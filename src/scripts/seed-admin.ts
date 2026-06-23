@@ -2,6 +2,7 @@
 // Run: npx tsx src/scripts/seed-admin.ts
 import { config } from 'dotenv'
 import { createClient } from '@supabase/supabase-js'
+import WebSocket from 'ws'
 
 // Next.js stores local secrets in .env.local (not .env), so load that first.
 config({ path: ['.env.local', '.env'] })
@@ -26,7 +27,12 @@ if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  { auth: { autoRefreshToken: false, persistSession: false } }
+  {
+    auth: { autoRefreshToken: false, persistSession: false },
+    // Node < 22 has no native WebSocket; supabase-js eagerly builds a Realtime
+    // client (unused here). Provide ws so it doesn't throw at construction.
+    realtime: { transport: WebSocket as unknown as typeof globalThis.WebSocket },
+  }
 )
 
 async function main() {
