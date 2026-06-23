@@ -15,7 +15,8 @@
   },
   "home": {
     "tagline": "Paris · Montréal",
-    "cta": "Cliquez sur un laboratoire pour entrer"
+    "cta": "Cliquez sur un laboratoire pour entrer",
+    "enteringLab": "Ouverture du laboratoire de {city}…"
   },
   "lab": {
     "searchPlaceholder": "Rechercher un sujet…",
