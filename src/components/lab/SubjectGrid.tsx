@@ -141,7 +141,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
       setSubjects(prev => prev.filter(s => s.id !== id))
       addToast(t('toast.deleted'), 'info')
     } catch {
-      addToast('Delete failed', 'error')
+      addToast(t('error.deleteFailed'), 'error')
     }
   }
 
@@ -233,7 +233,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
       window.removeEventListener('pointermove', onPointerMove)
       window.removeEventListener('pointerup', onPointerUp)
     }
-  }, [subjects])
+  }, [])
 
   // Subject to delete title for confirm dialog
   const deleteTitle = pendingSubject?.titre ?? ''
@@ -408,6 +408,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
                       editMode={editMode}
                       isDragging={draggingId === s.id}
                       statusLabel={t(`status.${s.statut}`)}
+                      doneLabel={t('done')}
                       onDelete={canEdit && editMode ? () => setPendingDeleteId(s.id) : undefined}
                       onCardClick={!editMode ? () => openPaper(s.id) : undefined}
                     />
@@ -496,6 +497,8 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
         onConfirm={handleDelete}
         onCancel={() => setPendingDeleteId(null)}
         danger
+        confirmLabel={t('delete.confirm')}
+        cancelLabel={t('delete.cancel')}
       />
     </>
   )

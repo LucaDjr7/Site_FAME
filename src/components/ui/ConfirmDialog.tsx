@@ -8,22 +8,24 @@ type Props = {
   onConfirm: () => void
   onCancel: () => void
   danger?: boolean
+  confirmLabel?: string
+  cancelLabel?: string
 }
 
-export function ConfirmDialog({ open, message, onConfirm, onCancel, danger = true }: Props) {
+export function ConfirmDialog({ open, message, onConfirm, onCancel, danger = true, confirmLabel, cancelLabel }: Props) {
   const t = useTranslations('common')
   return (
     <Modal open={open} onClose={onCancel}>
       <p className="text-fame-blue-dark mb-6">{message}</p>
       <div className="flex gap-3 justify-end">
         <button onClick={onCancel} className="px-4 py-2 rounded text-sm border border-fame-ecru hover:bg-fame-ecru">
-          {t('cancel')}
+          {cancelLabel ?? t('cancel')}
         </button>
         <button
           onClick={onConfirm}
           className={`px-4 py-2 rounded text-sm text-white font-medium ${danger ? 'bg-fame-red hover:bg-fame-red/90' : 'bg-fame-blue hover:bg-fame-blue-dark'}`}
         >
-          {t('confirm')}
+          {confirmLabel ?? t('confirm')}
         </button>
       </div>
     </Modal>

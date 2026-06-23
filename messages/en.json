@@ -87,7 +87,12 @@
     "editModeActive": "Editing",
     "sortDate": "Date",
     "tasks": "tasks",
-    "done": "DONE"
+    "done": "DONE",
+    "error": {
+      "network": "Network error",
+      "server": "Error",
+      "deleteFailed": "Delete failed"
+    }
   },
   "paper": {
     "back": "Click around the paper to go back",

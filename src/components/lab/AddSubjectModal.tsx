@@ -4,6 +4,36 @@ import { useTranslations } from 'next-intl'
 import type { MemberRef, SubjectStatus, Difficulty, Lab } from '@/types'
 import { Modal } from '@/components/ui/Modal'
 
+type PillBtnProps<T extends string> = {
+  value: T
+  current: T
+  label: string
+  onChange: (v: T) => void
+}
+
+function PillBtn<T extends string>({ value, current, label, onChange }: PillBtnProps<T>) {
+  const active = value === current
+  return (
+    <button
+      type="button"
+      onClick={() => onChange(value)}
+      style={{
+        padding: '4px 10px',
+        borderRadius: 20,
+        fontSize: 10,
+        fontFamily: 'IBM Plex Mono, monospace',
+        cursor: 'pointer',
+        border: active ? '1.5px solid #2f4486' : '1px solid #eceadf',
+        background: active ? 'rgba(47,68,134,0.1)' : 'transparent',
+        color: active ? '#2f4486' : '#7e95d6',
+        transition: 'all 0.1s',
+      }}
+    >
+      {label}
+    </button>
+  )
+}
+
 type Props = {
   open: boolean
   lab: Lab
@@ -64,14 +94,14 @@ export function AddSubjectModal({ open, lab, members, onClose, onAdded }: Props)
       })
       if (!res.ok) {
         const err = await res.json().catch(() => ({}))
-        setError((err as { error?: string }).error ?? 'Error')
+        setError((err as { error?: string }).error ?? t('error.server'))
         return
       }
       const created = await res.json()
       onAdded(created)
       reset()
     } catch {
-      setError('Network error')
+      setError(t('error.network'))
     } finally {
       setSubmitting(false)
     }
@@ -93,31 +123,6 @@ export function AddSubjectModal({ open, lab, members, onClose, onAdded }: Props)
     display: 'flex',
     gap: 6,
     flexWrap: 'wrap',
-  }
-
-  function PillBtn<T extends string>({ value, current, label, onChange }: {
-    value: T; current: T; label: string; onChange: (v: T) => void
-  }) {
-    const active = value === current
-    return (
-      <button
-        type="button"
-        onClick={() => onChange(value)}
-        style={{
-          padding: '4px 10px',
-          borderRadius: 20,
-          fontSize: 10,
-          fontFamily: 'IBM Plex Mono, monospace',
-          cursor: 'pointer',
-          border: active ? '1.5px solid #2f4486' : '1px solid #eceadf',
-          background: active ? 'rgba(47,68,134,0.1)' : 'transparent',
-          color: active ? '#2f4486' : '#7e95d6',
-          transition: 'all 0.1s',
-        }}
-      >
-        {label}
-      </button>
-    )
   }
 
   const labelStyle: React.CSSProperties = {

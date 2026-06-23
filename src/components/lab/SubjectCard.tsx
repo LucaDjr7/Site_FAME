@@ -40,6 +40,7 @@ type Props = {
   editMode: boolean
   isDragging?: boolean
   statusLabel: string
+  doneLabel: string
   onDelete?: () => void
   onCardClick?: () => void
 }
@@ -50,6 +51,7 @@ export function SubjectCard({
   editMode,
   isDragging = false,
   statusLabel,
+  doneLabel,
   onDelete,
   onCardClick,
 }: Props) {
@@ -249,7 +251,7 @@ export function SubjectCard({
                 textTransform: 'uppercase',
                 opacity: 0.7,
               }}>
-                DONE
+                {doneLabel}
               </div>
             </div>
           )}

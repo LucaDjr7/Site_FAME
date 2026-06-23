@@ -87,7 +87,12 @@
     "editModeActive": "Édition activée",
     "sortDate": "Date",
     "tasks": "tâches",
-    "done": "TERMINÉ"
+    "done": "TERMINÉ",
+    "error": {
+      "network": "Erreur réseau",
+      "server": "Erreur",
+      "deleteFailed": "Échec de la suppression"
+    }
   },
   "paper": {
     "back": "Cliquez autour du papier pour revenir aux sujets",
