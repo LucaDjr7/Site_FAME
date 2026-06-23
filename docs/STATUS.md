@@ -25,9 +25,9 @@ Dernière mise à jour : 2026-06-23
 ## Checklist — Phase 1 (Foundation)
 
 ### Étape 0 — Setup initial
-- [ ] Déplacer le scaffold de `_to_delete/` vers la racine du projet
-- [ ] Vérifier que `npm run dev` démarre sans erreur
-- [ ] Appliquer la migration SQL dans Supabase dashboard
+- [x] Déplacer le scaffold de `_to_delete/` vers la racine du projet (`_to_delete/` supprimé)
+- [x] Vérifier que `npm run dev` démarre sans erreur (`/en`, `/fr`, `/en/paris`, `/en/montreal` → 200 ; lab invalide → 404 ; `tsc --noEmit` clean)
+- [ ] Appliquer la migration SQL dans Supabase dashboard _(bloqué : migration créée en Task 2)_
 
 ### Task 1 — TypeScript Types (Opus)
 - [ ] Créer `src/types/index.ts` avec tous les types partagés
@@ -102,3 +102,6 @@ _Voir `docs/superpowers/plans/2026-06-22-fame-website-p3-secondary.md`_
 | 2026-06-22 | Labo Montréal : démarre vide au lancement |
 | 2026-06-22 | Seed : BDD vide sauf compte admin `luca.desjardin@dauphine.eu` |
 | 2026-06-23 | Modèles : Opus 4.8 pour Tasks 1–4, Sonnet 4.6 pour Tasks 5+ |
+| 2026-06-23 | Maquettes : accès via MCP Claude Design uniquement (pas de `docs/mockups/`) — connexion à claude.ai/design réservée à Opus |
+| 2026-06-23 | Étape 0 : scaffold déplacé vers la racine, `_to_delete/` supprimé, `recap_projet_FAME.md` archivé dans `docs/` |
+| 2026-06-23 | Fix scaffold : import Google Fonts placé **avant** `@import "tailwindcss"` dans `globals.css` (Tailwind v4 inline son contenu → tout `@import` doit précéder) |
