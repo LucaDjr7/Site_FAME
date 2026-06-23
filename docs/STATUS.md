@@ -8,7 +8,7 @@ Dernière mise à jour : 2026-06-23
 
 ## Phase active
 
-**Phase 1 — Foundation** (Tasks 1–7 ✅ — en revue finale de branche ; prochaine phase : Part 2 Features)
+**Phase 1 — Foundation TERMINÉE et validée** (Tasks 1–7 ✅, migration appliquée, admin seedé, **connexion vérifiée de bout en bout**). PR `feat/p1-foundation` ouverte. → Prochaine phase : **Part 2 Features (Task 8)**.
 
 ---
 
@@ -27,7 +27,7 @@ Dernière mise à jour : 2026-06-23
 ### Étape 0 — Setup initial
 - [x] Déplacer le scaffold de `_to_delete/` vers la racine du projet (`_to_delete/` supprimé)
 - [x] Vérifier que `npm run dev` démarre sans erreur (`/en`, `/fr`, `/en/paris`, `/en/montreal` → 200 ; lab invalide → 404 ; `tsc --noEmit` clean)
-- [ ] Appliquer la migration SQL dans Supabase dashboard _(bloqué : migration créée en Task 2)_
+- [x] Appliquer la migration SQL dans Supabase dashboard _(appliquée — 14 tables présentes)_
 
 ### Task 1 — TypeScript Types (Opus) ✅
 - [x] Créer `src/types/index.ts` avec tous les types partagés
@@ -35,13 +35,13 @@ Dernière mise à jour : 2026-06-23
 
 ### Task 2 — Schema BDD (Opus) ✅
 - [x] Créer `supabase/migrations/001_initial_schema.sql` (14 tables, index, RLS, trigger)
-- [ ] **Manuel** : appliquer dans Supabase dashboard → SQL Editor
-- [ ] **Manuel** : vérifier toutes les tables dans Table Editor
+- [x] **Manuel** : appliquer dans Supabase dashboard → SQL Editor ✅
+- [x] **Manuel** : vérifier toutes les tables dans Table Editor ✅
 
 ### Task 3 — Admin Seed (Opus) ✅
 - [x] Créer `src/scripts/seed-admin.ts` (durci : récupération auth user existant + guards env)
-- [ ] **Manuel** : définir `SEED_ADMIN_PASSWORD` dans `.env.local`
-- [ ] **Manuel** : `npm run seed:admin` → compte admin créé _(nécessite la migration Task 2 appliquée d'abord)_
+- [x] **Manuel** : définir `SEED_ADMIN_PASSWORD` dans `.env.local` ✅
+- [x] **Manuel** : `npm run seed:admin` → compte admin `luca.desjardin@dauphine.eu` créé ✅ _(rappel : `members.password_hash` reste NULL — le mot de passe vit dans `auth.users`, pas dans `members`)_
 
 ### Task 4 — Auth Flow (Opus) ✅
 - [x] `src/lib/auth.ts` — getSession, requireMember, requireAdmin, AuthError, authErrorResponse
@@ -66,7 +66,7 @@ Dernière mise à jour : 2026-06-23
 - [x] Auto-rotation + drag, thème clair, pins coral masqués à l'arrière, anneaux orbitaux, étoiles 4 branches
 - [x] `src/app/[locale]/page.tsx` + `public/world-110m.json` (TopoJSON world-atlas, fallback CDN)
 - [x] Fix review : `pointercancel`, sync wrapper au resize, nettoyage dead-code, `title` pin
-- [ ] **Manuel** : vérifier le rendu visuel du globe sur `http://localhost:3000/en` (`npm run dev`)
+- [x] **Manuel** : rendu visuel du globe vérifié sur `http://localhost:3000/en` ✅ (« parfait »)
 
 ---
 
@@ -117,3 +117,7 @@ _Voir `docs/superpowers/plans/2026-06-22-fame-website-p3-secondary.md`_
 | 2026-06-23 | Fix scaffold : import Google Fonts placé **avant** `@import "tailwindcss"` dans `globals.css` (Tailwind v4 inline son contenu → tout `@import` doit précéder) |
 | 2026-06-23 | Accueil : **maquette fidèle** retenue (globe canvas D3 auto-rotatif, thème clair, pins coral, anneaux orbitaux) plutôt que la version SVG simplifiée du brief Task 7 |
 | 2026-06-23 | Part 1 Foundation terminée (Tasks 1–7) — revue finale Opus « Ready to merge », aucun finding bloquant |
+| 2026-06-23 | Correctif seed : `seed-admin.ts` chargeait `.env` au lieu de `.env.local` → `config({ path: ['.env.local','.env'] })` (`81977fc`) |
+| 2026-06-23 | Correctif seed : Node 20 sans WebSocket natif → polyfill `ws` passé en `realtime.transport` du client Supabase ; `ws`/`@types/ws` en devDeps (`603b6ba`) |
+| 2026-06-23 | **Correctif login** : le middleware next-intl redirigeait `/api/*` → `/en/api/*` (307) → tout fetch API échouait, la page login affichait « mot de passe invalide » pour toute erreur. Court-circuit `/api/` avant next-intl + `api` exclu du matcher (`dc19522`). Connexion vérifiée 200 + cookie de session |
+| 2026-06-23 | Rappel architecture : mot de passe stocké dans `auth.users` (Supabase Auth), `members.password_hash` volontairement NULL/inutilisé |
