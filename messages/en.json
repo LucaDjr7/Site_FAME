@@ -106,7 +106,15 @@
     "openDropbox": "Open data folder",
     "dropboxSub": "Dropbox · data linked to this subject",
     "progress": "Subject progress",
-    "saved": "Saved"
+    "saved": "Saved",
+    "responsible": "Lead",
+    "keywords": "Keywords",
+    "noTasks": "No linked tasks",
+    "noComments": "No comments yet",
+    "figurePlaceholder": "Figure placeholder — drop the chart here",
+    "tasksLink": "Tasks →",
+    "prev": "Previous subject",
+    "next": "Next subject"
   },
   "tasks": {
     "claimTask": "Claim task",

@@ -106,7 +106,15 @@
     "openDropbox": "Ouvrir le dossier de données",
     "dropboxSub": "Dropbox · données liées au sujet",
     "progress": "Avancement du sujet",
-    "saved": "Enregistré"
+    "saved": "Enregistré",
+    "responsible": "Responsable",
+    "keywords": "Mots-clés",
+    "noTasks": "Aucune tâche liée",
+    "noComments": "Aucun commentaire",
+    "figurePlaceholder": "Emplacement figure — déposer le graphique ici",
+    "tasksLink": "Tâches →",
+    "prev": "Sujet précédent",
+    "next": "Sujet suivant"
   },
   "tasks": {
     "claimTask": "Claim task",
