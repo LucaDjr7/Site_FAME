@@ -2,6 +2,7 @@ import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { routing } from '@/i18n/routing'
+import { ToastProvider } from '@/components/ui/Toast'
 
 type Props = {
   children: React.ReactNode
@@ -21,7 +22,9 @@ export default async function LocaleLayout({ children, params }: Props) {
     <html lang={locale}>
       <body>
         <NextIntlClientProvider messages={messages}>
-          {children}
+          <ToastProvider>
+            {children}
+          </ToastProvider>
         </NextIntlClientProvider>
       </body>
     </html>
