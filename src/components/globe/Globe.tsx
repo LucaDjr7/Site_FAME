@@ -29,9 +29,10 @@ export function Globe() {
   const t = useTranslations('nav')
   const tHome = useTranslations('home')
 
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const parisRef  = useRef<HTMLButtonElement>(null)
-  const montRef   = useRef<HTMLButtonElement>(null)
+  const canvasRef  = useRef<HTMLCanvasElement>(null)
+  const wrapperRef = useRef<HTMLDivElement>(null)
+  const parisRef   = useRef<HTMLButtonElement>(null)
+  const montRef    = useRef<HTMLButtonElement>(null)
 
   // mutable refs for animation state — no setState in rAF loop
   const stateRef = useRef({
@@ -78,6 +79,10 @@ export function Globe() {
       canvas.height = s * dpr
       canvas.style.width  = `${s}px`
       canvas.style.height = `${s}px`
+      if (wrapperRef.current) {
+        wrapperRef.current.style.width  = `${s}px`
+        wrapperRef.current.style.height = `${s}px`
+      }
       const ctx = canvas.getContext('2d')!
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 
@@ -150,7 +155,6 @@ export function Globe() {
 
     function updatePins() {
       if (!state.projection) return
-      const s = state.size
 
       for (const lab of LABS) {
         const pinEl = pinRefs[lab.key].current
@@ -177,8 +181,6 @@ export function Globe() {
           pinEl.style.opacity = '0'
           pinEl.style.pointerEvents = 'none'
         }
-        // Scale the canvas container to match
-        void s
       }
     }
 
@@ -209,15 +211,17 @@ export function Globe() {
       state.phi = Math.max(-89, Math.min(89, state.phi - e.movementY * k))
       state.projection?.rotate([state.lambda, state.phi])
     }
-    function onPointerUp() {
+    function onPointerUp(e: PointerEvent) {
       state.dragging = false
       canvas.style.cursor = 'grab'
+      try { canvas.releasePointerCapture(e.pointerId) } catch { /* no-op */ }
     }
 
     canvas.addEventListener('pointerdown', onPointerDown)
     canvas.addEventListener('pointermove', onPointerMove)
     canvas.addEventListener('pointerup', onPointerUp)
     canvas.addEventListener('pointerleave', onPointerUp)
+    canvas.addEventListener('pointercancel', onPointerUp)
 
     // ---- resize ----
     function onResize() {
@@ -260,6 +264,7 @@ export function Globe() {
       canvas.removeEventListener('pointermove', onPointerMove)
       canvas.removeEventListener('pointerup', onPointerUp)
       canvas.removeEventListener('pointerleave', onPointerUp)
+      canvas.removeEventListener('pointercancel', onPointerUp)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -270,7 +275,7 @@ export function Globe() {
   const resumeRotation = () => { stateRef.current.paused = false }
 
   return (
-    <div style={{ position: 'relative', width: size, height: size }}>
+    <div ref={wrapperRef} style={{ position: 'relative', width: size, height: size }}>
       {/* Orbital rings — behind the globe */}
       <div
         aria-hidden="true"

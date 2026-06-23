@@ -30,6 +30,7 @@ export const LabPin = React.forwardRef<HTMLButtonElement, LabPinProps>(
           zIndex: 5,
         }}
         aria-label={label}
+        title={label}
       >
         {/* Pulse ring */}
         <span

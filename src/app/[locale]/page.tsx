@@ -8,9 +8,8 @@ type Props = {
 }
 
 export default async function HomePage({ params }: Props) {
-  const { locale } = await params
+  await params
   const t = await getTranslations('home')
-  void locale
 
   return (
     <div
