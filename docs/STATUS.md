@@ -8,7 +8,7 @@ Dernière mise à jour : 2026-06-23
 
 ## Phase active
 
-**Phase 1 — Foundation** (en cours — Étape 0 ✅, Task 1 ✅ ; prochaine : Task 2 schema SQL)
+**Phase 1 — Foundation** (en cours — Étape 0 ✅, Tasks 1–3 ✅ ; prochaine : Task 4 auth)
 
 ---
 
@@ -33,15 +33,15 @@ Dernière mise à jour : 2026-06-23
 - [x] Créer `src/types/index.ts` avec tous les types partagés
 - [x] `npx tsc --noEmit` sans erreurs
 
-### Task 2 — Schema BDD (Opus)
-- [ ] Créer `supabase/migrations/001_initial_schema.sql`
-- [ ] Appliquer dans Supabase dashboard → SQL Editor
-- [ ] Vérifier toutes les tables dans Table Editor
+### Task 2 — Schema BDD (Opus) ✅
+- [x] Créer `supabase/migrations/001_initial_schema.sql` (14 tables, index, RLS, trigger)
+- [ ] **Manuel** : appliquer dans Supabase dashboard → SQL Editor
+- [ ] **Manuel** : vérifier toutes les tables dans Table Editor
 
-### Task 3 — Admin Seed (Opus)
-- [ ] Créer `src/scripts/seed-admin.ts`
-- [ ] Ajouter `SEED_ADMIN_PASSWORD` dans `.env.local`
-- [ ] `npm run seed:admin` → compte admin créé
+### Task 3 — Admin Seed (Opus) ✅
+- [x] Créer `src/scripts/seed-admin.ts` (durci : récupération auth user existant + guards env)
+- [ ] **Manuel** : définir `SEED_ADMIN_PASSWORD` dans `.env.local`
+- [ ] **Manuel** : `npm run seed:admin` → compte admin créé _(nécessite la migration Task 2 appliquée d'abord)_
 
 ### Task 4 — Auth Flow (Opus)
 - [ ] `src/lib/auth.ts` — getSession, requireMember, requireAdmin
