@@ -64,7 +64,16 @@
     "email": "Email",
     "password": "Password",
     "forgotPassword": "Forgot password?",
-    "memberOnly": "Members only"
+    "memberOnly": "Members only",
+    "loading": "Loading…",
+    "signInError": "Invalid email or password.",
+    "setPasswordTitle": "Set your password",
+    "newPasswordPlaceholder": "New password (min 8 characters)",
+    "confirmPasswordPlaceholder": "Confirm password",
+    "passwordMismatch": "Passwords do not match",
+    "passwordTooShort": "Password must be at least 8 characters",
+    "activateButton": "Activate account",
+    "activatedSuccess": "Account activated! Redirecting to login…"
   },
   "comments": {
     "firstName": "First name",
