@@ -16,7 +16,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   try { await requireMember() } catch (e) { return authErrorResponse(e) }
   const { id } = await params
   const body = await req.json()
-  const allowed = ['titre', 'kicker', 'statut', 'context', 'method', 'results', 'keywords', 'auteurs', 'dimensions']
+  const allowed = ['titre', 'kicker', 'statut', 'difficulte', 'context', 'method', 'results', 'keywords', 'auteurs', 'dimensions']
   const updates: Record<string, unknown> = {}
   for (const key of allowed) {
     if (key in body) updates[key] = body[key]

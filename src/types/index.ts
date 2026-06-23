@@ -46,6 +46,7 @@ export interface Subject {
   results: string
   keywords: string[]
   auteurs: string[] // array of member IDs
+  difficulte: Difficulty   // 'easy' | 'intermediate' | 'advanced'
   dimensions: {
     method: string
     data: string

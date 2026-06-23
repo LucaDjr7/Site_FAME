@@ -19,12 +19,72 @@
     "enteringLab": "Ouverture du laboratoire de {city}…"
   },
   "lab": {
-    "searchPlaceholder": "Rechercher un sujet…",
-    "addSubject": "Ajouter un sujet",
+    "title": {
+      "paris": "FAME Paris",
+      "montreal": "FAME Montréal"
+    },
+    "kicker": "FAME / Laboratoire",
+    "search": "Rechercher un sujet…",
     "editMode": "Mode édition",
-    "editModeActive": "Édition activée",
+    "editModeOn": "Édition activée",
+    "addSubject": "Ajouter un sujet",
+    "proposeVisitor": "Proposer un sujet",
     "filters": "Filtres",
     "reset": "Réinitialiser",
+    "status": {
+      "active": "Actif",
+      "on-hold": "En attente",
+      "done": "Terminé"
+    },
+    "difficulty": {
+      "easy": "Facile",
+      "intermediate": "Intermédiaire",
+      "advanced": "Avancé"
+    },
+    "section": {
+      "status": "Statut",
+      "difficulty": "Difficulté",
+      "people": "Personnes",
+      "date": "Date d'existence"
+    },
+    "date": {
+      "2025": "2025",
+      "2024": "2024",
+      "older": "Avant 2024"
+    },
+    "count": "{n} sujet(s)",
+    "sortRecent": "Récents",
+    "sortOldest": "Anciens",
+    "tasksLink": "Tâches →",
+    "empty": "Aucun sujet ne correspond aux filtres.",
+    "modal": {
+      "newSubjectKicker": "NOUVEAU SUJET",
+      "title": "Ajouter un sujet",
+      "fTitle": "Titre",
+      "fDomain": "Domaine",
+      "fResponsable": "Responsable",
+      "none": "Aucun",
+      "fStatus": "Statut",
+      "fDifficulty": "Difficulté",
+      "fSummary": "Résumé",
+      "error": "Le titre et le domaine sont requis.",
+      "cancel": "Annuler",
+      "submit": "Ajouter le sujet →"
+    },
+    "delete": {
+      "kicker": "SUPPRIMER LE SUJET",
+      "title": "Supprimer le sujet",
+      "body": "Supprimer « {title} » ? Cette action est irréversible.",
+      "cancel": "Annuler",
+      "confirm": "Supprimer"
+    },
+    "toast": {
+      "added": "Sujet ajouté",
+      "deleted": "Sujet supprimé"
+    },
+    "searchPlaceholder": "Rechercher un sujet…",
+    "addSubject2": "Ajouter un sujet",
+    "editModeActive": "Édition activée",
     "sortDate": "Date",
     "tasks": "tâches",
     "done": "TERMINÉ"

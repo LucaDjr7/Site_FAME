@@ -19,12 +19,72 @@
     "enteringLab": "Opening {city} lab…"
   },
   "lab": {
-    "searchPlaceholder": "Search subjects…",
-    "addSubject": "Add subject",
+    "title": {
+      "paris": "FAME Paris",
+      "montreal": "FAME Montréal"
+    },
+    "kicker": "FAME / Laboratory",
+    "search": "Search subjects…",
     "editMode": "Edit mode",
-    "editModeActive": "Editing",
+    "editModeOn": "Editing",
+    "addSubject": "Add subject",
+    "proposeVisitor": "Propose a subject",
     "filters": "Filters",
     "reset": "Reset",
+    "status": {
+      "active": "Active",
+      "on-hold": "On hold",
+      "done": "Done"
+    },
+    "difficulty": {
+      "easy": "Easy",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
+    "section": {
+      "status": "Status",
+      "difficulty": "Difficulty",
+      "people": "People",
+      "date": "Date"
+    },
+    "date": {
+      "2025": "2025",
+      "2024": "2024",
+      "older": "Before 2024"
+    },
+    "count": "{n} subject(s)",
+    "sortRecent": "Recent",
+    "sortOldest": "Oldest",
+    "tasksLink": "Tasks →",
+    "empty": "No subjects match your filters.",
+    "modal": {
+      "newSubjectKicker": "NEW SUBJECT",
+      "title": "Add a subject",
+      "fTitle": "Title",
+      "fDomain": "Domain",
+      "fResponsable": "Responsible",
+      "none": "None",
+      "fStatus": "Status",
+      "fDifficulty": "Difficulty",
+      "fSummary": "Summary",
+      "error": "Title and domain are required.",
+      "cancel": "Cancel",
+      "submit": "Add subject →"
+    },
+    "delete": {
+      "kicker": "DELETE SUBJECT",
+      "title": "Delete subject",
+      "body": "Delete \"{title}\"? This cannot be undone.",
+      "cancel": "Cancel",
+      "confirm": "Delete"
+    },
+    "toast": {
+      "added": "Subject added",
+      "deleted": "Subject deleted"
+    },
+    "searchPlaceholder": "Search subjects…",
+    "addSubject2": "Add subject",
+    "editModeActive": "Editing",
     "sortDate": "Date",
     "tasks": "tasks",
     "done": "DONE"
