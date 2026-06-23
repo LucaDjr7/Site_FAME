@@ -133,7 +133,57 @@
       "done": "Done"
     },
     "hideCompleted": "Hide completed tasks",
-    "addTask": "Add task"
+    "addTask": "Add task",
+    "kicker": "FAME / Tasks",
+    "pageTitle": "Tasks",
+    "search": "Search tasks…",
+    "editMode": "Edit",
+    "editModeOn": "Editing",
+    "filters": "Filters",
+    "reset": "Reset",
+    "section": {
+      "subject": "Subject",
+      "status": "Status",
+      "difficulty": "Difficulty",
+      "people": "People",
+      "date": "Date",
+      "description": "Description"
+    },
+    "date": { "2025": "2025", "2024": "2024", "older": "Older" },
+    "progress": "Progress",
+    "positioning": "Positioning",
+    "noAssignees": "No one positioned yet",
+    "countTasks": "{n} task(s)",
+    "countOpen": "{n} to claim",
+    "subjectsLink": "Subjects →",
+    "empty": "No subjects yet. Add subjects on the lab page first.",
+    "modal": {
+      "title": "New task",
+      "fTitle": "Title",
+      "fStatus": "Status",
+      "fDifficulty": "Difficulty",
+      "fAssignee": "Assigned to",
+      "fDescription": "Description",
+      "fSubtasks": "Subtasks",
+      "addSubtask": "Add",
+      "subtaskPlaceholder": "Subtask label",
+      "none": "None",
+      "cancel": "Cancel",
+      "submit": "Create",
+      "error": "Title and subject are required."
+    },
+    "delete": {
+      "body": "Delete this task? This cannot be undone.",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "toast": {
+      "added": "Task added",
+      "deleted": "Task deleted",
+      "claimed": "You're now positioned on this task",
+      "unclaimed": "You stepped off this task",
+      "error": "Something went wrong"
+    }
   },
   "auth": {
     "signIn": "Sign in",

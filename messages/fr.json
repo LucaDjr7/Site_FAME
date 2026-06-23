@@ -117,8 +117,8 @@
     "next": "Sujet suivant"
   },
   "tasks": {
-    "claimTask": "Claim task",
-    "unclaimTask": "Unclaim",
+    "claimTask": "Se positionner",
+    "unclaimTask": "Me retirer",
     "subtasks": "Sous-tâches",
     "assignees": "Assignés",
     "history": "Historique",
@@ -133,7 +133,57 @@
       "done": "Fait"
     },
     "hideCompleted": "Masquer les tâches terminées",
-    "addTask": "Ajouter une tâche"
+    "addTask": "Ajouter une tâche",
+    "kicker": "FAME / Tâches",
+    "pageTitle": "Tâches",
+    "search": "Rechercher des tâches…",
+    "editMode": "Éditer",
+    "editModeOn": "Édition",
+    "filters": "Filtres",
+    "reset": "Réinitialiser",
+    "section": {
+      "subject": "Sujet",
+      "status": "Statut",
+      "difficulty": "Difficulté",
+      "people": "Personnes",
+      "date": "Date",
+      "description": "Description"
+    },
+    "date": { "2025": "2025", "2024": "2024", "older": "Plus ancien" },
+    "progress": "Avancement",
+    "positioning": "Positionnement",
+    "noAssignees": "Personne pour l'instant",
+    "countTasks": "{n} tâche(s)",
+    "countOpen": "{n} à pourvoir",
+    "subjectsLink": "Sujets →",
+    "empty": "Aucun sujet pour l'instant. Ajoutez des sujets depuis la page du laboratoire.",
+    "modal": {
+      "title": "Nouvelle tâche",
+      "fTitle": "Titre",
+      "fStatus": "Statut",
+      "fDifficulty": "Difficulté",
+      "fAssignee": "Assigné à",
+      "fDescription": "Description",
+      "fSubtasks": "Sous-tâches",
+      "addSubtask": "Ajouter",
+      "subtaskPlaceholder": "Libellé de la sous-tâche",
+      "none": "Aucun",
+      "cancel": "Annuler",
+      "submit": "Créer",
+      "error": "Le titre et le sujet sont obligatoires."
+    },
+    "delete": {
+      "body": "Supprimer cette tâche ? Cette action est irréversible.",
+      "confirm": "Supprimer",
+      "cancel": "Annuler"
+    },
+    "toast": {
+      "added": "Tâche ajoutée",
+      "deleted": "Tâche supprimée",
+      "claimed": "Vous êtes positionné·e sur cette tâche",
+      "unclaimed": "Vous vous êtes retiré·e de cette tâche",
+      "error": "Une erreur est survenue"
+    }
   },
   "auth": {
     "signIn": "Connexion",
