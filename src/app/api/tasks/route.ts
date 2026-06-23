@@ -6,12 +6,13 @@ import type { Lab } from '@/types'
 const VALID_LABS: Lab[] = ['paris', 'montreal']
 
 export async function GET(req: NextRequest) {
-  const lab = req.nextUrl.searchParams.get('lab') as Lab | null
+  const lab = req.nextUrl.searchParams.get('lab')
   const subjectId = req.nextUrl.searchParams.get('subject_id')
 
-  if (lab !== null && !VALID_LABS.includes(lab)) {
+  if (lab !== null && !VALID_LABS.includes(lab as Lab)) {
     return NextResponse.json({ error: 'Invalid lab' }, { status: 400 })
   }
+  const validLab = lab as Lab | null
 
   const service = await createServiceClient()
 
@@ -20,7 +21,7 @@ export async function GET(req: NextRequest) {
     .select(`*, task_assignees(member_id, members(id,prenom,nom,photo_url)), subtasks(*)`)
     .order('date_creation', { ascending: false })
 
-  if (lab) query = query.eq('labo', lab)
+  if (validLab) query = query.eq('labo', validLab)
   if (subjectId) query = query.eq('sujet_id', subjectId)
 
   const { data, error } = await query
@@ -47,19 +48,22 @@ export async function POST(req: NextRequest) {
 
   // Insert assignees
   if (assignee_ids.length > 0) {
-    await service.from('task_assignees').insert(assignee_ids.map((mid: string) => ({ task_id: task.id, member_id: mid })))
+    const { error: assigneeError } = await service.from('task_assignees').insert(assignee_ids.map((mid: string) => ({ task_id: task.id, member_id: mid })))
+    if (assigneeError) return NextResponse.json({ error: assigneeError.message }, { status: 500 })
   }
 
   // Insert subtasks (inherit assignees)
   if (subtask_labels.length > 0) {
-    const { data: subs } = await service.from('subtasks')
+    const { data: subs, error: subtaskError } = await service.from('subtasks')
       .insert(subtask_labels.map((label: string, i: number) => ({ task_id: task.id, label, ordre: i })))
       .select()
+    if (subtaskError) return NextResponse.json({ error: subtaskError.message }, { status: 500 })
     if (subs && assignee_ids.length > 0) {
       const subAssignees = subs.flatMap((s: { id: string }) =>
         assignee_ids.map((mid: string) => ({ subtask_id: s.id, member_id: mid }))
       )
-      await service.from('subtask_assignees').insert(subAssignees)
+      const { error: subAssigneeError } = await service.from('subtask_assignees').insert(subAssignees)
+      if (subAssigneeError) return NextResponse.json({ error: subAssigneeError.message }, { status: 500 })
     }
   }
 

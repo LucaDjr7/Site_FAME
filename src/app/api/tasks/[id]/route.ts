@@ -16,30 +16,39 @@ export async function GET(_req: NextRequest, { params }: Params) {
 }
 
 export async function PATCH(req: NextRequest, { params }: Params) {
-  let session
-  try { ({ session } = await requireMember()) } catch (e) { return authErrorResponse(e) }
+  let session, member
+  try { ({ session, member } = await requireMember()) } catch (e) { return authErrorResponse(e) }
   const { id } = await params
   const body = await req.json()
   const allowed = ['titre','description','statut','difficulte','sujet_id','date_echeance']
   const updates: Record<string, unknown> = {}
   for (const key of allowed) { if (key in body) updates[key] = body[key] }
 
+  if (Object.keys(updates).length === 0) {
+    return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 })
+  }
+
   const service = await createServiceClient()
 
-  // Record history for status change
+  // Read old statut before updating (if changing statut)
+  let oldStatut: string | null = null
   if ('statut' in body) {
     const { data: old } = await service.from('tasks').select('statut').eq('id', id).single()
-    if (old && old.statut !== body.statut) {
-      const name = session.member ? `${session.member.prenom} ${session.member.nom}` : 'Unknown'
-      await service.from('task_history').insert({
-        task_id: id, auteur_id: session.user.id, auteur_nom: name,
-        champ: 'statut', valeur_avant: old.statut, valeur_apres: body.statut,
-      })
-    }
+    oldStatut = old?.statut ?? null
   }
 
   const { data, error } = await service.from('tasks').update(updates).eq('id', id).select().single()
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+  // Record history AFTER successful update
+  if ('statut' in body && oldStatut !== null && oldStatut !== body.statut) {
+    const name = `${member.prenom} ${member.nom}`
+    await service.from('task_history').insert({
+      task_id: id, auteur_id: session.user.id, auteur_nom: name,
+      champ: 'statut', valeur_avant: oldStatut, valeur_apres: body.statut,
+    })
+  }
+
   return NextResponse.json(data)
 }
 
