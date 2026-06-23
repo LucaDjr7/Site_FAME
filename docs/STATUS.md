@@ -8,7 +8,7 @@ Dernière mise à jour : 2026-06-23
 
 ## Phase active
 
-**Phase 1 — Foundation** (non démarrée)
+**Phase 1 — Foundation** (en cours — Étape 0 ✅, Task 1 ✅ ; prochaine : Task 2 schema SQL)
 
 ---
 
@@ -29,9 +29,9 @@ Dernière mise à jour : 2026-06-23
 - [x] Vérifier que `npm run dev` démarre sans erreur (`/en`, `/fr`, `/en/paris`, `/en/montreal` → 200 ; lab invalide → 404 ; `tsc --noEmit` clean)
 - [ ] Appliquer la migration SQL dans Supabase dashboard _(bloqué : migration créée en Task 2)_
 
-### Task 1 — TypeScript Types (Opus)
-- [ ] Créer `src/types/index.ts` avec tous les types partagés
-- [ ] `npx tsc --noEmit` sans erreurs
+### Task 1 — TypeScript Types (Opus) ✅
+- [x] Créer `src/types/index.ts` avec tous les types partagés
+- [x] `npx tsc --noEmit` sans erreurs
 
 ### Task 2 — Schema BDD (Opus)
 - [ ] Créer `supabase/migrations/001_initial_schema.sql`
