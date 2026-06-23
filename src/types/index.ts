@@ -114,7 +114,7 @@ export interface TaskSubject {
 export interface TaskHistory {
   id: string
   task_id: string
-  auteur_id: string
+  auteur_id: string | null // FK on delete set null — preserved row keeps auteur_nom
   auteur_nom: string
   champ: string
   valeur_avant: unknown
@@ -156,7 +156,7 @@ export interface Prompt {
   titre: string
   type_cible: PromptTarget
   texte: string
-  created_by: string
+  created_by: string | null // FK on delete set null
   created_at: string
 }
 
