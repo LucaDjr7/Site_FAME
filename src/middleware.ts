@@ -12,15 +12,17 @@ const ADMIN_ONLY_PATHS = ['/admin']
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
 
+  // API routes must never be touched by the intl middleware: it would 307-
+  // redirect /api/* to /en/api/* (a non-existent route), breaking every fetch.
+  // Short-circuit BEFORE invoking next-intl. (The matcher also excludes /api,
+  // this is belt-and-suspenders.)
+  if (pathname.startsWith('/api/')) return NextResponse.next()
+
   // Strip locale prefix to check path
   const pathWithoutLocale = pathname.replace(/^\/(en|fr)/, '')
-  const isApiRoute = pathname.startsWith('/api/')
 
-  // Run intl middleware first (handles locale redirect / cookie)
+  // Run intl middleware (handles locale redirect / cookie) for page routes
   const intlResponse = intlMiddleware(request)
-
-  // For API routes and static assets, skip auth checks
-  if (isApiRoute) return intlResponse ?? NextResponse.next()
 
   // Check member-only pages
   const matchesPath = (paths: string[]) =>
@@ -56,5 +58,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!_next|_vercel|.*\\..*).*)'],
+  matcher: ['/((?!api|_next|_vercel|.*\\..*).*)'],
 }
