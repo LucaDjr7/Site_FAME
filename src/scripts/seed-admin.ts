@@ -1,7 +1,10 @@
 // src/scripts/seed-admin.ts
 // Run: npx tsx src/scripts/seed-admin.ts
-import 'dotenv/config'
+import { config } from 'dotenv'
 import { createClient } from '@supabase/supabase-js'
+
+// Next.js stores local secrets in .env.local (not .env), so load that first.
+config({ path: ['.env.local', '.env'] })
 
 const ADMIN_EMAIL = 'luca.desjardin@dauphine.eu'
 const ADMIN_PASSWORD = process.env.SEED_ADMIN_PASSWORD ?? ''
