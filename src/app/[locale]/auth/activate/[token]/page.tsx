@@ -22,8 +22,14 @@ export default function ActivatePage() {
       body: JSON.stringify({ token, password }),
     })
     if (!res.ok) {
-      const { error: msg } = await res.json()
-      setError(msg)
+      let msg = ''
+      try {
+        const body = await res.json()
+        msg = body?.error ?? ''
+      } catch {
+        msg = ''
+      }
+      setError(msg || t('activationFailed'))
       return
     }
     setDone(true)

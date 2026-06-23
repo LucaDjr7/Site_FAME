@@ -23,9 +23,15 @@ export async function middleware(request: NextRequest) {
   if (isApiRoute) return intlResponse ?? NextResponse.next()
 
   // Check member-only pages
-  const needsMember = MEMBER_ONLY_PATHS.some(p => pathWithoutLocale.includes(p))
-  const needsAdmin = ADMIN_ONLY_PATHS.some(p => pathWithoutLocale.includes(p))
+  const matchesPath = (paths: string[]) =>
+    paths.some(p => pathWithoutLocale === p || pathWithoutLocale.startsWith(p + '/'))
+  const needsMember = matchesPath(MEMBER_ONLY_PATHS)
+  const needsAdmin = matchesPath(ADMIN_ONLY_PATHS)
 
+  // NOTE: this is an authentication gate only (is the caller logged in?).
+  // It does NOT verify is_admin at the edge — RLS blocks reading members
+  // without the service-role key, which must not live in edge middleware.
+  // Admin-role enforcement MUST happen in each /admin page's RSC via requireAdmin().
   if (needsMember || needsAdmin) {
     // Build response to set cookies from supabase-ssr
     const response = intlResponse ?? NextResponse.next()

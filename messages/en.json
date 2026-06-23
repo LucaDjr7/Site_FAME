@@ -73,7 +73,8 @@
     "passwordMismatch": "Passwords do not match",
     "passwordTooShort": "Password must be at least 8 characters",
     "activateButton": "Activate account",
-    "activatedSuccess": "Account activated! Redirecting to login…"
+    "activatedSuccess": "Account activated! Redirecting to login…",
+    "activationFailed": "Activation failed."
   },
   "comments": {
     "firstName": "First name",

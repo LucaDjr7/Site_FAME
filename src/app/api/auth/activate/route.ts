@@ -26,7 +26,10 @@ export async function POST(req: NextRequest) {
     invitation.member_id,
     { password }
   )
-  if (pwErr) return NextResponse.json({ error: pwErr.message }, { status: 500 })
+  if (pwErr) {
+    console.error('Activation password update failed:', pwErr)
+    return NextResponse.json({ error: 'Activation failed' }, { status: 500 })
+  }
 
   // Mark member as activated
   await service.from('members').update({ activated_at: new Date().toISOString() })
