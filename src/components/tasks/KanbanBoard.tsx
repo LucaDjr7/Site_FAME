@@ -49,26 +49,29 @@ export function KanbanBoard({ lab, locale, subjects, initialTasks, members, isMe
 
   async function handleClaim(taskId: string) {
     const res = await fetch(`/api/tasks/${taskId}/claim`, { method: 'POST' })
+    if (!res.ok) { addToast(t('toast.error'), 'error'); return }
     const body = await res.json().catch(() => ({}))
     await refresh()
     addToast((body as { claimed?: boolean }).claimed ? t('toast.claimed') : t('toast.unclaimed'), 'info')
   }
 
   async function handlePatch(taskId: string, fields: { statut?: TaskStatus; difficulte?: Difficulty }) {
-    await fetch(`/api/tasks/${taskId}`, {
+    const res = await fetch(`/api/tasks/${taskId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(fields),
     })
+    if (!res.ok) { addToast(t('toast.error'), 'error'); return }
     await refresh()
   }
 
   async function handleToggleSubtask(taskId: string, subtaskId: string, done: boolean) {
-    await fetch(`/api/tasks/${taskId}/subtasks`, {
+    const res = await fetch(`/api/tasks/${taskId}/subtasks`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ subtask_id: subtaskId, done }),
     })
+    if (!res.ok) { addToast(t('toast.error'), 'error'); return }
     await refresh()
   }
 
@@ -107,12 +110,13 @@ export function KanbanBoard({ lab, locale, subjects, initialTasks, members, isMe
   const filtered = useMemo(() => tasks.filter(tk => {
     if (q && !tk.titre.toLowerCase().includes(q.toLowerCase())) return false
     if (hideDone && tk.statut === 'done') return false
+    if (fSubject.size > 0 && !fSubject.has(tk.sujet_id)) return false
     if (fStatus.size > 0 && !fStatus.has(tk.statut)) return false
     if (fDiff.size > 0 && !fDiff.has(tk.difficulte)) return false
     if (fPerson.size > 0 && !tk.assignees.some(a => fPerson.has(a.id))) return false
     if (fDate.size > 0 && !fDate.has(bucket(tk))) return false
     return true
-  }), [tasks, q, hideDone, fStatus, fDiff, fPerson, fDate])
+  }), [tasks, q, hideDone, fSubject, fStatus, fDiff, fPerson, fDate])
 
   const visibleSubjects = subjects.filter(s => fSubject.size === 0 || fSubject.has(s.id))
   const totalCount = filtered.length
