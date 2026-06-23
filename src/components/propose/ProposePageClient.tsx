@@ -4,11 +4,11 @@ import { useTranslations } from 'next-intl'
 import { ProposeForm } from './ProposeForm'
 import { ProposalTracker, storeProposalId } from './ProposalTracker'
 import { useToast } from '@/components/ui/Toast'
-import type { Lab, Member } from '@/types'
+import type { Lab } from '@/types'
 
-type Props = { lab: Lab; member: Member | null }
+type Props = { lab: Lab; isMember: boolean }
 
-export function ProposePageClient({ lab, member }: Props) {
+export function ProposePageClient({ lab, isMember }: Props) {
   const t = useTranslations('propose')
   const { addToast } = useToast()
   const [refreshKey, setRefreshKey] = useState(0)
@@ -86,7 +86,7 @@ export function ProposePageClient({ lab, member }: Props) {
       </div>
 
       {/* Tracker sidebar (right, fixed width) */}
-      <ProposalTracker lab={lab} member={member} refreshKey={refreshKey} />
+      <ProposalTracker lab={lab} isMember={isMember} refreshKey={refreshKey} />
     </div>
   )
 }

@@ -10,5 +10,5 @@ export default async function ProposePage({ params }: Props) {
   const { lab } = await params
   if (!LABS.includes(lab as Lab)) notFound()
   const session = await getSession()
-  return <ProposePageClient lab={lab as Lab} member={session?.member ?? null} />
+  return <ProposePageClient lab={lab as Lab} isMember={!!session?.member} />
 }

@@ -68,7 +68,7 @@ export function AdminProposalsClient() {
           {LABS.map(l => (
             <button
               key={l}
-              onClick={() => setLab(l)}
+              onClick={() => { setProposals([]); setLab(l) }}
               className={`px-3 py-1 text-xs font-mono rounded border capitalize transition-colors ${
                 lab === l
                   ? 'bg-fame-blue text-white border-fame-blue'

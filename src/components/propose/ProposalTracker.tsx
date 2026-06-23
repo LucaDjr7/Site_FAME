@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { ProposalStatusBadge } from '@/components/ui/StatusBadge'
-import type { Proposal, Lab, Member, ProposalStatus } from '@/types'
+import type { Proposal, Lab, ProposalStatus } from '@/types'
 
 const STORAGE_KEY = 'fame_proposals'
 
@@ -28,15 +28,15 @@ const STATUS_DOT: Record<ProposalStatus, string> = {
   rejected: '#c0473b',
 }
 
-type Props = { lab: Lab; member: Member | null; refreshKey: number }
+type Props = { lab: Lab; isMember: boolean; refreshKey: number }
 
-export function ProposalTracker({ lab, member, refreshKey }: Props) {
+export function ProposalTracker({ lab, isMember, refreshKey }: Props) {
   const t = useTranslations('propose')
   const ts = useTranslations('proposalStatus')
   const [proposals, setProposals] = useState<Proposal[]>([])
 
   useEffect(() => {
-    if (member) {
+    if (isMember) {
       fetch(`/api/proposals?lab=${lab}`)
         .then(res => res.ok ? res.json() : null)
         .then(data => setProposals(data ?? []))
@@ -47,9 +47,9 @@ export function ProposalTracker({ lab, member, refreshKey }: Props) {
     Promise.resolve(url)
       .then(u => u ? fetch(u).then(res => res.ok ? res.json() : []) : [])
       .then(data => setProposals(data))
-  }, [lab, member, refreshKey])
+  }, [lab, isMember, refreshKey])
 
-  const heading = member ? t('memberTrackerTitle') : t('trackerTitle')
+  const heading = isMember ? t('memberTrackerTitle') : t('trackerTitle')
 
   return (
     <aside style={{

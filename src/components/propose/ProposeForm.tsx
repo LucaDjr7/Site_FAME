@@ -51,6 +51,14 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
       return
     }
     const created = await res.json()
+    setError('')
+    setTitre('')
+    setDescription('')
+    setPrenom('')
+    setNom('')
+    setEmail('')
+    setDomaine(PROPOSAL_DOMAINS[0])
+    setDifficulte('easy')
     onSubmitted(created.id)
   }
 
