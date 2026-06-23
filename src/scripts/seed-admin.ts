@@ -11,6 +11,15 @@ if (!ADMIN_PASSWORD) {
   process.exit(1)
 }
 
+if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+  console.error('Set NEXT_PUBLIC_SUPABASE_URL in .env.local before running this script.')
+  process.exit(1)
+}
+if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  console.error('Set SUPABASE_SERVICE_ROLE_KEY in .env.local before running this script.')
+  process.exit(1)
+}
+
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!,
@@ -28,7 +37,21 @@ async function main() {
     console.error('Auth error:', authError.message)
     process.exit(1)
   }
-  const userId = authData?.user?.id
+  let userId = authData?.user?.id
+
+  if (!userId) {
+    const { data: listData, error: listError } = await supabase.auth.admin.listUsers()
+    if (listError) {
+      console.error('Could not list users to recover existing admin id:', listError.message)
+      process.exit(1)
+    }
+    const existingUser = listData?.users?.find((u) => u.email === ADMIN_EMAIL)
+    if (!existingUser) {
+      console.error('Auth user reported as already registered but could not be retrieved.')
+      process.exit(1)
+    }
+    userId = existingUser.id
+  }
 
   // 2. Check if member profile already exists
   const { data: existing } = await supabase
@@ -63,4 +86,7 @@ async function main() {
   console.log(`Admin created: ${ADMIN_EMAIL}`)
 }
 
-main()
+main().catch((err) => {
+  console.error('Unexpected error:', err)
+  process.exit(1)
+})
