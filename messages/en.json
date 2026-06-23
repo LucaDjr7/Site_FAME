@@ -1,0 +1,192 @@
+{
+  "nav": {
+    "subjects": "Subjects",
+    "tasks": "Tasks",
+    "data": "Data",
+    "publications": "Publications",
+    "team": "Team",
+    "prompts": "Prompts",
+    "propose": "Propose",
+    "menu": "Menu",
+    "navigation": "Navigation"
+  },
+  "home": {
+    "tagline": "Paris · Montréal",
+    "cta": "Click on a lab to enter"
+  },
+  "lab": {
+    "searchPlaceholder": "Search subjects…",
+    "addSubject": "Add subject",
+    "editMode": "Edit mode",
+    "editModeActive": "Editing",
+    "filters": "Filters",
+    "reset": "Reset",
+    "sortDate": "Date",
+    "tasks": "tasks",
+    "done": "DONE"
+  },
+  "paper": {
+    "back": "Click around the paper to go back",
+    "context": "Context",
+    "method": "Method",
+    "results": "Expected results",
+    "linkedTasks": "Linked tasks",
+    "filesLinks": "Files & links",
+    "comments": "Comments",
+    "addComment": "Add a comment…",
+    "openDropbox": "Open data folder",
+    "dropboxSub": "Dropbox · data linked to this subject",
+    "progress": "Subject progress",
+    "saved": "Saved"
+  },
+  "tasks": {
+    "claimTask": "Claim task",
+    "unclaimTask": "Unclaim",
+    "subtasks": "Subtasks",
+    "assignees": "Assignees",
+    "history": "History",
+    "difficulty": {
+      "easy": "Easy",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
+    "status": {
+      "todo": "To do",
+      "inProgress": "In progress",
+      "done": "Done"
+    },
+    "hideCompleted": "Hide completed tasks",
+    "addTask": "Add task"
+  },
+  "auth": {
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "memberOnly": "Members only"
+  },
+  "comments": {
+    "firstName": "First name",
+    "lastName": "Last name",
+    "post": "Post",
+    "delete": "Delete",
+    "visitorPrompt": "Enter your name to comment"
+  },
+  "propose": {
+    "title": "Propose a research subject",
+    "subtitle": "Describe a lead the FAME team could explore.",
+    "subjectTitle": "Subject title",
+    "domain": "Domain",
+    "difficulty": "Estimated difficulty",
+    "description": "Description",
+    "yourName": "Your name",
+    "email": "Email",
+    "send": "Send to the team",
+    "required": "* Required fields",
+    "yourProposals": "Your proposals",
+    "pendingReview": "Under review by the team.",
+    "gdpr": "The information you provide is used solely to process your proposal. You may request its deletion by contacting us.",
+    "success": "Proposal sent to the team",
+    "errorRequired": "Please fill in the title, domain, description and your name.",
+    "errorEmail": "Please provide a valid email address."
+  },
+  "publications": {
+    "title": "Publications",
+    "filters": "Filters",
+    "reset": "Reset",
+    "type": "Type",
+    "author": "Author",
+    "year": "Year",
+    "search": "Search a publication…",
+    "noResults": "No publications match the filters.",
+    "addPublication": "Add publication",
+    "types": {
+      "article": "Article",
+      "preprint": "Preprint",
+      "conference": "Conference",
+      "working": "Working paper"
+    },
+    "status": {
+      "published": "Published",
+      "accepted": "Accepted",
+      "submitted": "Submitted",
+      "preparation": "In preparation"
+    }
+  },
+  "team": {
+    "title": "Team",
+    "roles": {
+      "direction": "Direction",
+      "researchers": "Researchers",
+      "phd": "PhD Students",
+      "engineering": "Engineering"
+    },
+    "addMember": "Add member",
+    "inviteByEmail": "Invite by email"
+  },
+  "data": {
+    "title": "Data — Team Dropbox",
+    "tree": "File tree",
+    "linkedFolders": "linked folder(s)",
+    "linkToSubject": "Link to a subject",
+    "linkToTask": "Link to a task",
+    "chooseSubject": "Choose a subject…",
+    "chooseTask": "Choose a task…",
+    "openDropbox": "Open in Dropbox →",
+    "noSelection": "Select a folder or file to link it to a subject or task.",
+    "linkedTo": "Linked to"
+  },
+  "prompts": {
+    "title": "Prompt library",
+    "subtitle": "Standardised templates to produce site content. Variables between",
+    "subtitleEnd": "are to be filled in at generation time.",
+    "newPrompt": "New prompt",
+    "addPrompt": "Add a prompt",
+    "allTypes": "All types",
+    "types": {
+      "sujet": "Subject card",
+      "publication": "Publication card",
+      "donnees": "Dataset card",
+      "membre": "Member card",
+      "tache": "Task"
+    },
+    "copy": "Copy",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel",
+    "copied": "Prompt copied to clipboard",
+    "saved": "Prompt saved",
+    "deleted": "Prompt deleted",
+    "noPrompts": "No prompts for this type."
+  },
+  "admin": {
+    "proposals": "Proposals",
+    "status": {
+      "pending": "Pending",
+      "accepted": "Accepted",
+      "rejected": "Rejected"
+    },
+    "accept": "Accept",
+    "reject": "Reject",
+    "convertToSubject": "Convert to subject"
+  },
+  "common": {
+    "loading": "Loading…",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "close": "Close",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "filters": "Filters",
+    "noResults": "No results",
+    "paris": "Paris",
+    "montreal": "Montréal",
+    "lab": "Lab",
+    "by": "by"
+  }
+}

@@ -39,3 +39,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# superpowers SDD workspace (task briefs, review packages, progress ledger)
+.superpowers/
+
+# legacy scaffold staging — not part of the repo
+/_to_delete/
+
+# Claude Code local (personal) settings
+.claude/settings.local.json

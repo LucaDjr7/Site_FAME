@@ -1,0 +1,192 @@
+{
+  "nav": {
+    "subjects": "Sujets",
+    "tasks": "Tâches",
+    "data": "Données",
+    "publications": "Publications",
+    "team": "Équipe",
+    "prompts": "Prompts",
+    "propose": "Proposer",
+    "menu": "Menu",
+    "navigation": "Navigation"
+  },
+  "home": {
+    "tagline": "Paris · Montréal",
+    "cta": "Cliquez sur un laboratoire pour entrer"
+  },
+  "lab": {
+    "searchPlaceholder": "Rechercher un sujet…",
+    "addSubject": "Ajouter un sujet",
+    "editMode": "Mode édition",
+    "editModeActive": "Édition activée",
+    "filters": "Filtres",
+    "reset": "Réinitialiser",
+    "sortDate": "Date",
+    "tasks": "tâches",
+    "done": "TERMINÉ"
+  },
+  "paper": {
+    "back": "Cliquez autour du papier pour revenir aux sujets",
+    "context": "Contexte",
+    "method": "Méthode",
+    "results": "Résultats attendus",
+    "linkedTasks": "Tasks liées",
+    "filesLinks": "Fichiers & liens",
+    "comments": "Commentaires",
+    "addComment": "Ajouter un commentaire…",
+    "openDropbox": "Ouvrir le dossier de données",
+    "dropboxSub": "Dropbox · données liées au sujet",
+    "progress": "Avancement du sujet",
+    "saved": "Enregistré"
+  },
+  "tasks": {
+    "claimTask": "Claim task",
+    "unclaimTask": "Unclaim",
+    "subtasks": "Sous-tâches",
+    "assignees": "Assignés",
+    "history": "Historique",
+    "difficulty": {
+      "easy": "Facile",
+      "intermediate": "Intermédiaire",
+      "advanced": "Avancé"
+    },
+    "status": {
+      "todo": "À faire",
+      "inProgress": "En cours",
+      "done": "Fait"
+    },
+    "hideCompleted": "Masquer les tâches terminées",
+    "addTask": "Ajouter une tâche"
+  },
+  "auth": {
+    "signIn": "Connexion",
+    "signOut": "Déconnexion",
+    "email": "Email",
+    "password": "Mot de passe",
+    "forgotPassword": "Mot de passe oublié ?",
+    "memberOnly": "Membres uniquement"
+  },
+  "comments": {
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "post": "Publier",
+    "delete": "Supprimer",
+    "visitorPrompt": "Entrez votre nom pour commenter"
+  },
+  "propose": {
+    "title": "Proposer un sujet de recherche",
+    "subtitle": "Décrivez une piste que l'équipe FAME pourrait explorer.",
+    "subjectTitle": "Titre du sujet",
+    "domain": "Domaine",
+    "difficulty": "Difficulté estimée",
+    "description": "Description",
+    "yourName": "Votre nom",
+    "email": "Email",
+    "send": "Envoyer à l'équipe",
+    "required": "* Champs requis",
+    "yourProposals": "Vos propositions",
+    "pendingReview": "En cours d'examen par l'équipe.",
+    "gdpr": "Les informations que vous fournissez sont utilisées uniquement pour traiter votre proposition. Vous pouvez demander leur suppression en nous contactant.",
+    "success": "Proposition envoyée à l'équipe",
+    "errorRequired": "Merci de remplir le titre, le domaine, la description et votre nom.",
+    "errorEmail": "Merci d'indiquer une adresse e-mail valide."
+  },
+  "publications": {
+    "title": "Publications",
+    "filters": "Filtres",
+    "reset": "Réinitialiser",
+    "type": "Type",
+    "author": "Auteur",
+    "year": "Année",
+    "search": "Rechercher une publication…",
+    "noResults": "Aucune publication ne correspond aux filtres.",
+    "addPublication": "Ajouter une publication",
+    "types": {
+      "article": "Article",
+      "preprint": "Preprint",
+      "conference": "Conférence",
+      "working": "Working paper"
+    },
+    "status": {
+      "published": "Publié",
+      "accepted": "Accepté",
+      "submitted": "Soumis",
+      "preparation": "En préparation"
+    }
+  },
+  "team": {
+    "title": "Trombinoscope",
+    "roles": {
+      "direction": "Direction",
+      "researchers": "Chercheurs permanents",
+      "phd": "Doctorants",
+      "engineering": "Ingénierie"
+    },
+    "addMember": "Ajouter un membre",
+    "inviteByEmail": "Inviter par email"
+  },
+  "data": {
+    "title": "Données — Dropbox d'équipe",
+    "tree": "Arborescence",
+    "linkedFolders": "dossier(s) lié(s)",
+    "linkToSubject": "Lier à un sujet",
+    "linkToTask": "Lier à une tâche",
+    "chooseSubject": "Choisir un sujet…",
+    "chooseTask": "Choisir une tâche…",
+    "openDropbox": "Ouvrir dans Dropbox →",
+    "noSelection": "Sélectionnez un dossier ou un fichier pour le lier à un sujet ou une tâche.",
+    "linkedTo": "Lié à"
+  },
+  "prompts": {
+    "title": "Bibliothèque de prompts",
+    "subtitle": "Ces gabarits permettent de produire chaque fiche de manière homogène. Les variables entre",
+    "subtitleEnd": "sont à compléter au moment de la génération.",
+    "newPrompt": "Nouveau prompt",
+    "addPrompt": "Ajouter un prompt",
+    "allTypes": "Tous les types",
+    "types": {
+      "sujet": "Fiche sujet",
+      "publication": "Fiche publication",
+      "donnees": "Fiche jeu de données",
+      "membre": "Fiche membre",
+      "tache": "Tâche"
+    },
+    "copy": "Copier",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "copied": "Prompt copié dans le presse-papier",
+    "saved": "Prompt enregistré",
+    "deleted": "Prompt supprimé",
+    "noPrompts": "Aucun prompt pour ce type."
+  },
+  "admin": {
+    "proposals": "Propositions",
+    "status": {
+      "pending": "En attente",
+      "accepted": "Acceptée",
+      "rejected": "Refusée"
+    },
+    "accept": "Accepter",
+    "reject": "Refuser",
+    "convertToSubject": "Convertir en sujet"
+  },
+  "common": {
+    "loading": "Chargement…",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "confirm": "Confirmer",
+    "close": "Fermer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "search": "Rechercher",
+    "filters": "Filtres",
+    "noResults": "Aucun résultat",
+    "paris": "Paris",
+    "montreal": "Montréal",
+    "lab": "Laboratoire",
+    "by": "par"
+  }
+}

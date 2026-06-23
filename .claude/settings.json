@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(npx tsx *)",
+      "Bash(npx create-next-app *)",
+      "Bash(git status)",
+      "Bash(git log *)",
+      "Bash(git diff *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git show *)",
+      "Bash(git branch *)",
+      "Bash(find . *)",
+      "Bash(ls *)",
+      "Bash(ls -la *)",
+      "Bash(mkdir -p *)",
+      "Bash(curl -L *)",
+      "Bash(node --version)",
+      "Bash(node -e *)",
+      "Bash(npm --version)",
+      "Bash(npx --version)"
+    ]
+  }
+}
