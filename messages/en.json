@@ -8,11 +8,15 @@
     "prompts": "Prompts",
     "propose": "Propose",
     "menu": "Menu",
-    "navigation": "Navigation"
+    "navigation": "Navigation",
+    "admin": "Admin",
+    "labParis": "Paris",
+    "labMontreal": "Montreal"
   },
   "home": {
     "tagline": "Paris · Montréal",
-    "cta": "Click on a lab to enter"
+    "cta": "Click on a lab to enter",
+    "enteringLab": "Opening {city} lab…"
   },
   "lab": {
     "searchPlaceholder": "Search subjects…",
@@ -64,7 +68,17 @@
     "email": "Email",
     "password": "Password",
     "forgotPassword": "Forgot password?",
-    "memberOnly": "Members only"
+    "memberOnly": "Members only",
+    "loading": "Loading…",
+    "signInError": "Invalid email or password.",
+    "setPasswordTitle": "Set your password",
+    "newPasswordPlaceholder": "New password (min 8 characters)",
+    "confirmPasswordPlaceholder": "Confirm password",
+    "passwordMismatch": "Passwords do not match",
+    "passwordTooShort": "Password must be at least 8 characters",
+    "activateButton": "Activate account",
+    "activatedSuccess": "Account activated! Redirecting to login…",
+    "activationFailed": "Activation failed."
   },
   "comments": {
     "firstName": "First name",

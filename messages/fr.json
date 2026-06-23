@@ -8,11 +8,15 @@
     "prompts": "Prompts",
     "propose": "Proposer",
     "menu": "Menu",
-    "navigation": "Navigation"
+    "navigation": "Navigation",
+    "admin": "Admin",
+    "labParis": "Paris",
+    "labMontreal": "Montréal"
   },
   "home": {
     "tagline": "Paris · Montréal",
-    "cta": "Cliquez sur un laboratoire pour entrer"
+    "cta": "Cliquez sur un laboratoire pour entrer",
+    "enteringLab": "Ouverture du laboratoire de {city}…"
   },
   "lab": {
     "searchPlaceholder": "Rechercher un sujet…",
@@ -64,7 +68,17 @@
     "email": "Email",
     "password": "Mot de passe",
     "forgotPassword": "Mot de passe oublié ?",
-    "memberOnly": "Membres uniquement"
+    "memberOnly": "Membres uniquement",
+    "loading": "Chargement…",
+    "signInError": "Email ou mot de passe invalide.",
+    "setPasswordTitle": "Définissez votre mot de passe",
+    "newPasswordPlaceholder": "Nouveau mot de passe (min. 8 caractères)",
+    "confirmPasswordPlaceholder": "Confirmez le mot de passe",
+    "passwordMismatch": "Les mots de passe ne correspondent pas",
+    "passwordTooShort": "Le mot de passe doit comporter au moins 8 caractères",
+    "activateButton": "Activer le compte",
+    "activatedSuccess": "Compte activé ! Redirection vers la connexion…",
+    "activationFailed": "Échec de l'activation."
   },
   "comments": {
     "firstName": "Prénom",
