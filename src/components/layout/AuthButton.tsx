@@ -12,8 +12,8 @@ export function AuthButton({ member, locale }: Props) {
 
   async function signOut() {
     await fetch('/api/auth/sign-out', { method: 'POST' })
-    router.push(`/${locale}`)
     router.refresh()
+    router.push(`/${locale}`)
   }
 
   if (!member) {

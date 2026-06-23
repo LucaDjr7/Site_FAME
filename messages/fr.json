@@ -9,7 +9,9 @@
     "propose": "Proposer",
     "menu": "Menu",
     "navigation": "Navigation",
-    "admin": "Admin"
+    "admin": "Admin",
+    "labParis": "Paris",
+    "labMontreal": "Montréal"
   },
   "home": {
     "tagline": "Paris · Montréal",

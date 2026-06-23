@@ -28,6 +28,8 @@ export function NavMenu({ locale, lab, member }: Props) {
     <div className="relative">
       <button
         onClick={() => setOpen(o => !o)}
+        aria-expanded={open}
+        aria-haspopup="menu"
         className="flex items-center gap-1.5 text-fame-text-muted hover:text-fame-text-light font-mono text-xs uppercase tracking-widest"
       >
         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
@@ -73,7 +75,7 @@ export function NavMenu({ locale, lab, member }: Props) {
                   onClick={() => setOpen(false)}
                   className="block px-4 py-2 text-sm text-fame-gold hover:text-fame-gold/80 hover:bg-white/5 font-mono"
                 >
-                  {t('admin') ?? 'Admin'}
+                  {t('admin')}
                 </Link>
               </>
             )}
