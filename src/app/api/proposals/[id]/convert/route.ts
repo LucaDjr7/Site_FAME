@@ -42,11 +42,12 @@ export async function POST(_req: NextRequest, { params }: Params) {
   }).select().single()
   if (sErr) return NextResponse.json({ error: sErr.message }, { status: 500 })
 
-  await service.from('proposals').update({
+  const { error: updErr } = await service.from('proposals').update({
     statut: 'accepted',
     traitee_at: new Date().toISOString(),
     traitee_par: member.id,
   }).eq('id', id)
+  if (updErr) console.error('proposal convert: subject created but proposal status update failed', { id, subjectId: subject.id, error: updErr.message })
 
   return NextResponse.json({ subject_id: subject.id }, { status: 201 })
 }
