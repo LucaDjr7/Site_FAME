@@ -211,22 +211,42 @@
     "visitorPrompt": "Enter your name to comment"
   },
   "propose": {
-    "title": "Propose a research subject",
-    "subtitle": "Describe a lead the FAME team could explore.",
-    "subjectTitle": "Subject title",
-    "domain": "Domain",
-    "difficulty": "Estimated difficulty",
-    "description": "Description",
-    "yourName": "Your name",
-    "email": "Email",
-    "send": "Send to the team",
-    "required": "* Required fields",
-    "yourProposals": "Your proposals",
-    "pendingReview": "Under review by the team.",
-    "gdpr": "The information you provide is used solely to process your proposal. You may request its deletion by contacting us.",
-    "success": "Proposal sent to the team",
-    "errorRequired": "Please fill in the title, domain, description and your name.",
-    "errorEmail": "Please provide a valid email address."
+    "title": "Propose a subject",
+    "kicker": "FAME / Propose",
+    "intro": "Anyone can suggest a research subject. Members review submissions.",
+    "fieldTitle": "Title",
+    "fieldDomain": "Domain",
+    "fieldDifficulty": "Difficulty",
+    "fieldDescription": "Description",
+    "fieldFirstName": "First name",
+    "fieldLastName": "Last name",
+    "fieldEmail": "Email (optional — to receive a reply)",
+    "submit": "Submit proposal",
+    "submitting": "Submitting…",
+    "successTitle": "Proposal submitted",
+    "successBody": "Thank you. A member will review your suggestion.",
+    "submitAnother": "Submit another",
+    "validationRequired": "Please fill in all required fields.",
+    "errorGeneric": "Something went wrong. Please try again.",
+    "trackerTitle": "Your proposals",
+    "trackerEmpty": "You haven't submitted any proposals yet.",
+    "memberTrackerTitle": "Lab proposals",
+    "rgpd": "The names and email you provide are collected solely to process and reply to your proposal. You may request deletion at any time via the contact in our privacy policy."
+  },
+  "domains": {
+    "macroeconomics": "Macroeconomics",
+    "microeconomics": "Microeconomics",
+    "finance": "Finance",
+    "econometrics": "Econometrics",
+    "behavioral": "Behavioral economics",
+    "political-economy": "Political economy",
+    "history": "Economic history",
+    "other": "Other"
+  },
+  "proposalStatus": {
+    "pending": "Pending",
+    "accepted": "Accepted",
+    "rejected": "Rejected"
   },
   "publications": {
     "title": "Publications",
@@ -300,14 +320,27 @@
   },
   "admin": {
     "proposals": "Proposals",
+    "proposalsTitle": "Proposals",
     "status": {
       "pending": "Pending",
       "accepted": "Accepted",
       "rejected": "Rejected"
     },
+    "filterAll": "All",
+    "filterPending": "Pending",
+    "filterAccepted": "Accepted",
+    "filterRejected": "Rejected",
+    "filterLab": "Lab",
     "accept": "Accept",
     "reject": "Reject",
-    "convertToSubject": "Convert to subject"
+    "convert": "Convert to subject",
+    "convertToSubject": "Convert to subject",
+    "commentPlaceholder": "Optional comment for the proposer…",
+    "by": "by",
+    "noProposals": "No proposals match the current filter.",
+    "decisionSaved": "Decision saved",
+    "converted": "Converted to subject",
+    "actionError": "Action failed"
   },
   "common": {
     "loading": "Loading…",
