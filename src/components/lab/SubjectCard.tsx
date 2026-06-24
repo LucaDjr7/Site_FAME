@@ -209,7 +209,7 @@ export function SubjectCard({
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '5px 10px 8px',
-            borderTop: '1px solid #eceadf',
+            borderTop: '1px solid rgba(0,0,0,0.06)',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
               {authorName ? (
@@ -219,8 +219,8 @@ export function SubjectCard({
               )}
               <span style={{
                 fontFamily: 'IBM Plex Mono, monospace',
-                fontSize: 7,
-                color: '#7e95d6',
+                fontSize: 8.5,
+                color: '#43507a',
               }}>
                 {dateStr}
               </span>

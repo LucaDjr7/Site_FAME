@@ -254,7 +254,12 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
 
       <div style={{
         minHeight: 'calc(100vh - 6rem)',
-        background: 'linear-gradient(160deg, #15203f 0%, #18244c 40%, #1d2b56 100%)',
+        background: [
+          'radial-gradient(110% 80% at 30% 10%, rgba(181,157,135,0.28) 0%, rgba(181,157,135,0) 52%)',
+          'radial-gradient(120% 110% at 72% 110%, rgba(113,120,132,0.22) 0%, rgba(113,120,132,0) 60%)',
+          'radial-gradient(140% 120% at 90% 46%, rgba(47,68,134,0.08) 0%, rgba(47,68,134,0) 55%)',
+          '#F9F9FA',
+        ].join(', '),
         display: 'flex',
         flexDirection: 'column',
       }}>
@@ -265,6 +270,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
           justifyContent: 'space-between',
           padding: '18px 24px 14px',
           flexShrink: 0,
+          borderBottom: '1px solid rgba(20,40,90,0.1)',
         }}>
           {/* Left: title block */}
           <div>
@@ -282,7 +288,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
               fontFamily: 'Roboto Slab, Georgia, serif',
               fontSize: 20,
               fontWeight: 600,
-              color: '#eef3ff',
+              color: '#15203f',
               margin: 0,
             }}>
               {t(`title.${lab}`)}
@@ -300,9 +306,9 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
               style={{
                 padding: '6px 12px',
                 borderRadius: 6,
-                border: '1px solid rgba(87,104,172,0.35)',
-                background: 'rgba(255,255,255,0.07)',
-                color: '#eef3ff',
+                border: '1px solid rgba(20,40,90,0.15)',
+                background: 'rgba(255,255,255,0.6)',
+                color: '#15203f',
                 fontFamily: 'IBM Plex Mono, monospace',
                 fontSize: 11,
                 width: 180,
@@ -316,9 +322,9 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
                 style={{
                   padding: '6px 12px',
                   borderRadius: 6,
-                  border: editMode ? '1.5px solid #e8b149' : '1px solid rgba(87,104,172,0.35)',
-                  background: editMode ? 'rgba(232,177,73,0.15)' : 'rgba(255,255,255,0.07)',
-                  color: editMode ? '#e8b149' : '#9fb2e6',
+                  border: editMode ? '1.5px solid #e8b149' : '1px solid rgba(20,40,90,0.15)',
+                  background: editMode ? 'rgba(232,177,73,0.12)' : 'rgba(255,255,255,0.6)',
+                  color: editMode ? '#b88c30' : '#6b7596',
                   fontFamily: 'IBM Plex Mono, monospace',
                   fontSize: 10,
                   cursor: 'pointer',
@@ -354,8 +360,8 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
               style={{
                 padding: '6px 12px',
                 borderRadius: 6,
-                border: '1px solid rgba(87,104,172,0.35)',
-                color: '#9fb2e6',
+                border: '1px solid rgba(20,40,90,0.15)',
+                color: '#6b7596',
                 fontFamily: 'IBM Plex Mono, monospace',
                 fontSize: 10,
                 textDecoration: 'none',
@@ -444,13 +450,13 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: '10px 24px',
-          borderTop: '1px solid rgba(87,104,172,0.2)',
+          borderTop: '1px solid rgba(20,40,90,0.1)',
           flexShrink: 0,
         }}>
           {/* Left: count + sort */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
             <span style={{
-              fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: '#7e95d6',
+              fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: '#6b7596',
             }}>
               {t('count', { n: displaySubjects.length })}
             </span>
@@ -460,7 +466,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
                 display: 'flex', alignItems: 'center', gap: 5,
                 background: 'none', border: 'none', cursor: 'pointer',
                 fontFamily: 'IBM Plex Mono, monospace', fontSize: 10,
-                color: sort === 'ordre' ? 'rgba(159,178,230,0.5)' : '#9fb2e6',
+                color: sort === 'ordre' ? 'rgba(90,100,140,0.45)' : '#5a6486',
                 padding: 0,
               }}
             >
@@ -473,7 +479,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
             href={`/${locale}/${lab}/tasks`}
             style={{
               fontFamily: 'IBM Plex Mono, monospace', fontSize: 10,
-              color: '#9fb2e6', textDecoration: 'none',
+              color: '#6b7596', textDecoration: 'none',
               letterSpacing: '0.06em',
             }}
           >
