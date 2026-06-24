@@ -22,21 +22,24 @@ export function KanbanColumn({
   const t = useTranslations('tasks')
 
   return (
-    <div style={{ flexShrink: 0, width: 270, height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ flexShrink: 0, width: 300, height: '100%', display: 'flex', flexDirection: 'column' }}>
       {/* header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '0 4px 8px', flexShrink: 0 }}>
-        <span style={{ width: 8, height: 8, borderRadius: '50%', background: SUBJECT_STATUS_COLOR[subject.statut], flexShrink: 0 }} />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '0 4px 14px', flexShrink: 0 }}>
+        <span style={{ width: 9, height: 9, borderRadius: '50%', background: SUBJECT_STATUS_COLOR[subject.statut], flexShrink: 0 }} />
         <h3 style={{
-          fontFamily: 'Roboto Slab, Georgia, serif', fontSize: 14, fontWeight: 600, color: '#15203f',
+          fontFamily: 'Roboto Slab, Georgia, serif', fontSize: 13, fontWeight: 600, color: '#15203f',
           margin: 0, flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
         }}>
           {subject.titre}
         </h3>
-        <span style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, color: '#7e95d6' }}>{tasks.length}</span>
+        <span style={{
+          fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: '#5c678a', flexShrink: 0,
+          background: 'rgba(20,40,90,0.08)', padding: '2px 8px', borderRadius: 20,
+        }}>{tasks.length}</span>
       </div>
 
       {/* cards */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 9, overflowY: 'auto', paddingBottom: 8 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, overflowY: 'auto', paddingBottom: 8 }}>
         {tasks.map(tk => (
           <TaskCard
             key={tk.id}

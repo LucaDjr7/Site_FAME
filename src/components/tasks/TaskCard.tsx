@@ -23,12 +23,12 @@ export function TaskCard({ task, isMember, currentMemberId, editMode, onOpen, on
     <div
       onClick={() => onOpen(task)}
       style={{
-        background: '#fff',
-        borderRadius: 7,
-        padding: '10px 11px',
+        background: '#fbf8f1',
+        borderRadius: 13,
+        padding: 14,
         cursor: 'pointer',
-        boxShadow: '0 1px 2px rgba(20,32,63,0.06)',
-        border: '1px solid #eceadf',
+        boxShadow: '0 8px 20px -12px rgba(20,40,90,0.32)',
+        border: '1px solid rgba(20,40,90,0.12)',
         display: 'flex',
         flexDirection: 'column',
         gap: 7,
@@ -40,8 +40,8 @@ export function TaskCard({ task, isMember, currentMemberId, editMode, onOpen, on
         <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
           <span style={{ width: 7, height: 7, borderRadius: '50%', background: TASK_STATUS_COLOR[task.statut] }} />
           <span style={{
-            fontFamily: 'IBM Plex Mono, monospace', fontSize: 8, letterSpacing: '0.1em',
-            textTransform: 'uppercase', color: '#7e95d6',
+            fontFamily: 'IBM Plex Mono, monospace', fontSize: 9, letterSpacing: '0.1em',
+            textTransform: 'uppercase', color: TASK_STATUS_COLOR[task.statut],
           }}>
             {t(`status.${STATUS_KEY[task.statut]}`)}
           </span>
@@ -50,7 +50,7 @@ export function TaskCard({ task, isMember, currentMemberId, editMode, onOpen, on
       </div>
 
       {/* title */}
-      <p style={{ fontFamily: 'Roboto Slab, Georgia, serif', fontSize: 13, fontWeight: 600, color: '#15203f', margin: 0, lineHeight: 1.25 }}>
+      <p style={{ fontFamily: 'Roboto Slab, Georgia, serif', fontSize: 13, fontWeight: 500, color: '#18244c', margin: 0, lineHeight: 1.32 }}>
         {task.titre}
       </p>
 
