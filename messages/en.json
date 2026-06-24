@@ -206,7 +206,8 @@
     "firstName": "First name",
     "lastName": "Last name",
     "post": "Post",
-    "delete": "Delete"
+    "delete": "Delete",
+    "error": "Action failed. Please try again."
   },
   "propose": {
     "title": "Propose a subject",

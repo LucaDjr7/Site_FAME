@@ -45,33 +45,38 @@ export function AdminProposalsClient() {
     fetch(`/api/proposals?lab=${lab}`)
       .then(res => res.ok ? res.json() : null)
       .then(data => { if (data) setProposals(data) })
-  }, [lab])
+      .catch(() => addToast(t('actionError'), 'error'))
+  }, [lab, t, addToast])
 
   useEffect(() => {
     load()
   }, [load])
 
   async function decide(id: string, statut: 'accepted' | 'rejected') {
-    const res = await fetch(`/api/proposals/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ statut, commentaire_admin: comments[id] ?? null }),
-    })
-    if (res.ok) {
-      addToast(t('decisionSaved'), 'success')
-      load()
-    } else {
+    try {
+      const res = await fetch(`/api/proposals/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ statut, commentaire_admin: comments[id] ?? null }),
+      })
+      if (res.ok) { addToast(t('decisionSaved'), 'success'); load() }
+      else { addToast(t('actionError'), 'error') }
+    } catch {
       addToast(t('actionError'), 'error')
     }
   }
 
   async function convert(id: string) {
-    const res = await fetch(`/api/proposals/${id}/convert`, { method: 'POST' })
-    if (res.ok) {
-      const { subject_id } = await res.json()
-      addToast(t('converted'), 'success')
-      router.push(`/${locale}/${lab}/paper/${subject_id}`)
-    } else {
+    try {
+      const res = await fetch(`/api/proposals/${id}/convert`, { method: 'POST' })
+      if (res.ok) {
+        const { subject_id } = await res.json()
+        addToast(t('converted'), 'success')
+        router.push(`/${locale}/${lab}/paper/${subject_id}`)
+      } else {
+        addToast(t('actionError'), 'error')
+      }
+    } catch {
       addToast(t('actionError'), 'error')
     }
   }

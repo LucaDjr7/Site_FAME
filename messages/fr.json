@@ -206,7 +206,8 @@
     "firstName": "Prénom",
     "lastName": "Nom",
     "post": "Publier",
-    "delete": "Supprimer"
+    "delete": "Supprimer",
+    "error": "Action échouée. Réessayez."
   },
   "propose": {
     "title": "Proposer un sujet",
