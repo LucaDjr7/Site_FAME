@@ -148,7 +148,7 @@ export function PaperView({
 
         {/* LEFT: linked tasks */}
         <TasksPanel
-          tasks={tasks} members={members} isMember={isMember}
+          tasks={tasks} isMember={isMember}
           open={panels.tasks} onToggleOpen={() => toggle('tasks')}
           doneCount={tasksDone} total={tasksTotal} onToggleTask={onToggleTask}
         />

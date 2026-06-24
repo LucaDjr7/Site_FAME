@@ -1,7 +1,7 @@
 'use client'
 import { useTranslations } from 'next-intl'
 import { Avatar } from '@/components/ui/Avatar'
-import type { TaskWithRelations, MemberRef, TaskStatus } from '@/types'
+import type { TaskWithRelations, TaskStatus } from '@/types'
 
 const STATUS_KEY: Record<TaskStatus, 'todo' | 'inProgress' | 'done'> = {
   'to-do': 'todo', 'in-progress': 'inProgress', done: 'done',
@@ -9,7 +9,6 @@ const STATUS_KEY: Record<TaskStatus, 'todo' | 'inProgress' | 'done'> = {
 
 type Props = {
   tasks: TaskWithRelations[]
-  members: MemberRef[]
   isMember: boolean
   open: boolean
   onToggleOpen: () => void
