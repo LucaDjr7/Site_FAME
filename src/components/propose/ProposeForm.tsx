@@ -95,17 +95,16 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
 
   const diffButtonStyle = (active: boolean): React.CSSProperties => ({
     flex: 1,
-    padding: '9px 8px',
-    borderRadius: 8,
+    padding: '10px 6px',
+    borderRadius: 9,
     border: active ? '1px solid #2f4486' : '1px solid rgba(20,40,90,0.14)',
     background: active ? 'rgba(47,68,134,0.12)' : '#fff',
     color: active ? '#2f4486' : '#5a6486',
-    fontFamily: "'IBM Plex Mono', monospace",
-    fontSize: 11,
+    fontFamily: "'Roboto Slab', Georgia, serif",
+    fontSize: 12,
     fontWeight: active ? 600 : 400,
     cursor: 'pointer',
-    transition: 'all 0.14s',
-    letterSpacing: '0.04em',
+    transition: 'all 0.15s',
   })
 
   return (
@@ -244,13 +243,13 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
             padding: '12px 22px',
             borderRadius: 10,
             border: 'none',
-            fontFamily: "'IBM Plex Mono', monospace",
-            fontSize: 13,
+            fontFamily: "'Roboto Slab', Georgia, serif",
+            fontSize: 14,
             fontWeight: 600,
             cursor: saving ? 'not-allowed' : 'pointer',
             boxShadow: saving ? 'none' : '0 12px 28px -12px rgba(47,68,134,0.7)',
             transition: 'all 0.15s',
-            letterSpacing: '0.04em',
+            letterSpacing: '0.01em',
           }}
         >
           {saving ? t('submitting') : t('submit')}
