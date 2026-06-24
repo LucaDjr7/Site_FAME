@@ -240,8 +240,8 @@ export function MemberGrid({ lab, currentMemberId, isAdmin }: Props) {
                     <span
                       style={{
                         fontFamily: 'IBM Plex Mono, monospace',
-                        fontSize: 11,
-                        fontWeight: 700,
+                        fontSize: 12,
+                        fontWeight: 500,
                         textTransform: 'uppercase',
                         letterSpacing: '0.18em',
                         color: '#2f4486',
@@ -262,6 +262,7 @@ export function MemberGrid({ lab, currentMemberId, isAdmin }: Props) {
                         fontFamily: 'IBM Plex Mono, monospace',
                         fontSize: 10,
                         color: '#6b7596',
+                        letterSpacing: '0.1em',
                         flexShrink: 0,
                       }}
                     >
