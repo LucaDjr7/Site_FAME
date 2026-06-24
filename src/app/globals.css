@@ -2,6 +2,10 @@
    content in place, so any @import after it is no longer a leading rule. */
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
+/* Tailwind v4 ne charge plus tailwind.config.ts automatiquement : sans cette
+   directive, les tokens couleur `fame-*` (bg-fame-*, text-fame-*, border-fame-*)
+   ne génèrent aucun CSS. Chemin relatif à ce fichier (src/app/ → racine). */
+@config "../../tailwind.config.ts";
 
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }

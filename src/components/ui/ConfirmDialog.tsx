@@ -23,7 +23,7 @@ export function ConfirmDialog({ open, message, onConfirm, onCancel, danger = tru
         </button>
         <button
           onClick={onConfirm}
-          className={`px-4 py-2 rounded text-sm text-white font-medium ${danger ? 'bg-[#c0473b] hover:bg-[#a83e33]' : 'bg-[#2f4486] hover:bg-[#1d2b56]'}`}
+          className={`px-4 py-2 rounded text-sm text-white font-medium ${danger ? 'bg-fame-red hover:bg-fame-red/90' : 'bg-fame-blue hover:bg-fame-blue-dark'}`}
         >
           {confirmLabel ?? t('confirm')}
         </button>
