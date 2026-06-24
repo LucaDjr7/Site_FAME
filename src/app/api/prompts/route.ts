@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
   const { data, error } = await service
     .from('prompts')
     .select('*')
-    .eq('labo', lab)
+    .or(`labo.eq.${lab},is_transversal.eq.true`)
     .order('created_at', { ascending: false })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json(data)
