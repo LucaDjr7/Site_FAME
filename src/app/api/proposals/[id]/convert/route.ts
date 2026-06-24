@@ -20,6 +20,11 @@ export async function POST(_req: NextRequest, { params }: Params) {
     return NextResponse.json({ error: 'Cannot convert a rejected proposal' }, { status: 409 })
   }
 
+  // Idempotency: already converted — return the existing subject without re-inserting.
+  if (proposal.subject_id) {
+    return NextResponse.json({ subject_id: proposal.subject_id }, { status: 200 })
+  }
+
   // Next ordre for the lab
   const { data: last } = await service
     .from('subjects').select('ordre').eq('labo', proposal.labo)
@@ -46,6 +51,7 @@ export async function POST(_req: NextRequest, { params }: Params) {
     statut: 'accepted',
     traitee_at: new Date().toISOString(),
     traitee_par: member.id,
+    subject_id: subject.id,
   }).eq('id', id)
   if (updErr) console.error('proposal convert: subject created but proposal status update failed', { id, subjectId: subject.id, error: updErr.message })
 

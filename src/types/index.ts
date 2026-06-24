@@ -178,6 +178,7 @@ export interface Proposal {
   created_at: string
   traitee_at: string | null
   traitee_par: string | null
+  subject_id: string | null
 }
 
 // ─── Dropbox ─────────────────────────────────────────────────────────────────
