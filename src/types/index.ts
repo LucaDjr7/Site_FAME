@@ -54,6 +54,7 @@ export interface Subject {
     writing: string
   }
   ordre: number
+  is_transversal: boolean
   created_at: string
   updated_at: string
 }
@@ -157,6 +158,7 @@ export interface Prompt {
   titre: string
   type_cible: PromptTarget
   texte: string
+  is_transversal: boolean
   created_by: string | null // FK on delete set null
   created_at: string
 }
