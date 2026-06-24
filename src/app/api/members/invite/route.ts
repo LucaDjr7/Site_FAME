@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { requireAdmin, authErrorResponse } from '@/lib/auth'
 import { sendInvitationEmail } from '@/lib/resend/send-invitation'
+import { getAppBaseUrl } from '@/lib/app-url'
 import crypto from 'crypto'
 import type { Lab, Role } from '@/types'
 
@@ -31,8 +32,16 @@ export async function POST(req: NextRequest) {
   const expires_at = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
   await service.from('invitations').insert({ email, token, member_id: member.id, expires_at })
 
-  const base = process.env.NEXT_PUBLIC_APP_URL ?? ''
-  const activationUrl = `${base}/en/auth/activate/${token}`
+  let activationUrl: string
+  try {
+    activationUrl = `${getAppBaseUrl()}/en/auth/activate/${token}`
+  } catch {
+    console.error('NEXT_PUBLIC_APP_URL is not set — cannot build activation link')
+    return NextResponse.json(
+      { error: 'Server misconfigured: NEXT_PUBLIC_APP_URL is not set' },
+      { status: 500 }
+    )
+  }
   try {
     await sendInvitationEmail({ to: email, prenom, activationUrl, lab: labo })
   } catch (emailErr) {
