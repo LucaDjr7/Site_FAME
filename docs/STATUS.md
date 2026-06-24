@@ -8,9 +8,15 @@ Dernière mise à jour : 2026-06-24
 
 ## Phase active
 
-**Phase 2 — Features TERMINÉE** (Tasks 8–14 ✅, revue finale Opus « Ready to merge », finding NF-1 corrigé). Branche `feat/p2-features` = 15 commits au-dessus de `main`, build/tsc clean. → Prochaine phase : **Part 3 Secondary (Data, Publications, Prompts, Team, Emails, RGPD)**.
+**Phase 2 — Features TERMINÉE + PR ouverte.** Tasks 8–14 ✅, revue finale Opus « Ready to merge », NF-1 corrigé, **correctif auth/RLS majeur** (`cc133c5`, voir journal). Branche `feat/p2-features` = 17 commits au-dessus de `main`, `tsc`/`lint`/`build` clean. **PR #2 ouverte** vers `main` : https://github.com/LucaDjr7/Site_FAME/pull/2 (en attente de merge). → Prochaine phase : **Part 3 Secondary**.
 
-> ⚠️ **Deploy gates avant mise en ligne de la Part 2** — appliquer manuellement dans le Supabase dashboard :
+> 🚦 **Démarrage Part 3 — à savoir avant de dispatcher :**
+> - Le plan Part 3 (`…p3-secondary.md`) commence par une **Task 13 « Propose Page + Admin Proposals » DÉJÀ FAITE en Part 2** (Task 14 du plan p2). **La sauter** et démarrer à la **Task 14 (Publications)**.
+> - Tâches Part 3 restantes : **14 Publications · 15 Team (trombinoscope) · 16 Prompts · 17 Data (Dropbox) · 18 Emails (Resend) · 19 RGPD · 20 Déploiement (Git/GitHub/Vercel)**.
+> - Lot « polish » différé de Part 2 à traiter dans Part 3 : PGRST116→404 uniforme, clés i18n mortes (`lab.*` legacy + `admin.convertToSubject`), `<a>`→`Link` next-intl sur barres d'outils immersives, prop morte `members` de `TasksPanel`. (Détails dans `.superpowers/sdd/progress.md`.)
+> - Modèles : Tasks UI/API → Sonnet 4.6 ; revue finale → Opus 4.8. Maquettes via MCP Claude Design (Opus only).
+
+> ⚠️ **Deploy gates avant mise en ligne de la Part 2** — appliquer manuellement dans le Supabase dashboard. _(Déjà appliquées sur l'instance de dev de Luca le 2026-06-24 ; à refaire sur prod.)_
 > - `supabase/migrations/002_subject_difficulte_and_indexes.sql` (colonne `subjects.difficulte` + index `task_subjects(subject_id)`, `dropbox_links(task_id)`)
 > - `supabase/migrations/003_proposal_subject_link.sql` (colonne `proposals.subject_id` — convert idempotent)
 
@@ -98,14 +104,16 @@ _Voir `docs/superpowers/plans/2026-06-22-fame-website-p2-features.md`_
 
 ## Checklist — Phase 3 (Secondary)
 
-_Voir `docs/superpowers/plans/2026-06-22-fame-website-p3-secondary.md`_
+_Voir `docs/superpowers/plans/2026-06-22-fame-website-p3-secondary.md` — numérotation alignée sur le plan._
 
-- [ ] Task 12 — Page Data (Dropbox explorer)
-- [ ] Task 13 — Page Publications
-- [ ] Task 14 — Page Prompts
+- [x] ~~Task 13 — Propose Page + Admin Proposals~~ **déjà fait en Part 2 (Task 14 p2) → à sauter**
+- [ ] Task 14 — Page Publications
 - [ ] Task 15 — Page Team (trombinoscope)
-- [ ] Task 16 — Emails transactionnels (invitation, retour proposition)
-- [ ] Task 17 — Politique de confidentialité RGPD
+- [ ] Task 16 — Page Prompts
+- [ ] Task 17 — Page Data (explorateur Dropbox)
+- [ ] Task 18 — Emails transactionnels Resend (invitation, retour proposition)
+- [ ] Task 19 — Politique de confidentialité RGPD
+- [ ] Task 20 — Déploiement Git / GitHub / Vercel
 
 ---
 
@@ -135,3 +143,4 @@ _Voir `docs/superpowers/plans/2026-06-22-fame-website-p3-secondary.md`_
 | 2026-06-24 | Convert idempotent (NF-1) : ajout `proposals.subject_id` (migration 003) — reconvertir une proposition déjà convertie renvoie le sujet existant au lieu d'en créer un doublon |
 | 2026-06-24 | Part 2 Features terminée (Tasks 8–14) — revue finale Opus « Ready to merge », NF-1 corrigé |
 | 2026-06-24 | **Correctif auth majeur** (`cc133c5`) : `createServiceClient()` était bâti via `@supabase/ssr` **avec les cookies de la requête** → pour un utilisateur connecté, supabase-js mettait l'`Authorization` au JWT du user (cookie), écrasant la clé service-role → PostgREST exécutait les requêtes en rôle `authenticated` **sous RLS**, pas en `service_role`. Conséquence : le lookup `members` de `getSession()` renvoyait 0 ligne (PGRST116) pour tout utilisateur connecté → TopBar affichait « Sign in », `requireMember()`/`requireAdmin()` échouaient → la connexion semblait « déconnecter » sur toute page utilisant `getSession`. Corrigé en construisant le client service-role **sans cookies** via `@supabase/supabase-js` (Authorization = clé service-role, RLS contournée comme prévu). Vérifié : `/en/paris` connecté affiche le membre, `/en/admin/proposals` → 200. |
+| 2026-06-24 | Part 2 livrée : **PR #2** ouverte vers `main` (`feat/p2-features`, 17 commits, `tsc`/`lint`/`build` clean) — https://github.com/LucaDjr7/Site_FAME/pull/2. Branche conservée pour itérer sur retours PR. |
