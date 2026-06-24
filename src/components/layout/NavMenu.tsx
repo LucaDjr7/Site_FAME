@@ -19,6 +19,18 @@ const MEMBER_LINKS = [
 
 type Props = { locale: string; lab: string; member: Member | null }
 
+const itemStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: 11,
+  textDecoration: 'none',
+  padding: '9px 11px',
+  borderRadius: 9,
+  fontFamily: "'Roboto Slab', Georgia, serif",
+  fontSize: 13.5,
+  color: '#2a3457',
+}
+
 export function NavMenu({ locale, lab, member }: Props) {
   const [open, setOpen] = useState(false)
   const t = useTranslations('nav')
@@ -30,37 +42,80 @@ export function NavMenu({ locale, lab, member }: Props) {
         onClick={() => setOpen(o => !o)}
         aria-expanded={open}
         aria-haspopup="menu"
-        className="flex items-center gap-1.5 text-fame-text-muted hover:text-fame-text-light font-mono text-xs uppercase tracking-widest"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 10,
+          background: 'rgba(31,46,92,0.6)',
+          border: '1px solid rgba(150,180,255,0.22)',
+          borderRadius: 9,
+          padding: '7px 14px',
+          cursor: 'pointer',
+          color: '#eef3ff',
+          fontFamily: "'IBM Plex Mono', monospace",
+          fontSize: 12,
+          letterSpacing: '0.12em',
+        }}
       >
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-          <path fillRule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
-        </svg>
+        <span style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <span style={{ width: 15, height: 1.5, background: '#cdd8f5' }} />
+          <span style={{ width: 15, height: 1.5, background: '#cdd8f5' }} />
+          <span style={{ width: 15, height: 1.5, background: '#cdd8f5' }} />
+        </span>
         {t('menu')}
       </button>
 
       {open && (
         <>
           <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-8 z-40 bg-fame-navy/95 backdrop-blur rounded-lg shadow-2xl border border-white/10 py-2 min-w-[160px]">
+          <div
+            className="absolute right-0 z-40"
+            style={{
+              top: 'calc(100% + 12px)',
+              width: 236,
+              background: '#fbf9f3',
+              border: '1px solid rgba(20,40,90,0.12)',
+              borderRadius: 13,
+              boxShadow: '0 30px 70px -24px rgba(0,5,30,0.62)',
+              padding: 8,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 2,
+            }}
+          >
+            <div
+              style={{
+                fontFamily: "'IBM Plex Mono', monospace",
+                fontSize: 9,
+                letterSpacing: '0.2em',
+                textTransform: 'uppercase',
+                color: '#9a9684',
+                padding: '8px 10px 6px',
+              }}
+            >
+              {t('navigation')}
+            </div>
             {NAV_LINKS.map(({ key, href }) => (
               <Link
                 key={key}
                 href={`${base}${href}`}
                 onClick={() => setOpen(false)}
-                className="block px-4 py-2 text-sm text-fame-text-muted hover:text-fame-text-light hover:bg-white/5 font-mono"
+                className="hover:bg-[rgba(47,68,134,0.08)] transition-colors"
+                style={itemStyle}
               >
                 {t(key)}
               </Link>
             ))}
             {member && (
               <>
-                <hr className="border-white/10 my-1" />
+                <hr style={{ border: 'none', borderTop: '1px solid rgba(20,40,90,0.08)', margin: '4px 0' }} />
                 {MEMBER_LINKS.map(({ key, href }) => (
                   <Link
                     key={key}
                     href={`${base}${href}`}
                     onClick={() => setOpen(false)}
-                    className="block px-4 py-2 text-sm text-fame-text-muted hover:text-fame-text-light hover:bg-white/5 font-mono"
+                    className="hover:bg-[rgba(47,68,134,0.08)] transition-colors"
+                    style={itemStyle}
                   >
                     {t(key)}
                   </Link>
@@ -69,11 +124,12 @@ export function NavMenu({ locale, lab, member }: Props) {
             )}
             {member?.is_admin && (
               <>
-                <hr className="border-white/10 my-1" />
+                <hr style={{ border: 'none', borderTop: '1px solid rgba(20,40,90,0.08)', margin: '4px 0' }} />
                 <Link
                   href={`/${locale}/admin/proposals`}
                   onClick={() => setOpen(false)}
-                  className="block px-4 py-2 text-sm text-fame-gold hover:text-fame-gold/80 hover:bg-white/5 font-mono"
+                  className="hover:bg-[rgba(232,177,73,0.12)] transition-colors"
+                  style={{ ...itemStyle, color: '#b88c30', fontWeight: 600 }}
                 >
                   {t('admin')}
                 </Link>
