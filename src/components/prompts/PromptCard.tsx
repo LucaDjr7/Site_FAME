@@ -71,8 +71,8 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
 
   async function handleDelete() {
     setConfirmOpen(false)
-    await fetch(`/api/prompts/${prompt.id}`, { method: 'DELETE' })
-    onDeleted(prompt.id)
+    const res = await fetch(`/api/prompts/${prompt.id}`, { method: 'DELETE' })
+    if (res.ok) onDeleted(prompt.id)
   }
 
   const cardStyle: React.CSSProperties = {
