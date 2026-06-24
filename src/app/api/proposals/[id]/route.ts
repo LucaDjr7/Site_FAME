@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { requireAdmin, authErrorResponse } from '@/lib/auth'
+import { sendProposalResultEmail } from '@/lib/resend/send-proposal-result'
 
 type Params = { params: Promise<{ id: string }> }
 
@@ -22,6 +23,20 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   }).eq('id', id).select().single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  // TODO Part 3 (Task 16): if data.proposant_email, send decision feedback email via Resend.
+
+  if (data?.proposant_email) {
+    try {
+      await sendProposalResultEmail({
+        to: data.proposant_email,
+        proposantPrenom: data.proposant_prenom,
+        titreProposal: data.titre,
+        statut,
+        commentaire: data.commentaire_admin,
+      })
+    } catch (emailErr) {
+      // Non-fatal: the decision is persisted regardless of email delivery.
+      console.error('Failed to send proposal result email:', emailErr)
+    }
+  }
   return NextResponse.json(data)
 }

@@ -258,6 +258,7 @@
     "search": "Rechercher une publication…",
     "noResults": "Aucune publication ne correspond aux filtres.",
     "addPublication": "Ajouter une publication",
+    "loading": "Chargement…",
     "types": {
       "article": "Article",
       "preprint": "Preprint",
@@ -269,7 +270,29 @@
       "accepted": "Accepté",
       "submitted": "Soumis",
       "preparation": "En préparation"
-    }
+    },
+    "statPublications": "Publications",
+    "statAuthors": "Auteurs",
+    "countSuffix": "publication(s)",
+    "editMode": "Éditer",
+    "editModeOn": "Édition",
+    "addTitle": "Ajouter une publication",
+    "fTitle": "Titre",
+    "fAuthors": "Auteurs",
+    "fAuthorsPlaceholder": "A. Laurent, B. Dupont…",
+    "fYear": "Année",
+    "fJournal": "Revue / Conférence",
+    "fLink": "DOI / URL",
+    "cancel": "Annuler",
+    "add": "Ajouter →",
+    "deleted": "Publication supprimée",
+    "created": "Publication ajoutée",
+    "errorRequired": "Le titre et les auteurs sont requis.",
+    "errorGeneric": "Une erreur est survenue.",
+    "confirmDelete": "Supprimer cette publication ? Cette action est irréversible.",
+    "deleteConfirmLabel": "Supprimer",
+    "deleteLabel": "Supprimer la publication",
+    "linkLabel": "DOI / Lien"
   },
   "team": {
     "title": "Trombinoscope",
@@ -280,7 +303,35 @@
       "engineering": "Ingénierie"
     },
     "addMember": "Ajouter un membre",
-    "inviteByEmail": "Inviter par email"
+    "inviteByEmail": "Inviter par email",
+    "members": "membres",
+    "loading": "Chargement…",
+    "empty": "Aucun membre pour l'instant.",
+    "editMode": "Mode édition",
+    "editModeOn": "Édition",
+    "deleted": "Membre retiré",
+    "confirmRemove": "Retirer ce membre ? Cette action est définitive.",
+    "removeLabel": "Retirer",
+    "saved": "Enregistré",
+    "inviteTitle": "Inviter un membre",
+    "fFirstName": "Prénom",
+    "fLastName": "Nom",
+    "fEmail": "Email",
+    "fRole": "Rôle",
+    "send": "Envoyer l'invitation →",
+    "cancel": "Annuler",
+    "inviteSent": "Invitation créée",
+    "activationNote": "Partagez ce lien d'activation (email à venir) :",
+    "copy": "Copier",
+    "copied": "Copié !",
+    "editTitle": "Modifier le membre",
+    "fDomains": "Domaines",
+    "fDomainsPlaceholder": "Macroéconomie, Finance…",
+    "fPhoto": "URL de la photo",
+    "fIsAdmin": "Admin",
+    "save": "Enregistrer",
+    "errorGeneric": "Une erreur est survenue.",
+    "errorRequired": "Tous les champs sont obligatoires."
   },
   "data": {
     "title": "Données — Dropbox d'équipe",
@@ -292,7 +343,16 @@
     "chooseTask": "Choisir une tâche…",
     "openDropbox": "Ouvrir dans Dropbox →",
     "noSelection": "Sélectionnez un dossier ou un fichier pour le lier à un sujet ou une tâche.",
-    "linkedTo": "Lié à"
+    "linkedTo": "Lié à",
+    "openRoot": "Ouvrir le Dropbox →",
+    "subjectLabel": "Sujet",
+    "taskLabel": "Tâche",
+    "loading": "Chargement du Dropbox…",
+    "notConfigured": "Le Dropbox n'est pas encore configuré.",
+    "noLinks": "Aucun lien. Associez cet élément à un sujet ou une tâche ci-dessous.",
+    "linkAdded": "Lien ajouté",
+    "linkRemoved": "Lien retiré",
+    "errorGeneric": "Impossible de charger le Dropbox."
   },
   "prompts": {
     "title": "Bibliothèque de prompts",
@@ -316,7 +376,16 @@
     "copied": "Prompt copié dans le presse-papier",
     "saved": "Prompt enregistré",
     "deleted": "Prompt supprimé",
-    "noPrompts": "Aucun prompt pour ce type."
+    "noPrompts": "Aucun prompt pour ce type.",
+    "sidebarTitle": "Éléments à générer",
+    "sidebarHelp": "Un prompt standardisé par type de fiche. Modulable : ajoutez ou supprimez à volonté.",
+    "countSuffix": "prompt(s)",
+    "untitled": "Nouveau prompt",
+    "titlePlaceholder": "Titre du prompt",
+    "bodyPlaceholder": "Texte du prompt — utilisez des variables comme {{nom}} pour les champs à compléter.",
+    "confirmDelete": "Supprimer ce prompt ? Cette action est définitive.",
+    "loading": "Chargement…",
+    "errorGeneric": "Une erreur est survenue."
   },
   "admin": {
     "proposals": "Propositions",
@@ -358,5 +427,33 @@
     "montreal": "Montréal",
     "lab": "Laboratoire",
     "by": "par"
+  },
+  "privacy": {
+    "link": "Politique de confidentialité",
+    "title": "Politique de confidentialité",
+    "dataCollected": {
+      "h": "Données collectées",
+      "p": "Le site FAME collecte les données suivantes : (1) noms et prénoms des visiteurs qui laissent un commentaire ou soumettent une proposition de sujet ; (2) adresses email des visiteurs qui souhaitent recevoir un retour sur leur proposition ; (3) profils des membres de l'équipe (nom, email, rôle, photo)."
+    },
+    "purpose": {
+      "h": "Finalité",
+      "p": "Ces données sont utilisées exclusivement pour : afficher les commentaires publiquement, traiter les propositions de sujets, contacter les proposants en cas de décision, gérer les accès membres."
+    },
+    "retention": {
+      "h": "Durée de conservation",
+      "p": "Les commentaires et propositions sont conservés 3 ans. Les profils membres sont conservés tant que la personne fait partie de l'équipe."
+    },
+    "rights": {
+      "h": "Vos droits",
+      "p": "Vous disposez d'un droit d'accès, de rectification et de suppression de vos données. Pour exercer ces droits, contactez-nous à :"
+    },
+    "cookies": {
+      "h": "Cookies",
+      "p": "Ce site utilise uniquement un cookie de session httpOnly, strictement nécessaire au fonctionnement de l'authentification. Aucun cookie de tracking ou publicitaire n'est déposé."
+    },
+    "hosting": {
+      "h": "Hébergement",
+      "p": "Le site est hébergé sur Vercel. La base de données est hébergée sur Supabase (région EU West — Irlande). Les données ne sont pas transférées hors de l'Union Européenne."
+    }
   }
 }

@@ -258,6 +258,7 @@
     "search": "Search a publication…",
     "noResults": "No publications match the filters.",
     "addPublication": "Add publication",
+    "loading": "Loading…",
     "types": {
       "article": "Article",
       "preprint": "Preprint",
@@ -269,7 +270,29 @@
       "accepted": "Accepted",
       "submitted": "Submitted",
       "preparation": "In preparation"
-    }
+    },
+    "statPublications": "Publications",
+    "statAuthors": "Authors",
+    "countSuffix": "publication(s)",
+    "editMode": "Edit",
+    "editModeOn": "Editing",
+    "addTitle": "Add a publication",
+    "fTitle": "Title",
+    "fAuthors": "Authors",
+    "fAuthorsPlaceholder": "A. Laurent, B. Dupont…",
+    "fYear": "Year",
+    "fJournal": "Journal / Conference",
+    "fLink": "DOI / URL",
+    "cancel": "Cancel",
+    "add": "Add →",
+    "deleted": "Publication deleted",
+    "created": "Publication added",
+    "errorRequired": "Title and authors are required.",
+    "errorGeneric": "Something went wrong.",
+    "confirmDelete": "Delete this publication? This cannot be undone.",
+    "deleteConfirmLabel": "Delete",
+    "deleteLabel": "Delete publication",
+    "linkLabel": "DOI / Link"
   },
   "team": {
     "title": "Team",
@@ -280,7 +303,35 @@
       "engineering": "Engineering"
     },
     "addMember": "Add member",
-    "inviteByEmail": "Invite by email"
+    "inviteByEmail": "Invite by email",
+    "members": "members",
+    "loading": "Loading…",
+    "empty": "No members yet.",
+    "editMode": "Edit mode",
+    "editModeOn": "Editing",
+    "deleted": "Member removed",
+    "confirmRemove": "Remove this member? This is permanent.",
+    "removeLabel": "Remove",
+    "saved": "Saved",
+    "inviteTitle": "Invite a member",
+    "fFirstName": "First name",
+    "fLastName": "Last name",
+    "fEmail": "Email",
+    "fRole": "Role",
+    "send": "Send invitation →",
+    "cancel": "Cancel",
+    "inviteSent": "Invitation created",
+    "activationNote": "Share this activation link (email coming soon):",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "editTitle": "Edit member",
+    "fDomains": "Domains",
+    "fDomainsPlaceholder": "Macroeconomics, Finance…",
+    "fPhoto": "Photo URL",
+    "fIsAdmin": "Admin",
+    "save": "Save",
+    "errorGeneric": "Something went wrong.",
+    "errorRequired": "All fields are required."
   },
   "data": {
     "title": "Data — Team Dropbox",
@@ -292,7 +343,16 @@
     "chooseTask": "Choose a task…",
     "openDropbox": "Open in Dropbox →",
     "noSelection": "Select a folder or file to link it to a subject or task.",
-    "linkedTo": "Linked to"
+    "linkedTo": "Linked to",
+    "openRoot": "Open Dropbox →",
+    "subjectLabel": "Subject",
+    "taskLabel": "Task",
+    "loading": "Loading Dropbox…",
+    "notConfigured": "Dropbox is not configured yet.",
+    "noLinks": "No links yet. Link this item to a subject or task below.",
+    "linkAdded": "Link added",
+    "linkRemoved": "Link removed",
+    "errorGeneric": "Could not load Dropbox."
   },
   "prompts": {
     "title": "Prompt library",
@@ -316,7 +376,16 @@
     "copied": "Prompt copied to clipboard",
     "saved": "Prompt saved",
     "deleted": "Prompt deleted",
-    "noPrompts": "No prompts for this type."
+    "noPrompts": "No prompts for this type.",
+    "sidebarTitle": "Items to generate",
+    "sidebarHelp": "One standard prompt per card type. Add or remove freely.",
+    "countSuffix": "prompt(s)",
+    "untitled": "New prompt",
+    "titlePlaceholder": "Prompt title",
+    "bodyPlaceholder": "Prompt text — use variables like {{name}} for fields to fill in.",
+    "confirmDelete": "Delete this prompt? This is permanent.",
+    "loading": "Loading…",
+    "errorGeneric": "Something went wrong."
   },
   "admin": {
     "proposals": "Proposals",
@@ -358,5 +427,33 @@
     "montreal": "Montréal",
     "lab": "Lab",
     "by": "by"
+  },
+  "privacy": {
+    "link": "Privacy policy",
+    "title": "Privacy Policy",
+    "dataCollected": {
+      "h": "Data collected",
+      "p": "The FAME website collects the following data: (1) names of visitors who post a comment or submit a research proposal; (2) email addresses of visitors who wish to receive feedback on their proposal; (3) team member profiles (name, email, role, photo)."
+    },
+    "purpose": {
+      "h": "Purpose",
+      "p": "This data is used solely to: display comments publicly, process research proposals, contact proposers upon decision, and manage member access."
+    },
+    "retention": {
+      "h": "Retention period",
+      "p": "Comments and proposals are retained for 3 years. Member profiles are retained as long as the person is part of the team."
+    },
+    "rights": {
+      "h": "Your rights",
+      "p": "You have the right to access, correct, and delete your data. To exercise these rights, contact us at:"
+    },
+    "cookies": {
+      "h": "Cookies",
+      "p": "This site uses only a httpOnly session cookie, strictly necessary for authentication. No tracking or advertising cookies are set."
+    },
+    "hosting": {
+      "h": "Hosting",
+      "p": "The site is hosted on Vercel. The database is hosted on Supabase (EU West — Ireland region). Data is not transferred outside the European Union."
+    }
   }
 }
