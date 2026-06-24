@@ -89,11 +89,11 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 6,
+    borderRadius: 8,
     border: danger ? '1px solid rgba(220,68,55,0.2)' : '1px solid rgba(20,40,90,0.14)',
-    background: 'transparent',
+    background: '#fff',
     color: danger ? '#c0473b' : '#3a4d86',
-    fontSize: 15,
+    fontSize: danger ? 15 : 13,
     cursor: 'pointer',
     flexShrink: 0,
   })
@@ -102,7 +102,7 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
     background: '#fff',
     border: '1px solid rgba(20,40,90,0.18)',
     borderRadius: 8,
-    padding: '7px 10px',
+    padding: '8px 11px',
     fontFamily: 'inherit',
     fontSize: 13,
     color: '#18244c',
@@ -116,23 +116,24 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
           {/* Edit header */}
           <div
             style={{
-              padding: '14px 18px 12px',
+              padding: '16px 18px 12px',
               borderBottom: '1px solid rgba(0,0,0,0.06)',
               display: 'flex',
-              gap: 8,
+              gap: 10,
               alignItems: 'center',
+              flexWrap: 'wrap',
             }}
           >
             <input
               value={editTitre}
               onChange={e => setEditTitre(e.target.value)}
               placeholder={t('titlePlaceholder')}
-              style={{ ...inputStyle, flex: 1 }}
+              style={{ ...inputStyle, flex: 1, minWidth: 200, fontSize: 14, fontWeight: 600 }}
             />
             <select
               value={editTypeCible}
               onChange={e => setEditTypeCible(e.target.value as PromptTarget)}
-              style={{ ...inputStyle, cursor: 'pointer' }}
+              style={{ ...inputStyle, cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: 12 }}
             >
               {TARGET_ORDER.map(tc => (
                 <option key={tc} value={tc}>
@@ -143,7 +144,7 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
           </div>
 
           {/* Edit body */}
-          <div style={{ padding: '12px 18px 16px' }}>
+          <div style={{ padding: '14px 18px 16px' }}>
             <textarea
               value={editTexte}
               onChange={e => setEditTexte(e.target.value)}
@@ -152,22 +153,26 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
               style={{
                 ...inputStyle,
                 width: '100%',
+                borderRadius: 9,
+                padding: '12px 13px',
                 fontFamily: "'IBM Plex Mono', monospace",
                 fontSize: 12.5,
-                lineHeight: 1.7,
+                lineHeight: 1.65,
+                color: '#1f2a4d',
+                minHeight: 150,
                 resize: 'vertical',
                 boxSizing: 'border-box',
               }}
             />
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 10 }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 12 }}>
               <button
                 onClick={cancelEdit}
                 style={{
-                  padding: '6px 14px',
-                  borderRadius: 6,
-                  border: '1px solid rgba(20,40,90,0.18)',
-                  background: 'transparent',
-                  color: '#5768ac',
+                  padding: '9px 16px',
+                  borderRadius: 9,
+                  border: '1px solid rgba(20,40,90,0.16)',
+                  background: '#fff',
+                  color: '#5a6486',
                   fontSize: 12,
                   fontFamily: "'IBM Plex Mono', monospace",
                   cursor: 'pointer',
@@ -179,14 +184,16 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
                 onClick={handleSave}
                 disabled={saving}
                 style={{
-                  padding: '6px 14px',
-                  borderRadius: 6,
+                  padding: '9px 18px',
+                  borderRadius: 9,
                   border: 'none',
                   background: '#2f4486',
                   color: '#eef3ff',
-                  fontSize: 12,
-                  fontFamily: "'IBM Plex Mono', monospace",
+                  fontSize: 13,
+                  fontWeight: 600,
+                  fontFamily: "'Roboto Slab', Georgia, serif",
                   cursor: 'pointer',
+                  boxShadow: '0 12px 28px -14px rgba(47,68,134,0.7)',
                   opacity: saving ? 0.7 : 1,
                 }}
               >
@@ -229,11 +236,11 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: 5,
+                gap: 7,
                 fontFamily: "'IBM Plex Mono', monospace",
                 fontSize: 9.5,
                 textTransform: 'uppercase',
-                letterSpacing: '0.08em',
+                letterSpacing: '0.1em',
                 color: meta.color,
                 background: meta.color + '14',
                 border: `1px solid ${meta.color}33`,
@@ -259,7 +266,8 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
                 fontWeight: 700,
                 color: '#18244c',
                 fontFamily: "'Roboto Slab', Georgia, serif",
-                lineHeight: 1.3,
+                lineHeight: 1.2,
+                letterSpacing: '-0.01em',
               }}
             >
               {prompt.titre}

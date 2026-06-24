@@ -106,9 +106,8 @@ export function PromptLibrary({ lab }: Props) {
     cursor: 'pointer',
     width: '100%',
     textAlign: 'left',
-    fontFamily: "'IBM Plex Mono', monospace",
-    fontSize: 11,
-    letterSpacing: '0.03em',
+    fontFamily: "'Roboto Slab', Georgia, serif",
+    fontSize: 12.5,
   })
 
   return (
@@ -189,16 +188,18 @@ export function PromptLibrary({ lab }: Props) {
             overflowY: 'auto',
             borderRight: '1px solid rgba(20,40,90,0.1)',
             background: 'rgba(244,243,236,0.92)',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
             padding: '22px 18px 26px',
           }}
         >
           <h2
             style={{
-              fontFamily: "'IBM Plex Mono', monospace",
+              fontFamily: "'Roboto Slab', Georgia, serif",
               fontSize: 13,
-              fontWeight: 700,
+              fontWeight: 600,
               textTransform: 'uppercase',
-              letterSpacing: '0.12em',
+              letterSpacing: '0.2em',
               color: '#2f4486',
               margin: '0 0 4px',
             }}
@@ -207,11 +208,11 @@ export function PromptLibrary({ lab }: Props) {
           </h2>
           <p
             style={{
-              fontFamily: "'IBM Plex Mono', monospace",
-              fontSize: 10,
-              color: '#7e95d6',
+              fontFamily: "'Roboto Slab', Georgia, serif",
+              fontSize: 12,
+              color: '#5b668c',
               margin: '0 0 16px',
-              lineHeight: 1.5,
+              lineHeight: 1.55,
             }}
           >
             {t('sidebarHelp')}
@@ -223,10 +224,10 @@ export function PromptLibrary({ lab }: Props) {
               onClick={() => setFilter(null)}
               style={filterBtnStyle(filter === null)}
             >
-              <span style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 {t('allTypes')}
               </span>
-              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10 }}>
+              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, opacity: 0.7 }}>
                 {prompts.length}
               </span>
             </button>
@@ -241,7 +242,7 @@ export function PromptLibrary({ lab }: Props) {
                   onClick={() => setFilter(active ? null : tc)}
                   style={filterBtnStyle(active)}
                 >
-                  <span style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <span
                       style={{
                         width: 9,
@@ -253,7 +254,7 @@ export function PromptLibrary({ lab }: Props) {
                     />
                     {t(`types.${meta.i18nKey}` as Parameters<typeof t>[0])}
                   </span>
-                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10 }}>
+                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, opacity: 0.7 }}>
                     {count}
                   </span>
                 </button>
@@ -284,7 +285,7 @@ export function PromptLibrary({ lab }: Props) {
             <div
               style={{
                 display: 'flex',
-                alignItems: 'baseline',
+                alignItems: 'flex-end',
                 justifyContent: 'space-between',
                 gap: 16,
                 flexWrap: 'wrap',
@@ -293,10 +294,11 @@ export function PromptLibrary({ lab }: Props) {
               <p
                 style={{
                   margin: 0,
+                  maxWidth: 560,
                   fontSize: 13.5,
                   color: '#43507a',
                   fontFamily: "'Roboto Slab', Georgia, serif",
-                  lineHeight: 1.5,
+                  lineHeight: 1.6,
                 }}
               >
                 {t('subtitle')}{' '}
@@ -316,8 +318,8 @@ export function PromptLibrary({ lab }: Props) {
               <span
                 style={{
                   fontFamily: "'IBM Plex Mono', monospace",
-                  fontSize: 10,
-                  color: '#7e95d6',
+                  fontSize: 11,
+                  color: '#6b7596',
                   whiteSpace: 'nowrap',
                   flexShrink: 0,
                 }}
@@ -348,8 +350,9 @@ export function PromptLibrary({ lab }: Props) {
                   padding: '46px 20px',
                   textAlign: 'center',
                   color: '#6b7596',
-                  fontFamily: "'IBM Plex Mono', monospace",
-                  fontSize: 12,
+                  fontFamily: "'Roboto Slab', Georgia, serif",
+                  fontSize: 13,
+                  lineHeight: 1.6,
                 }}
               >
                 {t('noPrompts')}
@@ -377,11 +380,11 @@ export function PromptLibrary({ lab }: Props) {
                   background: 'rgba(47,68,134,0.04)',
                   color: '#2f4486',
                   borderRadius: 10,
-                  padding: '14px 20px',
+                  padding: '11px 18px',
                   fontFamily: "'IBM Plex Mono', monospace",
-                  fontSize: 11,
+                  fontSize: 12,
                   cursor: 'pointer',
-                  textAlign: 'center',
+                  alignSelf: 'flex-start',
                   letterSpacing: '0.04em',
                 }}
               >
