@@ -1,4 +1,5 @@
 import { Resend } from 'resend'
+import { escapeHtml } from './escape-html'
 
 const FROM = process.env.EMAIL_FROM ?? 'FAME <noreply@fame-lab.eu>'
 
@@ -15,6 +16,7 @@ export async function sendInvitationEmail(opts: {
     return
   }
   const labLabel = lab === 'paris' ? 'Paris' : 'Montréal'
+  const safePrenom = escapeHtml(prenom)
   const resend = new Resend(key)
   const { error } = await resend.emails.send({
     from: FROM,
@@ -22,7 +24,7 @@ export async function sendInvitationEmail(opts: {
     subject: `You're invited to join FAME ${labLabel}`,
     html: `
       <div style="font-family:Georgia,serif;max-width:480px;margin:0 auto;padding:32px;">
-        <h2 style="color:#2f4486;">Welcome to FAME, ${prenom}!</h2>
+        <h2 style="color:#2f4486;">Welcome to FAME, ${safePrenom}!</h2>
         <p>You have been invited to join the FAME research team (${labLabel} lab).</p>
         <p>Click the link below to activate your account and set your password:</p>
         <a href="${activationUrl}" style="display:inline-block;margin:16px 0;padding:12px 24px;background:#2f4486;color:white;border-radius:6px;text-decoration:none;font-family:monospace;">
