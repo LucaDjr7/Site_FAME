@@ -1,0 +1,331 @@
+'use client'
+import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
+import { useToast } from '@/components/ui/Toast'
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
+import { MemberCard } from './MemberCard'
+import { InviteModal } from './InviteModal'
+import { EditMemberModal } from './EditMemberModal'
+import type { Lab, Member, Role } from '@/types'
+
+type Props = {
+  lab: Lab
+  currentMemberId: string | null
+  isAdmin: boolean
+}
+
+const ROLE_ORDER: Role[] = ['direction', 'researcher', 'phd', 'engineering']
+
+const ROLE_GROUP_KEY: Record<Role, string> = {
+  direction: 'roles.direction',
+  researcher: 'roles.researchers',
+  phd: 'roles.phd',
+  engineering: 'roles.engineering',
+}
+
+const PAGE_BG =
+  'radial-gradient(110% 80% at 22% 8%, rgba(181,157,135,0.28) 0%, rgba(181,157,135,0) 52%), ' +
+  'radial-gradient(120% 110% at 80% 112%, rgba(113,120,132,0.2) 0%, rgba(113,120,132,0) 60%), ' +
+  'radial-gradient(140% 120% at 90% 44%, rgba(47,68,134,0.08) 0%, rgba(47,68,134,0) 55%), ' +
+  '#F9F9FA'
+
+export function MemberGrid({ lab, currentMemberId, isAdmin }: Props) {
+  const t = useTranslations('team')
+  const { addToast } = useToast()
+
+  const [members, setMembers] = useState<Member[]>([])
+  const [loading, setLoading] = useState(true)
+  const [reloadKey, setReloadKey] = useState(0)
+  const [editMode, setEditMode] = useState(false)
+  const [inviteOpen, setInviteOpen] = useState(false)
+  const [editTarget, setEditTarget] = useState<Member | null>(null)
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null)
+
+  const isMember = !!currentMemberId
+
+  function reload() { setReloadKey(k => k + 1) }
+
+  useEffect(() => {
+    let cancelled = false
+    async function fetchMembers() {
+      setLoading(true)
+      try {
+        const res = await fetch(`/api/members?lab=${lab}`)
+        if (res.ok) {
+          const data: Member[] = await res.json()
+          if (!cancelled) setMembers(data)
+        }
+      } catch {
+        // silently ignore
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+    void fetchMembers()
+    return () => { cancelled = true }
+  }, [lab, reloadKey])
+
+  // Group members by role
+  const grouped = ROLE_ORDER
+    .map(role => ({
+      role,
+      items: members.filter(m => m.role === role),
+    }))
+    .filter(g => g.items.length > 0)
+
+  async function handleDelete() {
+    if (!pendingDeleteId) return
+    const id = pendingDeleteId
+    setPendingDeleteId(null)
+    const res = await fetch(`/api/members/${id}`, { method: 'DELETE' })
+    if (res.ok) {
+      setMembers(prev => prev.filter(m => m.id !== id))
+      addToast(t('deleted'), 'info')
+    } else {
+      addToast(t('errorGeneric'), 'error')
+    }
+  }
+
+  function handleSaved(updated: Member) {
+    setMembers(prev => prev.map(m => (m.id === updated.id ? updated : m)))
+    addToast(t('saved'), 'success')
+  }
+
+  const labLabel = lab === 'paris' ? 'Paris' : 'Montréal'
+
+  return (
+    <>
+      <div
+        style={{
+          minHeight: 'calc(100vh - 3rem)',
+          display: 'flex',
+          flexDirection: 'column',
+          fontFamily: "'Roboto Slab', Georgia, serif",
+          color: '#18244c',
+          background: PAGE_BG,
+        }}
+      >
+        {/* ── Secondary toolbar ─────────────────────────────────────── */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '18px 24px 14px',
+            flexShrink: 0,
+            borderBottom: '1px solid rgba(20,40,90,0.1)',
+          }}
+        >
+          {/* Left: kicker + title */}
+          <div>
+            <div
+              style={{
+                fontFamily: 'IBM Plex Mono, monospace',
+                fontSize: 9,
+                letterSpacing: '0.14em',
+                textTransform: 'uppercase',
+                color: '#7e95d6',
+                marginBottom: 3,
+              }}
+            >
+              FAME / {labLabel}
+            </div>
+            <h1
+              style={{
+                fontFamily: 'Roboto Slab, Georgia, serif',
+                fontSize: 20,
+                fontWeight: 600,
+                color: '#15203f',
+                margin: 0,
+              }}
+            >
+              {t('title')}
+            </h1>
+          </div>
+
+          {/* Right: member count + controls */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span
+              style={{
+                fontFamily: 'IBM Plex Mono, monospace',
+                fontSize: 11,
+                color: '#6b7596',
+              }}
+            >
+              {members.length} {t('members')}
+            </span>
+
+            {/* Edit-mode toggle (members only) */}
+            {isMember && (
+              <button
+                onClick={() => setEditMode(v => !v)}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: 6,
+                  border: editMode ? '1.5px solid #e8b149' : '1px solid rgba(20,40,90,0.15)',
+                  background: editMode ? 'rgba(232,177,73,0.12)' : 'rgba(255,255,255,0.6)',
+                  color: editMode ? '#b88c30' : '#6b7596',
+                  fontFamily: 'IBM Plex Mono, monospace',
+                  fontSize: 10,
+                  cursor: 'pointer',
+                  letterSpacing: '0.06em',
+                  transition: 'all 0.14s',
+                }}
+              >
+                {editMode ? t('editModeOn') : t('editMode')}
+              </button>
+            )}
+
+            {/* Invite button (admin only) */}
+            {isAdmin && (
+              <button
+                onClick={() => setInviteOpen(true)}
+                style={{
+                  padding: '6px 14px',
+                  borderRadius: 6,
+                  border: 'none',
+                  background: '#2f4486',
+                  color: '#eef3ff',
+                  fontFamily: 'IBM Plex Mono, monospace',
+                  fontSize: 10,
+                  cursor: 'pointer',
+                  letterSpacing: '0.06em',
+                }}
+              >
+                + {t('inviteByEmail')}
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* ── Body scroll area ───────────────────────────────────────── */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '28px 32px 48px' }}>
+          {loading ? (
+            <div
+              style={{
+                fontFamily: 'IBM Plex Mono, monospace',
+                fontSize: 12,
+                color: '#7e95d6',
+                textAlign: 'center',
+                paddingTop: 60,
+              }}
+            >
+              {t('loading')}
+            </div>
+          ) : members.length === 0 ? (
+            <div
+              style={{
+                fontFamily: 'IBM Plex Mono, monospace',
+                fontSize: 13,
+                color: '#7e95d6',
+                textAlign: 'center',
+                paddingTop: 60,
+              }}
+            >
+              {t('empty')}
+            </div>
+          ) : (
+            <div style={{ maxWidth: 1080, margin: '0 auto' }}>
+              {grouped.map(({ role, items }) => (
+                <div key={role} style={{ marginBottom: 40 }}>
+                  {/* Role group header */}
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 12,
+                      marginBottom: 16,
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontFamily: 'IBM Plex Mono, monospace',
+                        fontSize: 11,
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.18em',
+                        color: '#2f4486',
+                        flexShrink: 0,
+                      }}
+                    >
+                      {t(ROLE_GROUP_KEY[role] as Parameters<typeof t>[0])}
+                    </span>
+                    <div
+                      style={{
+                        flex: 1,
+                        height: 1,
+                        background: 'rgba(20,40,90,0.12)',
+                      }}
+                    />
+                    <span
+                      style={{
+                        fontFamily: 'IBM Plex Mono, monospace',
+                        fontSize: 10,
+                        color: '#6b7596',
+                        flexShrink: 0,
+                      }}
+                    >
+                      {items.length}
+                    </span>
+                  </div>
+
+                  {/* Member grid */}
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fill, minmax(212px, 1fr))',
+                      gap: 18,
+                    }}
+                  >
+                    {items.map(member => (
+                      <MemberCard
+                        key={member.id}
+                        member={member}
+                        isSelf={member.id === currentMemberId}
+                        isAdmin={isAdmin}
+                        editMode={editMode}
+                        onEdit={m => setEditTarget(m)}
+                        onDelete={id => setPendingDeleteId(id)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ── Modals ──────────────────────────────────────────────────── */}
+      {isAdmin && (
+        <InviteModal
+          open={inviteOpen}
+          lab={lab}
+          onClose={() => setInviteOpen(false)}
+          onInvited={reload}
+        />
+      )}
+
+      <EditMemberModal
+        open={!!editTarget}
+        member={editTarget}
+        isAdmin={isAdmin}
+        isSelf={editTarget?.id === currentMemberId}
+        onClose={() => setEditTarget(null)}
+        onSaved={updated => {
+          handleSaved(updated)
+          setEditTarget(null)
+        }}
+      />
+
+      <ConfirmDialog
+        open={!!pendingDeleteId}
+        message={t('confirmRemove')}
+        onConfirm={handleDelete}
+        onCancel={() => setPendingDeleteId(null)}
+        danger
+        confirmLabel={t('removeLabel')}
+      />
+    </>
+  )
+}
