@@ -343,7 +343,16 @@
     "chooseTask": "Choisir une tâche…",
     "openDropbox": "Ouvrir dans Dropbox →",
     "noSelection": "Sélectionnez un dossier ou un fichier pour le lier à un sujet ou une tâche.",
-    "linkedTo": "Lié à"
+    "linkedTo": "Lié à",
+    "openRoot": "Ouvrir le Dropbox →",
+    "subjectLabel": "Sujet",
+    "taskLabel": "Tâche",
+    "loading": "Chargement du Dropbox…",
+    "notConfigured": "Le Dropbox n'est pas encore configuré.",
+    "noLinks": "Aucun lien. Associez cet élément à un sujet ou une tâche ci-dessous.",
+    "linkAdded": "Lien ajouté",
+    "linkRemoved": "Lien retiré",
+    "errorGeneric": "Impossible de charger le Dropbox."
   },
   "prompts": {
     "title": "Bibliothèque de prompts",

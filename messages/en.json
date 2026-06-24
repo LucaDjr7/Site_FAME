@@ -343,7 +343,16 @@
     "chooseTask": "Choose a task…",
     "openDropbox": "Open in Dropbox →",
     "noSelection": "Select a folder or file to link it to a subject or task.",
-    "linkedTo": "Linked to"
+    "linkedTo": "Linked to",
+    "openRoot": "Open Dropbox →",
+    "subjectLabel": "Subject",
+    "taskLabel": "Task",
+    "loading": "Loading Dropbox…",
+    "notConfigured": "Dropbox is not configured yet.",
+    "noLinks": "No links yet. Link this item to a subject or task below.",
+    "linkAdded": "Link added",
+    "linkRemoved": "Link removed",
+    "errorGeneric": "Could not load Dropbox."
   },
   "prompts": {
     "title": "Prompt library",
