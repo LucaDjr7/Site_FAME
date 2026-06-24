@@ -342,7 +342,7 @@ export function DataExplorer({ lab }: Props) {
                   fontFamily: 'IBM Plex Mono, monospace',
                   fontSize: 10,
                   textTransform: 'uppercase',
-                  letterSpacing: '0.14em',
+                  letterSpacing: '0.2em',
                   color: '#2f4486',
                   flexShrink: 0,
                 }}
@@ -360,6 +360,7 @@ export function DataExplorer({ lab }: Props) {
                 style={{
                   fontFamily: 'IBM Plex Mono, monospace',
                   fontSize: 10,
+                  letterSpacing: '0.08em',
                   color: '#6b7596',
                   flexShrink: 0,
                 }}
@@ -481,8 +482,9 @@ export function DataExplorer({ lab }: Props) {
                             style={{
                               width: 16,
                               height: 12,
-                              borderRadius: 3,
+                              borderRadius: 2,
                               background: '#cdb184',
+                              boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.35)',
                               marginRight: 7,
                               marginLeft: 4,
                               flexShrink: 0,
@@ -561,7 +563,7 @@ export function DataExplorer({ lab }: Props) {
                             fontSize: 12,
                             marginLeft: 4,
                             flexShrink: 0,
-                            borderRadius: 4,
+                            borderRadius: 6,
                           }}
                           title="Open in Dropbox"
                         >
@@ -597,6 +599,8 @@ export function DataExplorer({ lab }: Props) {
             overflowY: 'auto',
             borderLeft: '1px solid rgba(20,40,90,0.1)',
             background: 'rgba(244,243,236,0.92)',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
             padding: '24px 22px 30px',
           }}
         >
@@ -615,16 +619,18 @@ export function DataExplorer({ lab }: Props) {
               {/* Folder icon block */}
               <div
                 style={{
-                  width: 40,
-                  height: 30,
-                  borderRadius: 6,
-                  background: 'rgba(205,177,132,0.35)',
+                  width: 46,
+                  height: 34,
+                  borderRadius: 4,
+                  background: '#cdb184',
+                  boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.35)',
                 }}
               />
               <span
                 style={{
-                  fontFamily: 'IBM Plex Mono, monospace',
+                  fontFamily: "'Roboto Slab', Georgia, serif",
                   fontSize: 13.5,
+                  lineHeight: 1.55,
                   color: '#6b7596',
                   textAlign: 'center',
                 }}
@@ -640,6 +646,7 @@ export function DataExplorer({ lab }: Props) {
                 style={{
                   fontFamily: 'IBM Plex Mono, monospace',
                   fontSize: 10,
+                  letterSpacing: '0.06em',
                   color: '#6b7596',
                   marginBottom: 8,
                   overflow: 'hidden',
@@ -665,8 +672,9 @@ export function DataExplorer({ lab }: Props) {
                     style={{
                       width: 22,
                       height: 16,
-                      borderRadius: 4,
+                      borderRadius: 3,
                       background: '#cdb184',
+                      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.35)',
                       flexShrink: 0,
                     }}
                   />
@@ -686,6 +694,7 @@ export function DataExplorer({ lab }: Props) {
                   style={{
                     fontSize: 17,
                     fontWeight: 600,
+                    lineHeight: 1.2,
                     color: '#15203f',
                     margin: 0,
                     wordBreak: 'break-word',
@@ -703,14 +712,17 @@ export function DataExplorer({ lab }: Props) {
                 style={{
                   display: 'block',
                   background: '#0061ff',
+                  border: '1px solid #0061ff',
                   color: '#fff',
                   borderRadius: 9,
                   padding: '10px 14px',
                   fontFamily: 'IBM Plex Mono, monospace',
                   fontSize: 12,
+                  letterSpacing: '0.04em',
                   textDecoration: 'none',
                   textAlign: 'center',
                   marginBottom: 22,
+                  boxShadow: '0 12px 28px -14px rgba(0,97,255,0.8)',
                 }}
               >
                 {t('openDropbox')}
@@ -722,7 +734,7 @@ export function DataExplorer({ lab }: Props) {
                   fontFamily: 'IBM Plex Mono, monospace',
                   fontSize: 10,
                   textTransform: 'uppercase',
-                  letterSpacing: '0.14em',
+                  letterSpacing: '0.16em',
                   color: '#2f4486',
                   marginBottom: 10,
                 }}
@@ -735,15 +747,16 @@ export function DataExplorer({ lab }: Props) {
                 <div
                   style={{
                     fontFamily: 'IBM Plex Mono, monospace',
-                    fontSize: 12,
+                    fontSize: 11,
                     color: '#6b7596',
-                    marginBottom: 18,
+                    lineHeight: 1.5,
+                    marginBottom: 14,
                   }}
                 >
                   {t('noLinks')}
                 </div>
               ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 18 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 7, marginBottom: 14 }}>
                   {selectedNodeLinks.map(link => {
                     const isSubject = !!link.subject_id
                     const subj = isSubject ? subjects.find(s => s.id === link.subject_id) : null
@@ -778,10 +791,10 @@ export function DataExplorer({ lab }: Props) {
                         <span
                           style={{
                             fontFamily: 'IBM Plex Mono, monospace',
-                            fontSize: 9,
+                            fontSize: 8.5,
                             textTransform: 'uppercase',
                             letterSpacing: '0.1em',
-                            color: '#9aa3bd',
+                            color: '#8a8f9c',
                             flexShrink: 0,
                           }}
                         >
@@ -791,7 +804,7 @@ export function DataExplorer({ lab }: Props) {
                         <span
                           style={{
                             flex: 1,
-                            fontSize: 12,
+                            fontSize: 12.5,
                             color: '#2a3457',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
@@ -809,7 +822,7 @@ export function DataExplorer({ lab }: Props) {
                             border: 'none',
                             color: '#9aa3bd',
                             cursor: 'pointer',
-                            fontSize: 14,
+                            fontSize: 13,
                             padding: '0 2px',
                             lineHeight: 1,
                             flexShrink: 0,
@@ -830,9 +843,11 @@ export function DataExplorer({ lab }: Props) {
                   style={{
                     display: 'block',
                     fontFamily: 'IBM Plex Mono, monospace',
-                    fontSize: 10,
+                    fontSize: 9.5,
+                    letterSpacing: '0.12em',
+                    textTransform: 'uppercase',
                     color: '#6b7596',
-                    marginBottom: 5,
+                    marginBottom: 6,
                   }}
                 >
                   {t('linkToSubject')}
@@ -848,13 +863,13 @@ export function DataExplorer({ lab }: Props) {
                   }}
                   style={{
                     width: '100%',
-                    padding: '7px 10px',
-                    borderRadius: 7,
-                    border: '1px solid rgba(20,40,90,0.15)',
+                    padding: '9px 11px',
+                    borderRadius: 9,
+                    border: '1px solid rgba(20,40,90,0.18)',
                     background: '#fff',
-                    fontFamily: 'IBM Plex Mono, monospace',
-                    fontSize: 11,
-                    color: '#2a3457',
+                    fontFamily: "'Roboto Slab', Georgia, serif",
+                    fontSize: 13,
+                    color: '#18244c',
                     cursor: 'pointer',
                   }}
                 >
@@ -871,9 +886,11 @@ export function DataExplorer({ lab }: Props) {
                   style={{
                     display: 'block',
                     fontFamily: 'IBM Plex Mono, monospace',
-                    fontSize: 10,
+                    fontSize: 9.5,
+                    letterSpacing: '0.12em',
+                    textTransform: 'uppercase',
                     color: '#6b7596',
-                    marginBottom: 5,
+                    marginBottom: 6,
                   }}
                 >
                   {t('linkToTask')}
@@ -889,13 +906,13 @@ export function DataExplorer({ lab }: Props) {
                   }}
                   style={{
                     width: '100%',
-                    padding: '7px 10px',
-                    borderRadius: 7,
-                    border: '1px solid rgba(20,40,90,0.15)',
+                    padding: '9px 11px',
+                    borderRadius: 9,
+                    border: '1px solid rgba(20,40,90,0.18)',
                     background: '#fff',
-                    fontFamily: 'IBM Plex Mono, monospace',
-                    fontSize: 11,
-                    color: '#2a3457',
+                    fontFamily: "'Roboto Slab', Georgia, serif",
+                    fontSize: 13,
+                    color: '#18244c',
                     cursor: 'pointer',
                   }}
                 >
