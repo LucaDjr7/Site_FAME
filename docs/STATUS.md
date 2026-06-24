@@ -10,6 +10,8 @@ Dernière mise à jour : 2026-06-24
 
 **Phase de finition pré-prod (A+B+C) TERMINÉE** sur `feat/p4-pre-prod` → **PR #4** sur `main`. Audit fidélité graphique des 9 pages + TopBar (A0–A9), restyle admin immersif (B1) + nav admin vérifiée (B2), lot polish/dette technique (C1–C6). `tsc --noEmit` + `lint` (**0 warning**) + `npm run build` clean. Reste **D — Déploiement** (Task 20, plan superpowers dédié à venir).
 
+> 🔍 **Audit complet (2026-06-24)** sur branche `audit` (base main post-PR#4) — 7 sous-agents lecture seule. Rapport : [`docs/AUDIT_2026-06-24.md`](./AUDIT_2026-06-24.md) (bruts dans `docs/audit-raw/`). **Verdict : NO-GO en l'état** — 3 bugs 🔴 (convert→sujet orphelin, `order` silencieux, race `claim`) + 4 🟠 bloquants (`GET /api/members` public, écritures cross-lab, injection HTML emails, `NEXT_PUBLIC_APP_URL` non gardé). Fond sain (service-role correct, 0 secret fuité, parité i18n parfaite). À traiter en vague 0 avant la mise en ligne.
+
 _(Historique : Phase 3 — Secondary code terminé → PR #3 mergée dans `main`. `tsc`/`lint`/`build` clean tout du long.)_
 
 > ⚠️ **Deploy gates avant mise en ligne** — état :
