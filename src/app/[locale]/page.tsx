@@ -43,7 +43,7 @@ export default async function HomePage({ params }: Props) {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: 12,
+          gap: 18,
           paddingTop: 40,
           zIndex: 1,
           animation: 'fameFade 1.1s ease both',
@@ -61,7 +61,7 @@ export default async function HomePage({ params }: Props) {
             style={{
               width: 42,
               height: 1,
-              background: 'linear-gradient(90deg, rgba(113,120,132,0) 0%, rgba(113,120,132,0.5) 100%)',
+              background: 'linear-gradient(90deg, rgba(181,157,135,0) 0%, #B59D87 100%)',
             }}
           />
           <span
@@ -79,7 +79,7 @@ export default async function HomePage({ params }: Props) {
             style={{
               width: 42,
               height: 1,
-              background: 'linear-gradient(90deg, rgba(113,120,132,0.5) 0%, rgba(113,120,132,0) 100%)',
+              background: 'linear-gradient(90deg, #B59D87 0%, rgba(181,157,135,0) 100%)',
             }}
           />
         </div>
@@ -92,11 +92,13 @@ export default async function HomePage({ params }: Props) {
             fontWeight: 700,
             fontSize: 'clamp(52px, 10vw, 128px)',
             letterSpacing: '0.34em',
+            textIndent: '0.34em',
             background: 'linear-gradient(180deg, #2f4486, #1f2e5c)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
-            lineHeight: 1,
+            lineHeight: 0.9,
+            textShadow: '0 2px 30px rgba(47,68,134,0.16)',
           }}
         >
           FAME
