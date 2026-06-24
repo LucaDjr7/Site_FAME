@@ -93,7 +93,7 @@ export function AdminProposalsClient() {
   return (
     <div
       style={{
-        minHeight: '100vh',
+        minHeight: 'calc(100vh - 3rem)',
         display: 'flex',
         flexDirection: 'column',
         fontFamily: "'Roboto Slab', Georgia, serif",
