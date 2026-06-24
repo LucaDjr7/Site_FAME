@@ -23,6 +23,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   }
   const service = await createServiceClient()
   const { data, error } = await service.from('subjects').update(updates).eq('id', id).select().single()
+  if (error?.code === 'PGRST116') return NextResponse.json({ error: 'Not found' }, { status: 404 })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json(data)
 }
