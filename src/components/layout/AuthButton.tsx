@@ -20,7 +20,7 @@ export function AuthButton({ member, locale }: Props) {
     return (
       <button
         onClick={() => router.push(`/${locale}/auth/login`)}
-        className="text-xs font-mono text-fame-text-muted hover:text-fame-text-light px-2 py-1 rounded border border-fame-slate/30 hover:border-fame-slate transition-colors"
+        className="text-xs font-mono text-slate-200 hover:text-white px-2 py-1 rounded border border-slate-400/40 hover:border-slate-300 transition-colors"
       >
         {t('signIn')}
       </button>
@@ -30,7 +30,7 @@ export function AuthButton({ member, locale }: Props) {
   return (
     <button
       onClick={signOut}
-      className="flex items-center gap-2 text-xs font-mono text-fame-text-light hover:text-white"
+      className="flex items-center gap-2 text-xs font-mono text-slate-200 hover:text-white"
       title={t('signOut')}
     >
       <Avatar name={`${member.prenom} ${member.nom}`} photoUrl={member.photo_url} size={28} />

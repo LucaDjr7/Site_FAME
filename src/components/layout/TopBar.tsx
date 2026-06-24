@@ -19,9 +19,9 @@ export async function TopBar({ locale, lab }: Props) {
   return (
     <header className="fixed top-0 left-0 right-0 z-20 h-12 flex items-center justify-between px-6"
       style={{ background: '#2f4486', borderBottom: '1px solid rgba(20,40,90,0.4)' }}>
-      <Link href={`/${locale}`} className="font-serif font-bold text-fame-text-light text-lg tracking-wide hover:text-white transition-colors">
+      <Link href={`/${locale}`} className="group font-serif font-bold text-white text-lg tracking-wide transition-colors">
         FAME
-        <span className="text-fame-text-light font-mono text-xs ml-2 normal-case tracking-normal">
+        <span className="text-slate-200 group-hover:text-white font-mono text-xs ml-2 normal-case tracking-normal transition-colors">
           {resolvedLab === 'paris' ? t('labParis') : t('labMontreal')}
         </span>
       </Link>
