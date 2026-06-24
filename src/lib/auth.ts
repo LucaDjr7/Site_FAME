@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient as createServerClient, createServiceClient } from './supabase/server'
-import type { Member, Session } from '@/types'
+import type { Member, Session, Lab } from '@/types'
 
 export async function getSession(): Promise<Session | null> {
   const supabase = await createServerClient()
@@ -31,6 +31,15 @@ export async function requireAdmin(): Promise<{ session: Session; member: Member
     throw new AuthError(403, 'Admin access required')
   }
   return { session, member }
+}
+
+// Cloisonnement cross-lab : un membre n'agit que sur son labo ; un admin agit
+// sur les deux. À appeler après requireMember() avec le `labo` de la ressource.
+export function assertLabAccess(member: Member, labo: Lab): void {
+  if (member.is_admin) return
+  if (member.labo !== labo) {
+    throw new AuthError(403, 'Cross-lab access denied')
+  }
 }
 
 export class AuthError extends Error {

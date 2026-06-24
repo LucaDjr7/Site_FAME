@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
-import { requireMember, authErrorResponse } from '@/lib/auth'
+import { requireMember, assertLabAccess, authErrorResponse } from '@/lib/auth'
 
 type Params = { params: Promise<{ id: string }> }
 
@@ -29,6 +29,9 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   }
 
   const service = await createServiceClient()
+  const { data: existingTask } = await service.from('tasks').select('labo').eq('id', id).single()
+  if (!existingTask) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  try { assertLabAccess(member, existingTask.labo) } catch (e) { return authErrorResponse(e) }
 
   // Read old statut before updating (if changing statut)
   let oldStatut: string | null = null
@@ -53,9 +56,13 @@ export async function PATCH(req: NextRequest, { params }: Params) {
 }
 
 export async function DELETE(_req: NextRequest, { params }: Params) {
-  try { await requireMember() } catch (e) { return authErrorResponse(e) }
+  let member
+  try { ({ member } = await requireMember()) } catch (e) { return authErrorResponse(e) }
   const { id } = await params
   const service = await createServiceClient()
+  const { data: existingTask } = await service.from('tasks').select('labo').eq('id', id).single()
+  if (!existingTask) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  try { assertLabAccess(member, existingTask.labo) } catch (e) { return authErrorResponse(e) }
   const { error } = await service.from('tasks').delete().eq('id', id)
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ ok: true })
