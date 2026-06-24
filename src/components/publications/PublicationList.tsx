@@ -214,7 +214,7 @@ export function PublicationList({ lab, isMember }: Props) {
     <>
       <div
         style={{
-          minHeight: 'calc(100vh - 3rem)',
+          minHeight: 'calc(100vh - 6rem)',
           display: 'flex',
           flexDirection: 'column',
           background: PAGE_BG,
@@ -357,8 +357,8 @@ export function PublicationList({ lab, isMember }: Props) {
                     }}>
                       <span style={{
                         fontFamily: 'IBM Plex Mono, monospace',
-                        fontSize: 12,
-                        fontWeight: 700,
+                        fontSize: 13,
+                        fontWeight: 500,
                         color: '#2f4486',
                         letterSpacing: '0.14em',
                         flexShrink: 0,
@@ -374,6 +374,7 @@ export function PublicationList({ lab, isMember }: Props) {
                         fontFamily: 'IBM Plex Mono, monospace',
                         fontSize: 10,
                         color: '#6b7596',
+                        letterSpacing: '0.1em',
                         flexShrink: 0,
                       }}>
                         {items.length} {t('countSuffix')}
@@ -381,7 +382,7 @@ export function PublicationList({ lab, isMember }: Props) {
                     </div>
 
                     {/* Cards */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                       {items.map(p => {
                         const badge = TYPE_BADGE[p.type]
                         return (
@@ -447,14 +448,14 @@ export function PublicationList({ lab, isMember }: Props) {
                               <span style={{
                                 display: 'inline-flex',
                                 alignItems: 'center',
-                                gap: 5,
-                                padding: '2px 8px',
-                                borderRadius: 20,
+                                gap: 6,
+                                padding: '4px 9px',
+                                borderRadius: 6,
                                 border: `1px solid ${badge.border}`,
                                 background: badge.bg,
                                 fontFamily: 'IBM Plex Mono, monospace',
-                                fontSize: 9,
-                                fontWeight: 700,
+                                fontSize: 9.5,
+                                fontWeight: 500,
                                 letterSpacing: '0.1em',
                                 textTransform: 'uppercase',
                                 color: badge.color,
@@ -488,7 +489,8 @@ export function PublicationList({ lab, isMember }: Props) {
                               fontWeight: 600,
                               fontFamily: 'Roboto Slab, Georgia, serif',
                               color: '#15203f',
-                              lineHeight: 1.35,
+                              lineHeight: 1.28,
+                              letterSpacing: '-0.005em',
                             }}>
                               {p.titre}
                             </h3>
@@ -496,17 +498,15 @@ export function PublicationList({ lab, isMember }: Props) {
                             {/* Authors */}
                             {p.auteurs.length > 0 && (
                               <div style={{
-                                fontFamily: 'IBM Plex Mono, monospace',
-                                fontSize: 11,
+                                fontFamily: 'Roboto Slab, Georgia, serif',
+                                fontSize: 12.5,
                                 color: '#43507a',
-                                marginBottom: p.lien ? 10 : 0,
+                                marginBottom: p.lien ? 12 : 0,
                               }}>
                                 {p.auteurs.map((a, i) => (
                                   <span key={i}>
-                                    <span style={{ fontWeight: 600 }}>{a}</span>
-                                    {i < p.auteurs.length - 1 && (
-                                      <span style={{ color: '#9fb2e6', marginRight: 2 }}>{', '}</span>
-                                    )}
+                                    <span style={{ fontWeight: 600, color: '#2a3457' }}>{a}</span>
+                                    {i < p.auteurs.length - 1 && <span>{', '}</span>}
                                   </span>
                                 ))}
                               </div>

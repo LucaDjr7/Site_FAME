@@ -5,6 +5,8 @@ _Document de travail. Points à reprendre **avant** le déploiement prod (Task 2
 Dernière mise à jour : 2026-06-24
 Document frère : [`docs/STATUS.md`](./STATUS.md)
 
+> **Phase finition A+B+C close** (branche `feat/p4-pre-prod`, PR #4). Reste **D — Déploiement** (plan superpowers dédié).
+
 ---
 
 ## Contexte
@@ -37,15 +39,17 @@ Projet MCP : « Site FAME projet » — `projectId = 5bd688a8-2928-4c09-8d94-63f
 
 | Page | Route | Maquette (`path`) | Audit |
 |---|---|---|---|
-| Accueil / globe | `/[locale]` | `FAME Accueil.dc.html` | [ ] |
-| Lab (grille fiches) | `/[locale]/[lab]` | `FAME Laboratoire.dc.html` | [ ] |
-| Paper (fiche) | `/[locale]/[lab]/paper/[id]` | `FAME Paper.dc.html` | [ ] |
-| Tasks (kanban) | `/[locale]/[lab]/tasks` | `FAME Tasks.dc.html` | [ ] |
-| Propose (formulaire) | `/[locale]/[lab]/propose` | `FAME Proposer.dc.html` | [ ] |
-| Publications | `/[locale]/[lab]/publications` | `FAME Publications.dc.html` | [ ] |
-| Team (trombinoscope) | `/[locale]/[lab]/team` | `FAME Trombinoscope.dc.html` | [ ] |
-| Data (Dropbox) | `/[locale]/[lab]/data` | `FAME Données.dc.html` | [ ] |
-| Prompts | `/[locale]/[lab]/prompts` | `FAME Prompts.dc.html` | [ ] |
+| Accueil / globe | `/[locale]` | `FAME Accueil.dc.html` | [x] A1 |
+| Lab (grille fiches) | `/[locale]/[lab]` | `FAME Laboratoire.dc.html` | [x] A2 (converti en clair) |
+| Paper (fiche) | `/[locale]/[lab]/paper/[id]` | `FAME Paper.dc.html` | [x] A3 (déjà fidèle) |
+| Tasks (kanban) | `/[locale]/[lab]/tasks` | `FAME Tasks.dc.html` | [x] A4 |
+| Propose (formulaire) | `/[locale]/[lab]/propose` | `FAME Proposer.dc.html` | [x] A5 |
+| Publications | `/[locale]/[lab]/publications` | `FAME Publications.dc.html` | [x] A6 |
+| Team (trombinoscope) | `/[locale]/[lab]/team` | `FAME Trombinoscope.dc.html` | [x] A7 |
+| Data (Dropbox) | `/[locale]/[lab]/data` | `FAME Données.dc.html` | [x] A8 |
+| Prompts | `/[locale]/[lab]/prompts` | `FAME Prompts.dc.html` | [x] A9 |
+
+> **A0 — TopBar (transverse)** : [x] barre bleue pleine opaque `#2f4486` (deux niveaux conservés, bouton MENU encadré + panneau clair `#fbf9f3`).
 
 **Points d'attention transverses :**
 - La barre bleue « MENU » des maquettes correspond à la **TopBar globale** — vérifier que le mapping est cohérent partout (et que la TopBar elle-même est fidèle).
@@ -60,22 +64,22 @@ Projet MCP : « Site FAME projet » — `projectId = 5bd688a8-2928-4c09-8d94-63f
 Aujourd'hui `/admin/proposals` (`AdminProposalsClient.tsx`) est **fonctionnel mais en Tailwind brut** (`p-8`, pas de langage immersif, pas de TopBar/dégradé/barre d'outils secondaire, pas d'inline-hex). **Il n'existe aucune maquette admin** parmi les 9.
 
 À traiter :
-- [ ] **Décision maquette** : soit créer une maquette admin dans le projet Claude Design (cohérente avec le design system), soit **dériver** le style des autres pages (langage immersif : dégradé radial, barre d'outils secondaire kicker+titre, cartes `#fbf9f3`, badges mono, etc.).
-- [ ] **Restyler `/admin/proposals`** selon ce langage (liste des propositions, filtres statut/labo, actions accepter/refuser/convertir, commentaire admin).
-- [ ] **Anticiper les futures surfaces admin** : gestion membres (invitation) vit aujourd'hui dans la page Team ; vérifier s'il faut un point d'entrée admin dédié, ou si la cohérence Team/Admin suffit.
-- [ ] Vérifier la **navigation vers l'admin** (lien visible uniquement pour `is_admin`, dans la TopBar/menu).
+- [x] **Décision maquette** : pas de nouvelle maquette → **dériver** le langage immersif des pages existantes (décision utilisateur).
+- [x] **Restyler `/admin/proposals`** (B1) : page pleine hauteur `PAGE_BG`, barre secondaire kicker `FAME / Admin` + titre serif, filtres labo/statut en boutons mono, cartes `#fbf9f3`, `ProposalStatusBadge` réutilisé, actions accepter `#1e9b7e` / refuser `#c0473b` / convertir bordé `#2f4486`. **Aucun changement de logique/API.**
+- [x] **Futures surfaces admin** : la gestion membres reste dans la page Team (invitation par admin) — **pas de point d'entrée admin dédié en v1**, cohérence Team/Admin jugée suffisante.
+- [x] **Navigation vers l'admin** (B2) : lien `NavMenu` conditionné à `member?.is_admin` (doré, vers `/{locale}/admin/proposals`) — vérifié, pointe vers la page restylée.
 
 ---
 
 ## C. Lot polish / dette technique (reporté de la Part 2 + observations Part 3)
 
-- [ ] **`PGRST116` → 404 uniforme** : harmoniser la gestion « row not found » sur les routes `/api/**/[id]` (certaines renvoient 500 au lieu de 404).
-- [ ] **Clés i18n mortes** : auditer et supprimer les clés non utilisées dans `messages/en.json` / `fr.json` (garder la parité en/fr).
-- [ ] **`<a>` → `Link`** sur les barres d'outils immersives (le footer RGPD est déjà migré ; restent les toolbars Lab/Paper/etc. qui font du full-reload).
-- [ ] **Prop morte `members`** sur `TasksPanel` : supprimer.
-- [ ] **Footer RGPD vs pages immersives** : le footer ajoute un léger débordement de scroll sur les pages en `calc(100vh - 3rem)`. Décider : retirer le `min-h-screen` redondant, intégrer le footer dans le flux immersif, ou assumer.
-- [ ] **Warning `Avatar.tsx <img>`** : passer à `next/image` (ou assumer explicitement le warning et l'ignorer en lint).
-- [ ] **`EMAIL_FROM`** : le défaut `noreply@fame-lab.eu` nécessite un **domaine vérifié dans Resend**, sinon échec d'envoi en prod. Décider du domaine expéditeur réel.
+- [x] **`PGRST116` → 404 uniforme** (C1) : harmonisé sur `proposals/publications/members/prompts/comments/[id]` (alignés sur le pattern `subjects/[id]`).
+- [x] **Clés i18n mortes** (C6) : auditées et supprimées, parité en/fr maintenue.
+- [x] **`<a>` → `Link`** (C2) : toolbars immersives migrées (`KanbanBoard`, `SubjectGrid` ×2) — navigation client sans full-reload.
+- [x] **Prop morte `members`** sur `TasksPanel` (C3) : supprimée (type + appel `PaperView`).
+- [x] **Footer RGPD vs pages immersives** (C5) : `min-h-screen` redondant retiré du `<main>` — plus de scrollbar parasite.
+- [x] **Warning `Avatar.tsx <img>`** (C4) : migré vers `next/image` (`unoptimized`) — **0 warning lint**.
+- [ ] **`EMAIL_FROM`** → **reporté en D (déploiement)** : le défaut `noreply@fame-lab.eu` nécessite un **domaine vérifié dans Resend**, sinon échec d'envoi en prod. Décider du domaine expéditeur réel (décision de déploiement, hors phase finition).
 
 ---
 

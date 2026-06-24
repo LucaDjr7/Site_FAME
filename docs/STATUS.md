@@ -8,13 +8,16 @@ Dernière mise à jour : 2026-06-24
 
 ## Phase active
 
-**Phase 3 — Secondary : code TERMINÉ** (Publications, Team, Prompts, Data/Dropbox, Emails, RGPD ✅). Branche `feat/p3-secondary` poussée → **PR #3** ouverte sur `main` (https://github.com/LucaDjr7/Site_FAME/pull/3). `tsc --noEmit`, `lint` (1 warning pré-existant `Avatar.tsx <img>`) et `npm run build` clean. → **Phase de revue pré-prod en cours** (reprise de certains points avant déploiement), puis Task 20 — déploiement.
+**Phase de finition pré-prod (A+B+C) TERMINÉE** sur `feat/p4-pre-prod` → **PR #4** sur `main`. Audit fidélité graphique des 9 pages + TopBar (A0–A9), restyle admin immersif (B1) + nav admin vérifiée (B2), lot polish/dette technique (C1–C6). `tsc --noEmit` + `lint` (**0 warning**) + `npm run build` clean. Reste **D — Déploiement** (Task 20, plan superpowers dédié à venir).
+
+_(Historique : Phase 3 — Secondary code terminé → PR #3 mergée dans `main`. `tsc`/`lint`/`build` clean tout du long.)_
 
 > ⚠️ **Deploy gates avant mise en ligne** — état :
-> - ✅ **Migrations Supabase prod appliquées** : `001` + `002_subject_difficulte_and_indexes.sql` + `003_proposal_subject_link.sql`. _(Aucune nouvelle migration en Part 3.)_
+> - ✅ **Migrations Supabase prod appliquées** : `001` + `002_subject_difficulte_and_indexes.sql` + `003_proposal_subject_link.sql`. _(Aucune nouvelle migration depuis.)_
+> - ✅ **Finition graphique (A+B+C)** close — voir [`docs/REVUE_PRE_PROD.md`](./REVUE_PRE_PROD.md).
 > - ⏳ **Variables d'env prod** (Vercel) : `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_APP_URL` (URL prod, sert aux liens d'activation), `DROPBOX_ACCESS_TOKEN` (sinon page Data → 503 dégradé), `RESEND_API_KEY` + `EMAIL_FROM` (sinon emails skip avec warn). Domaine expéditeur à vérifier dans Resend.
 > - ⏳ `npm run seed:admin` à exécuter une fois sur la prod (compte admin `luca.desjardin@dauphine.eu`).
-> - ⏳ **Revue pré-prod** — points à reprendre **avant** déploiement : voir [`docs/REVUE_PRE_PROD.md`](./REVUE_PRE_PROD.md) (fidélité graphique aux maquettes MCP, aspect graphique de l'admin non traité, lot polish, déploiement par sous-agent via plan superpowers).
+> - ⏳ **Déploiement (D / Task 20)** — plan superpowers dédié à rédiger.
 
 ---
 
@@ -147,4 +150,5 @@ _Voir `docs/superpowers/plans/2026-06-22-fame-website-p3-secondary.md`_
 | 2026-06-24 | RGPD : page sous `[locale]/privacy` (hors TopBar), contenu i18n (namespace `privacy`, EN+FR), lien footer ajouté au layout `[lab]` (avec `Link`, résout un item du lot polish Part 2) |
 | 2026-06-24 | Part 3 code terminé (Publications, Team, Prompts, Data, Emails, RGPD) — `tsc`/`lint`/`build` clean. Reste Task 20 déploiement manuel |
 | 2026-06-24 | Part 3 poussée → **PR #3** sur `main`. Migrations prod `001/002/003` **appliquées** (deploy gate migrations levé). Reste : env vars Vercel + `seed:admin` prod + revue pré-prod |
+| 2026-06-24 | **Finition pré-prod (A+B+C)** sur `feat/p4-pre-prod` → PR #4. C1 PGRST116→404 (5 routes), C2 `<a>`→`Link` (toolbars), C3 prop morte `members`, C4 `Avatar`→`next/image` (0 warning), C5 footer sans scroll parasite, C6 clés i18n mortes. A0–A9 : audit fidélité MCP page par page (TopBar barre bleue opaque ; Lab converti en clair ; corrections inline-hex sur Tasks/Propose/Publications/Team/Data/Prompts). B1 admin restylé en immersif (logique/API inchangées), B2 lien nav admin vérifié. Décisions : pas de maquette admin (dérivé immersif) ; gestion membres reste dans Team (pas d'entrée admin dédiée v1) ; `EMAIL_FROM` reporté au plan D (déploiement). |
 | 2026-06-24 | **Correctif auth majeur** (`cc133c5`) : `createServiceClient()` était bâti via `@supabase/ssr` **avec les cookies de la requête** → pour un utilisateur connecté, supabase-js mettait l'`Authorization` au JWT du user (cookie), écrasant la clé service-role → PostgREST exécutait les requêtes en rôle `authenticated` **sous RLS**, pas en `service_role`. Conséquence : le lookup `members` de `getSession()` renvoyait 0 ligne (PGRST116) pour tout utilisateur connecté → TopBar affichait « Sign in », `requireMember()`/`requireAdmin()` échouaient → la connexion semblait « déconnecter » sur toute page utilisant `getSession`. Corrigé en construisant le client service-role **sans cookies** via `@supabase/supabase-js` (Authorization = clé service-role, RLS contournée comme prévu). Vérifié : `/en/paris` connecté affiche le membre, `/en/admin/proposals` → 200. |

@@ -22,6 +22,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
 
   const service = await createServiceClient()
   const { data, error } = await service.from('members').update(updates).eq('id', id).select().single()
+  if (error?.code === 'PGRST116') return NextResponse.json({ error: 'Not found' }, { status: 404 })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json(data)
 }
@@ -33,7 +34,8 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
   // No DB cascade between auth.users and members — delete BOTH explicitly.
   // Deleting the member row cascades its invitations (FK on delete cascade).
   await service.auth.admin.deleteUser(id)            // ignore "user not found"
-  const { error } = await service.from('members').delete().eq('id', id)
+  const { data, error } = await service.from('members').delete().eq('id', id).select()
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (!data || data.length === 0) return NextResponse.json({ error: 'Not found' }, { status: 404 })
   return NextResponse.json({ ok: true })
 }

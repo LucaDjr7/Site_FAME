@@ -34,6 +34,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     .eq('id', id)
     .select()
     .single()
+  if (error?.code === 'PGRST116') return NextResponse.json({ error: 'Not found' }, { status: 404 })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json(data)
 }
@@ -42,7 +43,8 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
   try { await requireMember() } catch (e) { return authErrorResponse(e) }
   const { id } = await params
   const service = await createServiceClient()
-  const { error } = await service.from('prompts').delete().eq('id', id)
+  const { data, error } = await service.from('prompts').delete().eq('id', id).select()
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (!data || data.length === 0) return NextResponse.json({ error: 'Not found' }, { status: 404 })
   return NextResponse.json({ ok: true })
 }

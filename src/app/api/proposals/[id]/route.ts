@@ -22,6 +22,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     statut, commentaire_admin, traitee_at: new Date().toISOString(), traitee_par: member.id,
   }).eq('id', id).select().single()
 
+  if (error?.code === 'PGRST116') return NextResponse.json({ error: 'Not found' }, { status: 404 })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
   if (data?.proposant_email) {

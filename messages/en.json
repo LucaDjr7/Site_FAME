@@ -82,10 +82,7 @@
       "added": "Subject added",
       "deleted": "Subject deleted"
     },
-    "searchPlaceholder": "Search subjects…",
-    "addSubject2": "Add subject",
     "editModeActive": "Editing",
-    "sortDate": "Date",
     "tasks": "tasks",
     "done": "DONE",
     "error": {
@@ -149,7 +146,11 @@
       "date": "Date",
       "description": "Description"
     },
-    "date": { "2025": "2025", "2024": "2024", "older": "Older" },
+    "date": {
+      "2025": "2025",
+      "2024": "2024",
+      "older": "Older"
+    },
     "progress": "Progress",
     "positioning": "Positioning",
     "noAssignees": "No one positioned yet",
@@ -190,8 +191,6 @@
     "signOut": "Sign out",
     "email": "Email",
     "password": "Password",
-    "forgotPassword": "Forgot password?",
-    "memberOnly": "Members only",
     "loading": "Loading…",
     "signInError": "Invalid email or password.",
     "setPasswordTitle": "Set your password",
@@ -207,8 +206,7 @@
     "firstName": "First name",
     "lastName": "Last name",
     "post": "Post",
-    "delete": "Delete",
-    "visitorPrompt": "Enter your name to comment"
+    "delete": "Delete"
   },
   "propose": {
     "title": "Propose a subject",
@@ -224,8 +222,6 @@
     "submit": "Submit proposal",
     "submitting": "Submitting…",
     "successTitle": "Proposal submitted",
-    "successBody": "Thank you. A member will review your suggestion.",
-    "submitAnother": "Submit another",
     "validationRequired": "Please fill in all required fields.",
     "errorGeneric": "Something went wrong. Please try again.",
     "trackerTitle": "Your proposals",
@@ -265,12 +261,6 @@
       "conference": "Conference",
       "working": "Working paper"
     },
-    "status": {
-      "published": "Published",
-      "accepted": "Accepted",
-      "submitted": "Submitted",
-      "preparation": "In preparation"
-    },
     "statPublications": "Publications",
     "statAuthors": "Authors",
     "countSuffix": "publication(s)",
@@ -302,7 +292,6 @@
       "phd": "PhD Students",
       "engineering": "Engineering"
     },
-    "addMember": "Add member",
     "inviteByEmail": "Invite by email",
     "members": "members",
     "loading": "Loading…",
@@ -399,11 +388,9 @@
     "filterPending": "Pending",
     "filterAccepted": "Accepted",
     "filterRejected": "Rejected",
-    "filterLab": "Lab",
     "accept": "Accept",
     "reject": "Reject",
     "convert": "Convert to subject",
-    "convertToSubject": "Convert to subject",
     "commentPlaceholder": "Optional comment for the proposer…",
     "by": "by",
     "noProposals": "No proposals match the current filter.",
@@ -417,7 +404,6 @@
     "cancel": "Cancel",
     "delete": "Delete",
     "confirm": "Confirm",
-    "close": "Close",
     "edit": "Edit",
     "add": "Add",
     "search": "Search",

@@ -1,5 +1,6 @@
 'use client'
 import { useState, useMemo } from 'react'
+import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import type { Subject, TaskWithRelations, MemberRef, Lab, TaskStatus, Difficulty } from '@/types'
 import { KanbanColumn } from './KanbanColumn'
@@ -126,13 +127,23 @@ export function KanbanBoard({ lab, locale, subjects, initialTasks, members, isMe
 
   return (
     <>
-      <div style={{ height: 'calc(100vh - 3rem)', background: '#f4f3ee', display: 'flex', flexDirection: 'column' }}>
+      <div style={{
+        height: 'calc(100vh - 6rem)',
+        background: [
+          'radial-gradient(110% 80% at 20% 12%, rgba(181,157,135,0.28) 0%, rgba(181,157,135,0) 52%)',
+          'radial-gradient(120% 110% at 80% 110%, rgba(113,120,132,0.22) 0%, rgba(113,120,132,0) 60%)',
+          'radial-gradient(140% 120% at 14% 48%, rgba(47,68,134,0.08) 0%, rgba(47,68,134,0) 55%)',
+          '#F9F9FA',
+        ].join(', '),
+        display: 'flex',
+        flexDirection: 'column',
+      }}>
         {/* Secondary toolbar */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 24px 12px', flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 24px 12px', flexShrink: 0, borderBottom: '1px solid rgba(20,40,90,0.1)' }}>
           <div>
             <div style={{
               fontFamily: 'IBM Plex Mono, monospace', fontSize: 9, letterSpacing: '0.14em', textTransform: 'uppercase',
-              color: '#5768ac', marginBottom: 3,
+              color: '#7e95d6', marginBottom: 3,
             }}>
               {t('kicker')}
             </div>
@@ -167,7 +178,7 @@ export function KanbanBoard({ lab, locale, subjects, initialTasks, members, isMe
 
         {/* Board + sidebar */}
         <div style={{ flex: 1, display: 'flex', overflow: 'hidden', minHeight: 0 }}>
-          <div style={{ flex: 1, overflowX: 'auto', overflowY: 'hidden', padding: '6px 24px 0', display: 'flex', gap: 18, alignItems: 'stretch' }}>
+          <div style={{ flex: 1, overflowX: 'auto', overflowY: 'hidden', padding: '18px 28px 0', display: 'flex', gap: 22, alignItems: 'stretch' }}>
             {visibleSubjects.length === 0 ? (
               <div style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 13, color: '#7e95d6', margin: 'auto' }}>
                 {t('empty')}
@@ -214,10 +225,10 @@ export function KanbanBoard({ lab, locale, subjects, initialTasks, members, isMe
         {/* Bottom bar */}
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 24px',
-          borderTop: '1px solid rgba(87,104,172,0.2)', flexShrink: 0,
+          borderTop: '1px solid rgba(20,40,90,0.1)', flexShrink: 0,
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <span style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: '#5768ac' }}>
+            <span style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: '#6b7596' }}>
               {t('countTasks', { n: totalCount })} · {t('countOpen', { n: openCount })}
             </span>
             <button
@@ -231,12 +242,12 @@ export function KanbanBoard({ lab, locale, subjects, initialTasks, members, isMe
               {t('hideCompleted')}
             </button>
           </div>
-          <a
+          <Link
             href={`/${locale}/${lab}`}
             style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, color: '#5768ac', textDecoration: 'none', letterSpacing: '0.06em' }}
           >
             {t('subjectsLink')}
-          </a>
+          </Link>
         </div>
       </div>
 

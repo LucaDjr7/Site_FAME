@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 type Props = { name: string; photoUrl?: string | null; size?: number }
 
 const COLORS = ['#2f4486','#1e9b7e','#5768ac','#e8b149','#ff6f61','#c0473b']
@@ -11,7 +13,7 @@ function colorForName(name: string) {
 export function Avatar({ name, photoUrl, size = 32 }: Props) {
   const initials = name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
   if (photoUrl) {
-    return <img src={photoUrl} alt={name} width={size} height={size}
+    return <Image src={photoUrl} alt={name} width={size} height={size} unoptimized
       className="rounded-full object-cover" style={{ width: size, height: size }} />
   }
   return (
