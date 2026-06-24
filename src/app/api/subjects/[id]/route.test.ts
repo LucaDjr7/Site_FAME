@@ -49,4 +49,9 @@ describe('PATCH /api/subjects/[id]', () => {
     await PATCH(req({ is_transversal: true }), { params: Promise.resolve({ id: 'x' }) })
     expect(updateVals.is_transversal).toBe(true)
   })
+  it('coerce is_transversal en booléen', async () => {
+    singleResult = { data: { id: 'x', is_transversal: true }, error: null }
+    await PATCH(req({ is_transversal: 1 }), { params: Promise.resolve({ id: 'x' }) })
+    expect(updateVals.is_transversal).toBe(true)
+  })
 })
