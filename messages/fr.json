@@ -367,7 +367,16 @@
     "copied": "Prompt copié dans le presse-papier",
     "saved": "Prompt enregistré",
     "deleted": "Prompt supprimé",
-    "noPrompts": "Aucun prompt pour ce type."
+    "noPrompts": "Aucun prompt pour ce type.",
+    "sidebarTitle": "Éléments à générer",
+    "sidebarHelp": "Un prompt standardisé par type de fiche. Modulable : ajoutez ou supprimez à volonté.",
+    "countSuffix": "prompt(s)",
+    "untitled": "Nouveau prompt",
+    "titlePlaceholder": "Titre du prompt",
+    "bodyPlaceholder": "Texte du prompt — utilisez des variables comme {{nom}} pour les champs à compléter.",
+    "confirmDelete": "Supprimer ce prompt ? Cette action est définitive.",
+    "loading": "Chargement…",
+    "errorGeneric": "Une erreur est survenue."
   },
   "admin": {
     "proposals": "Propositions",

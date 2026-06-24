@@ -367,7 +367,16 @@
     "copied": "Prompt copied to clipboard",
     "saved": "Prompt saved",
     "deleted": "Prompt deleted",
-    "noPrompts": "No prompts for this type."
+    "noPrompts": "No prompts for this type.",
+    "sidebarTitle": "Items to generate",
+    "sidebarHelp": "One standard prompt per card type. Add or remove freely.",
+    "countSuffix": "prompt(s)",
+    "untitled": "New prompt",
+    "titlePlaceholder": "Prompt title",
+    "bodyPlaceholder": "Prompt text — use variables like {{name}} for fields to fill in.",
+    "confirmDelete": "Delete this prompt? This is permanent.",
+    "loading": "Loading…",
+    "errorGeneric": "Something went wrong."
   },
   "admin": {
     "proposals": "Proposals",
