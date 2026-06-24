@@ -9,6 +9,26 @@ import type { Proposal, Lab, ProposalStatus } from '@/types'
 const LABS: Lab[] = ['paris', 'montreal']
 const STATUSES: (ProposalStatus | 'all')[] = ['all', 'pending', 'accepted', 'rejected']
 
+const PAGE_BG =
+  'radial-gradient(110% 80% at 22% 8%, rgba(181,157,135,0.28) 0%, rgba(181,157,135,0) 52%), ' +
+  'radial-gradient(120% 110% at 80% 112%, rgba(113,120,132,0.2) 0%, rgba(113,120,132,0) 60%), ' +
+  'radial-gradient(140% 120% at 90% 44%, rgba(47,68,134,0.08) 0%, rgba(47,68,134,0) 55%), ' +
+  '#F9F9FA'
+
+const filterBtnStyle = (active: boolean): React.CSSProperties => ({
+  padding: '6px 12px',
+  borderRadius: 6,
+  border: active ? '1px solid #2f4486' : '1px solid rgba(20,40,90,0.14)',
+  background: active ? 'rgba(47,68,134,0.12)' : 'rgba(255,255,255,0.6)',
+  color: active ? '#2f4486' : '#6b7596',
+  fontFamily: "'IBM Plex Mono', monospace",
+  fontSize: 10,
+  letterSpacing: '0.06em',
+  textTransform: 'capitalize',
+  cursor: 'pointer',
+  transition: 'all 0.14s',
+})
+
 export function AdminProposalsClient() {
   const t = useTranslations('admin')
   const tdiff = useTranslations('tasks')
@@ -58,113 +78,220 @@ export function AdminProposalsClient() {
 
   const visible = proposals.filter(p => statusFilter === 'all' || p.statut === statusFilter)
 
-  return (
-    <div className="p-8">
-      <h1 className="font-serif text-2xl font-bold text-fame-blue-dark mb-6">{t('proposalsTitle')}</h1>
+  const actionBtn = (kind: 'accept' | 'reject' | 'convert'): React.CSSProperties => ({
+    padding: '8px 14px',
+    borderRadius: 8,
+    fontFamily: "'IBM Plex Mono', monospace",
+    fontSize: 11,
+    letterSpacing: '0.04em',
+    cursor: 'pointer',
+    border: kind === 'convert' ? '1px solid #2f4486' : 'none',
+    background: kind === 'accept' ? '#1e9b7e' : kind === 'reject' ? '#c0473b' : 'transparent',
+    color: kind === 'convert' ? '#2f4486' : '#eef3ff',
+  })
 
-      <div className="flex gap-6 mb-6 flex-wrap">
-        {/* Lab filter */}
-        <div className="flex gap-1">
-          {LABS.map(l => (
-            <button
-              key={l}
-              onClick={() => { setProposals([]); setLab(l) }}
-              className={`px-3 py-1 text-xs font-mono rounded border capitalize transition-colors ${
-                lab === l
-                  ? 'bg-fame-blue text-white border-fame-blue'
-                  : 'border-fame-ecru text-fame-text-muted hover:border-fame-blue'
-              }`}
-            >
-              {l}
-            </button>
-          ))}
+  return (
+    <div
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        fontFamily: "'Roboto Slab', Georgia, serif",
+        color: '#18244c',
+        background: PAGE_BG,
+      }}
+    >
+      {/* ── Secondary toolbar ─────────────────────────────────────── */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 16,
+          padding: '18px 24px 14px',
+          flexShrink: 0,
+          borderBottom: '1px solid rgba(20,40,90,0.1)',
+          flexWrap: 'wrap',
+        }}
+      >
+        {/* Left: kicker + title */}
+        <div>
+          <div
+            style={{
+              fontFamily: "'IBM Plex Mono', monospace",
+              fontSize: 9,
+              letterSpacing: '0.14em',
+              textTransform: 'uppercase',
+              color: '#7e95d6',
+              marginBottom: 3,
+            }}
+          >
+            FAME / Admin
+          </div>
+          <h1
+            style={{
+              fontFamily: "'Roboto Slab', Georgia, serif",
+              fontSize: 20,
+              fontWeight: 600,
+              color: '#15203f',
+              margin: 0,
+            }}
+          >
+            {t('proposalsTitle')}
+          </h1>
         </div>
 
-        {/* Status filter */}
-        <div className="flex gap-1">
-          {STATUSES.map(s => (
-            <button
-              key={s}
-              onClick={() => setStatusFilter(s)}
-              className={`px-3 py-1 text-xs font-mono rounded border transition-colors ${
-                statusFilter === s
-                  ? 'bg-fame-blue text-white border-fame-blue'
-                  : 'border-fame-ecru text-fame-text-muted hover:border-fame-blue'
-              }`}
-            >
-              {s === 'all' ? t('filterAll') : t(`filter${s.charAt(0).toUpperCase()}${s.slice(1)}` as 'filterPending' | 'filterAccepted' | 'filterRejected')}
-            </button>
-          ))}
+        {/* Right: lab + status filters */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: 6 }}>
+            {LABS.map(l => (
+              <button
+                key={l}
+                onClick={() => { setProposals([]); setLab(l) }}
+                style={filterBtnStyle(lab === l)}
+              >
+                {l}
+              </button>
+            ))}
+          </div>
+          <div style={{ width: 1, height: 22, background: 'rgba(20,40,90,0.12)' }} />
+          <div style={{ display: 'flex', gap: 6 }}>
+            {STATUSES.map(s => (
+              <button
+                key={s}
+                onClick={() => setStatusFilter(s)}
+                style={filterBtnStyle(statusFilter === s)}
+              >
+                {s === 'all' ? t('filterAll') : t(`filter${s.charAt(0).toUpperCase()}${s.slice(1)}` as 'filterPending' | 'filterAccepted' | 'filterRejected')}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      {visible.length === 0 && (
-        <p className="text-sm text-fame-text-muted">{t('noProposals')}</p>
-      )}
+      {/* ── Body scroll area ──────────────────────────────────────── */}
+      <div style={{ flex: 1, overflowY: 'auto', padding: '28px 32px 48px' }}>
+        <div style={{ maxWidth: 820, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {visible.length === 0 && (
+            <p
+              style={{
+                fontFamily: "'IBM Plex Mono', monospace",
+                fontSize: 12,
+                color: '#7e95d6',
+                textAlign: 'center',
+                paddingTop: 50,
+              }}
+            >
+              {t('noProposals')}
+            </p>
+          )}
 
-      <div className="flex flex-col gap-4 max-w-3xl">
-        {visible.map(p => (
-          <div key={p.id} className="bg-white rounded-lg shadow-sm p-5 border border-fame-ecru">
-            <div className="flex items-start justify-between gap-3 mb-2">
-              <div>
-                <h3 className="font-serif text-base font-bold text-fame-blue-dark">{p.titre}</h3>
-                <p className="text-[11px] font-mono text-fame-text-muted uppercase tracking-widest mt-0.5">
-                  {p.domaine} · {tdiff(`difficulty.${p.difficulte}`)} · {t('by')} {p.proposant_prenom} {p.proposant_nom}
-                </p>
-              </div>
-              <ProposalStatusBadge status={p.statut} label={ts(p.statut)} />
-            </div>
-
-            <p className="text-sm text-gray-700 mb-3 whitespace-pre-wrap leading-relaxed">{p.description}</p>
-
-            {p.statut === 'pending' && (
-              <div className="flex flex-col gap-2 border-t border-fame-ecru pt-3">
-                <input
-                  type="text"
-                  placeholder={t('commentPlaceholder')}
-                  value={comments[p.id] ?? ''}
-                  onChange={e => setComments(c => ({ ...c, [p.id]: e.target.value }))}
-                  className="w-full border border-fame-ecru rounded px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-fame-blue"
-                />
-                <div className="flex gap-2 flex-wrap">
-                  <button
-                    onClick={() => decide(p.id, 'accepted')}
-                    className="px-3 py-1.5 text-xs font-mono bg-fame-teal text-white rounded hover:opacity-90 transition-opacity"
+          {visible.map(p => (
+            <div
+              key={p.id}
+              style={{
+                background: '#fbf9f3',
+                borderRadius: 11,
+                boxShadow: '0 16px 40px -24px rgba(0,5,30,0.4), inset 0 0 0 1px rgba(0,0,0,0.05)',
+                padding: '18px 20px',
+              }}
+            >
+              {/* Header */}
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 10 }}>
+                <div style={{ minWidth: 0 }}>
+                  <h3
+                    style={{
+                      fontFamily: "'Roboto Slab', Georgia, serif",
+                      fontSize: 16,
+                      fontWeight: 700,
+                      color: '#15203f',
+                      margin: 0,
+                      lineHeight: 1.25,
+                    }}
                   >
-                    {t('accept')}
-                  </button>
-                  <button
-                    onClick={() => decide(p.id, 'rejected')}
-                    className="px-3 py-1.5 text-xs font-mono bg-fame-red text-white rounded hover:opacity-90 transition-opacity"
+                    {p.titre}
+                  </h3>
+                  <p
+                    style={{
+                      fontFamily: "'IBM Plex Mono', monospace",
+                      fontSize: 10,
+                      letterSpacing: '0.12em',
+                      textTransform: 'uppercase',
+                      color: '#6b7596',
+                      margin: '5px 0 0',
+                    }}
                   >
-                    {t('reject')}
-                  </button>
-                  <button
-                    onClick={() => convert(p.id)}
-                    className="px-3 py-1.5 text-xs font-mono border border-fame-blue text-fame-blue rounded hover:bg-fame-blue hover:text-white transition-colors"
-                  >
-                    {t('convert')}
-                  </button>
+                    {p.domaine} · {tdiff(`difficulty.${p.difficulte}`)} · {t('by')} {p.proposant_prenom} {p.proposant_nom}
+                  </p>
                 </div>
+                <ProposalStatusBadge status={p.statut} label={ts(p.statut)} />
               </div>
-            )}
 
-            {p.statut !== 'pending' && p.commentaire_admin && (
-              <p className="text-xs text-fame-text-muted border-t border-fame-ecru pt-2 mt-2 italic">
-                &quot;{p.commentaire_admin}&quot;
-              </p>
-            )}
-
-            {p.statut === 'accepted' && (
-              <button
-                onClick={() => convert(p.id)}
-                className="mt-2 px-3 py-1.5 text-xs font-mono border border-fame-blue text-fame-blue rounded hover:bg-fame-blue hover:text-white transition-colors"
+              <p
+                style={{
+                  fontFamily: "'Roboto Slab', Georgia, serif",
+                  fontSize: 13.5,
+                  color: '#43507a',
+                  lineHeight: 1.6,
+                  whiteSpace: 'pre-wrap',
+                  margin: '0 0 12px',
+                }}
               >
-                {t('convert')}
-              </button>
-            )}
-          </div>
-        ))}
+                {p.description}
+              </p>
+
+              {p.statut === 'pending' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, borderTop: '1px solid rgba(0,0,0,0.06)', paddingTop: 14 }}>
+                  <input
+                    type="text"
+                    placeholder={t('commentPlaceholder')}
+                    value={comments[p.id] ?? ''}
+                    onChange={e => setComments(c => ({ ...c, [p.id]: e.target.value }))}
+                    style={{
+                      width: '100%',
+                      background: '#fff',
+                      border: '1px solid rgba(20,40,90,0.18)',
+                      borderRadius: 9,
+                      padding: '9px 11px',
+                      fontFamily: "'IBM Plex Mono', monospace",
+                      fontSize: 12,
+                      color: '#2a3457',
+                      outline: 'none',
+                      boxSizing: 'border-box',
+                    }}
+                  />
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    <button onClick={() => decide(p.id, 'accepted')} style={actionBtn('accept')}>{t('accept')}</button>
+                    <button onClick={() => decide(p.id, 'rejected')} style={actionBtn('reject')}>{t('reject')}</button>
+                    <button onClick={() => convert(p.id)} style={actionBtn('convert')}>{t('convert')}</button>
+                  </div>
+                </div>
+              )}
+
+              {p.statut !== 'pending' && p.commentaire_admin && (
+                <p
+                  style={{
+                    fontFamily: "'IBM Plex Mono', monospace",
+                    fontSize: 11.5,
+                    color: '#6b7596',
+                    fontStyle: 'italic',
+                    borderTop: '1px solid rgba(0,0,0,0.06)',
+                    paddingTop: 10,
+                    margin: '10px 0 0',
+                  }}
+                >
+                  &quot;{p.commentaire_admin}&quot;
+                </p>
+              )}
+
+              {p.statut === 'accepted' && (
+                <button onClick={() => convert(p.id)} style={{ ...actionBtn('convert'), marginTop: 12 }}>
+                  {t('convert')}
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   )
