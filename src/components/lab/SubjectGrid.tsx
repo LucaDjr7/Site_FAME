@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect, useRef, useCallback } from 'react'
+import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { useRouter, useParams } from 'next/navigation'
 import type { Subject, MemberRef, Lab, SubjectStatus, Difficulty } from '@/types'
@@ -348,7 +349,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
               </button>
             )}
             {/* Propose (visitor) link */}
-            <a
+            <Link
               href={`/${locale}/${lab}/propose`}
               style={{
                 padding: '6px 12px',
@@ -362,7 +363,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
               }}
             >
               {t('proposeVisitor')}
-            </a>
+            </Link>
           </div>
         </div>
 
@@ -468,7 +469,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
             </button>
           </div>
           {/* Right: tasks link */}
-          <a
+          <Link
             href={`/${locale}/${lab}/tasks`}
             style={{
               fontFamily: 'IBM Plex Mono, monospace', fontSize: 10,
@@ -477,7 +478,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
             }}
           >
             {t('tasksLink')}
-          </a>
+          </Link>
         </div>
       </div>
 

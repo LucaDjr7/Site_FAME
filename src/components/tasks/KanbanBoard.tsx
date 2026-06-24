@@ -1,5 +1,6 @@
 'use client'
 import { useState, useMemo } from 'react'
+import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import type { Subject, TaskWithRelations, MemberRef, Lab, TaskStatus, Difficulty } from '@/types'
 import { KanbanColumn } from './KanbanColumn'
@@ -231,12 +232,12 @@ export function KanbanBoard({ lab, locale, subjects, initialTasks, members, isMe
               {t('hideCompleted')}
             </button>
           </div>
-          <a
+          <Link
             href={`/${locale}/${lab}`}
             style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, color: '#5768ac', textDecoration: 'none', letterSpacing: '0.06em' }}
           >
             {t('subjectsLink')}
-          </a>
+          </Link>
         </div>
       </div>
 
