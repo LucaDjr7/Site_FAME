@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { requireAdmin, authErrorResponse } from '@/lib/auth'
+import { sendInvitationEmail } from '@/lib/resend/send-invitation'
 import crypto from 'crypto'
 import type { Lab, Role } from '@/types'
 
@@ -32,7 +33,11 @@ export async function POST(req: NextRequest) {
 
   const base = process.env.NEXT_PUBLIC_APP_URL ?? ''
   const activationUrl = `${base}/en/auth/activate/${token}`
-  // TODO (Task 18): send invitation email via Resend
-  console.log('Activation URL:', activationUrl)
+  try {
+    await sendInvitationEmail({ to: email, prenom, activationUrl, lab: labo })
+  } catch (emailErr) {
+    // Non-fatal: the invitation row exists; the admin can resend / share the link.
+    console.error('Failed to send invitation email:', emailErr)
+  }
   return NextResponse.json({ ok: true, activationUrl }, { status: 201 })
 }
