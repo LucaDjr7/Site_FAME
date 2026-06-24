@@ -258,6 +258,7 @@
     "search": "Search a publication…",
     "noResults": "No publications match the filters.",
     "addPublication": "Add publication",
+    "loading": "Loading…",
     "types": {
       "article": "Article",
       "preprint": "Preprint",
@@ -269,7 +270,29 @@
       "accepted": "Accepted",
       "submitted": "Submitted",
       "preparation": "In preparation"
-    }
+    },
+    "statPublications": "Publications",
+    "statAuthors": "Authors",
+    "countSuffix": "publication(s)",
+    "editMode": "Edit",
+    "editModeOn": "Editing",
+    "addTitle": "Add a publication",
+    "fTitle": "Title",
+    "fAuthors": "Authors",
+    "fAuthorsPlaceholder": "A. Laurent, B. Dupont…",
+    "fYear": "Year",
+    "fJournal": "Journal / Conference",
+    "fLink": "DOI / URL",
+    "cancel": "Cancel",
+    "add": "Add →",
+    "deleted": "Publication deleted",
+    "created": "Publication added",
+    "errorRequired": "Title and authors are required.",
+    "errorGeneric": "Something went wrong.",
+    "confirmDelete": "Delete this publication? This cannot be undone.",
+    "deleteConfirmLabel": "Delete",
+    "deleteLabel": "Delete publication",
+    "linkLabel": "DOI / Link"
   },
   "team": {
     "title": "Team",

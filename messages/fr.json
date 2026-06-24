@@ -258,6 +258,7 @@
     "search": "Rechercher une publication…",
     "noResults": "Aucune publication ne correspond aux filtres.",
     "addPublication": "Ajouter une publication",
+    "loading": "Chargement…",
     "types": {
       "article": "Article",
       "preprint": "Preprint",
@@ -269,7 +270,29 @@
       "accepted": "Accepté",
       "submitted": "Soumis",
       "preparation": "En préparation"
-    }
+    },
+    "statPublications": "Publications",
+    "statAuthors": "Auteurs",
+    "countSuffix": "publication(s)",
+    "editMode": "Éditer",
+    "editModeOn": "Édition",
+    "addTitle": "Ajouter une publication",
+    "fTitle": "Titre",
+    "fAuthors": "Auteurs",
+    "fAuthorsPlaceholder": "A. Laurent, B. Dupont…",
+    "fYear": "Année",
+    "fJournal": "Revue / Conférence",
+    "fLink": "DOI / URL",
+    "cancel": "Annuler",
+    "add": "Ajouter →",
+    "deleted": "Publication supprimée",
+    "created": "Publication ajoutée",
+    "errorRequired": "Le titre et les auteurs sont requis.",
+    "errorGeneric": "Une erreur est survenue.",
+    "confirmDelete": "Supprimer cette publication ? Cette action est irréversible.",
+    "deleteConfirmLabel": "Supprimer",
+    "deleteLabel": "Supprimer la publication",
+    "linkLabel": "DOI / Lien"
   },
   "team": {
     "title": "Trombinoscope",
