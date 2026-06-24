@@ -14,7 +14,7 @@ Dernière mise à jour : 2026-06-24
 > - ✅ **Migrations Supabase prod appliquées** : `001` + `002_subject_difficulte_and_indexes.sql` + `003_proposal_subject_link.sql`. _(Aucune nouvelle migration en Part 3.)_
 > - ⏳ **Variables d'env prod** (Vercel) : `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_APP_URL` (URL prod, sert aux liens d'activation), `DROPBOX_ACCESS_TOKEN` (sinon page Data → 503 dégradé), `RESEND_API_KEY` + `EMAIL_FROM` (sinon emails skip avec warn). Domaine expéditeur à vérifier dans Resend.
 > - ⏳ `npm run seed:admin` à exécuter une fois sur la prod (compte admin `luca.desjardin@dauphine.eu`).
-> - ⏳ **Revue pré-prod** (points à reprendre — voir avec Luca avant déploiement).
+> - ⏳ **Revue pré-prod** — points à reprendre **avant** déploiement : voir [`docs/REVUE_PRE_PROD.md`](./REVUE_PRE_PROD.md) (fidélité graphique aux maquettes MCP, aspect graphique de l'admin non traité, lot polish, déploiement par sous-agent via plan superpowers).
 
 ---
 
