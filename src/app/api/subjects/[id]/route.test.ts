@@ -7,11 +7,13 @@ vi.mock('@/lib/auth', async (orig) => {
   return { ...actual, requireMember: () => requireMember() }
 })
 
+let updateVals: Record<string, unknown> = {}
 let singleResult: { data: unknown; error: unknown } = { data: null, error: null }
 vi.mock('@/lib/supabase/server', () => ({
   createServiceClient: async () => ({
     from: () => ({
-      update: () => ({ eq: () => ({ select: () => ({ single: () => Promise.resolve(singleResult) }) }) }),
+      update: (vals: Record<string, unknown>) => { updateVals = vals; return {
+        eq: () => ({ select: () => ({ single: () => Promise.resolve(singleResult) }) }) } },
     }),
   }),
 }))
@@ -25,6 +27,7 @@ function req(body: unknown) {
 beforeEach(() => {
   requireMember.mockReset()
   requireMember.mockResolvedValue({ session: {}, member: { labo: 'paris', is_admin: false } })
+  updateVals = {}
   singleResult = { data: null, error: null }
 })
 
@@ -40,5 +43,10 @@ describe('PATCH /api/subjects/[id]', () => {
   it('renvoie 200 en cas de succès', async () => {
     singleResult = { data: { id: 'x', titre: 'x' }, error: null }
     expect((await PATCH(req({ titre: 'x' }), { params: Promise.resolve({ id: 'x' }) })).status).toBe(200)
+  })
+  it('whiteliste is_transversal dans l\'update', async () => {
+    singleResult = { data: { id: 'x', is_transversal: true }, error: null }
+    await PATCH(req({ is_transversal: true }), { params: Promise.resolve({ id: 'x' }) })
+    expect(updateVals.is_transversal).toBe(true)
   })
 })

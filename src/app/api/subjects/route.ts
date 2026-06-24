@@ -27,7 +27,8 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json()
   const { labo, titre, kicker = '', statut = 'active', difficulte = 'intermediate',
-    context = '', method = '', results = '', keywords = [], auteurs = [], dimensions } = body
+    context = '', method = '', results = '', keywords = [], auteurs = [], dimensions,
+    is_transversal = false } = body
 
   if (!VALID_LABS.includes(labo) || !titre?.trim()) {
     return NextResponse.json({ error: 'labo and titre required' }, { status: 400 })
@@ -48,7 +49,8 @@ export async function POST(req: NextRequest) {
   const { data, error } = await service
     .from('subjects')
     .insert({ labo, titre, kicker, statut, difficulte, context, method, results, keywords, auteurs,
-      dimensions: dimensions ?? { method: '', data: '', theory: '', writing: '' }, ordre })
+      dimensions: dimensions ?? { method: '', data: '', theory: '', writing: '' }, ordre,
+      is_transversal: !!is_transversal })
     .select()
     .single()
 
