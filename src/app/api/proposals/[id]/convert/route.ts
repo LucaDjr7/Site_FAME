@@ -53,7 +53,14 @@ export async function POST(_req: NextRequest, { params }: Params) {
     traitee_par: member.id,
     subject_id: subject.id,
   }).eq('id', id)
-  if (updErr) console.error('proposal convert: subject created but proposal status update failed', { id, subjectId: subject.id, error: updErr.message })
+
+  if (updErr) {
+    // Compensation : la proposition n'a pas pu être liée au sujet → on supprime
+    // le sujet pour éviter un orphelin (sinon un retry recréerait un doublon).
+    await service.from('subjects').delete().eq('id', subject.id)
+    console.error('proposal convert: rolled back orphan subject after proposal update failure', { id, subjectId: subject.id, error: updErr.message })
+    return NextResponse.json({ error: 'Conversion failed; rolled back' }, { status: 500 })
+  }
 
   return NextResponse.json({ subject_id: subject.id }, { status: 201 })
 }
