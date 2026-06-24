@@ -427,5 +427,33 @@
     "montreal": "Montréal",
     "lab": "Lab",
     "by": "by"
+  },
+  "privacy": {
+    "link": "Privacy policy",
+    "title": "Privacy Policy",
+    "dataCollected": {
+      "h": "Data collected",
+      "p": "The FAME website collects the following data: (1) names of visitors who post a comment or submit a research proposal; (2) email addresses of visitors who wish to receive feedback on their proposal; (3) team member profiles (name, email, role, photo)."
+    },
+    "purpose": {
+      "h": "Purpose",
+      "p": "This data is used solely to: display comments publicly, process research proposals, contact proposers upon decision, and manage member access."
+    },
+    "retention": {
+      "h": "Retention period",
+      "p": "Comments and proposals are retained for 3 years. Member profiles are retained as long as the person is part of the team."
+    },
+    "rights": {
+      "h": "Your rights",
+      "p": "You have the right to access, correct, and delete your data. To exercise these rights, contact us at:"
+    },
+    "cookies": {
+      "h": "Cookies",
+      "p": "This site uses only a httpOnly session cookie, strictly necessary for authentication. No tracking or advertising cookies are set."
+    },
+    "hosting": {
+      "h": "Hosting",
+      "p": "The site is hosted on Vercel. The database is hosted on Supabase (EU West — Ireland region). Data is not transferred outside the European Union."
+    }
   }
 }

@@ -427,5 +427,33 @@
     "montreal": "Montréal",
     "lab": "Laboratoire",
     "by": "par"
+  },
+  "privacy": {
+    "link": "Politique de confidentialité",
+    "title": "Politique de confidentialité",
+    "dataCollected": {
+      "h": "Données collectées",
+      "p": "Le site FAME collecte les données suivantes : (1) noms et prénoms des visiteurs qui laissent un commentaire ou soumettent une proposition de sujet ; (2) adresses email des visiteurs qui souhaitent recevoir un retour sur leur proposition ; (3) profils des membres de l'équipe (nom, email, rôle, photo)."
+    },
+    "purpose": {
+      "h": "Finalité",
+      "p": "Ces données sont utilisées exclusivement pour : afficher les commentaires publiquement, traiter les propositions de sujets, contacter les proposants en cas de décision, gérer les accès membres."
+    },
+    "retention": {
+      "h": "Durée de conservation",
+      "p": "Les commentaires et propositions sont conservés 3 ans. Les profils membres sont conservés tant que la personne fait partie de l'équipe."
+    },
+    "rights": {
+      "h": "Vos droits",
+      "p": "Vous disposez d'un droit d'accès, de rectification et de suppression de vos données. Pour exercer ces droits, contactez-nous à :"
+    },
+    "cookies": {
+      "h": "Cookies",
+      "p": "Ce site utilise uniquement un cookie de session httpOnly, strictement nécessaire au fonctionnement de l'authentification. Aucun cookie de tracking ou publicitaire n'est déposé."
+    },
+    "hosting": {
+      "h": "Hébergement",
+      "p": "Le site est hébergé sur Vercel. La base de données est hébergée sur Supabase (région EU West — Irlande). Les données ne sont pas transférées hors de l'Union Européenne."
+    }
   }
 }
