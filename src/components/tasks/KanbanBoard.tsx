@@ -127,7 +127,7 @@ export function KanbanBoard({ lab, locale, subjects, initialTasks, members, isMe
 
   return (
     <>
-      <div style={{ height: 'calc(100vh - 3rem)', background: '#f4f3ee', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ height: 'calc(100vh - 6rem)', background: '#f4f3ee', display: 'flex', flexDirection: 'column' }}>
         {/* Secondary toolbar */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 24px 12px', flexShrink: 0 }}>
           <div>

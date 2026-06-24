@@ -253,7 +253,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
       `}</style>
 
       <div style={{
-        minHeight: 'calc(100vh - 3rem)',
+        minHeight: 'calc(100vh - 6rem)',
         background: 'linear-gradient(160deg, #15203f 0%, #18244c 40%, #1d2b56 100%)',
         display: 'flex',
         flexDirection: 'column',

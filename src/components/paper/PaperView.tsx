@@ -64,7 +64,7 @@ export function PaperView({
       className="fame-paper-root"
       style={{
         position: 'relative',
-        height: 'calc(100vh - 48px)',
+        height: 'calc(100vh - 96px)',
         overflow: 'hidden',
         background:
           'radial-gradient(110% 80% at 50% 12%, rgba(181,157,135,0.32) 0%, rgba(181,157,135,0) 52%),' +

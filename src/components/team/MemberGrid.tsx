@@ -97,7 +97,7 @@ export function MemberGrid({ lab, currentMemberId, isAdmin }: Props) {
     <>
       <div
         style={{
-          minHeight: 'calc(100vh - 3rem)',
+          minHeight: 'calc(100vh - 6rem)',
           display: 'flex',
           flexDirection: 'column',
           fontFamily: "'Roboto Slab', Georgia, serif",

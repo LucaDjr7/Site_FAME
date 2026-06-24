@@ -19,10 +19,10 @@ export default async function LabLayout({ children, params }: Props) {
   return (
     <>
       <TopBar locale={locale} lab={lab} />
-      <main className="pt-12 min-h-screen bg-fame-sand-bg">
+      <main className="pt-12 bg-fame-sand-bg">
         {children}
       </main>
-      <footer className="text-center py-4 border-t border-fame-ecru bg-fame-sand-bg">
+      <footer className="h-12 flex items-center justify-center border-t border-fame-ecru bg-fame-sand-bg">
         <Link
           href={`/${locale}/privacy`}
           className="text-[10px] font-mono text-fame-text-muted hover:text-fame-blue"
