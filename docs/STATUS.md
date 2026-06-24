@@ -8,11 +8,12 @@ Dernière mise à jour : 2026-06-24
 
 ## Phase active
 
-**Phase 2 — Features TERMINÉE** (Tasks 8–14 ✅, revue finale Opus « Ready to merge », finding NF-1 corrigé). Branche `feat/p2-features` = 15 commits au-dessus de `main`, build/tsc clean. → Prochaine phase : **Part 3 Secondary (Data, Publications, Prompts, Team, Emails, RGPD)**.
+**Phase 3 — Secondary : code TERMINÉ** (Publications, Team, Prompts, Data/Dropbox, Emails, RGPD ✅). Branche `feat/p3-secondary` (partie de `main` à jour post-merge PR #2). `tsc --noEmit`, `lint` (1 warning pré-existant `Avatar.tsx <img>`) et `npm run build` clean. → **Reste uniquement Task 20 — déploiement manuel** (GitHub push + Vercel + Supabase prod + env vars) : gates ci-dessous.
 
-> ⚠️ **Deploy gates avant mise en ligne de la Part 2** — appliquer manuellement dans le Supabase dashboard :
-> - `supabase/migrations/002_subject_difficulte_and_indexes.sql` (colonne `subjects.difficulte` + index `task_subjects(subject_id)`, `dropbox_links(task_id)`)
-> - `supabase/migrations/003_proposal_subject_link.sql` (colonne `proposals.subject_id` — convert idempotent)
+> ⚠️ **Deploy gates avant mise en ligne** — actions manuelles (hors agent) :
+> - **Migrations Supabase prod** (dashboard) : `002_subject_difficulte_and_indexes.sql` (colonne `subjects.difficulte` + index) puis `003_proposal_subject_link.sql` (colonne `proposals.subject_id`). _(001 déjà appliquée ; aucune nouvelle migration en Part 3.)_
+> - **Variables d'env prod** (Vercel) : `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_APP_URL` (URL prod, sert aux liens d'activation), `DROPBOX_ACCESS_TOKEN` (sinon page Data → 503 dégradé), `RESEND_API_KEY` + `EMAIL_FROM` (sinon emails skip avec warn). Domaine expéditeur à vérifier dans Resend.
+> - `npm run seed:admin` à exécuter une fois sur la prod (compte admin `luca.desjardin@dauphine.eu`).
 
 ---
 
@@ -100,12 +101,15 @@ _Voir `docs/superpowers/plans/2026-06-22-fame-website-p2-features.md`_
 
 _Voir `docs/superpowers/plans/2026-06-22-fame-website-p3-secondary.md`_
 
-- [ ] Task 12 — Page Data (Dropbox explorer)
-- [ ] Task 13 — Page Publications
-- [ ] Task 14 — Page Prompts
-- [ ] Task 15 — Page Team (trombinoscope)
-- [ ] Task 16 — Emails transactionnels (invitation, retour proposition)
-- [ ] Task 17 — Politique de confidentialité RGPD
+- [x] Publications — page (groupes par année, sidebar filtres croisés, ajout/suppr membres) ✅ _(`34eeb12`)_
+- [x] Team / Trombinoscope — grille par rôle, invitation admin, self-edit + suppression ✅ _(`a9b6341`)_
+- [x] Prompts — bibliothèque, sidebar par type, édition inline, copie/ajout/suppr (membres) ✅ _(`20c873a`)_
+- [x] Data (Dropbox) — explorateur arborescent, liens dossiers↔sujets/tâches, token server-only (503 dégradé) ✅ _(`f4462ae`)_
+- [x] Emails transactionnels — invitation membre + retour proposition (Resend, dégradé si pas de clé) ✅ _(`f5d53ea`)_
+- [x] RGPD — page politique de confidentialité (EN+FR, i18n) + lien footer ✅ _(`84e5c83`)_
+- [ ] **Task 20 — Déploiement** (manuel : GitHub + Vercel + Supabase prod + env vars — voir Deploy gates)
+
+> **Note numérotation** : Task 13 (Propose) avait déjà été livrée en Part 2 (`Task 14` P2), donc sautée ici. Invariant `members.id === auth.users.id` désormais respecté par `members/invite` (création auth user → `id` réutilisé pour la ligne `members`). La suppression membre supprime explicitement l'utilisateur auth ET la ligne `members` (pas de cascade DB entre `auth.users` et `members`).
 
 ---
 
@@ -134,4 +138,11 @@ _Voir `docs/superpowers/plans/2026-06-22-fame-website-p3-secondary.md`_
 | 2026-06-24 | Proposals : `GET ?ids=` public (tracker visiteur via UUID non devinable) ; `?lab=` membre ; PATCH/convert admin ; `POST` soumission publique |
 | 2026-06-24 | Convert idempotent (NF-1) : ajout `proposals.subject_id` (migration 003) — reconvertir une proposition déjà convertie renvoie le sujet existant au lieu d'en créer un doublon |
 | 2026-06-24 | Part 2 Features terminée (Tasks 8–14) — revue finale Opus « Ready to merge », NF-1 corrigé |
+| 2026-06-24 | Part 3 démarrée sur `feat/p3-secondary` (branchée sur `main` à jour après merge PR #2) — exécution via sous-agents Sonnet, Opus lit les maquettes via MCP + injecte le markup + revue + commit |
+| 2026-06-24 | Publications : maquette riche (statut/keywords/abstract) réconciliée avec le schéma réel (lien unique) → langage visuel de la maquette lié aux champs réels ; stat « Publiées » remplacée par « auteurs distincts » |
+| 2026-06-24 | Team : GET `/api/members` **public** (trombinoscope public) ; PATCH self limité à `email/domaines/photo_url`, admin à tout ; DELETE admin supprime auth user **+** ligne members (pas de cascade DB) ; invite crée auth user + members(`id`=auth id) + invitation compatible route activate |
+| 2026-06-24 | Data : page `/data` membres-only via gate RSC (`getSession`→redirect), **pas** l'ancien probe `/api/members` 401 (GET members désormais public) ; arbre Dropbox chargé paresseusement par niveau ; `DROPBOX_ACCESS_TOKEN` server-only (lib `dropbox` importée seulement côté route) ; 503 dégradé si pas de token |
+| 2026-06-24 | Emails (Resend) : helpers `send-invitation` / `send-proposal-result` non bloquants (try/catch + log) ; si `RESEND_API_KEY` absent → warn + skip (dev propre) ; expéditeur via `EMAIL_FROM` (défaut `noreply@fame-lab.eu`) |
+| 2026-06-24 | RGPD : page sous `[locale]/privacy` (hors TopBar), contenu i18n (namespace `privacy`, EN+FR), lien footer ajouté au layout `[lab]` (avec `Link`, résout un item du lot polish Part 2) |
+| 2026-06-24 | Part 3 code terminé (Publications, Team, Prompts, Data, Emails, RGPD) — `tsc`/`lint`/`build` clean. Reste Task 20 déploiement manuel |
 | 2026-06-24 | **Correctif auth majeur** (`cc133c5`) : `createServiceClient()` était bâti via `@supabase/ssr` **avec les cookies de la requête** → pour un utilisateur connecté, supabase-js mettait l'`Authorization` au JWT du user (cookie), écrasant la clé service-role → PostgREST exécutait les requêtes en rôle `authenticated` **sous RLS**, pas en `service_role`. Conséquence : le lookup `members` de `getSession()` renvoyait 0 ligne (PGRST116) pour tout utilisateur connecté → TopBar affichait « Sign in », `requireMember()`/`requireAdmin()` échouaient → la connexion semblait « déconnecter » sur toute page utilisant `getSession`. Corrigé en construisant le client service-role **sans cookies** via `@supabase/supabase-js` (Authorization = clé service-role, RLS contournée comme prévu). Vérifié : `/en/paris` connecté affiche le membre, `/en/admin/proposals` → 200. |
