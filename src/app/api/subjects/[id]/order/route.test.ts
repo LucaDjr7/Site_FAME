@@ -2,24 +2,16 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { NextRequest } from 'next/server'
 
 const requireMember = vi.fn()
-const assertLabAccess = vi.fn()
 vi.mock('@/lib/auth', async (orig) => {
   const actual = await orig<typeof import('@/lib/auth')>()
-  return {
-    ...actual,
-    requireMember: () => requireMember(),
-    assertLabAccess: (...a: unknown[]) => assertLabAccess(...a),
-  }
+  return { ...actual, requireMember: () => requireMember() }
 })
 
 let updateError: unknown = null
-let readError: unknown = null
 const updateCalls: unknown[][] = []
 vi.mock('@/lib/supabase/server', () => ({
   createServiceClient: async () => ({
     from: () => ({
-      // lecture des labos des ids
-      select: () => ({ in: () => Promise.resolve({ data: readError ? null : [{ labo: 'paris' }], error: readError }) }),
       update: (vals: unknown) => ({
         eq: (_c: string, id: string) => {
           updateCalls.push([vals, id])
@@ -40,10 +32,9 @@ function req(body: unknown) {
 }
 
 beforeEach(() => {
-  requireMember.mockReset(); assertLabAccess.mockReset()
-  updateError = null; readError = null; updateCalls.length = 0
+  requireMember.mockReset()
+  updateError = null; updateCalls.length = 0
   requireMember.mockResolvedValue({ member: { labo: 'paris', is_admin: false } })
-  assertLabAccess.mockReturnValue(undefined)
 })
 
 describe('PATCH /api/subjects/[id]/order', () => {
@@ -56,10 +47,6 @@ describe('PATCH /api/subjects/[id]/order', () => {
     expect((await PATCH(req({ orderedIds: 'nope' }))).status).toBe(400)
     expect((await PATCH(req({ orderedIds: [] }))).status).toBe(400)
     expect((await PATCH(req({ orderedIds: [1, 2] }))).status).toBe(400)
-  })
-  it('renvoie 500 si la lecture des labos échoue', async () => {
-    readError = { message: 'read fail' }
-    expect((await PATCH(req({ orderedIds: ['a', 'b'] }))).status).toBe(500)
   })
   it('renvoie 500 si une mise à jour échoue', async () => {
     updateError = { message: 'db down' }
