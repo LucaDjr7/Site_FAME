@@ -4,21 +4,30 @@ import { requireMember, authErrorResponse } from '@/lib/auth'
 
 type Params = { params: Promise<{ id: string }> }
 
-// POST: toggle — if already assigned, remove; otherwise add
+// POST: toggle d'assignation. S'appuie sur la PK (task_id, member_id) de
+// task_assignees pour l'atomicité : une violation d'unicité (23505) lors de
+// l'insert signifie « déjà réclamé » (course gagnée par une autre requête).
 export async function POST(req: NextRequest, { params }: Params) {
   let member
   try { ({ member } = await requireMember()) } catch (e) { return authErrorResponse(e) }
+
   const { id: task_id } = await params
   const service = await createServiceClient()
 
+  // Lecture avec maybeSingle (pas de throw si absent)
   const { data: existing } = await service.from('task_assignees')
-    .select('*').eq('task_id', task_id).eq('member_id', member.id).single()
+    .select('*').eq('task_id', task_id).eq('member_id', member.id).maybeSingle()
 
   if (existing) {
-    await service.from('task_assignees').delete().eq('task_id', task_id).eq('member_id', member.id)
+    const { error } = await service.from('task_assignees')
+      .delete().eq('task_id', task_id).eq('member_id', member.id)
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
     return NextResponse.json({ claimed: false })
-  } else {
-    await service.from('task_assignees').insert({ task_id, member_id: member.id })
-    return NextResponse.json({ claimed: true })
   }
+
+  const { error } = await service.from('task_assignees').insert({ task_id, member_id: member.id })
+  if (error && error.code !== '23505') {
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  }
+  return NextResponse.json({ claimed: true })
 }

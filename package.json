@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test": "vitest run",
     "seed:admin": "npx tsx src/scripts/seed-admin.ts"
   },
   "dependencies": {
@@ -29,12 +30,14 @@
     "@types/react-dom": "^19",
     "@types/topojson-client": "^3.1.5",
     "@types/ws": "^8.18.1",
+    "@vitest/coverage-v8": "^3.2.6",
     "dotenv": "^17.4.2",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
     "tailwindcss": "^4",
     "tsx": "^4.22.4",
     "typescript": "^5",
+    "vitest": "^3.2.6",
     "ws": "^8.21.0"
   }
 }

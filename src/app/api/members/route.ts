@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
+import { requireMember, authErrorResponse } from '@/lib/auth'
 import type { Lab } from '@/types'
 
 const LABS: Lab[] = ['paris', 'montreal']
 
 export async function GET(req: NextRequest) {
+  try { await requireMember() } catch (e) { return authErrorResponse(e) }
   const lab = req.nextUrl.searchParams.get('lab') as Lab
   if (!LABS.includes(lab)) return NextResponse.json({ error: 'Invalid lab' }, { status: 400 })
   const service = await createServiceClient()
