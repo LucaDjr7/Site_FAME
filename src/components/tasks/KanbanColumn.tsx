@@ -39,7 +39,7 @@ export function KanbanColumn({
       </div>
 
       {/* cards */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, overflowY: 'auto', paddingBottom: 8 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, overflowY: 'auto', padding: 8 }}>
         {tasks.map(tk => (
           <TaskCard
             key={tk.id}
