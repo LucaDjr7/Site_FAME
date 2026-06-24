@@ -89,7 +89,9 @@
       "network": "Network error",
       "server": "Error",
       "deleteFailed": "Delete failed"
-    }
+    },
+    "transversalLabel": "Transversal — visible in both labs",
+    "transversalBadge": "Transversal"
   },
   "paper": {
     "back": "Click around the paper to go back",
@@ -375,7 +377,9 @@
     "bodyPlaceholder": "Prompt text — use variables like {{name}} for fields to fill in.",
     "confirmDelete": "Delete this prompt? This is permanent.",
     "loading": "Loading…",
-    "errorGeneric": "Something went wrong."
+    "errorGeneric": "Something went wrong.",
+    "transversalLabel": "Transversal — visible in both labs",
+    "transversalBadge": "Transversal"
   },
   "admin": {
     "proposals": "Proposals",
