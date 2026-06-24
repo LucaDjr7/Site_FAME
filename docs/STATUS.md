@@ -8,12 +8,13 @@ Dernière mise à jour : 2026-06-24
 
 ## Phase active
 
-**Phase 3 — Secondary : code TERMINÉ** (Publications, Team, Prompts, Data/Dropbox, Emails, RGPD ✅). Branche `feat/p3-secondary` (partie de `main` à jour post-merge PR #2). `tsc --noEmit`, `lint` (1 warning pré-existant `Avatar.tsx <img>`) et `npm run build` clean. → **Reste uniquement Task 20 — déploiement manuel** (GitHub push + Vercel + Supabase prod + env vars) : gates ci-dessous.
+**Phase 3 — Secondary : code TERMINÉ** (Publications, Team, Prompts, Data/Dropbox, Emails, RGPD ✅). Branche `feat/p3-secondary` poussée → **PR #3** ouverte sur `main` (https://github.com/LucaDjr7/Site_FAME/pull/3). `tsc --noEmit`, `lint` (1 warning pré-existant `Avatar.tsx <img>`) et `npm run build` clean. → **Phase de revue pré-prod en cours** (reprise de certains points avant déploiement), puis Task 20 — déploiement.
 
-> ⚠️ **Deploy gates avant mise en ligne** — actions manuelles (hors agent) :
-> - **Migrations Supabase prod** (dashboard) : `002_subject_difficulte_and_indexes.sql` (colonne `subjects.difficulte` + index) puis `003_proposal_subject_link.sql` (colonne `proposals.subject_id`). _(001 déjà appliquée ; aucune nouvelle migration en Part 3.)_
-> - **Variables d'env prod** (Vercel) : `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_APP_URL` (URL prod, sert aux liens d'activation), `DROPBOX_ACCESS_TOKEN` (sinon page Data → 503 dégradé), `RESEND_API_KEY` + `EMAIL_FROM` (sinon emails skip avec warn). Domaine expéditeur à vérifier dans Resend.
-> - `npm run seed:admin` à exécuter une fois sur la prod (compte admin `luca.desjardin@dauphine.eu`).
+> ⚠️ **Deploy gates avant mise en ligne** — état :
+> - ✅ **Migrations Supabase prod appliquées** : `001` + `002_subject_difficulte_and_indexes.sql` + `003_proposal_subject_link.sql`. _(Aucune nouvelle migration en Part 3.)_
+> - ⏳ **Variables d'env prod** (Vercel) : `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_APP_URL` (URL prod, sert aux liens d'activation), `DROPBOX_ACCESS_TOKEN` (sinon page Data → 503 dégradé), `RESEND_API_KEY` + `EMAIL_FROM` (sinon emails skip avec warn). Domaine expéditeur à vérifier dans Resend.
+> - ⏳ `npm run seed:admin` à exécuter une fois sur la prod (compte admin `luca.desjardin@dauphine.eu`).
+> - ⏳ **Revue pré-prod** (points à reprendre — voir avec Luca avant déploiement).
 
 ---
 
@@ -145,4 +146,5 @@ _Voir `docs/superpowers/plans/2026-06-22-fame-website-p3-secondary.md`_
 | 2026-06-24 | Emails (Resend) : helpers `send-invitation` / `send-proposal-result` non bloquants (try/catch + log) ; si `RESEND_API_KEY` absent → warn + skip (dev propre) ; expéditeur via `EMAIL_FROM` (défaut `noreply@fame-lab.eu`) |
 | 2026-06-24 | RGPD : page sous `[locale]/privacy` (hors TopBar), contenu i18n (namespace `privacy`, EN+FR), lien footer ajouté au layout `[lab]` (avec `Link`, résout un item du lot polish Part 2) |
 | 2026-06-24 | Part 3 code terminé (Publications, Team, Prompts, Data, Emails, RGPD) — `tsc`/`lint`/`build` clean. Reste Task 20 déploiement manuel |
+| 2026-06-24 | Part 3 poussée → **PR #3** sur `main`. Migrations prod `001/002/003` **appliquées** (deploy gate migrations levé). Reste : env vars Vercel + `seed:admin` prod + revue pré-prod |
 | 2026-06-24 | **Correctif auth majeur** (`cc133c5`) : `createServiceClient()` était bâti via `@supabase/ssr` **avec les cookies de la requête** → pour un utilisateur connecté, supabase-js mettait l'`Authorization` au JWT du user (cookie), écrasant la clé service-role → PostgREST exécutait les requêtes en rôle `authenticated` **sous RLS**, pas en `service_role`. Conséquence : le lookup `members` de `getSession()` renvoyait 0 ligne (PGRST116) pour tout utilisateur connecté → TopBar affichait « Sign in », `requireMember()`/`requireAdmin()` échouaient → la connexion semblait « déconnecter » sur toute page utilisant `getSession`. Corrigé en construisant le client service-role **sans cookies** via `@supabase/supabase-js` (Authorization = clé service-role, RLS contournée comme prévu). Vérifié : `/en/paris` connecté affiche le membre, `/en/admin/proposals` → 200. |
