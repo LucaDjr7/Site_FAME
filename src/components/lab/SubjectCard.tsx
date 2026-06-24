@@ -41,6 +41,7 @@ type Props = {
   isDragging?: boolean
   statusLabel: string
   doneLabel: string
+  transversalLabel?: string
   onDelete?: () => void
   onCardClick?: () => void
 }
@@ -52,6 +53,7 @@ export function SubjectCard({
   isDragging = false,
   statusLabel,
   doneLabel,
+  transversalLabel,
   onDelete,
   onCardClick,
 }: Props) {
@@ -140,6 +142,25 @@ export function SubjectCard({
             }}>
               {subject.kicker || statusLabel}
             </span>
+            {subject.is_transversal && transversalLabel && (
+              <span style={{
+                marginLeft: 'auto',
+                fontFamily: 'IBM Plex Mono, monospace',
+                fontSize: 6.5,
+                fontWeight: 600,
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+                color: '#1e9b7e',
+                background: 'rgba(30,155,126,0.12)',
+                border: '1px solid rgba(30,155,126,0.3)',
+                borderRadius: 10,
+                padding: '1px 5px',
+                lineHeight: 1.4,
+                whiteSpace: 'nowrap',
+              }}>
+                {transversalLabel}
+              </span>
+            )}
           </div>
 
           {/* Title */}
