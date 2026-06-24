@@ -16,13 +16,15 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   try { await requireMember() } catch (e) { return authErrorResponse(e) }
   const { id } = await params
   const body = await req.json()
-  const allowed = ['titre', 'kicker', 'statut', 'difficulte', 'context', 'method', 'results', 'keywords', 'auteurs', 'dimensions']
+  const allowed = ['titre', 'kicker', 'statut', 'difficulte', 'context', 'method', 'results', 'keywords', 'auteurs', 'dimensions', 'is_transversal']
   const updates: Record<string, unknown> = {}
   for (const key of allowed) {
     if (key in body) updates[key] = body[key]
   }
+  if ('is_transversal' in updates) updates.is_transversal = !!updates.is_transversal
   const service = await createServiceClient()
   const { data, error } = await service.from('subjects').update(updates).eq('id', id).select().single()
+  if (error?.code === 'PGRST116') return NextResponse.json({ error: 'Not found' }, { status: 404 })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json(data)
 }

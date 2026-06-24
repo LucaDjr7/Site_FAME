@@ -51,6 +51,7 @@ export function AddSubjectModal({ open, lab, members, onClose, onAdded }: Props)
   const [statut, setStatut] = useState<SubjectStatus>('active')
   const [difficulte, setDifficulte] = useState<Difficulty>('intermediate')
   const [context, setContext] = useState('')
+  const [isTransversal, setIsTransversal] = useState(false)
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
@@ -61,6 +62,7 @@ export function AddSubjectModal({ open, lab, members, onClose, onAdded }: Props)
     setStatut('active')
     setDifficulte('intermediate')
     setContext('')
+    setIsTransversal(false)
     setError('')
   }
 
@@ -86,6 +88,7 @@ export function AddSubjectModal({ open, lab, members, onClose, onAdded }: Props)
         difficulte,
         context: context.trim(),
         auteurs: responsable ? [responsable] : [],
+        is_transversal: isTransversal,
       }
       const res = await fetch('/api/subjects', {
         method: 'POST',
@@ -224,6 +227,18 @@ export function AddSubjectModal({ open, lab, members, onClose, onAdded }: Props)
             rows={3}
             style={{ ...inputStyle, resize: 'vertical', fontFamily: 'IBM Plex Mono, monospace' }}
           />
+        </div>
+
+        {/* Transversal */}
+        <div style={{ marginBottom: 18 }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', ...labelStyle, textTransform: 'none', letterSpacing: 0, fontSize: 11 }}>
+            <input
+              type="checkbox"
+              checked={isTransversal}
+              onChange={e => setIsTransversal(e.target.checked)}
+            />
+            {t('transversalLabel')}
+          </label>
         </div>
 
         {/* Error */}

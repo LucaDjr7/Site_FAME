@@ -89,7 +89,9 @@
       "network": "Network error",
       "server": "Error",
       "deleteFailed": "Delete failed"
-    }
+    },
+    "transversalLabel": "Transversal — visible in both labs",
+    "transversalBadge": "Transversal"
   },
   "paper": {
     "back": "Click around the paper to go back",
@@ -206,7 +208,8 @@
     "firstName": "First name",
     "lastName": "Last name",
     "post": "Post",
-    "delete": "Delete"
+    "delete": "Delete",
+    "error": "Action failed. Please try again."
   },
   "propose": {
     "title": "Propose a subject",
@@ -374,7 +377,9 @@
     "bodyPlaceholder": "Prompt text — use variables like {{name}} for fields to fill in.",
     "confirmDelete": "Delete this prompt? This is permanent.",
     "loading": "Loading…",
-    "errorGeneric": "Something went wrong."
+    "errorGeneric": "Something went wrong.",
+    "transversalLabel": "Transversal — visible in both labs",
+    "transversalBadge": "Transversal"
   },
   "admin": {
     "proposals": "Proposals",

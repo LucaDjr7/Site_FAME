@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { Avatar } from '@/components/ui/Avatar'
+import { useToast } from '@/components/ui/Toast'
 import type { Comment } from '@/types'
 
 type Props = {
@@ -15,6 +16,7 @@ type Props = {
 export function CommentsPanel({ subjectId, isMember, initialComments, open, onToggleOpen }: Props) {
   const t = useTranslations('paper')
   const tc = useTranslations('comments')
+  const { addToast } = useToast()
   const [comments, setComments] = useState<Comment[]>(initialComments)
   const [draft, setDraft] = useState('')
   const [firstName, setFirstName] = useState('')
@@ -26,22 +28,31 @@ export function CommentsPanel({ subjectId, isMember, initialComments, open, onTo
     if (!text || posting) return
     if (!isMember && (!firstName.trim() || !lastName.trim())) return
     setPosting(true)
-    const res = await fetch('/api/comments', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sujet_id: subjectId, texte: text, visitor_prenom: firstName, visitor_nom: lastName }),
-    })
-    setPosting(false)
-    if (res.ok) {
+    try {
+      const res = await fetch('/api/comments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sujet_id: subjectId, texte: text, visitor_prenom: firstName, visitor_nom: lastName }),
+      })
+      if (!res.ok) throw new Error('post failed')
       const created: Comment = await res.json()
       setComments(prev => [...prev, created])
       setDraft('')
+    } catch {
+      addToast(tc('error'), 'error')
+    } finally {
+      setPosting(false)
     }
   }
 
   async function remove(id: string) {
-    const res = await fetch(`/api/comments/${id}`, { method: 'DELETE' })
-    if (res.ok) setComments(prev => prev.filter(c => c.id !== id))
+    try {
+      const res = await fetch(`/api/comments/${id}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('delete failed')
+      setComments(prev => prev.filter(c => c.id !== id))
+    } catch {
+      addToast(tc('error'), 'error')
+    }
   }
 
   return (

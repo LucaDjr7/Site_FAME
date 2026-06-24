@@ -32,6 +32,7 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
   const [editTitre, setEditTitre] = useState(prompt.titre)
   const [editTypeCible, setEditTypeCible] = useState<PromptTarget>(prompt.type_cible)
   const [editTexte, setEditTexte] = useState(prompt.texte)
+  const [editTransversal, setEditTransversal] = useState(prompt.is_transversal)
 
   const meta = TARGET_META[prompt.type_cible]
 
@@ -39,6 +40,7 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
     setEditTitre(prompt.titre)
     setEditTypeCible(prompt.type_cible)
     setEditTexte(prompt.texte)
+    setEditTransversal(prompt.is_transversal)
     setEditing(true)
   }
 
@@ -57,7 +59,7 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
       const res = await fetch(`/api/prompts/${prompt.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ titre: editTitre, type_cible: editTypeCible, texte: editTexte }),
+        body: JSON.stringify({ titre: editTitre, type_cible: editTypeCible, texte: editTexte, is_transversal: editTransversal }),
       })
       if (res.ok) {
         const updated: Prompt = await res.json()
@@ -71,8 +73,8 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
 
   async function handleDelete() {
     setConfirmOpen(false)
-    await fetch(`/api/prompts/${prompt.id}`, { method: 'DELETE' })
-    onDeleted(prompt.id)
+    const res = await fetch(`/api/prompts/${prompt.id}`, { method: 'DELETE' })
+    if (res.ok) onDeleted(prompt.id)
   }
 
   const cardStyle: React.CSSProperties = {
@@ -164,6 +166,10 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
                 boxSizing: 'border-box',
               }}
             />
+            <label style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12, cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: '#5a6486' }}>
+              <input type="checkbox" checked={editTransversal} onChange={e => setEditTransversal(e.target.checked)} />
+              {t('transversalLabel')}
+            </label>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 12 }}>
               <button
                 onClick={cancelEdit}
@@ -259,6 +265,24 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
               />
               {t(`types.${meta.i18nKey}` as Parameters<typeof t>[0])}
             </div>
+            {prompt.is_transversal && (
+              <span style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                marginLeft: 7,
+                fontFamily: "'IBM Plex Mono', monospace",
+                fontSize: 9.5,
+                textTransform: 'uppercase',
+                letterSpacing: '0.1em',
+                color: '#1e9b7e',
+                background: 'rgba(30,155,126,0.08)',
+                border: '1px solid rgba(30,155,126,0.2)',
+                borderRadius: 20,
+                padding: '4px 9px',
+              }}>
+                {t('transversalBadge')}
+              </span>
+            )}
             <h3
               style={{
                 margin: '9px 0 0',

@@ -92,6 +92,7 @@ export function PublicationList({ lab, isMember }: Props) {
       setLoading(true)
       try {
         const r = await fetch(`/api/publications?lab=${lab}`)
+        if (!r.ok) throw new Error('fetch failed')
         const data: Publication[] = await r.json()
         if (!cancelled) setPublications(data)
       } catch {

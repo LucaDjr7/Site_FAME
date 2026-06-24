@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import * as d3 from 'd3'
@@ -269,7 +269,9 @@ export function Globe() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const size = typeof window !== 'undefined' ? computeSize() : 400
+  const [size, setSize] = useState(400)
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { setSize(computeSize()) }, [])
 
   const pauseRotation  = () => { stateRef.current.paused = true  }
   const resumeRotation = () => { stateRef.current.paused = false }

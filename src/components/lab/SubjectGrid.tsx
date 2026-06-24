@@ -416,6 +416,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
                       isDragging={draggingId === s.id}
                       statusLabel={t(`status.${s.statut}`)}
                       doneLabel={t('done')}
+                      transversalLabel={t('transversalBadge')}
                       onDelete={canEdit && editMode ? () => setPendingDeleteId(s.id) : undefined}
                       onCardClick={!editMode ? () => openPaper(s.id) : undefined}
                     />

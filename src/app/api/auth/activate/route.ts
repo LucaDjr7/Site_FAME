@@ -32,11 +32,17 @@ export async function POST(req: NextRequest) {
   }
 
   // Mark member as activated
-  await service.from('members').update({ activated_at: new Date().toISOString() })
+  const { error: actErr } = await service.from('members')
+    .update({ activated_at: new Date().toISOString() })
     .eq('id', invitation.member_id)
+  if (actErr) {
+    console.error('Activation member update failed:', actErr)
+    return NextResponse.json({ error: 'Activation failed' }, { status: 500 })
+  }
 
-  // Delete the invitation
-  await service.from('invitations').delete().eq('id', invitation.id)
+  // Delete the invitation (non-blocking cleanup)
+  const { error: delErr } = await service.from('invitations').delete().eq('id', invitation.id)
+  if (delErr) console.error('Invitation cleanup failed:', delErr)
 
   return NextResponse.json({ ok: true })
 }

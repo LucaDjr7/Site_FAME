@@ -89,7 +89,9 @@
       "network": "Erreur réseau",
       "server": "Erreur",
       "deleteFailed": "Échec de la suppression"
-    }
+    },
+    "transversalLabel": "Transversal — visible dans les deux labos",
+    "transversalBadge": "Transversal"
   },
   "paper": {
     "back": "Cliquez autour du papier pour revenir aux sujets",
@@ -206,7 +208,8 @@
     "firstName": "Prénom",
     "lastName": "Nom",
     "post": "Publier",
-    "delete": "Supprimer"
+    "delete": "Supprimer",
+    "error": "Action échouée. Réessayez."
   },
   "propose": {
     "title": "Proposer un sujet",
@@ -374,7 +377,9 @@
     "bodyPlaceholder": "Texte du prompt — utilisez des variables comme {{nom}} pour les champs à compléter.",
     "confirmDelete": "Supprimer ce prompt ? Cette action est définitive.",
     "loading": "Chargement…",
-    "errorGeneric": "Une erreur est survenue."
+    "errorGeneric": "Une erreur est survenue.",
+    "transversalLabel": "Transversal — visible dans les deux labos",
+    "transversalBadge": "Transversal"
   },
   "admin": {
     "proposals": "Propositions",

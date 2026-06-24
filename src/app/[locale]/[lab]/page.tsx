@@ -14,7 +14,7 @@ export default async function LabPage({ params }: Props) {
 
   const service = await createServiceClient()
   const [{ data: subjects }, { data: members }, session] = await Promise.all([
-    service.from('subjects').select('*').eq('labo', lab).order('ordre', { ascending: true }),
+    service.from('subjects').select('*').or(`labo.eq.${lab},is_transversal.eq.true`).order('ordre', { ascending: true }),
     service.from('members').select('id,prenom,nom,photo_url').eq('labo', lab),
     getSession(),
   ])
