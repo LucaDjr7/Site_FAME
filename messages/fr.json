@@ -19,15 +19,80 @@
     "enteringLab": "Ouverture du laboratoire de {city}…"
   },
   "lab": {
-    "searchPlaceholder": "Rechercher un sujet…",
-    "addSubject": "Ajouter un sujet",
+    "title": {
+      "paris": "FAME Paris",
+      "montreal": "FAME Montréal"
+    },
+    "kicker": "FAME / Laboratoire",
+    "search": "Rechercher un sujet…",
     "editMode": "Mode édition",
-    "editModeActive": "Édition activée",
+    "editModeOn": "Édition activée",
+    "addSubject": "Ajouter un sujet",
+    "proposeVisitor": "Proposer un sujet",
     "filters": "Filtres",
     "reset": "Réinitialiser",
+    "status": {
+      "active": "Actif",
+      "on-hold": "En attente",
+      "done": "Terminé"
+    },
+    "difficulty": {
+      "easy": "Facile",
+      "intermediate": "Intermédiaire",
+      "advanced": "Avancé"
+    },
+    "section": {
+      "status": "Statut",
+      "difficulty": "Difficulté",
+      "people": "Personnes",
+      "date": "Date d'existence"
+    },
+    "date": {
+      "2025": "2025",
+      "2024": "2024",
+      "older": "Avant 2024"
+    },
+    "count": "{n} sujet(s)",
+    "sortRecent": "Récents",
+    "sortOldest": "Anciens",
+    "tasksLink": "Tâches →",
+    "empty": "Aucun sujet ne correspond aux filtres.",
+    "modal": {
+      "newSubjectKicker": "NOUVEAU SUJET",
+      "title": "Ajouter un sujet",
+      "fTitle": "Titre",
+      "fDomain": "Domaine",
+      "fResponsable": "Responsable",
+      "none": "Aucun",
+      "fStatus": "Statut",
+      "fDifficulty": "Difficulté",
+      "fSummary": "Résumé",
+      "error": "Le titre et le domaine sont requis.",
+      "cancel": "Annuler",
+      "submit": "Ajouter le sujet →"
+    },
+    "delete": {
+      "kicker": "SUPPRIMER LE SUJET",
+      "title": "Supprimer le sujet",
+      "body": "Supprimer « {title} » ? Cette action est irréversible.",
+      "cancel": "Annuler",
+      "confirm": "Supprimer"
+    },
+    "toast": {
+      "added": "Sujet ajouté",
+      "deleted": "Sujet supprimé"
+    },
+    "searchPlaceholder": "Rechercher un sujet…",
+    "addSubject2": "Ajouter un sujet",
+    "editModeActive": "Édition activée",
     "sortDate": "Date",
     "tasks": "tâches",
-    "done": "TERMINÉ"
+    "done": "TERMINÉ",
+    "error": {
+      "network": "Erreur réseau",
+      "server": "Erreur",
+      "deleteFailed": "Échec de la suppression"
+    }
   },
   "paper": {
     "back": "Cliquez autour du papier pour revenir aux sujets",
@@ -41,11 +106,19 @@
     "openDropbox": "Ouvrir le dossier de données",
     "dropboxSub": "Dropbox · données liées au sujet",
     "progress": "Avancement du sujet",
-    "saved": "Enregistré"
+    "saved": "Enregistré",
+    "responsible": "Responsable",
+    "keywords": "Mots-clés",
+    "noTasks": "Aucune tâche liée",
+    "noComments": "Aucun commentaire",
+    "figurePlaceholder": "Emplacement figure — déposer le graphique ici",
+    "tasksLink": "Tâches →",
+    "prev": "Sujet précédent",
+    "next": "Sujet suivant"
   },
   "tasks": {
-    "claimTask": "Claim task",
-    "unclaimTask": "Unclaim",
+    "claimTask": "Se positionner",
+    "unclaimTask": "Me retirer",
     "subtasks": "Sous-tâches",
     "assignees": "Assignés",
     "history": "Historique",
@@ -60,7 +133,57 @@
       "done": "Fait"
     },
     "hideCompleted": "Masquer les tâches terminées",
-    "addTask": "Ajouter une tâche"
+    "addTask": "Ajouter une tâche",
+    "kicker": "FAME / Tâches",
+    "pageTitle": "Tâches",
+    "search": "Rechercher des tâches…",
+    "editMode": "Éditer",
+    "editModeOn": "Édition",
+    "filters": "Filtres",
+    "reset": "Réinitialiser",
+    "section": {
+      "subject": "Sujet",
+      "status": "Statut",
+      "difficulty": "Difficulté",
+      "people": "Personnes",
+      "date": "Date",
+      "description": "Description"
+    },
+    "date": { "2025": "2025", "2024": "2024", "older": "Plus ancien" },
+    "progress": "Avancement",
+    "positioning": "Positionnement",
+    "noAssignees": "Personne pour l'instant",
+    "countTasks": "{n} tâche(s)",
+    "countOpen": "{n} à pourvoir",
+    "subjectsLink": "Sujets →",
+    "empty": "Aucun sujet pour l'instant. Ajoutez des sujets depuis la page du laboratoire.",
+    "modal": {
+      "title": "Nouvelle tâche",
+      "fTitle": "Titre",
+      "fStatus": "Statut",
+      "fDifficulty": "Difficulté",
+      "fAssignee": "Assigné à",
+      "fDescription": "Description",
+      "fSubtasks": "Sous-tâches",
+      "addSubtask": "Ajouter",
+      "subtaskPlaceholder": "Libellé de la sous-tâche",
+      "none": "Aucun",
+      "cancel": "Annuler",
+      "submit": "Créer",
+      "error": "Le titre et le sujet sont obligatoires."
+    },
+    "delete": {
+      "body": "Supprimer cette tâche ? Cette action est irréversible.",
+      "confirm": "Supprimer",
+      "cancel": "Annuler"
+    },
+    "toast": {
+      "added": "Tâche ajoutée",
+      "deleted": "Tâche supprimée",
+      "claimed": "Vous êtes positionné·e sur cette tâche",
+      "unclaimed": "Vous vous êtes retiré·e de cette tâche",
+      "error": "Une erreur est survenue"
+    }
   },
   "auth": {
     "signIn": "Connexion",
@@ -88,22 +211,42 @@
     "visitorPrompt": "Entrez votre nom pour commenter"
   },
   "propose": {
-    "title": "Proposer un sujet de recherche",
-    "subtitle": "Décrivez une piste que l'équipe FAME pourrait explorer.",
-    "subjectTitle": "Titre du sujet",
-    "domain": "Domaine",
-    "difficulty": "Difficulté estimée",
-    "description": "Description",
-    "yourName": "Votre nom",
-    "email": "Email",
-    "send": "Envoyer à l'équipe",
-    "required": "* Champs requis",
-    "yourProposals": "Vos propositions",
-    "pendingReview": "En cours d'examen par l'équipe.",
-    "gdpr": "Les informations que vous fournissez sont utilisées uniquement pour traiter votre proposition. Vous pouvez demander leur suppression en nous contactant.",
-    "success": "Proposition envoyée à l'équipe",
-    "errorRequired": "Merci de remplir le titre, le domaine, la description et votre nom.",
-    "errorEmail": "Merci d'indiquer une adresse e-mail valide."
+    "title": "Proposer un sujet",
+    "kicker": "FAME / Proposer",
+    "intro": "Tout le monde peut soumettre un sujet de recherche. Les membres examinent les propositions.",
+    "fieldTitle": "Titre",
+    "fieldDomain": "Domaine",
+    "fieldDifficulty": "Difficulté",
+    "fieldDescription": "Description",
+    "fieldFirstName": "Prénom",
+    "fieldLastName": "Nom",
+    "fieldEmail": "Email (facultatif — pour recevoir une réponse)",
+    "submit": "Soumettre la proposition",
+    "submitting": "Envoi en cours…",
+    "successTitle": "Proposition soumise",
+    "successBody": "Merci. Un membre va examiner votre suggestion.",
+    "submitAnother": "Soumettre une autre proposition",
+    "validationRequired": "Merci de remplir tous les champs obligatoires.",
+    "errorGeneric": "Une erreur est survenue. Veuillez réessayer.",
+    "trackerTitle": "Vos propositions",
+    "trackerEmpty": "Vous n'avez encore soumis aucune proposition.",
+    "memberTrackerTitle": "Propositions du labo",
+    "rgpd": "Les noms et l'adresse email que vous fournissez sont collectés uniquement pour traiter votre proposition et vous répondre. Vous pouvez demander leur suppression à tout moment via le contact indiqué dans notre politique de confidentialité."
+  },
+  "domains": {
+    "macroeconomics": "Macroéconomie",
+    "microeconomics": "Microéconomie",
+    "finance": "Finance",
+    "econometrics": "Économétrie",
+    "behavioral": "Économie comportementale",
+    "political-economy": "Économie politique",
+    "history": "Histoire économique",
+    "other": "Autre"
+  },
+  "proposalStatus": {
+    "pending": "En attente",
+    "accepted": "Acceptée",
+    "rejected": "Refusée"
   },
   "publications": {
     "title": "Publications",
@@ -177,14 +320,27 @@
   },
   "admin": {
     "proposals": "Propositions",
+    "proposalsTitle": "Propositions",
     "status": {
       "pending": "En attente",
       "accepted": "Acceptée",
       "rejected": "Refusée"
     },
+    "filterAll": "Toutes",
+    "filterPending": "En attente",
+    "filterAccepted": "Acceptées",
+    "filterRejected": "Refusées",
+    "filterLab": "Labo",
     "accept": "Accepter",
     "reject": "Refuser",
-    "convertToSubject": "Convertir en sujet"
+    "convert": "Convertir en sujet",
+    "convertToSubject": "Convertir en sujet",
+    "commentPlaceholder": "Commentaire facultatif pour le proposant…",
+    "by": "par",
+    "noProposals": "Aucune proposition ne correspond au filtre.",
+    "decisionSaved": "Décision enregistrée",
+    "converted": "Converti en sujet",
+    "actionError": "Échec de l'action"
   },
   "common": {
     "loading": "Chargement…",

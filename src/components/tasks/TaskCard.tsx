@@ -1,0 +1,96 @@
+'use client'
+import { useTranslations } from 'next-intl'
+import { Avatar } from '@/components/ui/Avatar'
+import { DiffDots, DIFF_LEVEL, TASK_STATUS_COLOR, STATUS_KEY, ProgressBar, taskProgress } from './kanban-shared'
+import type { TaskWithRelations } from '@/types'
+
+type Props = {
+  task: TaskWithRelations
+  isMember: boolean
+  currentMemberId: string | null
+  editMode: boolean
+  onOpen: (task: TaskWithRelations) => void
+  onClaim: (taskId: string) => void
+  onDelete: (taskId: string) => void
+}
+
+export function TaskCard({ task, isMember, currentMemberId, editMode, onOpen, onClaim, onDelete }: Props) {
+  const t = useTranslations('tasks')
+  const pct = taskProgress(task)
+  const claimedByMe = !!currentMemberId && task.assignees.some(a => a.id === currentMemberId)
+
+  return (
+    <div
+      onClick={() => onOpen(task)}
+      style={{
+        background: '#fff',
+        borderRadius: 7,
+        padding: '10px 11px',
+        cursor: 'pointer',
+        boxShadow: '0 1px 2px rgba(20,32,63,0.06)',
+        border: '1px solid #eceadf',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 7,
+        position: 'relative',
+      }}
+    >
+      {/* status + difficulty */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+          <span style={{ width: 7, height: 7, borderRadius: '50%', background: TASK_STATUS_COLOR[task.statut] }} />
+          <span style={{
+            fontFamily: 'IBM Plex Mono, monospace', fontSize: 8, letterSpacing: '0.1em',
+            textTransform: 'uppercase', color: '#7e95d6',
+          }}>
+            {t(`status.${STATUS_KEY[task.statut]}`)}
+          </span>
+        </span>
+        <DiffDots level={DIFF_LEVEL[task.difficulte]} />
+      </div>
+
+      {/* title */}
+      <p style={{ fontFamily: 'Roboto Slab, Georgia, serif', fontSize: 13, fontWeight: 600, color: '#15203f', margin: 0, lineHeight: 1.25 }}>
+        {task.titre}
+      </p>
+
+      {/* progress */}
+      <ProgressBar pct={pct} height={3} />
+
+      {/* assignees + claim */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 6 }}>
+        <span style={{ display: 'flex', gap: 3 }}>
+          {task.assignees.map(a => (
+            <Avatar key={a.id} name={`${a.prenom} ${a.nom}`} photoUrl={a.photo_url} size={20} />
+          ))}
+        </span>
+        {isMember && !claimedByMe && (
+          <button
+            onClick={e => { e.stopPropagation(); onClaim(task.id) }}
+            style={{
+              fontFamily: 'IBM Plex Mono, monospace', fontSize: 9, color: '#2f4486',
+              background: 'none', border: 'none', cursor: 'pointer', letterSpacing: '0.04em', whiteSpace: 'nowrap',
+            }}
+          >
+            ＋ {t('claimTask')}
+          </button>
+        )}
+      </div>
+
+      {/* delete (edit mode, member) */}
+      {isMember && editMode && (
+        <button
+          onClick={e => { e.stopPropagation(); onDelete(task.id) }}
+          aria-label={t('delete.confirm')}
+          style={{
+            position: 'absolute', top: -7, right: -7, width: 18, height: 18, borderRadius: '50%',
+            border: 'none', background: '#c0473b', color: '#fff', fontSize: 11, lineHeight: '18px',
+            cursor: 'pointer', padding: 0,
+          }}
+        >
+          ×
+        </button>
+      )}
+    </div>
+  )
+}

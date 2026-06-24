@@ -1,7 +1,38 @@
 # FAME Website — Implementation Plan (Part 2: Core Features)
 
 > Continuation of Part 1. Same global constraints apply.
-> Tasks 8–14: Lab grid · Paper detail · Tasks kanban · Propose/Admin · Publications · Team · Prompts
+> Tasks 8–14: Subjects API · Lab grid · Tasks/Comments API · Paper detail · Tasks kanban · Proposals API · Propose + Admin
+
+---
+
+## Global Constraints (apply to EVERY task 8–14)
+
+These corrections override the inline code wherever they conflict with it. The
+inline code blocks are starting points; these rules are binding.
+
+1. **`await` the Supabase clients.** `createServiceClient()` and `createClient()`
+   in `src/lib/supabase/server.ts` are **async** (they `await cookies()`). Every
+   call site must `const service = await createServiceClient()` — never
+   `const service = createServiceClient()` (that leaves a Promise and
+   `service.from(...)` throws). This applies to every API route below.
+2. **`requireMember()` returns `{ session, member }`** and `requireAdmin()`
+   returns `{ session, member }` — both objects, both throw `AuthError` on
+   failure. Destructure accordingly; `authErrorResponse(e)` formats the error.
+3. **Build/run path is `FAME_Website` (underscore).** All build/commit commands:
+   `cd "/home/lucad/Documents/Projets Programmation/FAME_Website"`. The space-form
+   `FAME Website` in some inline snippets is wrong.
+4. **i18n strict — zero hardcoded UI strings.** Every visible string goes through
+   `useTranslations()` (client) / `getTranslations()` (server). Add each key to
+   **both** `messages/en.json` and `messages/fr.json`. The inline code blocks
+   contain English literals (`STATUS_LABELS`, `"Loading…"`, `"Delete this
+   subject?…"`, placeholders) for readability — route them through i18n instead.
+5. **No Rules-of-Hooks violations.** Never call `useTranslations('x')(...)` inline
+   inside JSX. Hoist every hook call to the top of the component body.
+6. **Lab validation.** Validate `lab` ∈ `['paris','montreal']` in every route
+   handler and page; invalid lab → 404 (pages) / 400 (API).
+7. **Deferred indexes** (carry-forward from Part 1 review): before any data-load
+   task, ensure `dropbox_links(task_id)` and `task_subjects(subject_id)` indexes
+   exist (add to a follow-up migration when the consuming feature lands).
 
 ---
 
@@ -1706,6 +1737,683 @@ export default async function TasksPage({ params }: Props) {
 cd "/home/lucad/Documents/Projets Programmation/FAME Website" && npm run build 2>&1 | tail -10
 git add src/components/tasks/ src/app/[locale]/[lab]/tasks/
 git commit -m "feat: tasks kanban — columns per subject, task cards, task modal, claim/unclaim"
+```
+
+---
+
+## Task 13: Proposals API Routes
+
+**Files:**
+- Create: `src/lib/constants.ts`
+- Create: `src/app/api/proposals/route.ts`
+- Create: `src/app/api/proposals/[id]/route.ts`
+- Create: `src/app/api/proposals/[id]/convert/route.ts`
+
+**Interfaces:**
+- Consumes: `requireMember()`, `requireAdmin()`, `authErrorResponse()` from `src/lib/auth.ts` · `createServiceClient()` from `src/lib/supabase/server.ts` · `Proposal`, `Lab`, `Difficulty` from `src/types`
+- Produces:
+  - `POST /api/proposals` (public) → `Proposal` (201)
+  - `GET /api/proposals?ids=a,b,c` (public) → `Proposal[]` · `GET /api/proposals?lab=paris` (member) → `Proposal[]`
+  - `PATCH /api/proposals/[id]` (admin) → `Proposal`
+  - `POST /api/proposals/[id]/convert` (admin) → `{ subject_id: string }`
+  - `PROPOSAL_DOMAINS: readonly string[]` from `src/lib/constants.ts`
+
+- [ ] **Step 1: Write `src/lib/constants.ts`**
+
+```typescript
+// Research domains offered in the Propose form's dropdown.
+// Stored verbatim as `proposals.domaine` (text). Labels are translated in the
+// UI via the `domains.*` i18n namespace; these are the stable string values.
+export const PROPOSAL_DOMAINS = [
+  'macroeconomics',
+  'microeconomics',
+  'finance',
+  'econometrics',
+  'behavioral',
+  'political-economy',
+  'history',
+  'other',
+] as const
+
+export type ProposalDomain = (typeof PROPOSAL_DOMAINS)[number]
+```
+
+- [ ] **Step 2: Write `src/app/api/proposals/route.ts`**
+
+```typescript
+import { NextRequest, NextResponse } from 'next/server'
+import { createServiceClient } from '@/lib/supabase/server'
+import { requireMember, authErrorResponse } from '@/lib/auth'
+import { PROPOSAL_DOMAINS } from '@/lib/constants'
+import type { Lab, Difficulty } from '@/types'
+
+const VALID_LABS: Lab[] = ['paris', 'montreal']
+const VALID_DIFF: Difficulty[] = ['easy', 'intermediate', 'advanced']
+
+// GET ?ids=a,b,c  → public, returns just those proposals (visitor tracker)
+// GET ?lab=paris  → member only, returns all proposals for the lab
+export async function GET(req: NextRequest) {
+  const idsParam = req.nextUrl.searchParams.get('ids')
+  const lab = req.nextUrl.searchParams.get('lab') as Lab | null
+  const service = await createServiceClient()
+
+  if (idsParam) {
+    const ids = idsParam.split(',').map(s => s.trim()).filter(Boolean).slice(0, 100)
+    if (ids.length === 0) return NextResponse.json([])
+    const { data, error } = await service
+      .from('proposals').select('*').in('id', ids).order('created_at', { ascending: false })
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json(data)
+  }
+
+  if (lab) {
+    if (!VALID_LABS.includes(lab)) return NextResponse.json({ error: 'Invalid lab' }, { status: 400 })
+    try { await requireMember() } catch (e) { return authErrorResponse(e) }
+    const { data, error } = await service
+      .from('proposals').select('*').eq('labo', lab).order('created_at', { ascending: false })
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json(data)
+  }
+
+  return NextResponse.json({ error: 'ids or lab required' }, { status: 400 })
+}
+
+// POST → public submission
+export async function POST(req: NextRequest) {
+  const body = await req.json()
+  const { labo, titre, domaine, difficulte, description,
+    proposant_prenom, proposant_nom, proposant_email = null } = body
+
+  if (!VALID_LABS.includes(labo)) return NextResponse.json({ error: 'Invalid lab' }, { status: 400 })
+  if (!titre?.trim() || !description?.trim() || !proposant_prenom?.trim() || !proposant_nom?.trim()) {
+    return NextResponse.json({ error: 'titre, description, prenom, nom required' }, { status: 400 })
+  }
+  if (!PROPOSAL_DOMAINS.includes(domaine)) return NextResponse.json({ error: 'Invalid domaine' }, { status: 400 })
+  if (!VALID_DIFF.includes(difficulte)) return NextResponse.json({ error: 'Invalid difficulte' }, { status: 400 })
+
+  const service = await createServiceClient()
+  const { data, error } = await service.from('proposals').insert({
+    labo, titre: titre.trim(), domaine, difficulte, description: description.trim(),
+    proposant_prenom: proposant_prenom.trim(), proposant_nom: proposant_nom.trim(),
+    proposant_email: proposant_email?.trim() || null, statut: 'pending',
+  }).select().single()
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  return NextResponse.json(data, { status: 201 })
+}
+```
+
+- [ ] **Step 3: Write `src/app/api/proposals/[id]/route.ts`**
+
+```typescript
+import { NextRequest, NextResponse } from 'next/server'
+import { createServiceClient } from '@/lib/supabase/server'
+import { requireAdmin, authErrorResponse } from '@/lib/auth'
+
+type Params = { params: Promise<{ id: string }> }
+
+// PATCH (admin) — accept/reject with optional admin comment.
+// Body: { statut: 'accepted' | 'rejected', commentaire_admin?: string }
+export async function PATCH(req: NextRequest, { params }: Params) {
+  let member
+  try { ({ member } = await requireAdmin()) } catch (e) { return authErrorResponse(e) }
+  const { id } = await params
+  const { statut, commentaire_admin = null } = await req.json()
+
+  if (statut !== 'accepted' && statut !== 'rejected') {
+    return NextResponse.json({ error: 'statut must be accepted or rejected' }, { status: 400 })
+  }
+
+  const service = await createServiceClient()
+  const { data, error } = await service.from('proposals').update({
+    statut, commentaire_admin, traitee_at: new Date().toISOString(), traitee_par: member.id,
+  }).eq('id', id).select().single()
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  // TODO Part 3 (Task 16): if data.proposant_email, send decision feedback email via Resend.
+  return NextResponse.json(data)
+}
+```
+
+- [ ] **Step 4: Write `src/app/api/proposals/[id]/convert/route.ts`**
+
+```typescript
+import { NextRequest, NextResponse } from 'next/server'
+import { createServiceClient } from '@/lib/supabase/server'
+import { requireAdmin, authErrorResponse } from '@/lib/auth'
+
+type Params = { params: Promise<{ id: string }> }
+
+// POST (admin) — convert an accepted/pending proposal into a subject.
+// Creates a subject pre-filled from the proposal, marks the proposal accepted,
+// returns { subject_id } so the client can redirect to the new paper.
+export async function POST(_req: NextRequest, { params }: Params) {
+  let member
+  try { ({ member } = await requireAdmin()) } catch (e) { return authErrorResponse(e) }
+  const { id } = await params
+  const service = await createServiceClient()
+
+  const { data: proposal, error: pErr } = await service
+    .from('proposals').select('*').eq('id', id).single()
+  if (pErr || !proposal) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  if (proposal.statut === 'rejected') {
+    return NextResponse.json({ error: 'Cannot convert a rejected proposal' }, { status: 409 })
+  }
+
+  // Next ordre for the lab
+  const { data: last } = await service
+    .from('subjects').select('ordre').eq('labo', proposal.labo)
+    .order('ordre', { ascending: false }).limit(1).maybeSingle()
+  const ordre = (last?.ordre ?? -1) + 1
+
+  const { data: subject, error: sErr } = await service.from('subjects').insert({
+    labo: proposal.labo,
+    titre: proposal.titre,
+    kicker: '',
+    statut: 'active',
+    context: proposal.description,
+    method: '',
+    results: '',
+    keywords: [proposal.domaine],
+    auteurs: [],
+    dimensions: { method: '', data: '', theory: '', writing: '' },
+    ordre,
+  }).select().single()
+  if (sErr) return NextResponse.json({ error: sErr.message }, { status: 500 })
+
+  await service.from('proposals').update({
+    statut: 'accepted',
+    traitee_at: new Date().toISOString(),
+    traitee_par: member.id,
+  }).eq('id', id)
+
+  return NextResponse.json({ subject_id: subject.id }, { status: 201 })
+}
+```
+
+- [ ] **Step 5: Commit**
+
+```bash
+cd "/home/lucad/Documents/Projets Programmation/FAME_Website"
+git add src/lib/constants.ts src/app/api/proposals/
+git commit -m "feat: proposals API routes — public submit, member/visitor read, admin decision + convert"
+```
+
+---
+
+## Task 14: Propose Page + Admin Dashboard
+
+**Files:**
+- Create: `src/components/propose/ProposeForm.tsx`
+- Create: `src/components/propose/ProposalTracker.tsx`
+- Create: `src/components/propose/ProposePageClient.tsx`
+- Modify: `src/app/[locale]/[lab]/propose/page.tsx`
+- Create: `src/components/admin/AdminProposalsClient.tsx`
+- Modify: `src/app/[locale]/admin/proposals/page.tsx`
+- Modify: `messages/en.json`, `messages/fr.json`
+
+**Interfaces:**
+- Consumes: Task 13 routes · `PROPOSAL_DOMAINS` · `Proposal`, `Lab`, `Member` types · `StatusBadge`, `Modal`, `useToast` UI components · `getSession`/`requireAdmin` from `src/lib/auth.ts`
+- Produces: public page `/{locale}/{lab}/propose` · admin page `/{locale}/admin/proposals`
+
+> **Mockup:** read `FAME Proposer.dc.html` via the Design MCP and follow its layout/tokens for the Propose page. The admin dashboard has no mockup — build it functional and on-brand with FAME tokens (`bg-fame-*`, `font-mono`, `StatusBadge`).
+> **i18n:** every string below uses a translation key — add all keys to `messages/en.json` AND `messages/fr.json` under the `propose`, `admin`, and `domains` namespaces.
+
+- [ ] **Step 1: Add i18n keys to `messages/en.json` and `messages/fr.json`**
+
+Add (EN shown — provide the FR equivalents in `fr.json`):
+
+```json
+{
+  "propose": {
+    "title": "Propose a subject",
+    "intro": "Anyone can suggest a research subject. Members review submissions.",
+    "fieldTitle": "Title",
+    "fieldDomain": "Domain",
+    "fieldDifficulty": "Difficulty",
+    "fieldDescription": "Description",
+    "fieldFirstName": "First name",
+    "fieldLastName": "Last name",
+    "fieldEmail": "Email (optional — to receive a reply)",
+    "submit": "Submit proposal",
+    "submitting": "Submitting…",
+    "successTitle": "Proposal submitted",
+    "successBody": "Thank you. A member will review your suggestion.",
+    "submitAnother": "Submit another",
+    "validationRequired": "Please fill in all required fields.",
+    "errorGeneric": "Something went wrong. Please try again.",
+    "trackerTitle": "Your proposals",
+    "trackerEmpty": "You haven't submitted any proposals yet.",
+    "memberTrackerTitle": "Lab proposals",
+    "rgpd": "The names and email you provide are collected solely to process and reply to your proposal. You may request deletion at any time via the contact in our privacy policy."
+  },
+  "domains": {
+    "macroeconomics": "Macroeconomics",
+    "microeconomics": "Microeconomics",
+    "finance": "Finance",
+    "econometrics": "Econometrics",
+    "behavioral": "Behavioral economics",
+    "political-economy": "Political economy",
+    "history": "Economic history",
+    "other": "Other"
+  },
+  "admin": {
+    "proposalsTitle": "Proposals",
+    "filterAll": "All",
+    "filterPending": "Pending",
+    "filterAccepted": "Accepted",
+    "filterRejected": "Rejected",
+    "filterLab": "Lab",
+    "accept": "Accept",
+    "reject": "Reject",
+    "convert": "Convert to subject",
+    "commentPlaceholder": "Optional comment for the proposer…",
+    "by": "by",
+    "noProposals": "No proposals match the current filter.",
+    "decisionSaved": "Decision saved",
+    "converted": "Converted to subject",
+    "actionError": "Action failed"
+  }
+}
+```
+
+Difficulty labels reuse the existing `tasks.difficulty.{easy,intermediate,advanced}` keys from Task 12.
+
+- [ ] **Step 2: Write `src/components/propose/ProposeForm.tsx`**
+
+```typescript
+'use client'
+import { useState } from 'react'
+import { useTranslations } from 'next-intl'
+import { PROPOSAL_DOMAINS } from '@/lib/constants'
+import type { Lab, Difficulty } from '@/types'
+
+const DIFFS: Difficulty[] = ['easy', 'intermediate', 'advanced']
+
+type Props = { lab: Lab; onSubmitted: (id: string) => void }
+
+export function ProposeForm({ lab, onSubmitted }: Props) {
+  const t = useTranslations('propose')
+  const td = useTranslations('domains')
+  const tdiff = useTranslations('tasks')
+  const [titre, setTitre] = useState('')
+  const [domaine, setDomaine] = useState<string>(PROPOSAL_DOMAINS[0])
+  const [difficulte, setDifficulte] = useState<Difficulty>('easy')
+  const [description, setDescription] = useState('')
+  const [prenom, setPrenom] = useState('')
+  const [nom, setNom] = useState('')
+  const [email, setEmail] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (!titre.trim() || !description.trim() || !prenom.trim() || !nom.trim()) {
+      setError(t('validationRequired')); return
+    }
+    setSaving(true); setError('')
+    const res = await fetch('/api/proposals', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        labo: lab, titre, domaine, difficulte, description,
+        proposant_prenom: prenom, proposant_nom: nom, proposant_email: email,
+      }),
+    })
+    setSaving(false)
+    if (!res.ok) { setError(t('errorGeneric')); return }
+    const created = await res.json()
+    onSubmitted(created.id)
+  }
+
+  const inputCls = 'w-full border border-fame-ecru rounded px-3 py-2 text-sm focus:outline-none focus:border-fame-blue'
+
+  return (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-xl">
+      {error && <p className="text-fame-red text-sm">{error}</p>}
+
+      <label className="flex flex-col gap-1">
+        <span className="text-xs font-mono uppercase tracking-widest text-fame-text-muted">{t('fieldTitle')} *</span>
+        <input type="text" value={titre} onChange={e => setTitre(e.target.value)} required className={inputCls} />
+      </label>
+
+      <div className="flex gap-4">
+        <label className="flex-1 flex flex-col gap-1">
+          <span className="text-xs font-mono uppercase tracking-widest text-fame-text-muted">{t('fieldDomain')}</span>
+          <select value={domaine} onChange={e => setDomaine(e.target.value)} className={inputCls}>
+            {PROPOSAL_DOMAINS.map(d => <option key={d} value={d}>{td(d)}</option>)}
+          </select>
+        </label>
+        <label className="flex-1 flex flex-col gap-1">
+          <span className="text-xs font-mono uppercase tracking-widest text-fame-text-muted">{t('fieldDifficulty')}</span>
+          <select value={difficulte} onChange={e => setDifficulte(e.target.value as Difficulty)} className={inputCls}>
+            {DIFFS.map(d => <option key={d} value={d}>{tdiff(`difficulty.${d}`)}</option>)}
+          </select>
+        </label>
+      </div>
+
+      <label className="flex flex-col gap-1">
+        <span className="text-xs font-mono uppercase tracking-widest text-fame-text-muted">{t('fieldDescription')} *</span>
+        <textarea value={description} onChange={e => setDescription(e.target.value)} required rows={5} className={`${inputCls} resize-none`} />
+      </label>
+
+      <div className="flex gap-4">
+        <label className="flex-1 flex flex-col gap-1">
+          <span className="text-xs font-mono uppercase tracking-widest text-fame-text-muted">{t('fieldFirstName')} *</span>
+          <input type="text" value={prenom} onChange={e => setPrenom(e.target.value)} required className={inputCls} />
+        </label>
+        <label className="flex-1 flex flex-col gap-1">
+          <span className="text-xs font-mono uppercase tracking-widest text-fame-text-muted">{t('fieldLastName')} *</span>
+          <input type="text" value={nom} onChange={e => setNom(e.target.value)} required className={inputCls} />
+        </label>
+      </div>
+
+      <label className="flex flex-col gap-1">
+        <span className="text-xs font-mono uppercase tracking-widest text-fame-text-muted">{t('fieldEmail')}</span>
+        <input type="email" value={email} onChange={e => setEmail(e.target.value)} className={inputCls} />
+      </label>
+
+      <p className="text-[11px] text-fame-text-muted leading-relaxed">{t('rgpd')}</p>
+
+      <button type="submit" disabled={saving} className="self-start px-5 py-2 text-sm font-mono bg-fame-blue text-white rounded hover:bg-fame-blue-dark disabled:opacity-50">
+        {saving ? t('submitting') : t('submit')}
+      </button>
+    </form>
+  )
+}
+```
+
+- [ ] **Step 3: Write `src/components/propose/ProposalTracker.tsx`**
+
+```typescript
+'use client'
+import { useEffect, useState, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
+import { ProposalStatusBadge } from '@/components/ui/StatusBadge'
+import type { Proposal, Lab, Member } from '@/types'
+
+const STORAGE_KEY = 'fame_proposals'
+
+export function readStoredProposalIds(): string[] {
+  if (typeof window === 'undefined') return []
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]') } catch { return [] }
+}
+
+export function storeProposalId(id: string) {
+  const ids = readStoredProposalIds()
+  if (!ids.includes(id)) localStorage.setItem(STORAGE_KEY, JSON.stringify([id, ...ids]))
+}
+
+type Props = { lab: Lab; member: Member | null; refreshKey: number }
+
+export function ProposalTracker({ lab, member, refreshKey }: Props) {
+  const t = useTranslations('propose')
+  const [proposals, setProposals] = useState<Proposal[]>([])
+
+  const load = useCallback(async () => {
+    if (member) {
+      const res = await fetch(`/api/proposals?lab=${lab}`)
+      if (res.ok) setProposals(await res.json())
+      return
+    }
+    const ids = readStoredProposalIds()
+    if (ids.length === 0) { setProposals([]); return }
+    const res = await fetch(`/api/proposals?ids=${ids.join(',')}`)
+    if (res.ok) setProposals(await res.json())
+  }, [lab, member])
+
+  useEffect(() => { load() }, [load, refreshKey])
+
+  return (
+    <aside className="w-72 shrink-0 border-l border-fame-ecru bg-fame-sand p-4 overflow-y-auto">
+      <h2 className="text-xs font-mono uppercase tracking-widest text-fame-text-muted mb-3">
+        {member ? t('memberTrackerTitle') : t('trackerTitle')}
+      </h2>
+      {proposals.length === 0 && <p className="text-xs text-fame-text-muted">{t('trackerEmpty')}</p>}
+      <div className="flex flex-col gap-2">
+        {proposals.map(p => (
+          <div key={p.id} className="bg-white rounded p-3 shadow-sm">
+            <div className="flex items-start justify-between gap-2 mb-1">
+              <span className="text-xs font-semibold text-fame-blue-dark leading-tight">{p.titre}</span>
+              <ProposalStatusBadge status={p.statut} />
+            </div>
+            <span className="text-[10px] text-fame-text-muted">{new Date(p.created_at).toLocaleDateString()}</span>
+          </div>
+        ))}
+      </div>
+    </aside>
+  )
+}
+```
+
+> **Note:** `ProposalStatusBadge` may not exist yet in `src/components/ui/StatusBadge.tsx`. If absent, add it there following the existing `SubjectStatusBadge`/`TaskStatusBadge` pattern: map `pending → fame-gold`, `accepted → fame-teal`, `rejected → fame-red`, label via the `admin.filter*` keys or a dedicated `proposalStatus.*` namespace (add to both locales).
+
+- [ ] **Step 4: Write `src/components/propose/ProposePageClient.tsx`**
+
+```typescript
+'use client'
+import { useState } from 'react'
+import { useTranslations } from 'next-intl'
+import { ProposeForm } from './ProposeForm'
+import { ProposalTracker, storeProposalId } from './ProposalTracker'
+import type { Lab, Member } from '@/types'
+
+type Props = { lab: Lab; member: Member | null }
+
+export function ProposePageClient({ lab, member }: Props) {
+  const t = useTranslations('propose')
+  const [submittedId, setSubmittedId] = useState<string | null>(null)
+  const [refreshKey, setRefreshKey] = useState(0)
+
+  function handleSubmitted(id: string) {
+    storeProposalId(id)
+    setSubmittedId(id)
+    setRefreshKey(k => k + 1)
+  }
+
+  return (
+    <div className="flex h-[calc(100vh-48px)]">
+      <main className="flex-1 overflow-y-auto p-8">
+        <h1 className="font-serif text-2xl font-bold text-fame-blue-dark mb-1">{t('title')}</h1>
+        <p className="text-sm text-fame-text-muted mb-6">{t('intro')}</p>
+
+        {submittedId ? (
+          <div className="max-w-xl bg-white rounded shadow-sm p-6 flex flex-col gap-3">
+            <h2 className="font-serif text-lg font-bold text-fame-teal">{t('successTitle')}</h2>
+            <p className="text-sm text-gray-700">{t('successBody')}</p>
+            <button onClick={() => setSubmittedId(null)} className="self-start px-4 py-2 text-sm font-mono border border-fame-ecru rounded hover:bg-fame-ecru">
+              {t('submitAnother')}
+            </button>
+          </div>
+        ) : (
+          <ProposeForm lab={lab} onSubmitted={handleSubmitted} />
+        )}
+      </main>
+
+      <ProposalTracker lab={lab} member={member} refreshKey={refreshKey} />
+    </div>
+  )
+}
+```
+
+- [ ] **Step 5: Replace `src/app/[locale]/[lab]/propose/page.tsx`**
+
+```typescript
+import { notFound } from 'next/navigation'
+import { getSession } from '@/lib/auth'
+import { ProposePageClient } from '@/components/propose/ProposePageClient'
+import type { Lab } from '@/types'
+
+const LABS: Lab[] = ['paris', 'montreal']
+type Props = { params: Promise<{ locale: string; lab: string }> }
+
+export default async function ProposePage({ params }: Props) {
+  const { lab } = await params
+  if (!LABS.includes(lab as Lab)) notFound()
+  const session = await getSession()
+  return <ProposePageClient lab={lab as Lab} member={session?.member ?? null} />
+}
+```
+
+- [ ] **Step 6: Write `src/components/admin/AdminProposalsClient.tsx`**
+
+```typescript
+'use client'
+import { useEffect, useState, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
+import { useLocale, useTranslations } from 'next-intl'
+import { ProposalStatusBadge } from '@/components/ui/StatusBadge'
+import { useToast } from '@/components/ui/Toast'
+import type { Proposal, Lab, ProposalStatus } from '@/types'
+
+const LABS: Lab[] = ['paris', 'montreal']
+const STATUSES: (ProposalStatus | 'all')[] = ['all', 'pending', 'accepted', 'rejected']
+
+export function AdminProposalsClient() {
+  const t = useTranslations('admin')
+  const tdiff = useTranslations('tasks')
+  const locale = useLocale()
+  const router = useRouter()
+  const { addToast } = useToast()
+  const [proposals, setProposals] = useState<Proposal[]>([])
+  const [lab, setLab] = useState<Lab>('paris')
+  const [statusFilter, setStatusFilter] = useState<ProposalStatus | 'all'>('pending')
+  const [comments, setComments] = useState<Record<string, string>>({})
+
+  const load = useCallback(async () => {
+    const res = await fetch(`/api/proposals?lab=${lab}`)
+    if (res.ok) setProposals(await res.json())
+  }, [lab])
+
+  useEffect(() => { load() }, [load])
+
+  async function decide(id: string, statut: 'accepted' | 'rejected') {
+    const res = await fetch(`/api/proposals/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ statut, commentaire_admin: comments[id] || null }),
+    })
+    if (res.ok) { addToast(t('decisionSaved'), 'success'); load() }
+    else addToast(t('actionError'), 'error')
+  }
+
+  async function convert(id: string) {
+    const res = await fetch(`/api/proposals/${id}/convert`, { method: 'POST' })
+    if (res.ok) {
+      const { subject_id } = await res.json()
+      addToast(t('converted'), 'success')
+      router.push(`/${locale}/${lab}/paper/${subject_id}`)
+    } else addToast(t('actionError'), 'error')
+  }
+
+  const visible = proposals.filter(p => statusFilter === 'all' || p.statut === statusFilter)
+
+  return (
+    <div className="p-8">
+      <h1 className="font-serif text-2xl font-bold text-fame-blue-dark mb-6">{t('proposalsTitle')}</h1>
+
+      <div className="flex gap-6 mb-6">
+        <div className="flex gap-1">
+          {LABS.map(l => (
+            <button key={l} onClick={() => setLab(l)}
+              className={`px-3 py-1 text-xs font-mono rounded border capitalize ${lab === l ? 'bg-fame-blue text-white border-fame-blue' : 'border-fame-ecru text-fame-text-muted hover:border-fame-blue'}`}>
+              {l}
+            </button>
+          ))}
+        </div>
+        <div className="flex gap-1">
+          {STATUSES.map(s => (
+            <button key={s} onClick={() => setStatusFilter(s)}
+              className={`px-3 py-1 text-xs font-mono rounded border ${statusFilter === s ? 'bg-fame-blue text-white border-fame-blue' : 'border-fame-ecru text-fame-text-muted hover:border-fame-blue'}`}>
+              {s === 'all' ? t('filterAll') : t(`filter${s.charAt(0).toUpperCase()}${s.slice(1)}`)}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {visible.length === 0 && <p className="text-sm text-fame-text-muted">{t('noProposals')}</p>}
+
+      <div className="flex flex-col gap-4 max-w-3xl">
+        {visible.map(p => (
+          <div key={p.id} className="bg-white rounded shadow-sm p-5">
+            <div className="flex items-start justify-between gap-3 mb-2">
+              <div>
+                <h3 className="font-serif text-base font-bold text-fame-blue-dark">{p.titre}</h3>
+                <p className="text-[11px] font-mono text-fame-text-muted uppercase tracking-widest">
+                  {p.domaine} · {tdiff(`difficulty.${p.difficulte}`)} · {t('by')} {p.proposant_prenom} {p.proposant_nom}
+                </p>
+              </div>
+              <ProposalStatusBadge status={p.statut} />
+            </div>
+            <p className="text-sm text-gray-700 mb-3 whitespace-pre-wrap">{p.description}</p>
+
+            {p.statut === 'pending' && (
+              <div className="flex flex-col gap-2 border-t border-fame-ecru pt-3">
+                <input
+                  type="text" placeholder={t('commentPlaceholder')}
+                  value={comments[p.id] ?? ''}
+                  onChange={e => setComments(c => ({ ...c, [p.id]: e.target.value }))}
+                  className="w-full border border-fame-ecru rounded px-3 py-1.5 text-xs"
+                />
+                <div className="flex gap-2">
+                  <button onClick={() => decide(p.id, 'accepted')} className="px-3 py-1.5 text-xs font-mono bg-fame-teal text-white rounded hover:bg-fame-teal/90">{t('accept')}</button>
+                  <button onClick={() => decide(p.id, 'rejected')} className="px-3 py-1.5 text-xs font-mono bg-fame-red text-white rounded hover:bg-fame-red/90">{t('reject')}</button>
+                  <button onClick={() => convert(p.id)} className="px-3 py-1.5 text-xs font-mono border border-fame-blue text-fame-blue rounded hover:bg-fame-blue hover:text-white">{t('convert')}</button>
+                </div>
+              </div>
+            )}
+            {p.statut !== 'pending' && p.commentaire_admin && (
+              <p className="text-xs text-fame-text-muted border-t border-fame-ecru pt-2">“{p.commentaire_admin}”</p>
+            )}
+            {p.statut === 'accepted' && (
+              <button onClick={() => convert(p.id)} className="mt-2 px-3 py-1.5 text-xs font-mono border border-fame-blue text-fame-blue rounded hover:bg-fame-blue hover:text-white">{t('convert')}</button>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+```
+
+- [ ] **Step 7: Replace `src/app/[locale]/admin/proposals/page.tsx`**
+
+```typescript
+import { redirect } from 'next/navigation'
+import { requireAdmin, AuthError } from '@/lib/auth'
+import { AdminProposalsClient } from '@/components/admin/AdminProposalsClient'
+
+type Props = { params: Promise<{ locale: string }> }
+
+// Admin-only (RSC enforces the role; middleware only gates auth).
+export default async function AdminProposalsPage({ params }: Props) {
+  const { locale } = await params
+  try {
+    await requireAdmin()
+  } catch (e) {
+    if (e instanceof AuthError) redirect(`/${locale}/auth/login`)
+    throw e
+  }
+  return <AdminProposalsClient />
+}
+```
+
+- [ ] **Step 8: Build check**
+
+```bash
+cd "/home/lucad/Documents/Projets Programmation/FAME_Website"
+npm run build 2>&1 | tail -15
+```
+
+Expected: build succeeds; `/[locale]/[lab]/propose` and `/[locale]/admin/proposals` compile.
+
+- [ ] **Step 9: Commit**
+
+```bash
+cd "/home/lucad/Documents/Projets Programmation/FAME_Website"
+git add src/components/propose/ src/components/admin/ src/components/ui/StatusBadge.tsx \
+  "src/app/[locale]/[lab]/propose/" "src/app/[locale]/admin/proposals/" messages/
+git commit -m "feat: propose page + admin proposals dashboard — submit, visitor/member tracking, accept/reject/convert"
 ```
 
 ---

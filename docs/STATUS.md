@@ -2,13 +2,17 @@
 
 _Mettre à jour ce fichier après chaque tâche complétée._
 
-Dernière mise à jour : 2026-06-23
+Dernière mise à jour : 2026-06-24
 
 ---
 
 ## Phase active
 
-**Phase 1 — Foundation TERMINÉE et validée** (Tasks 1–7 ✅, migration appliquée, admin seedé, **connexion vérifiée de bout en bout**). PR `feat/p1-foundation` ouverte. → Prochaine phase : **Part 2 Features (Task 8)**.
+**Phase 2 — Features TERMINÉE** (Tasks 8–14 ✅, revue finale Opus « Ready to merge », finding NF-1 corrigé). Branche `feat/p2-features` = 15 commits au-dessus de `main`, build/tsc clean. → Prochaine phase : **Part 3 Secondary (Data, Publications, Prompts, Team, Emails, RGPD)**.
+
+> ⚠️ **Deploy gates avant mise en ligne de la Part 2** — appliquer manuellement dans le Supabase dashboard :
+> - `supabase/migrations/002_subject_difficulte_and_indexes.sql` (colonne `subjects.difficulte` + index `task_subjects(subject_id)`, `dropbox_links(task_id)`)
+> - `supabase/migrations/003_proposal_subject_link.sql` (colonne `proposals.subject_id` — convert idempotent)
 
 ---
 
@@ -74,17 +78,21 @@ Dernière mise à jour : 2026-06-23
 
 _Voir `docs/superpowers/plans/2026-06-22-fame-website-p2-features.md`_
 
-> **Carry-forwards de la revue finale Part 1 (à traiter en Part 2) :**
-> - **Invariant** `members.id === auth.users.id` : le schéma a `default gen_random_uuid()` — la route `members/invite` **doit** fixer `members.id` à l'id du user Supabase Auth explicitement (ne jamais laisser le défaut).
-> - Réconcilier le nom d'export de `src/lib/supabase/server.ts` (`createClient` vs `createServerClient` documenté) **avant** d'écrire les routes API.
-> - Pages `/admin/*` : appliquer le rôle via `requireAdmin()` en RSC (le middleware n'est qu'une barrière d'auth).
-> - Ajouter les index différés avant chargement de données : `dropbox_links(task_id)`, `task_subjects(subject_id)`.
-> - Next 16 : renommer la convention `middleware` → `proxy` (avertissement de dépréciation).
+> **Carry-forwards Part 1 — TOUS traités en Part 2 :**
+> - ✅ Index différés `dropbox_links(task_id)`, `task_subjects(subject_id)` → migration 002.
+> - ✅ Pages `/admin/*` appliquent `requireAdmin()` en RSC (`admin/proposals/page.tsx`).
+> - ✅ Export `createServiceClient`/`createClient` de `server.ts` utilisé directement par les routes API.
+> - ⏭️ `middleware` → `proxy` (dépréciation non bloquante) et invariant `members.id === auth.users.id` côté `members/invite` : reportés en Part 3 (route invite construite en Part 3 / Task 16).
 
-- [ ] Task 8 — Page Lab (grille, filtres, barre segmentée)
-- [ ] Task 9 — Page Paper (fiche détaillée, commentaires, navigation)
-- [ ] Task 10 — Page Tasks (kanban, modal, sous-tâches, historique)
-- [ ] Task 11 — Page Propose + workflow admin
+- [x] Task 8 — API Subjects (CRUD + reorder) ✅
+- [x] Task 9 — Page Lab (grille poster, sidebar filtres cross-filtrés, add modal, edit/delete membre, drag-reorder) ✅ _(ajoute `subjects.difficulte` → migration 002)_
+- [x] Task 10 — API Tasks + Comments (CRUD, claim, sous-tâches, task_history) ✅
+- [x] Task 11 — Page Paper (fiche détaillée immersive, panneau Tasks, Files, Comments, nav vignettes) ✅
+- [x] Task 12 — Page Tasks (kanban par sujet, modal détail, add modal, sous-tâches, sidebar cross-filtre) ✅
+- [x] Task 13 — API Proposals (submit public, lecture visiteur/membre, accept/reject + convert) ✅
+- [x] Task 14 — Page Propose (maquette fidèle) + dashboard admin Proposals ✅ _(convert idempotent → migration 003)_
+
+> **Revue finale Part 2 (Opus) : « Ready to merge ».** Invariants sécurité tous respectés (aucune clé service-role/Dropbox dans un bundle client ; tous les writes via routes `/api/` service-role ; `/admin/proposals` protégé en RSC ; clients Supabase awaités ; lab validé partout ; i18n en/fr à parité, FR réel). Finding NF-1 (convert pouvait créer des sujets dupliqués) **corrigé** via migration 003 + convert idempotent. Findings mineurs restants → reportés Part 3 (lot polish : PGRST116→404 uniforme, clés i18n mortes, `<a>`→`Link` sur barres d'outils immersives, prop morte `TasksPanel`).
 
 ---
 
@@ -121,3 +129,9 @@ _Voir `docs/superpowers/plans/2026-06-22-fame-website-p3-secondary.md`_
 | 2026-06-23 | Correctif seed : Node 20 sans WebSocket natif → polyfill `ws` passé en `realtime.transport` du client Supabase ; `ws`/`@types/ws` en devDeps (`603b6ba`) |
 | 2026-06-23 | **Correctif login** : le middleware next-intl redirigeait `/api/*` → `/en/api/*` (307) → tout fetch API échouait, la page login affichait « mot de passe invalide » pour toute erreur. Court-circuit `/api/` avant next-intl + `api` exclu du matcher (`dc19522`). Connexion vérifiée 200 + cookie de session |
 | 2026-06-23 | Rappel architecture : mot de passe stocké dans `auth.users` (Supabase Auth), `members.password_hash` volontairement NULL/inutilisé |
+| 2026-06-24 | Part 2 : fidélité maquette intégrale retenue pour les pages (Lab, Paper, Tasks, Propose) — layouts immersifs à styles inline reproduisant les `.dc.html`, + champ difficulté |
+| 2026-06-24 | Tasks/Paper : progression d'une tâche **dérivée** des sous-tâches (pas de champ `prog` stocké, barre en lecture seule) ; colonnes kanban = un par sujet ; assignation = se positionner/se retirer soi-même uniquement |
+| 2026-06-24 | Proposals : `GET ?ids=` public (tracker visiteur via UUID non devinable) ; `?lab=` membre ; PATCH/convert admin ; `POST` soumission publique |
+| 2026-06-24 | Convert idempotent (NF-1) : ajout `proposals.subject_id` (migration 003) — reconvertir une proposition déjà convertie renvoie le sujet existant au lieu d'en créer un doublon |
+| 2026-06-24 | Part 2 Features terminée (Tasks 8–14) — revue finale Opus « Ready to merge », NF-1 corrigé |
+| 2026-06-24 | **Correctif auth majeur** (`cc133c5`) : `createServiceClient()` était bâti via `@supabase/ssr` **avec les cookies de la requête** → pour un utilisateur connecté, supabase-js mettait l'`Authorization` au JWT du user (cookie), écrasant la clé service-role → PostgREST exécutait les requêtes en rôle `authenticated` **sous RLS**, pas en `service_role`. Conséquence : le lookup `members` de `getSession()` renvoyait 0 ligne (PGRST116) pour tout utilisateur connecté → TopBar affichait « Sign in », `requireMember()`/`requireAdmin()` échouaient → la connexion semblait « déconnecter » sur toute page utilisant `getSession`. Corrigé en construisant le client service-role **sans cookies** via `@supabase/supabase-js` (Authorization = clé service-role, RLS contournée comme prévu). Vérifié : `/en/paris` connecté affiche le membre, `/en/admin/proposals` → 200. |
