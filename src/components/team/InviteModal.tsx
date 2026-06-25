@@ -86,7 +86,6 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
     border: '1px solid rgba(20,40,90,0.18)',
     background: 'rgba(255,255,255,0.85)',
     fontSize: 12,
-    color: '#15203f',
     outline: 'none',
     boxSizing: 'border-box',
   }
@@ -95,7 +94,6 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
     fontSize: 10,
     letterSpacing: '0.1em',
     textTransform: 'uppercase',
-    color: '#2f4486',
     marginBottom: 5,
     display: 'block',
   }
@@ -105,10 +103,9 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
       {activationUrl ? (
         /* ── Success: show activation URL ─────────────────────────── */
         <div>
-          <div className="font-mono"
+          <div className="font-mono text-fame-teal"
             style={{
               fontSize: 11,
-              color: '#1e9b7e',
               marginBottom: 12,
               fontWeight: 600,
             }}
@@ -177,8 +174,8 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
         <form onSubmit={handleSubmit}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px 12px', marginBottom: 14 }}>
             <div>
-              <label htmlFor="invite-firstname" className="font-mono" style={labelStyle}>{t('fFirstName')} *</label>
-              <input className="font-mono"
+              <label htmlFor="invite-firstname" className="font-mono text-fame-blue" style={labelStyle}>{t('fFirstName')} *</label>
+              <input className="font-mono text-fame-text-dark"
                 id="invite-firstname"
                 value={prenom}
                 onChange={e => setPrenom(e.target.value)}
@@ -188,8 +185,8 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
               />
             </div>
             <div>
-              <label htmlFor="invite-lastname" className="font-mono" style={labelStyle}>{t('fLastName')} *</label>
-              <input className="font-mono"
+              <label htmlFor="invite-lastname" className="font-mono text-fame-blue" style={labelStyle}>{t('fLastName')} *</label>
+              <input className="font-mono text-fame-text-dark"
                 id="invite-lastname"
                 value={nom}
                 onChange={e => setNom(e.target.value)}
@@ -201,8 +198,8 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
           </div>
 
           <div style={{ marginBottom: 14 }}>
-            <label htmlFor="invite-email" className="font-mono" style={labelStyle}>{t('fEmail')} *</label>
-            <input className="font-mono"
+            <label htmlFor="invite-email" className="font-mono text-fame-blue" style={labelStyle}>{t('fEmail')} *</label>
+            <input className="font-mono text-fame-text-dark"
               id="invite-email"
               type="email"
               value={email}
@@ -214,8 +211,8 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
           </div>
 
           <div style={{ marginBottom: 20 }}>
-            <label htmlFor="invite-role" className="font-mono" style={labelStyle}>{t('fRole')}</label>
-            <select className="font-mono"
+            <label htmlFor="invite-role" className="font-mono text-fame-blue" style={labelStyle}>{t('fRole')}</label>
+            <select className="font-mono text-fame-text-dark"
               id="invite-role"
               value={role}
               onChange={e => setRole(e.target.value as Role)}
@@ -230,10 +227,9 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
           </div>
 
           {error && (
-            <div className="font-mono"
+            <div className="font-mono text-fame-red"
               style={{
                 fontSize: 11,
-                color: '#c0473b',
                 marginBottom: 12,
               }}
             >
@@ -257,15 +253,14 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
             >
               {t('cancel')}
             </button>
-            <button className="font-mono"
+            <button className={`font-mono text-fame-text-light ${loading ? '' : 'bg-fame-blue'}`}
               type="submit"
               disabled={loading}
               style={{
                 padding: '8px 18px',
                 borderRadius: 7,
                 border: 'none',
-                background: loading ? 'rgba(47,68,134,0.5)' : '#2f4486',
-                color: '#eef3ff',
+                background: loading ? 'rgba(47,68,134,0.5)' : undefined,
                 fontSize: 11,
                 cursor: loading ? 'not-allowed' : 'pointer',
                 letterSpacing: '0.06em',

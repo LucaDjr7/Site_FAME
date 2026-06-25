@@ -85,7 +85,6 @@ function EditForm({ member, isAdmin, onClose, onSaved }: FormProps) {
     border: '1px solid rgba(20,40,90,0.18)',
     background: 'rgba(255,255,255,0.85)',
     fontSize: 12,
-    color: '#15203f',
     outline: 'none',
     boxSizing: 'border-box',
   }
@@ -94,7 +93,6 @@ function EditForm({ member, isAdmin, onClose, onSaved }: FormProps) {
     fontSize: 10,
     letterSpacing: '0.1em',
     textTransform: 'uppercase',
-    color: '#2f4486',
     marginBottom: 5,
     display: 'block',
   }
@@ -105,8 +103,8 @@ function EditForm({ member, isAdmin, onClose, onSaved }: FormProps) {
       {isAdmin && (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px 12px', marginBottom: 14 }}>
           <div>
-            <label htmlFor="edit-member-firstname" className="font-mono" style={labelStyle}>{t('fFirstName')}</label>
-            <input className="font-mono"
+            <label htmlFor="edit-member-firstname" className="font-mono text-fame-blue" style={labelStyle}>{t('fFirstName')}</label>
+            <input className="font-mono text-fame-text-dark"
               id="edit-member-firstname"
               value={prenom}
               onChange={e => setPrenom(e.target.value)}
@@ -114,8 +112,8 @@ function EditForm({ member, isAdmin, onClose, onSaved }: FormProps) {
             />
           </div>
           <div>
-            <label htmlFor="edit-member-lastname" className="font-mono" style={labelStyle}>{t('fLastName')}</label>
-            <input className="font-mono"
+            <label htmlFor="edit-member-lastname" className="font-mono text-fame-blue" style={labelStyle}>{t('fLastName')}</label>
+            <input className="font-mono text-fame-text-dark"
               id="edit-member-lastname"
               value={nom}
               onChange={e => setNom(e.target.value)}
@@ -127,8 +125,8 @@ function EditForm({ member, isAdmin, onClose, onSaved }: FormProps) {
 
       {/* Email */}
       <div style={{ marginBottom: 14 }}>
-        <label htmlFor="edit-member-email" className="font-mono" style={labelStyle}>{t('fEmail')}</label>
-        <input className="font-mono"
+        <label htmlFor="edit-member-email" className="font-mono text-fame-blue" style={labelStyle}>{t('fEmail')}</label>
+        <input className="font-mono text-fame-text-dark"
           id="edit-member-email"
           type="email"
           value={email}
@@ -139,8 +137,8 @@ function EditForm({ member, isAdmin, onClose, onSaved }: FormProps) {
 
       {/* Domains */}
       <div style={{ marginBottom: 14 }}>
-        <label htmlFor="edit-member-domains" className="font-mono" style={labelStyle}>{t('fDomains')}</label>
-        <input className="font-mono"
+        <label htmlFor="edit-member-domains" className="font-mono text-fame-blue" style={labelStyle}>{t('fDomains')}</label>
+        <input className="font-mono text-fame-text-dark"
           id="edit-member-domains"
           value={domainesStr}
           onChange={e => setDomainesStr(e.target.value)}
@@ -151,8 +149,8 @@ function EditForm({ member, isAdmin, onClose, onSaved }: FormProps) {
 
       {/* Photo URL */}
       <div style={{ marginBottom: 14 }}>
-        <label htmlFor="edit-member-photo" className="font-mono" style={labelStyle}>{t('fPhoto')}</label>
-        <input className="font-mono"
+        <label htmlFor="edit-member-photo" className="font-mono text-fame-blue" style={labelStyle}>{t('fPhoto')}</label>
+        <input className="font-mono text-fame-text-dark"
           id="edit-member-photo"
           type="url"
           value={photoUrl}
@@ -166,8 +164,8 @@ function EditForm({ member, isAdmin, onClose, onSaved }: FormProps) {
       {isAdmin && (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '0 12px', alignItems: 'end', marginBottom: 20 }}>
           <div>
-            <label htmlFor="edit-member-role" className="font-mono" style={labelStyle}>{t('fRole')}</label>
-            <select className="font-mono"
+            <label htmlFor="edit-member-role" className="font-mono text-fame-blue" style={labelStyle}>{t('fRole')}</label>
+            <select className="font-mono text-fame-text-dark"
               id="edit-member-role"
               value={role}
               onChange={e => setRole(e.target.value as Role)}
@@ -180,13 +178,12 @@ function EditForm({ member, isAdmin, onClose, onSaved }: FormProps) {
               ))}
             </select>
           </div>
-          <label className="font-mono"
+          <label className="font-mono text-fame-blue"
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: 6,
               fontSize: 11,
-              color: '#2f4486',
               cursor: 'pointer',
               paddingBottom: 9,
               whiteSpace: 'nowrap',
@@ -206,10 +203,9 @@ function EditForm({ member, isAdmin, onClose, onSaved }: FormProps) {
       {!isAdmin && <div style={{ marginBottom: 20 }} />}
 
       {error && (
-        <div className="font-mono"
+        <div className="font-mono text-fame-red"
           style={{
             fontSize: 11,
-            color: '#c0473b',
             marginBottom: 12,
           }}
         >
@@ -233,15 +229,14 @@ function EditForm({ member, isAdmin, onClose, onSaved }: FormProps) {
         >
           {t('cancel')}
         </button>
-        <button className="font-mono"
+        <button className={`font-mono text-fame-text-light ${loading ? '' : 'bg-fame-blue'}`}
           type="submit"
           disabled={loading}
           style={{
             padding: '8px 18px',
             borderRadius: 7,
             border: 'none',
-            background: loading ? 'rgba(47,68,134,0.5)' : '#2f4486',
-            color: '#eef3ff',
+            background: loading ? 'rgba(47,68,134,0.5)' : undefined,
             fontSize: 11,
             cursor: loading ? 'not-allowed' : 'pointer',
             letterSpacing: '0.06em',

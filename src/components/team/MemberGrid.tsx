@@ -119,22 +119,20 @@ export function MemberGrid({ lab, currentMemberId, isAdmin }: Props) {
         >
           {/* Left: kicker + title */}
           <div>
-            <div className="font-mono"
+            <div className="font-mono text-fame-text-muted"
               style={{
                 fontSize: 9,
                 letterSpacing: '0.14em',
                 textTransform: 'uppercase',
-                color: '#7e95d6',
                 marginBottom: 3,
               }}
             >
               {t('kicker', { lab: labLabel })}
             </div>
-            <h1 className="font-serif"
+            <h1 className="font-serif text-fame-text-dark"
               style={{
                 fontSize: 20,
                 fontWeight: 600,
-                color: '#15203f',
                 margin: 0,
               }}
             >
@@ -175,14 +173,12 @@ export function MemberGrid({ lab, currentMemberId, isAdmin }: Props) {
 
             {/* Invite button (admin only) */}
             {isAdmin && (
-              <button className="font-mono"
+              <button className="font-mono bg-fame-blue text-fame-text-light"
                 onClick={() => setInviteOpen(true)}
                 style={{
                   padding: '6px 14px',
                   borderRadius: 6,
                   border: 'none',
-                  background: '#2f4486',
-                  color: '#eef3ff',
                   fontSize: 10,
                   cursor: 'pointer',
                   letterSpacing: '0.06em',
@@ -197,10 +193,9 @@ export function MemberGrid({ lab, currentMemberId, isAdmin }: Props) {
         {/* ── Body scroll area ───────────────────────────────────────── */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '28px 32px 48px' }}>
           {loading ? (
-            <div className="font-mono"
+            <div className="font-mono text-fame-text-muted"
               style={{
                 fontSize: 12,
-                color: '#7e95d6',
                 textAlign: 'center',
                 paddingTop: 60,
               }}
@@ -208,10 +203,9 @@ export function MemberGrid({ lab, currentMemberId, isAdmin }: Props) {
               {t('loading')}
             </div>
           ) : members.length === 0 ? (
-            <div className="font-mono"
+            <div className="font-mono text-fame-text-muted"
               style={{
                 fontSize: 13,
-                color: '#7e95d6',
                 textAlign: 'center',
                 paddingTop: 60,
               }}
@@ -231,13 +225,12 @@ export function MemberGrid({ lab, currentMemberId, isAdmin }: Props) {
                       marginBottom: 16,
                     }}
                   >
-                    <span className="font-mono"
+                    <span className="font-mono text-fame-blue"
                       style={{
                         fontSize: 12,
                         fontWeight: 500,
                         textTransform: 'uppercase',
                         letterSpacing: '0.18em',
-                        color: '#2f4486',
                         flexShrink: 0,
                       }}
                     >
