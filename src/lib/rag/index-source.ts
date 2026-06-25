@@ -164,6 +164,15 @@ export async function deleteSourceChunks(
   await service.from('rag_chunks').delete().eq('source_id', id)
 }
 
+export async function markSourceStale(
+  _type: RagSourceType,
+  id: string,
+  deps: IndexDeps = {},
+): Promise<void> {
+  const service = deps.service ?? (await createServiceClient())
+  await service.from('rag_chunks').update({ embedding_stale: true }).eq('source_id', id)
+}
+
 export async function reindexAll(deps: IndexDeps = {}): Promise<{ indexed: number }> {
   const service = deps.service ?? (await createServiceClient())
   const provider = deps.provider ?? getEmbeddingProvider()

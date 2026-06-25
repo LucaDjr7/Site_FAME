@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { requireMember, authErrorResponse } from '@/lib/auth'
+import { scheduleReindex } from '@/lib/rag/schedule'
 import type { Lab } from '@/types'
 import { VALID_LABS } from '@/lib/constants'
 
@@ -38,5 +39,6 @@ export async function POST(req: NextRequest) {
     .select()
     .single()
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  scheduleReindex('publication', data.id)
   return NextResponse.json(data, { status: 201 })
 }

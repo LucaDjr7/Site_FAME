@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { requireMember, authErrorResponse } from '@/lib/auth'
+import { scheduleReindex } from '@/lib/rag/schedule'
 import type { PromptTarget } from '@/types'
 
 const TARGETS: PromptTarget[] = ['subject', 'publication', 'data', 'member', 'task']
@@ -39,6 +40,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     .single()
   if (error?.code === 'PGRST116') return NextResponse.json({ error: 'Not found' }, { status: 404 })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  scheduleReindex('prompt', id)
   return NextResponse.json(data)
 }
 
@@ -49,5 +51,6 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
   const { data, error } = await service.from('prompts').delete().eq('id', id).select()
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   if (!data || data.length === 0) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  scheduleReindex('prompt', id)
   return NextResponse.json({ ok: true })
 }
