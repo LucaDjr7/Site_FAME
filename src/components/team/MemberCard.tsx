@@ -170,29 +170,6 @@ export function MemberCard({ member, isSelf, isAdmin, editMode, onEdit, onDelete
           ))}
         </div>
       )}
-
-      {/* Spacer to push email to bottom */}
-      <div style={{ flex: 1 }} />
-
-      {/* Email */}
-      <a className="font-mono"
-        href={`mailto:${member.email}`}
-        style={{
-          fontSize: 10.5,
-          color: '#6b7596',
-          textDecoration: 'none',
-          borderTop: '1px solid rgba(20,40,90,0.08)',
-          paddingTop: 11,
-          marginTop: member.domaines.length === 0 ? 13 : 0,
-          display: 'block',
-          width: '100%',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
-        }}
-      >
-        ✉ {member.email}
-      </a>
     </div>
   )
 }

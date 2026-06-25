@@ -25,7 +25,10 @@ type FormProps = {
 function EditForm({ member, isAdmin, onClose, onSaved }: FormProps) {
   const t = useTranslations('team')
 
-  const [email, setEmail] = useState(member.email)
+  // The public /api/members projection omits email (PII), so member.email may be
+  // undefined here. Track whether the field was populated to avoid blanking the
+  // stored address on save when it was never loaded.
+  const [email, setEmail] = useState(member.email ?? '')
   const [domainesStr, setDomainesStr] = useState(member.domaines.join(', '))
   const [photoUrl, setPhotoUrl] = useState(member.photo_url ?? '')
   // Admin-only
@@ -47,10 +50,12 @@ function EditForm({ member, isAdmin, onClose, onSaved }: FormProps) {
       .filter(Boolean)
 
     const body: Record<string, unknown> = {
-      email,
       domaines,
       photo_url: photoUrl || null,
     }
+    // Only send email when it was actually populated/edited. The public member
+    // list omits email, so an empty field means "not loaded" — never overwrite.
+    if (email.trim()) body.email = email
     if (isAdmin) {
       body.prenom = prenom
       body.nom = nom
