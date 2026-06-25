@@ -3,16 +3,7 @@ import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import type { Prompt, PromptTarget } from '@/types'
-
-const TARGET_META: Record<PromptTarget, { i18nKey: string; color: string }> = {
-  subject:     { i18nKey: 'sujet',       color: '#2f4486' },
-  publication: { i18nKey: 'publication', color: '#1e9b7e' },
-  data:        { i18nKey: 'donnees',     color: '#0061ff' },
-  member:      { i18nKey: 'membre',      color: '#28b8ce' },
-  task:        { i18nKey: 'tache',       color: '#e8b149' },
-}
-
-const TARGET_ORDER: PromptTarget[] = ['subject', 'publication', 'data', 'member', 'task']
+import { TARGET_META, TARGET_ORDER } from './prompt-shared'
 
 type Props = {
   prompt: Prompt

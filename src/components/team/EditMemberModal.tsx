@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { Modal } from '@/components/ui/Modal'
 import type { Member, Role } from '@/types'
+import { ROLE_KEY, ROLES } from './team-shared'
 
 type Props = {
   open: boolean
@@ -11,14 +12,6 @@ type Props = {
   isSelf: boolean
   onClose: () => void
   onSaved: (member: Member) => void
-}
-
-const ROLES: Role[] = ['direction', 'researcher', 'phd', 'engineering']
-const ROLE_KEY: Record<Role, string> = {
-  direction: 'roles.direction',
-  researcher: 'roles.researchers',
-  phd: 'roles.phd',
-  engineering: 'roles.engineering',
 }
 
 // Inner form is mounted fresh each time the modal opens (key=member.id+open)

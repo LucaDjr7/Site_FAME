@@ -3,20 +3,13 @@ import { useState, useRef } from 'react'
 import { useTranslations } from 'next-intl'
 import { Modal } from '@/components/ui/Modal'
 import type { Lab, Role } from '@/types'
+import { ROLE_KEY, ROLES } from './team-shared'
 
 type Props = {
   open: boolean
   lab: Lab
   onClose: () => void
   onInvited: () => void
-}
-
-const ROLES: Role[] = ['direction', 'researcher', 'phd', 'engineering']
-const ROLE_KEY: Record<Role, string> = {
-  direction: 'roles.direction',
-  researcher: 'roles.researchers',
-  phd: 'roles.phd',
-  engineering: 'roles.engineering',
 }
 
 export function InviteModal({ open, lab, onClose, onInvited }: Props) {

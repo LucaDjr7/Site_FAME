@@ -1,7 +1,8 @@
 'use client'
 import { useTranslations } from 'next-intl'
 import { Avatar } from '@/components/ui/Avatar'
-import type { Member, Role } from '@/types'
+import type { Member } from '@/types'
+import { ROLE_KEY } from './team-shared'
 
 type Props = {
   member: Member
@@ -10,13 +11,6 @@ type Props = {
   editMode: boolean
   onEdit: (member: Member) => void
   onDelete: (id: string) => void
-}
-
-const ROLE_KEY: Record<Role, string> = {
-  direction: 'roles.direction',
-  researcher: 'roles.researchers',
-  phd: 'roles.phd',
-  engineering: 'roles.engineering',
 }
 
 export function MemberCard({ member, isSelf, isAdmin, editMode, onEdit, onDelete }: Props) {

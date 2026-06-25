@@ -1,5 +1,6 @@
 import type { Subject, MemberRef, Difficulty } from '@/types'
 import { Avatar } from '@/components/ui/Avatar'
+import { DiffDots } from '@/components/ui/DiffDots'
 
 const STATUS_DOT: Record<string, string> = {
   active: '#1e9b7e',
@@ -7,31 +8,8 @@ const STATUS_DOT: Record<string, string> = {
   done: '#2f4486',
 }
 
-const DIFF_COLOR = '#15203f'
-const DIFF_FAINT = 'rgba(120,140,190,0.28)'
-
 function diffLevel(d: Difficulty): number {
   return d === 'easy' ? 1 : d === 'intermediate' ? 2 : 3
-}
-
-type DiffDotsProps = { difficulty: Difficulty }
-function DiffDots({ difficulty }: DiffDotsProps) {
-  const level = diffLevel(difficulty)
-  return (
-    <span style={{ display: 'flex', gap: 3, alignItems: 'center' }}>
-      {[1, 2, 3].map(i => (
-        <span
-          key={i}
-          style={{
-            display: 'inline-block',
-            width: 5,
-            height: 5,
-            background: i <= level ? DIFF_COLOR : DIFF_FAINT,
-          }}
-        />
-      ))}
-    </span>
-  )
 }
 
 type Props = {
@@ -249,7 +227,7 @@ export function SubjectCard({
                 {dateStr}
               </span>
             </div>
-            <DiffDots difficulty={subject.difficulte} />
+            <DiffDots level={diffLevel(subject.difficulte)} />
           </div>
 
           {/* DONE stamp overlay */}

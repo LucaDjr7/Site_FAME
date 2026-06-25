@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import type { Lab, PublicationType } from '@/types'
 import { Modal } from '@/components/ui/Modal'
+import { FORM_INPUT_STYLE, FORM_LABEL_STYLE, FORM_BTN_CANCEL_STYLE, FORM_BTN_SUBMIT_STYLE } from '@/components/ui/form-styles'
 
 type Props = {
   open: boolean
@@ -13,29 +14,8 @@ type Props = {
 
 const TYPES: PublicationType[] = ['article', 'preprint', 'conference', 'working-paper']
 
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  padding: '7px 10px',
-  borderRadius: 5,
-  border: '1px solid #eceadf',
-  background: '#fff',
-  fontFamily: 'IBM Plex Mono, monospace',
-  fontSize: 12,
-  color: '#2a3457',
-  outline: 'none',
-  boxSizing: 'border-box',
-}
-
-const labelStyle: React.CSSProperties = {
-  display: 'block',
-  fontFamily: 'IBM Plex Mono, monospace',
-  fontSize: 9,
-  fontWeight: 600,
-  letterSpacing: '0.1em',
-  textTransform: 'uppercase',
-  color: '#5768ac',
-  marginBottom: 5,
-}
+const inputStyle: React.CSSProperties = { ...FORM_INPUT_STYLE, boxSizing: 'border-box' }
+const labelStyle = FORM_LABEL_STYLE
 
 export function AddPublicationModal({ open, lab, onClose, onCreated }: Props) {
   const t = useTranslations('publications')
@@ -210,36 +190,13 @@ export function AddPublicationModal({ open, lab, onClose, onCreated }: Props) {
 
         {/* Actions */}
         <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-          <button
-            type="button"
-            onClick={handleClose}
-            style={{
-              padding: '8px 16px',
-              borderRadius: 6,
-              border: '1px solid #eceadf',
-              background: 'transparent',
-              fontFamily: 'IBM Plex Mono, monospace',
-              fontSize: 11,
-              color: '#7e95d6',
-              cursor: 'pointer',
-            }}
-          >
+          <button type="button" onClick={handleClose} style={FORM_BTN_CANCEL_STYLE}>
             {t('cancel')}
           </button>
           <button
             type="submit"
             disabled={submitting}
-            style={{
-              padding: '8px 16px',
-              borderRadius: 6,
-              border: 'none',
-              background: '#2f4486',
-              color: '#fff',
-              fontFamily: 'IBM Plex Mono, monospace',
-              fontSize: 11,
-              cursor: submitting ? 'not-allowed' : 'pointer',
-              opacity: submitting ? 0.7 : 1,
-            }}
+            style={{ ...FORM_BTN_SUBMIT_STYLE, cursor: submitting ? 'not-allowed' : 'pointer', opacity: submitting ? 0.7 : 1 }}
           >
             {submitting ? '…' : t('add')}
           </button>

@@ -5,16 +5,7 @@ import { useToast } from '@/components/ui/Toast'
 import { PromptCard } from './PromptCard'
 import type { Lab, Prompt, PromptTarget } from '@/types'
 import { LAB_LABELS } from '@/lib/constants'
-
-const TARGET_META: Record<PromptTarget, { i18nKey: string; color: string }> = {
-  subject:     { i18nKey: 'sujet',       color: '#2f4486' },
-  publication: { i18nKey: 'publication', color: '#1e9b7e' },
-  data:        { i18nKey: 'donnees',     color: '#0061ff' },
-  member:      { i18nKey: 'membre',      color: '#28b8ce' },
-  task:        { i18nKey: 'tache',       color: '#e8b149' },
-}
-
-const TARGET_ORDER: PromptTarget[] = ['subject', 'publication', 'data', 'member', 'task']
+import { TARGET_META, TARGET_ORDER } from './prompt-shared'
 
 // Intentional variance: 3-gradient composite with specific position offsets (at 26%/78%/92%).
 const PAGE_BG =

@@ -2,6 +2,7 @@
 import { useTranslations } from 'next-intl'
 import type { Subject, SubjectStatus, Difficulty, MemberRef, DateBucket } from '@/types'
 import { Avatar } from '@/components/ui/Avatar'
+import { DiffDots } from '@/components/ui/DiffDots'
 import { dateBucket } from '@/lib/utils'
 
 // Count subjects matching all filters except one dimension
@@ -36,21 +37,6 @@ const STATUS_DOT: Record<string, string> = {
   done: '#2f4486',
 }
 
-const DIFF_COLOR = '#15203f'
-const DIFF_FAINT = 'rgba(120,140,190,0.28)'
-
-function DiffDots({ level }: { level: number }) {
-  return (
-    <span style={{ display: 'inline-flex', gap: 2.5, alignItems: 'center' }}>
-      {[1, 2, 3].map(i => (
-        <span key={i} style={{
-          display: 'inline-block', width: 5, height: 5,
-          background: i <= level ? DIFF_COLOR : DIFF_FAINT,
-        }} />
-      ))}
-    </span>
-  )
-}
 
 type Props = {
   subjects: Subject[]
