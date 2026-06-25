@@ -1,16 +1,8 @@
 'use client'
 import { useTranslations } from 'next-intl'
-import type { Subject, SubjectStatus, Difficulty, MemberRef } from '@/types'
+import type { Subject, SubjectStatus, Difficulty, MemberRef, DateBucket } from '@/types'
 import { Avatar } from '@/components/ui/Avatar'
-
-type DateBucket = '2025' | '2024' | 'older'
-
-function dateBucket(s: Subject): DateBucket {
-  const year = s.created_at.slice(0, 4)
-  if (year === '2025') return '2025'
-  if (year === '2024') return '2024'
-  return 'older'
-}
+import { dateBucket } from '@/lib/utils'
 
 // Count subjects matching all filters except one dimension
 function countExcluding(
@@ -28,12 +20,12 @@ function countExcluding(
     if (ignoreDim !== 'status' && fStatus.size > 0 && !fStatus.has(s.statut)) return false
     if (ignoreDim !== 'diff' && fDiff.size > 0 && !fDiff.has(s.difficulte)) return false
     if (ignoreDim !== 'person' && fPerson.size > 0 && !s.auteurs.some(id => fPerson.has(id))) return false
-    if (ignoreDim !== 'date' && fDate.size > 0 && !fDate.has(dateBucket(s))) return false
+    if (ignoreDim !== 'date' && fDate.size > 0 && !fDate.has(dateBucket(s.created_at))) return false
     // Now check if this subject matches the "value" for the ignored dimension
     if (ignoreDim === 'status') return s.statut === value
     if (ignoreDim === 'diff') return s.difficulte === value
     if (ignoreDim === 'person') return s.auteurs.includes(value)
-    if (ignoreDim === 'date') return dateBucket(s) === value
+    if (ignoreDim === 'date') return dateBucket(s.created_at) === value
     return true
   }).length
 }

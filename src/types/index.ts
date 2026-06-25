@@ -13,6 +13,7 @@ export type Difficulty = 'easy' | 'intermediate' | 'advanced'
 export type PromptTarget = 'subject' | 'publication' | 'data' | 'member' | 'task'
 export type ProposalStatus = 'pending' | 'accepted' | 'rejected'
 export type PublicationType = 'article' | 'preprint' | 'conference' | 'working-paper'
+export type DateBucket = '2025' | '2024' | 'older'
 
 // ─── Members ─────────────────────────────────────────────────────────────────
 

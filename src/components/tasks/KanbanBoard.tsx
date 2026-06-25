@@ -2,7 +2,7 @@
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
-import type { Subject, TaskWithRelations, MemberRef, Lab, TaskStatus, Difficulty } from '@/types'
+import type { Subject, TaskWithRelations, MemberRef, Lab, TaskStatus, Difficulty, DateBucket } from '@/types'
 import { KanbanColumn } from './KanbanColumn'
 import { TaskModal } from './TaskModal'
 import { AddTaskModal } from './AddTaskModal'
@@ -10,8 +10,7 @@ import { TaskFilterSidebar } from './TaskFilterSidebar'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { useToast } from '@/components/ui/Toast'
 import { flattenTasks } from './kanban-shared'
-
-type DateBucket = '2025' | '2024' | 'older'
+import { dateBucket } from '@/lib/utils'
 
 type Props = {
   lab: Lab
@@ -101,13 +100,6 @@ export function KanbanBoard({ lab, locale, subjects, initialTasks, members, isMe
     setFSubject(new Set()); setFStatus(new Set()); setFDiff(new Set()); setFPerson(new Set()); setFDate(new Set())
   }
 
-  function bucket(t2: TaskWithRelations): DateBucket {
-    const y = (t2.date_creation ?? '').slice(0, 4)
-    if (y === '2025') return '2025'
-    if (y === '2024') return '2024'
-    return 'older'
-  }
-
   const filtered = useMemo(() => tasks.filter(tk => {
     if (q && !tk.titre.toLowerCase().includes(q.toLowerCase())) return false
     if (hideDone && tk.statut === 'done') return false
@@ -115,7 +107,7 @@ export function KanbanBoard({ lab, locale, subjects, initialTasks, members, isMe
     if (fStatus.size > 0 && !fStatus.has(tk.statut)) return false
     if (fDiff.size > 0 && !fDiff.has(tk.difficulte)) return false
     if (fPerson.size > 0 && !tk.assignees.some(a => fPerson.has(a.id))) return false
-    if (fDate.size > 0 && !fDate.has(bucket(tk))) return false
+    if (fDate.size > 0 && !fDate.has(dateBucket(tk.date_creation ?? ''))) return false
     return true
   }), [tasks, q, hideDone, fSubject, fStatus, fDiff, fPerson, fDate])
 

@@ -3,21 +3,13 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { useRouter, useParams } from 'next/navigation'
-import type { Subject, MemberRef, Lab, SubjectStatus, Difficulty } from '@/types'
+import type { Subject, MemberRef, Lab, SubjectStatus, Difficulty, DateBucket } from '@/types'
 import { SubjectCard } from './SubjectCard'
 import { FilterSidebar } from './FilterSidebar'
 import { AddSubjectModal } from './AddSubjectModal'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { useToast } from '@/components/ui/Toast'
-
-type DateBucket = '2025' | '2024' | 'older'
-
-function dateBucket(s: Subject): DateBucket {
-  const year = s.created_at.slice(0, 4)
-  if (year === '2025') return '2025'
-  if (year === '2024') return '2024'
-  return 'older'
-}
+import { dateBucket } from '@/lib/utils'
 
 function passesFilters(
   s: Subject,
@@ -31,7 +23,7 @@ function passesFilters(
   if (fStatus.size > 0 && !fStatus.has(s.statut)) return false
   if (fDiff.size > 0 && !fDiff.has(s.difficulte)) return false
   if (fPerson.size > 0 && !s.auteurs.some(id => fPerson.has(id))) return false
-  if (fDate.size > 0 && !fDate.has(dateBucket(s))) return false
+  if (fDate.size > 0 && !fDate.has(dateBucket(s.created_at))) return false
   return true
 }
 

@@ -1,17 +1,9 @@
 'use client'
 import { useTranslations } from 'next-intl'
-import type { Subject, TaskWithRelations, MemberRef, TaskStatus, Difficulty } from '@/types'
+import type { Subject, TaskWithRelations, MemberRef, TaskStatus, Difficulty, DateBucket } from '@/types'
 import { Avatar } from '@/components/ui/Avatar'
 import { DiffDots, DIFF_LEVEL, TASK_STATUS_COLOR, STATUS_KEY, SUBJECT_STATUS_COLOR } from './kanban-shared'
-
-type DateBucket = '2025' | '2024' | 'older'
-
-function dateBucket(t: TaskWithRelations): DateBucket {
-  const year = (t.date_creation ?? '').slice(0, 4)
-  if (year === '2025') return '2025'
-  if (year === '2024') return '2024'
-  return 'older'
-}
+import { dateBucket } from '@/lib/utils'
 
 type Dim = 'subject' | 'status' | 'diff' | 'person' | 'date'
 
@@ -25,7 +17,7 @@ function passes(
   if (ignore !== 'status' && fStatus.size > 0 && !fStatus.has(t.statut)) return false
   if (ignore !== 'diff' && fDiff.size > 0 && !fDiff.has(t.difficulte)) return false
   if (ignore !== 'person' && fPerson.size > 0 && !t.assignees.some(a => fPerson.has(a.id))) return false
-  if (ignore !== 'date' && fDate.size > 0 && !fDate.has(dateBucket(t))) return false
+  if (ignore !== 'date' && fDate.size > 0 && !fDate.has(dateBucket(t.date_creation ?? ''))) return false
   return true
 }
 
@@ -40,7 +32,7 @@ function countFor(
     if (dim === 'status') return t.statut === value
     if (dim === 'diff') return t.difficulte === value
     if (dim === 'person') return t.assignees.some(a => a.id === value)
-    if (dim === 'date') return dateBucket(t) === value
+    if (dim === 'date') return dateBucket(t.date_creation ?? '') === value
     return true
   }).length
 }
