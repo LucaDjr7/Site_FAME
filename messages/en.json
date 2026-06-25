@@ -16,7 +16,8 @@
   "home": {
     "tagline": "Paris · Montréal",
     "cta": "Click on a lab to enter",
-    "enteringLab": "Opening {city} lab…"
+    "enteringLab": "Opening {city} lab…",
+    "globeLabel": "Lab locations"
   },
   "lab": {
     "title": {
@@ -53,6 +54,7 @@
       "older": "Before 2024"
     },
     "count": "{n} subject(s)",
+    "searchLabel": "Search subjects",
     "sortRecent": "Recent",
     "sortOldest": "Oldest",
     "tasksLink": "Tasks →",
@@ -109,11 +111,14 @@
     "responsible": "Lead",
     "keywords": "Keywords",
     "noTasks": "No linked tasks",
+    "commentNameLabel": "Your name",
+    "commentTextLabel": "Add a comment",
     "noComments": "No comments yet",
     "figurePlaceholder": "Figure placeholder — drop the chart here",
     "tasksLink": "Tasks →",
     "prev": "Previous subject",
-    "next": "Next subject"
+    "next": "Next subject",
+    "commentPosted": "Comment posted"
   },
   "tasks": {
     "claimTask": "Claim task",
@@ -135,6 +140,7 @@
     "addTask": "Add task",
     "kicker": "FAME / Tasks",
     "pageTitle": "Tasks",
+    "searchLabel": "Search tasks",
     "search": "Search tasks…",
     "editMode": "Edit",
     "editModeOn": "Editing",
@@ -407,6 +413,7 @@
     "loading": "Loading…",
     "save": "Save",
     "cancel": "Cancel",
+    "close": "Close",
     "delete": "Delete",
     "confirm": "Confirm",
     "edit": "Edit",
@@ -418,6 +425,22 @@
     "montreal": "Montréal",
     "lab": "Lab",
     "by": "by"
+  },
+  "meta": {
+    "siteName": "FAME",
+    "homeTitle": "FAME — Financial and Monetary Economics",
+    "homeDesc": "Independent research labs in Paris and Montréal.",
+    "labTitle": "{lab} Lab",
+    "labDesc": "Research subjects and progress at the {lab} lab.",
+    "publicationsTitle": "Publications — {lab}",
+    "publicationsDesc": "Papers and preprints from the {lab} lab.",
+    "teamTitle": "Team — {lab}",
+    "teamDesc": "Members of the {lab} lab.",
+    "tasksTitle": "Tasks — {lab}",
+    "proposeTitle": "Propose a subject — {lab}",
+    "dataTitle": "Data — {lab}",
+    "promptsTitle": "Prompts — {lab}",
+    "paperTitle": "{title} — {lab}"
   },
   "privacy": {
     "link": "Privacy policy",

@@ -1,5 +1,10 @@
 // StarField — pure server-renderable component, no hooks
 // Uses a deterministic seeded LCG PRNG to avoid hydration mismatch
+//
+// P7: The 46 SVG <path> elements are intentional. Each star is a tiny 6–31 px
+// decorative shape; the total serialized SVG payload is < 8 KB. A canvas or
+// sprite-sheet alternative would add JS overhead or a network round-trip, so
+// individual inline SVG paths are the lightest option for a static decoration.
 
 const STAR_COLORS = ['#9fb2e6','#7e95d6','#b8c6ee','#6377b0','#aab9e4','#8ea4df']
 const STAR_COUNT = 46

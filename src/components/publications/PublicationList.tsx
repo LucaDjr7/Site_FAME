@@ -134,16 +134,28 @@ export function PublicationList({ lab, isMember }: Props) {
     [publications],
   )
 
-  // Cross-filtered counts
-  function countForType(tp: PublicationType) {
-    return publications.filter(p => matchesExcept(p, q, fType, fAuthor, fYear, 'type') && p.type === tp).length
-  }
-  function countForAuthor(author: string) {
-    return publications.filter(p => matchesExcept(p, q, fType, fAuthor, fYear, 'author') && p.auteurs.includes(author)).length
-  }
-  function countForYear(yr: number) {
-    return publications.filter(p => matchesExcept(p, q, fType, fAuthor, fYear, 'year') && p.annee === yr).length
-  }
+  // Cross-filtered counts (memoized to avoid recomputing on unrelated re-renders)
+  const countsByType = useMemo(
+    () => Object.fromEntries(
+      allTypes.map(tp => [tp, publications.filter(p => matchesExcept(p, q, fType, fAuthor, fYear, 'type') && p.type === tp).length])
+    ) as Record<PublicationType, number>,
+    [publications, q, fType, fAuthor, fYear, allTypes],
+  )
+  const countsByAuthor = useMemo(
+    () => Object.fromEntries(
+      allAuthors.map(a => [a, publications.filter(p => matchesExcept(p, q, fType, fAuthor, fYear, 'author') && p.auteurs.includes(a)).length])
+    ) as Record<string, number>,
+    [publications, q, fType, fAuthor, fYear, allAuthors],
+  )
+  const countsByYear = useMemo(
+    () => Object.fromEntries(
+      allYears.map(yr => [yr, publications.filter(p => matchesExcept(p, q, fType, fAuthor, fYear, 'year') && p.annee === yr).length])
+    ) as Record<number, number>,
+    [publications, q, fType, fAuthor, fYear, allYears],
+  )
+  function countForType(tp: PublicationType) { return countsByType[tp] ?? 0 }
+  function countForAuthor(author: string) { return countsByAuthor[author] ?? 0 }
+  function countForYear(yr: number) { return countsByYear[yr] ?? 0 }
 
   // Distinct authors in visible set
   const visibleAuthorCount = useMemo(

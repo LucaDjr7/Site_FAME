@@ -416,7 +416,7 @@ export function DataExplorer({ lab }: Props) {
                   {t('loading')}
                 </div>
               ) : (
-                <div>
+                <div role="tree">
                   {flatRows.map(({ node, depth }) => {
                     const isSelected = selectedId === node.id
                     const isExpanded = !!expanded[node.id]
@@ -427,9 +427,20 @@ export function DataExplorer({ lab }: Props) {
                     return (
                       <div
                         key={node.id}
+                        role="treeitem"
+                        aria-selected={isSelected}
+                        aria-expanded={node.is_folder ? isExpanded : undefined}
+                        tabIndex={0}
                         onClick={() => {
                           setSelectedId(node.id)
                           if (node.is_folder) void toggleExpand(node)
+                        }}
+                        onKeyDown={e => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault()
+                            setSelectedId(node.id)
+                            if (node.is_folder) void toggleExpand(node)
+                          }
                         }}
                         style={{
                           display: 'flex',

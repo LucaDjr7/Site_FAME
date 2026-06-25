@@ -159,8 +159,9 @@ export function AddSubjectModal({ open, lab, members, onClose, onAdded }: Props)
 
         {/* Titre */}
         <div style={{ marginBottom: 14 }}>
-          <label style={labelStyle}>{t('modal.fTitle')} *</label>
+          <label htmlFor="add-subject-title" style={labelStyle}>{t('modal.fTitle')} *</label>
           <input
+            id="add-subject-title"
             type="text"
             value={titre}
             onChange={e => setTitre(e.target.value)}
@@ -172,8 +173,9 @@ export function AddSubjectModal({ open, lab, members, onClose, onAdded }: Props)
 
         {/* Domaine / kicker */}
         <div style={{ marginBottom: 14 }}>
-          <label style={labelStyle}>{t('modal.fDomain')} *</label>
+          <label htmlFor="add-subject-domain" style={labelStyle}>{t('modal.fDomain')} *</label>
           <input
+            id="add-subject-domain"
             type="text"
             value={kicker}
             onChange={e => setKicker(e.target.value)}
@@ -184,8 +186,9 @@ export function AddSubjectModal({ open, lab, members, onClose, onAdded }: Props)
 
         {/* Responsable */}
         <div style={{ marginBottom: 14 }}>
-          <label style={labelStyle}>{t('modal.fResponsable')}</label>
+          <label htmlFor="add-subject-responsable" style={labelStyle}>{t('modal.fResponsable')}</label>
           <select
+            id="add-subject-responsable"
             value={responsable}
             onChange={e => setResponsable(e.target.value)}
             style={{ ...inputStyle, appearance: 'none' }}
@@ -219,8 +222,9 @@ export function AddSubjectModal({ open, lab, members, onClose, onAdded }: Props)
 
         {/* Résumé */}
         <div style={{ marginBottom: 18 }}>
-          <label style={labelStyle}>{t('modal.fSummary')}</label>
+          <label htmlFor="add-subject-summary" style={labelStyle}>{t('modal.fSummary')}</label>
           <textarea
+            id="add-subject-summary"
             value={context}
             onChange={e => setContext(e.target.value)}
             placeholder={t('modal.fSummary')}

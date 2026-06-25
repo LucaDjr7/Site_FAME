@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher'
 import { StarField } from '@/components/globe/StarField'
@@ -5,6 +6,12 @@ import { Globe } from '@/components/globe/Globe'
 
 type Props = {
   params: Promise<{ locale: string }>
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'meta' })
+  return { title: t('homeTitle'), description: t('homeDesc') }
 }
 
 export default async function HomePage({ params }: Props) {

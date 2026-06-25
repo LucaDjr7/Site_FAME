@@ -303,6 +303,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
               value={q}
               onChange={e => setQ(e.target.value)}
               placeholder={t('search')}
+              aria-label={t('searchLabel')}
               style={{
                 padding: '6px 12px',
                 borderRadius: 6,

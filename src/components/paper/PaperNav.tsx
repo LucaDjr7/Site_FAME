@@ -15,8 +15,9 @@ type Props = {
 export function PaperNav({ subjects, currentId, lab, locale }: Props) {
   const t = useTranslations('paper')
   const idx = subjects.findIndex(s => s.id === currentId)
-  const prev = subjects.length ? subjects[(idx - 1 + subjects.length) % subjects.length] : null
-  const next = subjects.length ? subjects[(idx + 1) % subjects.length] : null
+  const single = subjects.length <= 1
+  const prev = !single ? subjects[(idx - 1 + subjects.length) % subjects.length] : null
+  const next = !single ? subjects[(idx + 1) % subjects.length] : null
   const href = (id: string) => `/${locale}/${lab}/paper/${id}`
 
   return (
@@ -25,7 +26,11 @@ export function PaperNav({ subjects, currentId, lab, locale }: Props) {
       display: 'flex', alignItems: 'center', gap: 16, padding: '0 26px', background: '#2f4486',
       borderTop: '1px solid rgba(20,40,90,0.4)',
     }}>
-      <Link href={prev ? href(prev.id) : '#'} aria-label={t('prev')} style={arrowStyle}>‹</Link>
+      {prev ? (
+        <Link href={href(prev.id)} aria-label={t('prev')} style={arrowStyle}>‹</Link>
+      ) : (
+        <span aria-hidden="true" style={{ ...arrowStyle, opacity: 0.25, cursor: 'default', pointerEvents: 'none' }}>‹</span>
+      )}
       <div className="fame-scroll" style={{ flex: 1, display: 'flex', gap: 12, overflowX: 'auto', padding: '14px 4px' }}>
         {subjects.map(s => {
           const active = s.id === currentId
@@ -41,7 +46,11 @@ export function PaperNav({ subjects, currentId, lab, locale }: Props) {
           )
         })}
       </div>
-      <Link href={next ? href(next.id) : '#'} aria-label={t('next')} style={arrowStyle}>›</Link>
+      {next ? (
+        <Link href={href(next.id)} aria-label={t('next')} style={arrowStyle}>›</Link>
+      ) : (
+        <span aria-hidden="true" style={{ ...arrowStyle, opacity: 0.25, cursor: 'default', pointerEvents: 'none' }}>›</span>
+      )}
     </div>
   )
 }

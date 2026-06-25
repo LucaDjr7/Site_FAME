@@ -115,16 +115,18 @@ function EditForm({ member, isAdmin, onClose, onSaved }: FormProps) {
       {isAdmin && (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px 12px', marginBottom: 14 }}>
           <div>
-            <label style={labelStyle}>{t('fFirstName')}</label>
+            <label htmlFor="edit-member-firstname" style={labelStyle}>{t('fFirstName')}</label>
             <input
+              id="edit-member-firstname"
               value={prenom}
               onChange={e => setPrenom(e.target.value)}
               style={inputStyle}
             />
           </div>
           <div>
-            <label style={labelStyle}>{t('fLastName')}</label>
+            <label htmlFor="edit-member-lastname" style={labelStyle}>{t('fLastName')}</label>
             <input
+              id="edit-member-lastname"
               value={nom}
               onChange={e => setNom(e.target.value)}
               style={inputStyle}
@@ -135,8 +137,9 @@ function EditForm({ member, isAdmin, onClose, onSaved }: FormProps) {
 
       {/* Email */}
       <div style={{ marginBottom: 14 }}>
-        <label style={labelStyle}>{t('fEmail')}</label>
+        <label htmlFor="edit-member-email" style={labelStyle}>{t('fEmail')}</label>
         <input
+          id="edit-member-email"
           type="email"
           value={email}
           onChange={e => setEmail(e.target.value)}
@@ -146,8 +149,9 @@ function EditForm({ member, isAdmin, onClose, onSaved }: FormProps) {
 
       {/* Domains */}
       <div style={{ marginBottom: 14 }}>
-        <label style={labelStyle}>{t('fDomains')}</label>
+        <label htmlFor="edit-member-domains" style={labelStyle}>{t('fDomains')}</label>
         <input
+          id="edit-member-domains"
           value={domainesStr}
           onChange={e => setDomainesStr(e.target.value)}
           style={inputStyle}
@@ -157,8 +161,9 @@ function EditForm({ member, isAdmin, onClose, onSaved }: FormProps) {
 
       {/* Photo URL */}
       <div style={{ marginBottom: 14 }}>
-        <label style={labelStyle}>{t('fPhoto')}</label>
+        <label htmlFor="edit-member-photo" style={labelStyle}>{t('fPhoto')}</label>
         <input
+          id="edit-member-photo"
           type="url"
           value={photoUrl}
           onChange={e => setPhotoUrl(e.target.value)}
@@ -171,8 +176,9 @@ function EditForm({ member, isAdmin, onClose, onSaved }: FormProps) {
       {isAdmin && (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '0 12px', alignItems: 'end', marginBottom: 20 }}>
           <div>
-            <label style={labelStyle}>{t('fRole')}</label>
+            <label htmlFor="edit-member-role" style={labelStyle}>{t('fRole')}</label>
             <select
+              id="edit-member-role"
               value={role}
               onChange={e => setRole(e.target.value as Role)}
               style={{ ...inputStyle, cursor: 'pointer' }}

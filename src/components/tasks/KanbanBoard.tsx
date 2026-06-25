@@ -153,7 +153,7 @@ export function KanbanBoard({ lab, locale, subjects, initialTasks, members, isMe
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <input
-              type="search" value={q} onChange={e => setQ(e.target.value)} placeholder={t('search')}
+              type="search" value={q} onChange={e => setQ(e.target.value)} placeholder={t('search')} aria-label={t('searchLabel')}
               style={{
                 padding: '6px 12px', borderRadius: 6, border: '1px solid #eceadf', background: '#fff',
                 color: '#2a3457', fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, width: 180, outline: 'none',

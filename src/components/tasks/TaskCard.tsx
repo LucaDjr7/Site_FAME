@@ -20,7 +20,8 @@ export function TaskCard({ task, isMember, currentMemberId, editMode, onOpen, on
   const claimedByMe = !!currentMemberId && task.assignees.some(a => a.id === currentMemberId)
 
   return (
-    <div
+    <button
+      type="button"
       onClick={() => onOpen(task)}
       style={{
         background: '#fbf8f1',
@@ -33,6 +34,8 @@ export function TaskCard({ task, isMember, currentMemberId, editMode, onOpen, on
         flexDirection: 'column',
         gap: 7,
         position: 'relative',
+        width: '100%',
+        textAlign: 'left',
       }}
     >
       {/* status + difficulty */}
@@ -91,6 +94,6 @@ export function TaskCard({ task, isMember, currentMemberId, editMode, onOpen, on
           ×
         </button>
       )}
-    </div>
+    </button>
   )
 }

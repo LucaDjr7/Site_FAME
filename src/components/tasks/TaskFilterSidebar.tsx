@@ -147,7 +147,7 @@ export function TaskFilterSidebar({
           const count = countFor(tasks, q, fSubject, fStatus, fDiff, fPerson, fDate, 'subject', s.id)
           const active = fSubject.has(s.id)
           return (
-            <button key={s.id} onClick={() => onToggleSubject(s.id)} style={{ ...btnBase, ...(active ? ACTIVE : INACTIVE) }}>
+            <button key={s.id} onClick={() => onToggleSubject(s.id)} aria-pressed={active} style={{ ...btnBase, ...(active ? ACTIVE : INACTIVE) }}>
               <span style={{ width: 7, height: 7, borderRadius: '50%', background: SUBJECT_STATUS_COLOR[s.statut], flexShrink: 0 }} />
               <span style={{ flex: 1, fontSize: 10, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.titre}</span>
               <span style={{ fontSize: 9, opacity: 0.65 }}>{count}</span>
@@ -163,7 +163,7 @@ export function TaskFilterSidebar({
           const count = countFor(tasks, q, fSubject, fStatus, fDiff, fPerson, fDate, 'status', s)
           const active = fStatus.has(s)
           return (
-            <button key={s} onClick={() => onToggleStatus(s)} style={{ ...btnBase, ...(active ? ACTIVE : INACTIVE) }}>
+            <button key={s} onClick={() => onToggleStatus(s)} aria-pressed={active} style={{ ...btnBase, ...(active ? ACTIVE : INACTIVE) }}>
               <span style={{ width: 7, height: 7, borderRadius: '50%', background: TASK_STATUS_COLOR[s], flexShrink: 0 }} />
               <span style={{ flex: 1, fontSize: 10 }}>{t(`status.${STATUS_KEY[s]}`)}</span>
               <span style={{ fontSize: 9, opacity: 0.65 }}>{count}</span>
@@ -179,7 +179,7 @@ export function TaskFilterSidebar({
           const count = countFor(tasks, q, fSubject, fStatus, fDiff, fPerson, fDate, 'diff', key)
           const active = fDiff.has(key)
           return (
-            <button key={key} onClick={() => onToggleDiff(key)} style={{ ...btnBase, ...(active ? ACTIVE : INACTIVE) }}>
+            <button key={key} onClick={() => onToggleDiff(key)} aria-pressed={active} style={{ ...btnBase, ...(active ? ACTIVE : INACTIVE) }}>
               <DiffDots level={DIFF_LEVEL[key]} />
               <span style={{ flex: 1, fontSize: 10 }}>{t(`difficulty.${key}`)}</span>
               <span style={{ fontSize: 9, opacity: 0.65 }}>{count}</span>
@@ -197,7 +197,7 @@ export function TaskFilterSidebar({
             const active = fPerson.has(m.id)
             const name = `${m.prenom} ${m.nom}`
             return (
-              <button key={m.id} onClick={() => onTogglePerson(m.id)} style={{ ...btnBase, ...(active ? ACTIVE : INACTIVE) }}>
+              <button key={m.id} onClick={() => onTogglePerson(m.id)} aria-pressed={active} style={{ ...btnBase, ...(active ? ACTIVE : INACTIVE) }}>
                 <Avatar name={name} photoUrl={m.photo_url} size={16} />
                 <span style={{ flex: 1, fontSize: 10, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{name}</span>
                 <span style={{ fontSize: 9, opacity: 0.65 }}>{count}</span>
@@ -214,7 +214,7 @@ export function TaskFilterSidebar({
           const count = countFor(tasks, q, fSubject, fStatus, fDiff, fPerson, fDate, 'date', d)
           const active = fDate.has(d)
           return (
-            <button key={d} onClick={() => onToggleDate(d)} style={{ ...btnBase, ...(active ? ACTIVE : INACTIVE) }}>
+            <button key={d} onClick={() => onToggleDate(d)} aria-pressed={active} style={{ ...btnBase, ...(active ? ACTIVE : INACTIVE) }}>
               <span style={{ flex: 1, fontSize: 10 }}>{t(`date.${d}`)}</span>
               <span style={{ fontSize: 9, opacity: 0.65 }}>{count}</span>
             </button>

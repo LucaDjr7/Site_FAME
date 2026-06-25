@@ -18,7 +18,9 @@ export function LanguageSwitcher() {
       {(['en', 'fr'] as const).map(l => (
         <button
           key={l}
+          lang={l}
           onClick={() => switchTo(l)}
+          aria-current={locale === l ? 'true' : undefined}
           className={`px-2 py-0.5 rounded uppercase tracking-widest transition-colors ${
             locale === l
               ? 'bg-fame-blue text-white'

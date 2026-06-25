@@ -13,6 +13,9 @@ function colorForName(name: string) {
 export function Avatar({ name, photoUrl, size = 32 }: Props) {
   const initials = name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
   if (photoUrl) {
+    // unoptimized: photo_url is a user-supplied external URL (Supabase Storage or
+    // third-party CDN); dimensions are unknown at build time and Next.js image
+    // optimization requires a known origin — skip optimization to avoid 400 errors.
     return <Image src={photoUrl} alt={name} width={size} height={size} unoptimized
       className="rounded-full object-cover" style={{ width: size, height: size }} />
   }

@@ -16,7 +16,8 @@
   "home": {
     "tagline": "Paris · Montréal",
     "cta": "Cliquez sur un laboratoire pour entrer",
-    "enteringLab": "Ouverture du laboratoire de {city}…"
+    "enteringLab": "Ouverture du laboratoire de {city}…",
+    "globeLabel": "Emplacements des laboratoires"
   },
   "lab": {
     "title": {
@@ -53,6 +54,7 @@
       "older": "Avant 2024"
     },
     "count": "{n} sujet(s)",
+    "searchLabel": "Rechercher des sujets",
     "sortRecent": "Récents",
     "sortOldest": "Anciens",
     "tasksLink": "Tâches →",
@@ -109,11 +111,14 @@
     "responsible": "Responsable",
     "keywords": "Mots-clés",
     "noTasks": "Aucune tâche liée",
+    "commentNameLabel": "Votre nom",
+    "commentTextLabel": "Ajouter un commentaire",
     "noComments": "Aucun commentaire",
     "figurePlaceholder": "Emplacement figure — déposer le graphique ici",
     "tasksLink": "Tâches →",
     "prev": "Sujet précédent",
-    "next": "Sujet suivant"
+    "next": "Sujet suivant",
+    "commentPosted": "Commentaire publié"
   },
   "tasks": {
     "claimTask": "Se positionner",
@@ -135,6 +140,7 @@
     "addTask": "Ajouter une tâche",
     "kicker": "FAME / Tâches",
     "pageTitle": "Tâches",
+    "searchLabel": "Rechercher des tâches",
     "search": "Rechercher des tâches…",
     "editMode": "Éditer",
     "editModeOn": "Édition",
@@ -407,6 +413,7 @@
     "loading": "Chargement…",
     "save": "Enregistrer",
     "cancel": "Annuler",
+    "close": "Fermer",
     "delete": "Supprimer",
     "confirm": "Confirmer",
     "edit": "Modifier",
@@ -418,6 +425,22 @@
     "montreal": "Montréal",
     "lab": "Laboratoire",
     "by": "par"
+  },
+  "meta": {
+    "siteName": "FAME",
+    "homeTitle": "FAME — Économie financière et monétaire",
+    "homeDesc": "Laboratoires de recherche indépendants à Paris et Montréal.",
+    "labTitle": "Laboratoire {lab}",
+    "labDesc": "Sujets de recherche et avancement du laboratoire {lab}.",
+    "publicationsTitle": "Publications — {lab}",
+    "publicationsDesc": "Articles et prépublications du laboratoire {lab}.",
+    "teamTitle": "Équipe — {lab}",
+    "teamDesc": "Membres du laboratoire {lab}.",
+    "tasksTitle": "Tâches — {lab}",
+    "proposeTitle": "Proposer un sujet — {lab}",
+    "dataTitle": "Données — {lab}",
+    "promptsTitle": "Prompts — {lab}",
+    "paperTitle": "{title} — {lab}"
   },
   "privacy": {
     "link": "Politique de confidentialité",

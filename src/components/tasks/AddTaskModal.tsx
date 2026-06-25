@@ -110,8 +110,8 @@ export function AddTaskModal({ open, lab, subjectId, members, onClose, onAdded }
 
         {/* Titre */}
         <div style={{ marginBottom: 14 }}>
-          <label style={labelStyle}>{t('modal.fTitle')} *</label>
-          <input type="text" value={titre} onChange={e => setTitre(e.target.value)} placeholder={t('modal.fTitle')} style={inputStyle} autoFocus />
+          <label htmlFor="add-task-title" style={labelStyle}>{t('modal.fTitle')} *</label>
+          <input id="add-task-title" type="text" value={titre} onChange={e => setTitre(e.target.value)} placeholder={t('modal.fTitle')} style={inputStyle} autoFocus />
         </div>
 
         {/* Statut */}
@@ -136,8 +136,8 @@ export function AddTaskModal({ open, lab, subjectId, members, onClose, onAdded }
 
         {/* Assigné à */}
         <div style={{ marginBottom: 14 }}>
-          <label style={labelStyle}>{t('modal.fAssignee')}</label>
-          <select value={assignee} onChange={e => setAssignee(e.target.value)} style={{ ...inputStyle, appearance: 'none' }}>
+          <label htmlFor="add-task-assignee" style={labelStyle}>{t('modal.fAssignee')}</label>
+          <select id="add-task-assignee" value={assignee} onChange={e => setAssignee(e.target.value)} style={{ ...inputStyle, appearance: 'none' }}>
             <option value="">{t('modal.none')}</option>
             {members.map(m => <option key={m.id} value={m.id}>{m.prenom} {m.nom}</option>)}
           </select>
@@ -145,20 +145,21 @@ export function AddTaskModal({ open, lab, subjectId, members, onClose, onAdded }
 
         {/* Description */}
         <div style={{ marginBottom: 14 }}>
-          <label style={labelStyle}>{t('modal.fDescription')}</label>
-          <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder={t('modal.fDescription')} rows={3}
+          <label htmlFor="add-task-description" style={labelStyle}>{t('modal.fDescription')}</label>
+          <textarea id="add-task-description" value={description} onChange={e => setDescription(e.target.value)} placeholder={t('modal.fDescription')} rows={3}
             style={{ ...inputStyle, resize: 'vertical' }} />
         </div>
 
         {/* Sous-tâches */}
         <div style={{ marginBottom: 18 }}>
-          <label style={labelStyle}>{t('modal.fSubtasks')}</label>
+          <label htmlFor="add-task-subtask-input" style={labelStyle}>{t('modal.fSubtasks')}</label>
           {subtasks.length > 0 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 8 }}>
               {subtasks.map((s, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <span style={{ flex: 1, fontSize: 12, color: '#2a3457' }}>{s}</span>
                   <button type="button" onClick={() => setSubtasks(prev => prev.filter((_, j) => j !== i))}
+                    aria-label={t('delete.confirm')}
                     style={{ background: 'none', border: 'none', color: '#c0473b', cursor: 'pointer', fontSize: 13 }}>×</button>
                 </div>
               ))}
@@ -166,6 +167,7 @@ export function AddTaskModal({ open, lab, subjectId, members, onClose, onAdded }
           )}
           <div style={{ display: 'flex', gap: 6 }}>
             <input
+              id="add-task-subtask-input"
               type="text" value={subtaskDraft} onChange={e => setSubtaskDraft(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addSubtaskDraft() } }}
               placeholder={t('modal.subtaskPlaceholder')} style={inputStyle}
