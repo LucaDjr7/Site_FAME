@@ -275,7 +275,7 @@ export function DataExplorer({ lab }: Props) {
               marginBottom: 3,
             }}
           >
-            FAME / {labLabel}
+            {t('kicker', { lab: labLabel })}
           </div>
           <h1
             style={{
@@ -572,7 +572,7 @@ export function DataExplorer({ lab }: Props) {
                             flexShrink: 0,
                             borderRadius: 6,
                           }}
-                          title="Open in Dropbox"
+                          title={t('openInDropbox')}
                         >
                           ↗
                         </a>
@@ -834,7 +834,7 @@ export function DataExplorer({ lab }: Props) {
                             lineHeight: 1,
                             flexShrink: 0,
                           }}
-                          title="Remove link"
+                          title={t('removeLink')}
                         >
                           ✕
                         </button>

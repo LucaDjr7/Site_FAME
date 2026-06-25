@@ -132,7 +132,7 @@ export function AdminProposalsClient() {
               marginBottom: 3,
             }}
           >
-            FAME / Admin
+            {t('kicker')}
           </div>
           <h1
             style={{

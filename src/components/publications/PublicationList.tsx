@@ -263,7 +263,7 @@ export function PublicationList({ lab, isMember }: Props) {
                 marginBottom: 3,
               }}
             >
-              FAME / {labLabel}
+              {t('kicker', { lab: labLabel })}
             </div>
             <h1
               style={{

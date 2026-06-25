@@ -20,6 +20,7 @@ type Props = {
   statusLabel: string
   doneLabel: string
   transversalLabel?: string
+  deleteTitle?: string
   onDelete?: () => void
   onCardClick?: () => void
 }
@@ -32,6 +33,7 @@ export function SubjectCard({
   statusLabel,
   doneLabel,
   transversalLabel,
+  deleteTitle,
   onDelete,
   onCardClick,
 }: Props) {
@@ -46,7 +48,7 @@ export function SubjectCard({
       {editMode && onDelete && (
         <button
           onClick={e => { e.stopPropagation(); onDelete() }}
-          title="Delete"
+          title={deleteTitle}
           style={{
             position: 'absolute',
             top: -8,

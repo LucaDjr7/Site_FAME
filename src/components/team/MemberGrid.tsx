@@ -130,7 +130,7 @@ export function MemberGrid({ lab, currentMemberId, isAdmin }: Props) {
                 marginBottom: 3,
               }}
             >
-              FAME / {labLabel}
+              {t('kicker', { lab: labLabel })}
             </div>
             <h1
               style={{
