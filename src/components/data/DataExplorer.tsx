@@ -242,12 +242,11 @@ export function DataExplorer({ lab }: Props) {
   const unlinkedTasks = tasks.filter(t => !linkedTaskIds.has(t.id))
 
   return (
-    <div
+    <div className="font-serif"
       style={{
         minHeight: 'calc(100vh - 6rem)',
         display: 'flex',
         flexDirection: 'column',
-        fontFamily: "'Roboto Slab', Georgia, serif",
         color: '#18244c',
         background: PAGE_BG,
       }}
@@ -265,9 +264,8 @@ export function DataExplorer({ lab }: Props) {
       >
         {/* Left: kicker + title */}
         <div>
-          <div
+          <div className="font-mono"
             style={{
-              fontFamily: 'IBM Plex Mono, monospace',
               fontSize: 9,
               letterSpacing: '0.14em',
               textTransform: 'uppercase',
@@ -277,9 +275,8 @@ export function DataExplorer({ lab }: Props) {
           >
             {t('kicker', { lab: labLabel })}
           </div>
-          <h1
+          <h1 className="font-serif"
             style={{
-              fontFamily: "'Roboto Slab', Georgia, serif",
               fontSize: 20,
               fontWeight: 600,
               color: '#15203f',
@@ -291,7 +288,7 @@ export function DataExplorer({ lab }: Props) {
         </div>
 
         {/* Right: open root button */}
-        <a
+        <a className="font-mono"
           href="https://www.dropbox.com/home"
           target="_blank"
           rel="noopener noreferrer"
@@ -301,7 +298,6 @@ export function DataExplorer({ lab }: Props) {
             color: '#1f4f9e',
             borderRadius: 9,
             padding: '8px 14px',
-            fontFamily: 'IBM Plex Mono, monospace',
             fontSize: 11,
             textDecoration: 'none',
             display: 'inline-block',
@@ -333,9 +329,8 @@ export function DataExplorer({ lab }: Props) {
                 marginBottom: 14,
               }}
             >
-              <span
+              <span className="font-mono"
                 style={{
-                  fontFamily: 'IBM Plex Mono, monospace',
                   fontSize: 10,
                   textTransform: 'uppercase',
                   letterSpacing: '0.2em',
@@ -352,9 +347,8 @@ export function DataExplorer({ lab }: Props) {
                   background: 'rgba(20,40,90,0.12)',
                 }}
               />
-              <span
+              <span className="font-mono"
                 style={{
-                  fontFamily: 'IBM Plex Mono, monospace',
                   fontSize: 10,
                   letterSpacing: '0.08em',
                   color: '#6b7596',
@@ -376,9 +370,8 @@ export function DataExplorer({ lab }: Props) {
               }}
             >
               {treeError === 'not_configured' ? (
-                <div
+                <div className="font-mono"
                   style={{
-                    fontFamily: 'IBM Plex Mono, monospace',
                     fontSize: 12,
                     color: '#6b7596',
                     textAlign: 'center',
@@ -388,9 +381,8 @@ export function DataExplorer({ lab }: Props) {
                   {t('notConfigured')}
                 </div>
               ) : treeError === 'generic' ? (
-                <div
+                <div className="font-mono"
                   style={{
-                    fontFamily: 'IBM Plex Mono, monospace',
                     fontSize: 12,
                     color: '#c0473b',
                     textAlign: 'center',
@@ -400,9 +392,8 @@ export function DataExplorer({ lab }: Props) {
                   {t('errorGeneric')}
                 </div>
               ) : loading ? (
-                <div
+                <div className="font-mono"
                   style={{
-                    fontFamily: 'IBM Plex Mono, monospace',
                     fontSize: 12,
                     color: '#6b7596',
                     textAlign: 'center',
@@ -453,7 +444,7 @@ export function DataExplorer({ lab }: Props) {
                         <div style={{ width: depth * 18, flexShrink: 0 }} />
 
                         {/* Chevron */}
-                        <button
+                        <button className="font-mono"
                           onClick={e => {
                             e.stopPropagation()
                             if (node.is_folder) void toggleExpand(node)
@@ -468,7 +459,6 @@ export function DataExplorer({ lab }: Props) {
                             border: 'none',
                             cursor: node.is_folder ? 'pointer' : 'default',
                             color: '#6b7596',
-                            fontFamily: 'IBM Plex Mono, monospace',
                             fontSize: 10,
                             flexShrink: 0,
                             padding: 0,
@@ -580,9 +570,8 @@ export function DataExplorer({ lab }: Props) {
                     )
                   })}
                   {flatRows.length === 0 && !loading && (
-                    <div
+                    <div className="font-mono"
                       style={{
-                        fontFamily: 'IBM Plex Mono, monospace',
                         fontSize: 12,
                         color: '#6b7596',
                         textAlign: 'center',
@@ -633,9 +622,8 @@ export function DataExplorer({ lab }: Props) {
                   boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.35)',
                 }}
               />
-              <span
+              <span className="font-serif"
                 style={{
-                  fontFamily: "'Roboto Slab', Georgia, serif",
                   fontSize: 13.5,
                   lineHeight: 1.55,
                   color: '#6b7596',
@@ -649,9 +637,8 @@ export function DataExplorer({ lab }: Props) {
             /* Node detail */
             <div>
               {/* Path kicker */}
-              <div
+              <div className="font-mono"
                 style={{
-                  fontFamily: 'IBM Plex Mono, monospace',
                   fontSize: 10,
                   letterSpacing: '0.06em',
                   color: '#6b7596',
@@ -712,7 +699,7 @@ export function DataExplorer({ lab }: Props) {
               </div>
 
               {/* Open in Dropbox button */}
-              <a
+              <a className="font-mono"
                 href={dropboxUrl(selectedNode)}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -723,7 +710,6 @@ export function DataExplorer({ lab }: Props) {
                   color: '#fff',
                   borderRadius: 9,
                   padding: '10px 14px',
-                  fontFamily: 'IBM Plex Mono, monospace',
                   fontSize: 12,
                   letterSpacing: '0.04em',
                   textDecoration: 'none',
@@ -736,9 +722,8 @@ export function DataExplorer({ lab }: Props) {
               </a>
 
               {/* Links section */}
-              <div
+              <div className="font-mono"
                 style={{
-                  fontFamily: 'IBM Plex Mono, monospace',
                   fontSize: 10,
                   textTransform: 'uppercase',
                   letterSpacing: '0.16em',
@@ -751,9 +736,8 @@ export function DataExplorer({ lab }: Props) {
 
               {/* Existing links */}
               {selectedNodeLinks.length === 0 ? (
-                <div
+                <div className="font-mono"
                   style={{
-                    fontFamily: 'IBM Plex Mono, monospace',
                     fontSize: 11,
                     color: '#6b7596',
                     lineHeight: 1.5,
@@ -795,9 +779,8 @@ export function DataExplorer({ lab }: Props) {
                           }}
                         />
                         {/* Label */}
-                        <span
+                        <span className="font-mono"
                           style={{
-                            fontFamily: 'IBM Plex Mono, monospace',
                             fontSize: 8.5,
                             textTransform: 'uppercase',
                             letterSpacing: '0.1em',
@@ -846,10 +829,9 @@ export function DataExplorer({ lab }: Props) {
 
               {/* Link to subject select */}
               <div style={{ marginBottom: 12 }}>
-                <label
+                <label className="font-mono"
                   style={{
                     display: 'block',
-                    fontFamily: 'IBM Plex Mono, monospace',
                     fontSize: 9.5,
                     letterSpacing: '0.12em',
                     textTransform: 'uppercase',
@@ -859,7 +841,7 @@ export function DataExplorer({ lab }: Props) {
                 >
                   {t('linkToSubject')}
                 </label>
-                <select
+                <select className="font-serif"
                   key={`subject-${subjectSelectKey}`}
                   defaultValue=""
                   onChange={e => {
@@ -874,7 +856,6 @@ export function DataExplorer({ lab }: Props) {
                     borderRadius: 9,
                     border: '1px solid rgba(20,40,90,0.18)',
                     background: '#fff',
-                    fontFamily: "'Roboto Slab', Georgia, serif",
                     fontSize: 13,
                     color: '#18244c',
                     cursor: 'pointer',
@@ -889,10 +870,9 @@ export function DataExplorer({ lab }: Props) {
 
               {/* Link to task select */}
               <div>
-                <label
+                <label className="font-mono"
                   style={{
                     display: 'block',
-                    fontFamily: 'IBM Plex Mono, monospace',
                     fontSize: 9.5,
                     letterSpacing: '0.12em',
                     textTransform: 'uppercase',
@@ -902,7 +882,7 @@ export function DataExplorer({ lab }: Props) {
                 >
                   {t('linkToTask')}
                 </label>
-                <select
+                <select className="font-serif"
                   key={`task-${taskSelectKey}`}
                   defaultValue=""
                   onChange={e => {
@@ -917,7 +897,6 @@ export function DataExplorer({ lab }: Props) {
                     borderRadius: 9,
                     border: '1px solid rgba(20,40,90,0.18)',
                     background: '#fff',
-                    fontFamily: "'Roboto Slab', Georgia, serif",
                     fontSize: 13,
                     color: '#18244c',
                     cursor: 'pointer',
