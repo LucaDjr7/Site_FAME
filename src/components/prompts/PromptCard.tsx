@@ -123,10 +123,10 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
               placeholder={t('titlePlaceholder')}
               style={{ ...inputStyle, flex: 1, minWidth: 200, fontSize: 14, fontWeight: 600 }}
             />
-            <select
+            <select className="font-mono"
               value={editTypeCible}
               onChange={e => setEditTypeCible(e.target.value as PromptTarget)}
-              style={{ ...inputStyle, cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: 12 }}
+              style={{ ...inputStyle, cursor: 'pointer',  fontSize: 12 }}
             >
               {TARGET_ORDER.map(tc => (
                 <option key={tc} value={tc}>
@@ -138,7 +138,7 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
 
           {/* Edit body */}
           <div style={{ padding: '14px 18px 16px' }}>
-            <textarea
+            <textarea className="font-mono"
               value={editTexte}
               onChange={e => setEditTexte(e.target.value)}
               rows={8}
@@ -148,7 +148,6 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
                 width: '100%',
                 borderRadius: 9,
                 padding: '12px 13px',
-                fontFamily: "'IBM Plex Mono', monospace",
                 fontSize: 12.5,
                 lineHeight: 1.65,
                 color: '#1f2a4d',
@@ -157,12 +156,12 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
                 boxSizing: 'border-box',
               }}
             />
-            <label style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12, cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: '#5a6486' }}>
+            <label className="font-mono" style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12, cursor: 'pointer',  fontSize: 11, color: '#5a6486' }}>
               <input type="checkbox" checked={editTransversal} onChange={e => setEditTransversal(e.target.checked)} />
               {t('transversalLabel')}
             </label>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 12 }}>
-              <button
+              <button className="font-mono"
                 onClick={cancelEdit}
                 style={{
                   padding: '9px 16px',
@@ -171,13 +170,12 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
                   background: '#fff',
                   color: '#5a6486',
                   fontSize: 12,
-                  fontFamily: "'IBM Plex Mono', monospace",
                   cursor: 'pointer',
                 }}
               >
                 {t('cancel')}
               </button>
-              <button
+              <button className="font-serif"
                 onClick={handleSave}
                 disabled={saving}
                 style={{
@@ -188,7 +186,6 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
                   color: '#eef3ff',
                   fontSize: 13,
                   fontWeight: 600,
-                  fontFamily: "'Roboto Slab', Georgia, serif",
                   cursor: 'pointer',
                   boxShadow: '0 12px 28px -14px rgba(47,68,134,0.7)',
                   opacity: saving ? 0.7 : 1,
@@ -229,12 +226,11 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
         >
           <div style={{ flex: 1, minWidth: 0 }}>
             {/* Target badge */}
-            <div
+            <div className="font-mono"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 7,
-                fontFamily: "'IBM Plex Mono', monospace",
                 fontSize: 9.5,
                 textTransform: 'uppercase',
                 letterSpacing: '0.1em',
@@ -257,11 +253,10 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
               {t(`types.${meta.i18nKey}` as Parameters<typeof t>[0])}
             </div>
             {prompt.is_transversal && (
-              <span style={{
+              <span className="font-mono" style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 marginLeft: 7,
-                fontFamily: "'IBM Plex Mono', monospace",
                 fontSize: 9.5,
                 textTransform: 'uppercase',
                 letterSpacing: '0.1em',
@@ -274,13 +269,12 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
                 {t('transversalBadge')}
               </span>
             )}
-            <h3
+            <h3 className="font-serif"
               style={{
                 margin: '9px 0 0',
                 fontSize: 16.5,
                 fontWeight: 700,
                 color: '#18244c',
-                fontFamily: "'Roboto Slab', Georgia, serif",
                 lineHeight: 1.2,
                 letterSpacing: '-0.01em',
               }}
@@ -316,13 +310,12 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
         </div>
 
         {/* Card body */}
-        <div style={{ padding: '14px 18px 16px' }}>
+        <div className="font-mono" style={{ padding: '14px 18px 16px' }}>
           <pre
             style={{
               margin: 0,
               whiteSpace: 'pre-wrap',
               wordBreak: 'break-word',
-              fontFamily: "'IBM Plex Mono', monospace",
               fontSize: 12.5,
               lineHeight: 1.7,
               color: '#2a3457',
