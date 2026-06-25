@@ -22,7 +22,6 @@ const filterBtnStyle = (active: boolean): React.CSSProperties => ({
   border: active ? '1px solid #2f4486' : '1px solid rgba(20,40,90,0.14)',
   background: active ? 'rgba(47,68,134,0.12)' : 'rgba(255,255,255,0.6)',
   color: active ? '#2f4486' : '#6b7596',
-  fontFamily: "'IBM Plex Mono', monospace",
   fontSize: 10,
   letterSpacing: '0.06em',
   textTransform: 'capitalize',
@@ -87,7 +86,6 @@ export function AdminProposalsClient() {
   const actionBtn = (kind: 'accept' | 'reject' | 'convert'): React.CSSProperties => ({
     padding: '8px 14px',
     borderRadius: 8,
-    fontFamily: "'IBM Plex Mono', monospace",
     fontSize: 11,
     letterSpacing: '0.04em',
     cursor: 'pointer',
@@ -97,12 +95,11 @@ export function AdminProposalsClient() {
   })
 
   return (
-    <div
+    <div className="font-serif"
       style={{
         minHeight: 'calc(100vh - 3rem)',
         display: 'flex',
         flexDirection: 'column',
-        fontFamily: "'Roboto Slab', Georgia, serif",
         color: '#18244c',
         background: PAGE_BG,
       }}
@@ -122,9 +119,8 @@ export function AdminProposalsClient() {
       >
         {/* Left: kicker + title */}
         <div>
-          <div
+          <div className="font-mono"
             style={{
-              fontFamily: "'IBM Plex Mono', monospace",
               fontSize: 9,
               letterSpacing: '0.14em',
               textTransform: 'uppercase',
@@ -134,9 +130,8 @@ export function AdminProposalsClient() {
           >
             {t('kicker')}
           </div>
-          <h1
+          <h1 className="font-serif"
             style={{
-              fontFamily: "'Roboto Slab', Georgia, serif",
               fontSize: 20,
               fontWeight: 600,
               color: '#15203f',
@@ -179,9 +174,8 @@ export function AdminProposalsClient() {
       <div style={{ flex: 1, overflowY: 'auto', padding: '28px 32px 48px' }}>
         <div style={{ maxWidth: 820, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
           {visible.length === 0 && (
-            <p
+            <p className="font-mono"
               style={{
-                fontFamily: "'IBM Plex Mono', monospace",
                 fontSize: 12,
                 color: '#7e95d6',
                 textAlign: 'center',
@@ -205,9 +199,8 @@ export function AdminProposalsClient() {
               {/* Header */}
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 10 }}>
                 <div style={{ minWidth: 0 }}>
-                  <h3
+                  <h3 className="font-serif"
                     style={{
-                      fontFamily: "'Roboto Slab', Georgia, serif",
                       fontSize: 16,
                       fontWeight: 700,
                       color: '#15203f',
@@ -217,9 +210,8 @@ export function AdminProposalsClient() {
                   >
                     {p.titre}
                   </h3>
-                  <p
+                  <p className="font-mono"
                     style={{
-                      fontFamily: "'IBM Plex Mono', monospace",
                       fontSize: 10,
                       letterSpacing: '0.12em',
                       textTransform: 'uppercase',
@@ -233,9 +225,8 @@ export function AdminProposalsClient() {
                 <ProposalStatusBadge status={p.statut} label={ts(p.statut)} />
               </div>
 
-              <p
+              <p className="font-serif"
                 style={{
-                  fontFamily: "'Roboto Slab', Georgia, serif",
                   fontSize: 13.5,
                   color: '#43507a',
                   lineHeight: 1.6,
@@ -248,7 +239,7 @@ export function AdminProposalsClient() {
 
               {p.statut === 'pending' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10, borderTop: '1px solid rgba(0,0,0,0.06)', paddingTop: 14 }}>
-                  <input
+                  <input className="font-mono"
                     type="text"
                     placeholder={t('commentPlaceholder')}
                     value={comments[p.id] ?? ''}
@@ -259,7 +250,6 @@ export function AdminProposalsClient() {
                       border: '1px solid rgba(20,40,90,0.18)',
                       borderRadius: 9,
                       padding: '9px 11px',
-                      fontFamily: "'IBM Plex Mono', monospace",
                       fontSize: 12,
                       color: '#2a3457',
                       outline: 'none',
@@ -275,9 +265,8 @@ export function AdminProposalsClient() {
               )}
 
               {p.statut !== 'pending' && p.commentaire_admin && (
-                <p
+                <p className="font-mono"
                   style={{
-                    fontFamily: "'IBM Plex Mono', monospace",
                     fontSize: 11.5,
                     color: '#6b7596',
                     fontStyle: 'italic',
