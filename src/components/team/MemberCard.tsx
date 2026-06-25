@@ -121,12 +121,11 @@ export function MemberCard({ member, isSelf, isAdmin, editMode, onEdit, onDelete
       </div>
 
       {/* Name */}
-      <div
+      <div className="font-serif"
         style={{
           fontSize: 16,
           fontWeight: 600,
           color: '#15203f',
-          fontFamily: 'Roboto Slab, Georgia, serif',
           marginBottom: 4,
         }}
       >
@@ -134,9 +133,8 @@ export function MemberCard({ member, isSelf, isAdmin, editMode, onEdit, onDelete
       </div>
 
       {/* Role label */}
-      <div
+      <div className="font-mono"
         style={{
-          fontFamily: 'IBM Plex Mono, monospace',
           fontSize: 10,
           textTransform: 'uppercase',
           letterSpacing: '0.1em',
@@ -159,10 +157,9 @@ export function MemberCard({ member, isSelf, isAdmin, editMode, onEdit, onDelete
           }}
         >
           {member.domaines.map((d, i) => (
-            <span
+            <span className="font-mono"
               key={i}
               style={{
-                fontFamily: 'IBM Plex Mono, monospace',
                 fontSize: 9.5,
                 color: '#43507a',
                 background: '#eceadf',
@@ -181,10 +178,9 @@ export function MemberCard({ member, isSelf, isAdmin, editMode, onEdit, onDelete
       <div style={{ flex: 1 }} />
 
       {/* Email */}
-      <a
+      <a className="font-mono"
         href={`mailto:${member.email}`}
         style={{
-          fontFamily: 'IBM Plex Mono, monospace',
           fontSize: 10.5,
           color: '#6b7596',
           textDecoration: 'none',

@@ -85,7 +85,6 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
     borderRadius: 7,
     border: '1px solid rgba(20,40,90,0.18)',
     background: 'rgba(255,255,255,0.85)',
-    fontFamily: 'IBM Plex Mono, monospace',
     fontSize: 12,
     color: '#15203f',
     outline: 'none',
@@ -93,7 +92,6 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
   }
 
   const labelStyle: React.CSSProperties = {
-    fontFamily: 'IBM Plex Mono, monospace',
     fontSize: 10,
     letterSpacing: '0.1em',
     textTransform: 'uppercase',
@@ -107,9 +105,8 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
       {activationUrl ? (
         /* ── Success: show activation URL ─────────────────────────── */
         <div>
-          <div
+          <div className="font-mono"
             style={{
-              fontFamily: 'IBM Plex Mono, monospace',
               fontSize: 11,
               color: '#1e9b7e',
               marginBottom: 12,
@@ -118,9 +115,8 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
           >
             ✓ {t('inviteSent')}
           </div>
-          <div
+          <div className="font-mono"
             style={{
-              fontFamily: 'IBM Plex Mono, monospace',
               fontSize: 10,
               color: '#6b7596',
               marginBottom: 8,
@@ -142,7 +138,7 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
               }}
               onClick={e => (e.target as HTMLInputElement).select()}
             />
-            <button
+            <button className="font-mono"
               onClick={handleCopy}
               style={{
                 padding: '8px 12px',
@@ -150,7 +146,6 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
                 border: copied ? '1px solid #1e9b7e' : '1px solid rgba(20,40,90,0.18)',
                 background: copied ? 'rgba(30,155,126,0.08)' : 'rgba(47,68,134,0.08)',
                 color: copied ? '#1e9b7e' : '#2f4486',
-                fontFamily: 'IBM Plex Mono, monospace',
                 fontSize: 10,
                 cursor: 'pointer',
                 flexShrink: 0,
@@ -161,7 +156,7 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
             </button>
           </div>
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <button
+            <button className="font-mono"
               onClick={handleClose}
               style={{
                 padding: '8px 16px',
@@ -169,7 +164,6 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
                 border: '1px solid rgba(20,40,90,0.15)',
                 background: 'rgba(255,255,255,0.6)',
                 color: '#6b7596',
-                fontFamily: 'IBM Plex Mono, monospace',
                 fontSize: 11,
                 cursor: 'pointer',
               }}
@@ -236,9 +230,8 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
           </div>
 
           {error && (
-            <div
+            <div className="font-mono"
               style={{
-                fontFamily: 'IBM Plex Mono, monospace',
                 fontSize: 11,
                 color: '#c0473b',
                 marginBottom: 12,
@@ -249,7 +242,7 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
           )}
 
           <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-            <button
+            <button className="font-mono"
               type="button"
               onClick={handleClose}
               style={{
@@ -258,14 +251,13 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
                 border: '1px solid rgba(20,40,90,0.15)',
                 background: 'rgba(255,255,255,0.6)',
                 color: '#6b7596',
-                fontFamily: 'IBM Plex Mono, monospace',
                 fontSize: 11,
                 cursor: 'pointer',
               }}
             >
               {t('cancel')}
             </button>
-            <button
+            <button className="font-mono"
               type="submit"
               disabled={loading}
               style={{
@@ -274,7 +266,6 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
                 border: 'none',
                 background: loading ? 'rgba(47,68,134,0.5)' : '#2f4486',
                 color: '#eef3ff',
-                fontFamily: 'IBM Plex Mono, monospace',
                 fontSize: 11,
                 cursor: loading ? 'not-allowed' : 'pointer',
                 letterSpacing: '0.06em',

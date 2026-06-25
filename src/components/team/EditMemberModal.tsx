@@ -84,7 +84,6 @@ function EditForm({ member, isAdmin, onClose, onSaved }: FormProps) {
     borderRadius: 7,
     border: '1px solid rgba(20,40,90,0.18)',
     background: 'rgba(255,255,255,0.85)',
-    fontFamily: 'IBM Plex Mono, monospace',
     fontSize: 12,
     color: '#15203f',
     outline: 'none',
@@ -92,7 +91,6 @@ function EditForm({ member, isAdmin, onClose, onSaved }: FormProps) {
   }
 
   const labelStyle: React.CSSProperties = {
-    fontFamily: 'IBM Plex Mono, monospace',
     fontSize: 10,
     letterSpacing: '0.1em',
     textTransform: 'uppercase',
@@ -182,12 +180,11 @@ function EditForm({ member, isAdmin, onClose, onSaved }: FormProps) {
               ))}
             </select>
           </div>
-          <label
+          <label className="font-mono"
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: 6,
-              fontFamily: 'IBM Plex Mono, monospace',
               fontSize: 11,
               color: '#2f4486',
               cursor: 'pointer',
@@ -209,9 +206,8 @@ function EditForm({ member, isAdmin, onClose, onSaved }: FormProps) {
       {!isAdmin && <div style={{ marginBottom: 20 }} />}
 
       {error && (
-        <div
+        <div className="font-mono"
           style={{
-            fontFamily: 'IBM Plex Mono, monospace',
             fontSize: 11,
             color: '#c0473b',
             marginBottom: 12,
@@ -222,7 +218,7 @@ function EditForm({ member, isAdmin, onClose, onSaved }: FormProps) {
       )}
 
       <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-        <button
+        <button className="font-mono"
           type="button"
           onClick={onClose}
           style={{
@@ -231,14 +227,13 @@ function EditForm({ member, isAdmin, onClose, onSaved }: FormProps) {
             border: '1px solid rgba(20,40,90,0.15)',
             background: 'rgba(255,255,255,0.6)',
             color: '#6b7596',
-            fontFamily: 'IBM Plex Mono, monospace',
             fontSize: 11,
             cursor: 'pointer',
           }}
         >
           {t('cancel')}
         </button>
-        <button
+        <button className="font-mono"
           type="submit"
           disabled={loading}
           style={{
@@ -247,7 +242,6 @@ function EditForm({ member, isAdmin, onClose, onSaved }: FormProps) {
             border: 'none',
             background: loading ? 'rgba(47,68,134,0.5)' : '#2f4486',
             color: '#eef3ff',
-            fontFamily: 'IBM Plex Mono, monospace',
             fontSize: 11,
             cursor: loading ? 'not-allowed' : 'pointer',
             letterSpacing: '0.06em',
