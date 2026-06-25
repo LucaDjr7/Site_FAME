@@ -165,6 +165,7 @@ src/
       page.tsx                     ← Home globe
       auth/login/page.tsx
       auth/activate/[token]/page.tsx
+      privacy/page.tsx               ← page RGPD (hors TopBar, contenu i18n namespace `privacy`, lien footer)
       [lab]/
         layout.tsx                 ← TopBar + pt-12
         page.tsx                   ← Lab grid

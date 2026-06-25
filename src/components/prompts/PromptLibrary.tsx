@@ -4,17 +4,10 @@ import { useTranslations } from 'next-intl'
 import { useToast } from '@/components/ui/Toast'
 import { PromptCard } from './PromptCard'
 import type { Lab, Prompt, PromptTarget } from '@/types'
+import { LAB_LABELS } from '@/lib/constants'
+import { TARGET_META, TARGET_ORDER } from './prompt-shared'
 
-const TARGET_META: Record<PromptTarget, { i18nKey: string; color: string }> = {
-  subject:     { i18nKey: 'sujet',       color: '#2f4486' },
-  publication: { i18nKey: 'publication', color: '#1e9b7e' },
-  data:        { i18nKey: 'donnees',     color: '#0061ff' },
-  member:      { i18nKey: 'membre',      color: '#28b8ce' },
-  task:        { i18nKey: 'tache',       color: '#e8b149' },
-}
-
-const TARGET_ORDER: PromptTarget[] = ['subject', 'publication', 'data', 'member', 'task']
-
+// Intentional variance: 3-gradient composite with specific position offsets (at 26%/78%/92%).
 const PAGE_BG =
   'radial-gradient(110% 80% at 26% 8%, rgba(181,157,135,0.28) 0%, rgba(181,157,135,0) 52%), ' +
   'radial-gradient(120% 110% at 78% 112%, rgba(113,120,132,0.2) 0%, rgba(113,120,132,0) 60%), ' +
@@ -33,7 +26,7 @@ export function PromptLibrary({ lab }: Props) {
   const [reloadKey, setReloadKey] = useState(0)
   const [newlyCreatedId, setNewlyCreatedId] = useState<string | null>(null)
 
-  const labLabel = lab === 'paris' ? 'Paris' : 'Montréal'
+  const labLabel = LAB_LABELS[lab] ?? lab
 
   useEffect(() => {
     let cancelled = false
@@ -100,23 +93,20 @@ export function PromptLibrary({ lab }: Props) {
     justifyContent: 'space-between',
     padding: '9px 11px',
     borderRadius: 9,
-    border: active ? '1px solid #2f4486' : '1px solid rgba(20,40,90,0.12)',
+    border: active ? '1px solid' : '1px solid rgba(20,40,90,0.12)',
     background: active ? 'rgba(47,68,134,0.12)' : 'rgba(20,30,60,0.03)',
-    color: active ? '#2f4486' : '#5a6486',
     cursor: 'pointer',
     width: '100%',
     textAlign: 'left',
-    fontFamily: "'Roboto Slab', Georgia, serif",
     fontSize: 12.5,
   })
 
   return (
-    <div
+    <div className="font-serif"
       style={{
         minHeight: 'calc(100vh - 6rem)',
         display: 'flex',
         flexDirection: 'column',
-        fontFamily: "'Roboto Slab', Georgia, serif",
         color: '#18244c',
         background: PAGE_BG,
       }}
@@ -134,24 +124,20 @@ export function PromptLibrary({ lab }: Props) {
       >
         {/* Left: kicker + title */}
         <div>
-          <div
+          <div className="font-mono text-fame-text-muted"
             style={{
-              fontFamily: "'IBM Plex Mono', monospace",
               fontSize: 9,
               letterSpacing: '0.14em',
               textTransform: 'uppercase',
-              color: '#7e95d6',
               marginBottom: 3,
             }}
           >
-            FAME / {labLabel}
+            {t('kicker', { lab: labLabel })}
           </div>
-          <h1
+          <h1 className="font-serif text-fame-text-dark"
             style={{
-              fontFamily: "'Roboto Slab', Georgia, serif",
               fontSize: 20,
               fontWeight: 600,
-              color: '#15203f',
               margin: 0,
             }}
           >
@@ -160,15 +146,12 @@ export function PromptLibrary({ lab }: Props) {
         </div>
 
         {/* Right: new prompt button */}
-        <button
+        <button className="font-mono bg-fame-blue text-fame-text-light"
           onClick={addPrompt}
           style={{
             padding: '6px 14px',
             borderRadius: 6,
             border: 'none',
-            background: '#2f4486',
-            color: '#eef3ff',
-            fontFamily: "'IBM Plex Mono', monospace",
             fontSize: 10,
             cursor: 'pointer',
             letterSpacing: '0.06em',
@@ -193,22 +176,19 @@ export function PromptLibrary({ lab }: Props) {
             padding: '22px 18px 26px',
           }}
         >
-          <h2
+          <h2 className="font-serif text-fame-blue"
             style={{
-              fontFamily: "'Roboto Slab', Georgia, serif",
               fontSize: 13,
               fontWeight: 600,
               textTransform: 'uppercase',
               letterSpacing: '0.2em',
-              color: '#2f4486',
               margin: '0 0 4px',
             }}
           >
             {t('sidebarTitle')}
           </h2>
-          <p
+          <p className="font-serif"
             style={{
-              fontFamily: "'Roboto Slab', Georgia, serif",
               fontSize: 12,
               color: '#5b668c',
               margin: '0 0 16px',
@@ -221,13 +201,14 @@ export function PromptLibrary({ lab }: Props) {
           {/* All types button */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             <button
+              className={`font-serif ${filter === null ? 'text-fame-blue' : ''}`}
               onClick={() => setFilter(null)}
-              style={filterBtnStyle(filter === null)}
+              style={{ ...filterBtnStyle(filter === null), color: filter === null ? undefined : '#5a6486' }}
             >
               <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 {t('allTypes')}
               </span>
-              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, opacity: 0.7 }}>
+              <span className="font-mono" style={{  fontSize: 10, opacity: 0.7 }}>
                 {prompts.length}
               </span>
             </button>
@@ -239,8 +220,9 @@ export function PromptLibrary({ lab }: Props) {
               return (
                 <button
                   key={tc}
+                  className={`font-serif ${active ? 'text-fame-blue' : ''}`}
                   onClick={() => setFilter(active ? null : tc)}
-                  style={filterBtnStyle(active)}
+                  style={{ ...filterBtnStyle(active), color: active ? undefined : '#5a6486' }}
                 >
                   <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <span
@@ -254,7 +236,7 @@ export function PromptLibrary({ lab }: Props) {
                     />
                     {t(`types.${meta.i18nKey}` as Parameters<typeof t>[0])}
                   </span>
-                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, opacity: 0.7 }}>
+                  <span className="font-mono" style={{  fontSize: 10, opacity: 0.7 }}>
                     {count}
                   </span>
                 </button>
@@ -291,20 +273,18 @@ export function PromptLibrary({ lab }: Props) {
                 flexWrap: 'wrap',
               }}
             >
-              <p
+              <p className="font-serif"
                 style={{
                   margin: 0,
                   maxWidth: 560,
                   fontSize: 13.5,
                   color: '#43507a',
-                  fontFamily: "'Roboto Slab', Georgia, serif",
                   lineHeight: 1.6,
                 }}
               >
                 {t('subtitle')}{' '}
                 <code
                   style={{
-                    fontFamily: "'IBM Plex Mono', monospace",
                     fontSize: 12,
                     background: 'rgba(47,68,134,0.08)',
                     padding: '1px 5px',
@@ -315,9 +295,8 @@ export function PromptLibrary({ lab }: Props) {
                 </code>{' '}
                 {t('subtitleEnd')}
               </p>
-              <span
+              <span className="font-mono"
                 style={{
-                  fontFamily: "'IBM Plex Mono', monospace",
                   fontSize: 11,
                   color: '#6b7596',
                   whiteSpace: 'nowrap',
@@ -330,11 +309,9 @@ export function PromptLibrary({ lab }: Props) {
 
             {/* Loading */}
             {loading ? (
-              <div
+              <div className="font-mono text-fame-text-muted"
                 style={{
-                  fontFamily: "'IBM Plex Mono', monospace",
                   fontSize: 12,
-                  color: '#7e95d6',
                   textAlign: 'center',
                   paddingTop: 40,
                 }}
@@ -343,14 +320,13 @@ export function PromptLibrary({ lab }: Props) {
               </div>
             ) : filtered.length === 0 ? (
               /* Empty state */
-              <div
+              <div className="font-serif"
                 style={{
                   border: '1px dashed rgba(20,40,90,0.2)',
                   borderRadius: 12,
                   padding: '46px 20px',
                   textAlign: 'center',
                   color: '#6b7596',
-                  fontFamily: "'Roboto Slab', Georgia, serif",
                   fontSize: 13,
                   lineHeight: 1.6,
                 }}
@@ -373,15 +349,13 @@ export function PromptLibrary({ lab }: Props) {
 
             {/* Add a prompt button at bottom */}
             {!loading && (
-              <button
+              <button className="font-mono text-fame-blue"
                 onClick={addPrompt}
                 style={{
                   border: '1px dashed rgba(47,68,134,0.4)',
                   background: 'rgba(47,68,134,0.04)',
-                  color: '#2f4486',
                   borderRadius: 10,
                   padding: '11px 18px',
-                  fontFamily: "'IBM Plex Mono', monospace",
                   fontSize: 12,
                   cursor: 'pointer',
                   alignSelf: 'flex-start',

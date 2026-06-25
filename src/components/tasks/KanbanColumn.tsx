@@ -26,14 +26,14 @@ export function KanbanColumn({
       {/* header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '0 4px 14px', flexShrink: 0 }}>
         <span style={{ width: 9, height: 9, borderRadius: '50%', background: SUBJECT_STATUS_COLOR[subject.statut], flexShrink: 0 }} />
-        <h3 style={{
-          fontFamily: 'Roboto Slab, Georgia, serif', fontSize: 13, fontWeight: 600, color: '#15203f',
+        <h3 className="font-serif text-fame-text-dark" style={{
+           fontSize: 13, fontWeight: 600,
           margin: 0, flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
         }}>
           {subject.titre}
         </h3>
-        <span style={{
-          fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: '#5c678a', flexShrink: 0,
+        <span className="font-mono" style={{
+           fontSize: 11, color: '#5c678a', flexShrink: 0,
           background: 'rgba(20,40,90,0.08)', padding: '2px 8px', borderRadius: 20,
         }}>{tasks.length}</span>
       </div>
@@ -53,11 +53,11 @@ export function KanbanColumn({
           />
         ))}
         {isMember && (
-          <button
+          <button className="font-mono text-fame-slate"
             onClick={() => onAddTask(subject.id)}
             style={{
               border: '1px dashed rgba(87,104,172,0.4)', borderRadius: 7, padding: 8, background: 'transparent',
-              cursor: 'pointer', fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, color: '#5768ac', letterSpacing: '0.04em',
+              cursor: 'pointer',  fontSize: 10, letterSpacing: '0.04em',
             }}
           >
             ＋ {t('addTask')}

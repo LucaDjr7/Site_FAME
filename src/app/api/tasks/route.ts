@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { requireMember, authErrorResponse } from '@/lib/auth'
 import type { Lab } from '@/types'
-
-const VALID_LABS: Lab[] = ['paris', 'montreal']
+import { VALID_LABS } from '@/lib/constants'
 
 export async function GET(req: NextRequest) {
   const lab = req.nextUrl.searchParams.get('lab')

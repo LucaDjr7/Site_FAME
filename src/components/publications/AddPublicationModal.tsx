@@ -1,41 +1,21 @@
 'use client'
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
-import type { Lab, PublicationType } from '@/types'
+import type { Lab, PublicationType, Publication } from '@/types'
 import { Modal } from '@/components/ui/Modal'
+import { FORM_INPUT_STYLE, FORM_LABEL_STYLE, FORM_BTN_CANCEL_STYLE, FORM_BTN_SUBMIT_STYLE } from '@/components/ui/form-styles'
 
 type Props = {
   open: boolean
   lab: Lab
   onClose: () => void
-  onCreated: (pub: unknown) => void
+  onCreated: (pub: Publication) => void
 }
 
 const TYPES: PublicationType[] = ['article', 'preprint', 'conference', 'working-paper']
 
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  padding: '7px 10px',
-  borderRadius: 5,
-  border: '1px solid #eceadf',
-  background: '#fff',
-  fontFamily: 'IBM Plex Mono, monospace',
-  fontSize: 12,
-  color: '#2a3457',
-  outline: 'none',
-  boxSizing: 'border-box',
-}
-
-const labelStyle: React.CSSProperties = {
-  display: 'block',
-  fontFamily: 'IBM Plex Mono, monospace',
-  fontSize: 9,
-  fontWeight: 600,
-  letterSpacing: '0.1em',
-  textTransform: 'uppercase',
-  color: '#5768ac',
-  marginBottom: 5,
-}
+const inputStyle: React.CSSProperties = { ...FORM_INPUT_STYLE, boxSizing: 'border-box' }
+const labelStyle = FORM_LABEL_STYLE
 
 export function AddPublicationModal({ open, lab, onClose, onCreated }: Props) {
   const t = useTranslations('publications')
@@ -96,7 +76,7 @@ export function AddPublicationModal({ open, lab, onClose, onCreated }: Props) {
         setError((err as { error?: string }).error ?? t('errorGeneric'))
         return
       }
-      const created = await res.json()
+      const created = (await res.json()) as Publication
       onCreated(created)
       reset()
     } catch {
@@ -116,8 +96,8 @@ export function AddPublicationModal({ open, lab, onClose, onCreated }: Props) {
       <form onSubmit={handleSubmit} noValidate>
         {/* Title */}
         <div style={{ marginBottom: 14 }}>
-          <label htmlFor="add-pub-title" style={labelStyle}>{t('fTitle')} *</label>
-          <input
+          <label htmlFor="add-pub-title" className="font-mono" style={labelStyle}>{t('fTitle')} *</label>
+          <input className="font-mono"
             id="add-pub-title"
             type="text"
             value={titre}
@@ -130,8 +110,8 @@ export function AddPublicationModal({ open, lab, onClose, onCreated }: Props) {
 
         {/* Authors */}
         <div style={{ marginBottom: 14 }}>
-          <label htmlFor="add-pub-authors" style={labelStyle}>{t('fAuthors')} *</label>
-          <input
+          <label htmlFor="add-pub-authors" className="font-mono" style={labelStyle}>{t('fAuthors')} *</label>
+          <input className="font-mono"
             id="add-pub-authors"
             type="text"
             value={authorsRaw}
@@ -144,8 +124,8 @@ export function AddPublicationModal({ open, lab, onClose, onCreated }: Props) {
         {/* Year + Type row */}
         <div style={{ display: 'flex', gap: 12, marginBottom: 14 }}>
           <div style={{ flex: 1 }}>
-            <label htmlFor="add-pub-year" style={labelStyle}>{t('fYear')} *</label>
-            <input
+            <label htmlFor="add-pub-year" className="font-mono" style={labelStyle}>{t('fYear')} *</label>
+            <input className="font-mono"
               id="add-pub-year"
               type="number"
               value={annee}
@@ -156,8 +136,9 @@ export function AddPublicationModal({ open, lab, onClose, onCreated }: Props) {
             />
           </div>
           <div style={{ flex: 1 }}>
-            <label htmlFor="add-pub-type" style={labelStyle}>{t('type')} *</label>
+            <label htmlFor="add-pub-type" className="font-mono" style={labelStyle}>{t('type')} *</label>
             <select
+              className="font-mono"
               id="add-pub-type"
               value={type}
               onChange={e => setType(e.target.value as PublicationType)}
@@ -172,8 +153,8 @@ export function AddPublicationModal({ open, lab, onClose, onCreated }: Props) {
 
         {/* Journal / Conference */}
         <div style={{ marginBottom: 14 }}>
-          <label htmlFor="add-pub-journal" style={labelStyle}>{t('fJournal')}</label>
-          <input
+          <label htmlFor="add-pub-journal" className="font-mono" style={labelStyle}>{t('fJournal')}</label>
+          <input className="font-mono"
             id="add-pub-journal"
             type="text"
             value={revue}
@@ -185,8 +166,8 @@ export function AddPublicationModal({ open, lab, onClose, onCreated }: Props) {
 
         {/* DOI / URL */}
         <div style={{ marginBottom: 18 }}>
-          <label htmlFor="add-pub-link" style={labelStyle}>{t('fLink')}</label>
-          <input
+          <label htmlFor="add-pub-link" className="font-mono" style={labelStyle}>{t('fLink')}</label>
+          <input className="font-mono"
             id="add-pub-link"
             type="url"
             value={lien}
@@ -198,10 +179,8 @@ export function AddPublicationModal({ open, lab, onClose, onCreated }: Props) {
 
         {/* Error */}
         {error && (
-          <div style={{
-            fontFamily: 'IBM Plex Mono, monospace',
+          <div className="font-mono text-fame-red" style={{
             fontSize: 11,
-            color: '#c0473b',
             marginBottom: 12,
           }}>
             {error}
@@ -210,36 +189,13 @@ export function AddPublicationModal({ open, lab, onClose, onCreated }: Props) {
 
         {/* Actions */}
         <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-          <button
-            type="button"
-            onClick={handleClose}
-            style={{
-              padding: '8px 16px',
-              borderRadius: 6,
-              border: '1px solid #eceadf',
-              background: 'transparent',
-              fontFamily: 'IBM Plex Mono, monospace',
-              fontSize: 11,
-              color: '#7e95d6',
-              cursor: 'pointer',
-            }}
-          >
+          <button type="button" onClick={handleClose} className="font-mono" style={FORM_BTN_CANCEL_STYLE}>
             {t('cancel')}
           </button>
           <button
             type="submit"
             disabled={submitting}
-            style={{
-              padding: '8px 16px',
-              borderRadius: 6,
-              border: 'none',
-              background: '#2f4486',
-              color: '#fff',
-              fontFamily: 'IBM Plex Mono, monospace',
-              fontSize: 11,
-              cursor: submitting ? 'not-allowed' : 'pointer',
-              opacity: submitting ? 0.7 : 1,
-            }}
+            className="font-mono" style={{ ...FORM_BTN_SUBMIT_STYLE, cursor: submitting ? 'not-allowed' : 'pointer', opacity: submitting ? 0.7 : 1 }}
           >
             {submitting ? '…' : t('add')}
           </button>

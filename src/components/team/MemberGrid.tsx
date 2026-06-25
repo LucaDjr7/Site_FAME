@@ -7,6 +7,7 @@ import { MemberCard } from './MemberCard'
 import { InviteModal } from './InviteModal'
 import { EditMemberModal } from './EditMemberModal'
 import type { Lab, Member, Role } from '@/types'
+import { LAB_LABELS } from '@/lib/constants'
 
 type Props = {
   lab: Lab
@@ -23,6 +24,7 @@ const ROLE_GROUP_KEY: Record<Role, string> = {
   engineering: 'roles.engineering',
 }
 
+// Intentional variance: 3-gradient composite with specific position offsets (at 22%/80%/90%).
 const PAGE_BG =
   'radial-gradient(110% 80% at 22% 8%, rgba(181,157,135,0.28) 0%, rgba(181,157,135,0) 52%), ' +
   'radial-gradient(120% 110% at 80% 112%, rgba(113,120,132,0.2) 0%, rgba(113,120,132,0) 60%), ' +
@@ -91,16 +93,15 @@ export function MemberGrid({ lab, currentMemberId, isAdmin }: Props) {
     addToast(t('saved'), 'success')
   }
 
-  const labLabel = lab === 'paris' ? 'Paris' : 'Montréal'
+  const labLabel = LAB_LABELS[lab] ?? lab
 
   return (
     <>
-      <div
+      <div className="font-serif"
         style={{
           minHeight: 'calc(100vh - 6rem)',
           display: 'flex',
           flexDirection: 'column',
-          fontFamily: "'Roboto Slab', Georgia, serif",
           color: '#18244c',
           background: PAGE_BG,
         }}
@@ -118,24 +119,20 @@ export function MemberGrid({ lab, currentMemberId, isAdmin }: Props) {
         >
           {/* Left: kicker + title */}
           <div>
-            <div
+            <div className="font-mono text-fame-text-muted"
               style={{
-                fontFamily: 'IBM Plex Mono, monospace',
                 fontSize: 9,
                 letterSpacing: '0.14em',
                 textTransform: 'uppercase',
-                color: '#7e95d6',
                 marginBottom: 3,
               }}
             >
-              FAME / {labLabel}
+              {t('kicker', { lab: labLabel })}
             </div>
-            <h1
+            <h1 className="font-serif text-fame-text-dark"
               style={{
-                fontFamily: 'Roboto Slab, Georgia, serif',
                 fontSize: 20,
                 fontWeight: 600,
-                color: '#15203f',
                 margin: 0,
               }}
             >
@@ -145,9 +142,8 @@ export function MemberGrid({ lab, currentMemberId, isAdmin }: Props) {
 
           {/* Right: member count + controls */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span
+            <span className="font-mono"
               style={{
-                fontFamily: 'IBM Plex Mono, monospace',
                 fontSize: 11,
                 color: '#6b7596',
               }}
@@ -157,7 +153,11 @@ export function MemberGrid({ lab, currentMemberId, isAdmin }: Props) {
 
             {/* Edit-mode toggle (members only) */}
             {isMember && (
-              <button
+              // CONV-01 exemption (kept fully inline): the active state pairs a #b88c30 (non-charted
+              // dark-gold) TEXT with a #e8b149 (fame-gold) BORDER — two different colors — plus a
+              // non-standard 1.5px width. The currentColor trick can't express text≠border, so this
+              // element is not a clean mechanical token conversion; left as-is to preserve both colors.
+              <button className="font-mono"
                 onClick={() => setEditMode(v => !v)}
                 style={{
                   padding: '6px 12px',
@@ -165,7 +165,6 @@ export function MemberGrid({ lab, currentMemberId, isAdmin }: Props) {
                   border: editMode ? '1.5px solid #e8b149' : '1px solid rgba(20,40,90,0.15)',
                   background: editMode ? 'rgba(232,177,73,0.12)' : 'rgba(255,255,255,0.6)',
                   color: editMode ? '#b88c30' : '#6b7596',
-                  fontFamily: 'IBM Plex Mono, monospace',
                   fontSize: 10,
                   cursor: 'pointer',
                   letterSpacing: '0.06em',
@@ -178,15 +177,12 @@ export function MemberGrid({ lab, currentMemberId, isAdmin }: Props) {
 
             {/* Invite button (admin only) */}
             {isAdmin && (
-              <button
+              <button className="font-mono bg-fame-blue text-fame-text-light"
                 onClick={() => setInviteOpen(true)}
                 style={{
                   padding: '6px 14px',
                   borderRadius: 6,
                   border: 'none',
-                  background: '#2f4486',
-                  color: '#eef3ff',
-                  fontFamily: 'IBM Plex Mono, monospace',
                   fontSize: 10,
                   cursor: 'pointer',
                   letterSpacing: '0.06em',
@@ -201,11 +197,9 @@ export function MemberGrid({ lab, currentMemberId, isAdmin }: Props) {
         {/* ── Body scroll area ───────────────────────────────────────── */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '28px 32px 48px' }}>
           {loading ? (
-            <div
+            <div className="font-mono text-fame-text-muted"
               style={{
-                fontFamily: 'IBM Plex Mono, monospace',
                 fontSize: 12,
-                color: '#7e95d6',
                 textAlign: 'center',
                 paddingTop: 60,
               }}
@@ -213,11 +207,9 @@ export function MemberGrid({ lab, currentMemberId, isAdmin }: Props) {
               {t('loading')}
             </div>
           ) : members.length === 0 ? (
-            <div
+            <div className="font-mono text-fame-text-muted"
               style={{
-                fontFamily: 'IBM Plex Mono, monospace',
                 fontSize: 13,
-                color: '#7e95d6',
                 textAlign: 'center',
                 paddingTop: 60,
               }}
@@ -237,14 +229,12 @@ export function MemberGrid({ lab, currentMemberId, isAdmin }: Props) {
                       marginBottom: 16,
                     }}
                   >
-                    <span
+                    <span className="font-mono text-fame-blue"
                       style={{
-                        fontFamily: 'IBM Plex Mono, monospace',
                         fontSize: 12,
                         fontWeight: 500,
                         textTransform: 'uppercase',
                         letterSpacing: '0.18em',
-                        color: '#2f4486',
                         flexShrink: 0,
                       }}
                     >
@@ -257,9 +247,8 @@ export function MemberGrid({ lab, currentMemberId, isAdmin }: Props) {
                         background: 'rgba(20,40,90,0.12)',
                       }}
                     />
-                    <span
+                    <span className="font-mono"
                       style={{
-                        fontFamily: 'IBM Plex Mono, monospace',
                         fontSize: 10,
                         color: '#6b7596',
                         letterSpacing: '0.1em',
@@ -311,7 +300,6 @@ export function MemberGrid({ lab, currentMemberId, isAdmin }: Props) {
         open={!!editTarget}
         member={editTarget}
         isAdmin={isAdmin}
-        isSelf={editTarget?.id === currentMemberId}
         onClose={() => setEditTarget(null)}
         onSaved={updated => {
           handleSaved(updated)

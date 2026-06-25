@@ -42,18 +42,18 @@ export function TaskCard({ task, isMember, currentMemberId, editMode, onOpen, on
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
           <span style={{ width: 7, height: 7, borderRadius: '50%', background: TASK_STATUS_COLOR[task.statut] }} />
-          <span style={{
-            fontFamily: 'IBM Plex Mono, monospace', fontSize: 9, letterSpacing: '0.1em',
+          <span className="font-mono" style={{
+             fontSize: 9, letterSpacing: '0.1em',
             textTransform: 'uppercase', color: TASK_STATUS_COLOR[task.statut],
           }}>
             {t(`status.${STATUS_KEY[task.statut]}`)}
           </span>
         </span>
-        <DiffDots level={DIFF_LEVEL[task.difficulte]} />
+        <DiffDots level={DIFF_LEVEL[task.difficulte] ?? 0} />
       </div>
 
       {/* title */}
-      <p style={{ fontFamily: 'Roboto Slab, Georgia, serif', fontSize: 13, fontWeight: 500, color: '#18244c', margin: 0, lineHeight: 1.32 }}>
+      <p className="font-serif" style={{  fontSize: 13, fontWeight: 500, color: '#18244c', margin: 0, lineHeight: 1.32 }}>
         {task.titre}
       </p>
 
@@ -68,10 +68,10 @@ export function TaskCard({ task, isMember, currentMemberId, editMode, onOpen, on
           ))}
         </span>
         {isMember && !claimedByMe && (
-          <button
+          <button className="font-mono text-fame-blue"
             onClick={e => { e.stopPropagation(); onClaim(task.id) }}
             style={{
-              fontFamily: 'IBM Plex Mono, monospace', fontSize: 9, color: '#2f4486',
+               fontSize: 9,
               background: 'none', border: 'none', cursor: 'pointer', letterSpacing: '0.04em', whiteSpace: 'nowrap',
             }}
           >
@@ -82,12 +82,12 @@ export function TaskCard({ task, isMember, currentMemberId, editMode, onOpen, on
 
       {/* delete (edit mode, member) */}
       {isMember && editMode && (
-        <button
+        <button className="bg-fame-red text-white"
           onClick={e => { e.stopPropagation(); onDelete(task.id) }}
           aria-label={t('delete.confirm')}
           style={{
             position: 'absolute', top: -7, right: -7, width: 18, height: 18, borderRadius: '50%',
-            border: 'none', background: '#c0473b', color: '#fff', fontSize: 11, lineHeight: '18px',
+            border: 'none', fontSize: 11, lineHeight: '18px',
             cursor: 'pointer', padding: 0,
           }}
         >

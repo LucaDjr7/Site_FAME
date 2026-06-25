@@ -1,8 +1,9 @@
 'use client'
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
-import type { MemberRef, SubjectStatus, Difficulty, Lab } from '@/types'
+import type { MemberRef, SubjectStatus, Difficulty, Lab, Subject } from '@/types'
 import { Modal } from '@/components/ui/Modal'
+import { FORM_INPUT_STYLE, FORM_LABEL_STYLE, FORM_BTN_CANCEL_STYLE, FORM_BTN_SUBMIT_STYLE } from '@/components/ui/form-styles'
 
 type PillBtnProps<T extends string> = {
   value: T
@@ -15,17 +16,16 @@ function PillBtn<T extends string>({ value, current, label, onChange }: PillBtnP
   const active = value === current
   return (
     <button
+      className={`font-mono ${active ? 'text-fame-blue border-fame-blue' : 'text-fame-text-muted border-fame-ecru'}`}
       type="button"
       onClick={() => onChange(value)}
       style={{
         padding: '4px 10px',
         borderRadius: 20,
         fontSize: 10,
-        fontFamily: 'IBM Plex Mono, monospace',
         cursor: 'pointer',
-        border: active ? '1.5px solid #2f4486' : '1px solid #eceadf',
+        border: active ? '1.5px solid' : '1px solid',
         background: active ? 'rgba(47,68,134,0.1)' : 'transparent',
-        color: active ? '#2f4486' : '#7e95d6',
         transition: 'all 0.1s',
       }}
     >
@@ -39,7 +39,7 @@ type Props = {
   lab: Lab
   members: MemberRef[]
   onClose: () => void
-  onAdded: (subject: unknown) => void
+  onAdded: (subject: Subject) => void
 }
 
 export function AddSubjectModal({ open, lab, members, onClose, onAdded }: Props) {
@@ -100,7 +100,7 @@ export function AddSubjectModal({ open, lab, members, onClose, onAdded }: Props)
         setError((err as { error?: string }).error ?? t('error.server'))
         return
       }
-      const created = await res.json()
+      const created = (await res.json()) as Subject
       onAdded(created)
       reset()
     } catch {
@@ -110,17 +110,8 @@ export function AddSubjectModal({ open, lab, members, onClose, onAdded }: Props)
     }
   }
 
-  const inputStyle: React.CSSProperties = {
-    width: '100%',
-    padding: '7px 10px',
-    borderRadius: 5,
-    border: '1px solid #eceadf',
-    background: '#fff',
-    fontFamily: 'IBM Plex Mono, monospace',
-    fontSize: 12,
-    color: '#2a3457',
-    outline: 'none',
-  }
+  const inputStyle = FORM_INPUT_STYLE
+  const labelStyle = FORM_LABEL_STYLE
 
   const btnGroupStyle: React.CSSProperties = {
     display: 'flex',
@@ -128,39 +119,27 @@ export function AddSubjectModal({ open, lab, members, onClose, onAdded }: Props)
     flexWrap: 'wrap',
   }
 
-  const labelStyle: React.CSSProperties = {
-    display: 'block',
-    fontFamily: 'IBM Plex Mono, monospace',
-    fontSize: 9,
-    fontWeight: 600,
-    letterSpacing: '0.1em',
-    textTransform: 'uppercase',
-    color: '#5768ac',
-    marginBottom: 5,
-  }
-
   return (
     <Modal open={open} onClose={handleClose}>
       <form onSubmit={handleSubmit} noValidate>
         {/* Kicker */}
-        <div style={{
-          fontFamily: 'IBM Plex Mono, monospace', fontSize: 8,
-          letterSpacing: '0.14em', textTransform: 'uppercase', color: '#5768ac',
+        <div className="font-mono text-fame-slate" style={{
+           fontSize: 8,
+          letterSpacing: '0.14em', textTransform: 'uppercase',
           marginBottom: 6,
         }}>
           {t('modal.newSubjectKicker')}
         </div>
-        <div style={{
-          fontFamily: 'Roboto Slab, Georgia, serif',
-          fontSize: 18, fontWeight: 600, color: '#15203f', marginBottom: 20,
+        <div className="font-serif text-fame-text-dark" style={{
+          fontSize: 18, fontWeight: 600, marginBottom: 20,
         }}>
           {t('modal.title')}
         </div>
 
         {/* Titre */}
         <div style={{ marginBottom: 14 }}>
-          <label htmlFor="add-subject-title" style={labelStyle}>{t('modal.fTitle')} *</label>
-          <input
+          <label htmlFor="add-subject-title" className="font-mono" style={labelStyle}>{t('modal.fTitle')} *</label>
+          <input className="font-mono"
             id="add-subject-title"
             type="text"
             value={titre}
@@ -173,8 +152,8 @@ export function AddSubjectModal({ open, lab, members, onClose, onAdded }: Props)
 
         {/* Domaine / kicker */}
         <div style={{ marginBottom: 14 }}>
-          <label htmlFor="add-subject-domain" style={labelStyle}>{t('modal.fDomain')} *</label>
-          <input
+          <label htmlFor="add-subject-domain" className="font-mono" style={labelStyle}>{t('modal.fDomain')} *</label>
+          <input className="font-mono"
             id="add-subject-domain"
             type="text"
             value={kicker}
@@ -186,8 +165,9 @@ export function AddSubjectModal({ open, lab, members, onClose, onAdded }: Props)
 
         {/* Responsable */}
         <div style={{ marginBottom: 14 }}>
-          <label htmlFor="add-subject-responsable" style={labelStyle}>{t('modal.fResponsable')}</label>
+          <label htmlFor="add-subject-responsable" className="font-mono" style={labelStyle}>{t('modal.fResponsable')}</label>
           <select
+            className="font-mono"
             id="add-subject-responsable"
             value={responsable}
             onChange={e => setResponsable(e.target.value)}
@@ -202,7 +182,7 @@ export function AddSubjectModal({ open, lab, members, onClose, onAdded }: Props)
 
         {/* Statut */}
         <div style={{ marginBottom: 14 }}>
-          <label style={labelStyle}>{t('modal.fStatus')}</label>
+          <label className="font-mono" style={labelStyle}>{t('modal.fStatus')}</label>
           <div style={btnGroupStyle}>
             {(['active', 'on-hold', 'done'] as SubjectStatus[]).map(s => (
               <PillBtn key={s} value={s} current={statut} label={t(`status.${s}`)} onChange={setStatut} />
@@ -212,7 +192,7 @@ export function AddSubjectModal({ open, lab, members, onClose, onAdded }: Props)
 
         {/* Difficulté */}
         <div style={{ marginBottom: 14 }}>
-          <label style={labelStyle}>{t('modal.fDifficulty')}</label>
+          <label className="font-mono" style={labelStyle}>{t('modal.fDifficulty')}</label>
           <div style={btnGroupStyle}>
             {(['easy', 'intermediate', 'advanced'] as Difficulty[]).map(d => (
               <PillBtn key={d} value={d} current={difficulte} label={t(`difficulty.${d}`)} onChange={setDifficulte} />
@@ -222,14 +202,14 @@ export function AddSubjectModal({ open, lab, members, onClose, onAdded }: Props)
 
         {/* Résumé */}
         <div style={{ marginBottom: 18 }}>
-          <label htmlFor="add-subject-summary" style={labelStyle}>{t('modal.fSummary')}</label>
-          <textarea
+          <label htmlFor="add-subject-summary" className="font-mono" style={labelStyle}>{t('modal.fSummary')}</label>
+          <textarea className="font-mono"
             id="add-subject-summary"
             value={context}
             onChange={e => setContext(e.target.value)}
             placeholder={t('modal.fSummary')}
             rows={3}
-            style={{ ...inputStyle, resize: 'vertical', fontFamily: 'IBM Plex Mono, monospace' }}
+            style={{ ...inputStyle, resize: 'vertical' }}
           />
         </div>
 
@@ -247,8 +227,8 @@ export function AddSubjectModal({ open, lab, members, onClose, onAdded }: Props)
 
         {/* Error */}
         {error && (
-          <div style={{
-            fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: '#c0473b',
+          <div className="font-mono text-fame-red" style={{
+             fontSize: 11,
             marginBottom: 12,
           }}>
             {error}
@@ -257,27 +237,13 @@ export function AddSubjectModal({ open, lab, members, onClose, onAdded }: Props)
 
         {/* Actions */}
         <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-          <button
-            type="button"
-            onClick={handleClose}
-            style={{
-              padding: '8px 16px', borderRadius: 6, border: '1px solid #eceadf',
-              background: 'transparent', fontFamily: 'IBM Plex Mono, monospace',
-              fontSize: 11, color: '#7e95d6', cursor: 'pointer',
-            }}
-          >
+          <button type="button" onClick={handleClose} className="font-mono" style={FORM_BTN_CANCEL_STYLE}>
             {t('modal.cancel')}
           </button>
           <button
             type="submit"
             disabled={submitting}
-            style={{
-              padding: '8px 16px', borderRadius: 6, border: 'none',
-              background: '#2f4486', color: '#fff',
-              fontFamily: 'IBM Plex Mono, monospace', fontSize: 11,
-              cursor: submitting ? 'not-allowed' : 'pointer',
-              opacity: submitting ? 0.7 : 1,
-            }}
+            className="font-mono" style={{ ...FORM_BTN_SUBMIT_STYLE, cursor: submitting ? 'not-allowed' : 'pointer', opacity: submitting ? 0.7 : 1 }}
           >
             {t('modal.submit')}
           </button>

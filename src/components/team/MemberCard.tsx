@@ -1,7 +1,8 @@
 'use client'
 import { useTranslations } from 'next-intl'
 import { Avatar } from '@/components/ui/Avatar'
-import type { Member, Role } from '@/types'
+import type { Member } from '@/types'
+import { ROLE_KEY } from './team-shared'
 
 type Props = {
   member: Member
@@ -12,21 +13,14 @@ type Props = {
   onDelete: (id: string) => void
 }
 
-const ROLE_KEY: Record<Role, string> = {
-  direction: 'roles.direction',
-  researcher: 'roles.researchers',
-  phd: 'roles.phd',
-  engineering: 'roles.engineering',
-}
-
 export function MemberCard({ member, isSelf, isAdmin, editMode, onEdit, onDelete }: Props) {
   const t = useTranslations('team')
 
   return (
     <div
+      className="bg-fame-sand"
       style={{
         position: 'relative',
-        background: '#fbf9f3',
         borderRadius: 11,
         boxShadow: '0 16px 36px -22px rgba(0,5,30,0.42), inset 0 0 0 1px rgba(0,0,0,0.05)',
         padding: '22px 18px 18px',
@@ -39,6 +33,7 @@ export function MemberCard({ member, isSelf, isAdmin, editMode, onEdit, onDelete
       {/* Delete × button (admin only, not self) */}
       {editMode && isAdmin && !isSelf && (
         <button
+          className="text-fame-red"
           onClick={() => onDelete(member.id)}
           aria-label={t('removeLabel')}
           style={{
@@ -50,7 +45,6 @@ export function MemberCard({ member, isSelf, isAdmin, editMode, onEdit, onDelete
             borderRadius: '50%',
             border: '1.5px solid rgba(220,68,55,0.5)',
             background: '#fff',
-            color: '#c0473b',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
@@ -127,12 +121,10 @@ export function MemberCard({ member, isSelf, isAdmin, editMode, onEdit, onDelete
       </div>
 
       {/* Name */}
-      <div
+      <div className="font-serif text-fame-text-dark"
         style={{
           fontSize: 16,
           fontWeight: 600,
-          color: '#15203f',
-          fontFamily: 'Roboto Slab, Georgia, serif',
           marginBottom: 4,
         }}
       >
@@ -140,13 +132,11 @@ export function MemberCard({ member, isSelf, isAdmin, editMode, onEdit, onDelete
       </div>
 
       {/* Role label */}
-      <div
+      <div className="font-mono text-fame-blue"
         style={{
-          fontFamily: 'IBM Plex Mono, monospace',
           fontSize: 10,
           textTransform: 'uppercase',
           letterSpacing: '0.1em',
-          color: '#2f4486',
           marginBottom: 4,
         }}
       >
@@ -165,13 +155,11 @@ export function MemberCard({ member, isSelf, isAdmin, editMode, onEdit, onDelete
           }}
         >
           {member.domaines.map((d, i) => (
-            <span
+            <span className="font-mono bg-fame-ecru"
               key={i}
               style={{
-                fontFamily: 'IBM Plex Mono, monospace',
                 fontSize: 9.5,
                 color: '#43507a',
-                background: '#eceadf',
                 border: '1px solid rgba(0,0,0,0.05)',
                 padding: '4px 8px',
                 borderRadius: 5,
@@ -187,10 +175,9 @@ export function MemberCard({ member, isSelf, isAdmin, editMode, onEdit, onDelete
       <div style={{ flex: 1 }} />
 
       {/* Email */}
-      <a
+      <a className="font-mono"
         href={`mailto:${member.email}`}
         style={{
-          fontFamily: 'IBM Plex Mono, monospace',
           fontSize: 10.5,
           color: '#6b7596',
           textDecoration: 'none',

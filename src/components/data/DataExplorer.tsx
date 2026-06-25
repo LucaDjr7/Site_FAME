@@ -3,7 +3,10 @@ import { useState, useEffect, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
 import { useToast } from '@/components/ui/Toast'
 import type { Lab, DropboxNode, DropboxLink, Subject, Task } from '@/types'
+import { LAB_LABELS } from '@/lib/constants'
+import { apiFetch } from '@/lib/api-fetch'
 
+// Intentional variance: 3-gradient composite with specific position offsets (at 24%/80%/90%).
 const PAGE_BG =
   'radial-gradient(110% 80% at 24% 8%, rgba(181,157,135,0.28) 0%, rgba(181,157,135,0) 52%), ' +
   'radial-gradient(120% 110% at 80% 112%, rgba(113,120,132,0.2) 0%, rgba(113,120,132,0) 60%), ' +
@@ -86,7 +89,7 @@ export function DataExplorer({ lab }: Props) {
   const [subjectSelectKey, setSubjectSelectKey] = useState(0)
   const [taskSelectKey, setTaskSelectKey] = useState(0)
 
-  const labLabel = lab === 'paris' ? 'Paris' : 'Montréal'
+  const labLabel = LAB_LABELS[lab] ?? lab
 
   // Load on mount
   useEffect(() => {
@@ -203,7 +206,7 @@ export function DataExplorer({ lab }: Props) {
   }
 
   async function addLink(node: DropboxNode, opts: { subject_id?: string; task_id?: string }) {
-    const res = await fetch('/api/dropbox/links', {
+    const newLink = await apiFetch<DropboxLink>('/api/dropbox/links', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -214,27 +217,20 @@ export function DataExplorer({ lab }: Props) {
         subject_id: opts.subject_id,
         task_id: opts.task_id,
       }),
-    })
-    if (res.ok) {
-      const newLink: DropboxLink = await res.json()
-      setLinks(prev => [...prev, newLink])
-      addToast(t('linkAdded'), 'success')
-      // Reset select keys to clear the selects
-      setSubjectSelectKey(k => k + 1)
-      setTaskSelectKey(k => k + 1)
-    } else {
-      addToast(t('errorGeneric'), 'error')
-    }
+    }, (msg) => addToast(msg, 'error'), t('errorGeneric'))
+    if (newLink === null) return
+    setLinks(prev => [...prev, newLink])
+    addToast(t('linkAdded'), 'success')
+    // Reset select keys to clear the selects
+    setSubjectSelectKey(k => k + 1)
+    setTaskSelectKey(k => k + 1)
   }
 
   async function removeLink(id: string) {
-    const res = await fetch(`/api/dropbox/links/${id}`, { method: 'DELETE' })
-    if (res.ok) {
-      setLinks(prev => prev.filter(l => l.id !== id))
-      addToast(t('linkRemoved'), 'info')
-    } else {
-      addToast(t('errorGeneric'), 'error')
-    }
+    const result = await apiFetch<unknown>(`/api/dropbox/links/${id}`, { method: 'DELETE' }, (msg) => addToast(msg, 'error'), t('errorGeneric'))
+    if (result === null) return
+    setLinks(prev => prev.filter(l => l.id !== id))
+    addToast(t('linkRemoved'), 'info')
   }
 
   // Subjects/tasks not already linked to the selected node
@@ -246,12 +242,11 @@ export function DataExplorer({ lab }: Props) {
   const unlinkedTasks = tasks.filter(t => !linkedTaskIds.has(t.id))
 
   return (
-    <div
+    <div className="font-serif"
       style={{
         minHeight: 'calc(100vh - 6rem)',
         display: 'flex',
         flexDirection: 'column',
-        fontFamily: "'Roboto Slab', Georgia, serif",
         color: '#18244c',
         background: PAGE_BG,
       }}
@@ -269,24 +264,20 @@ export function DataExplorer({ lab }: Props) {
       >
         {/* Left: kicker + title */}
         <div>
-          <div
+          <div className="font-mono text-fame-text-muted"
             style={{
-              fontFamily: 'IBM Plex Mono, monospace',
               fontSize: 9,
               letterSpacing: '0.14em',
               textTransform: 'uppercase',
-              color: '#7e95d6',
               marginBottom: 3,
             }}
           >
-            FAME / {labLabel}
+            {t('kicker', { lab: labLabel })}
           </div>
-          <h1
+          <h1 className="font-serif text-fame-text-dark"
             style={{
-              fontFamily: "'Roboto Slab', Georgia, serif",
               fontSize: 20,
               fontWeight: 600,
-              color: '#15203f',
               margin: 0,
             }}
           >
@@ -295,7 +286,7 @@ export function DataExplorer({ lab }: Props) {
         </div>
 
         {/* Right: open root button */}
-        <a
+        <a className="font-mono"
           href="https://www.dropbox.com/home"
           target="_blank"
           rel="noopener noreferrer"
@@ -305,7 +296,6 @@ export function DataExplorer({ lab }: Props) {
             color: '#1f4f9e',
             borderRadius: 9,
             padding: '8px 14px',
-            fontFamily: 'IBM Plex Mono, monospace',
             fontSize: 11,
             textDecoration: 'none',
             display: 'inline-block',
@@ -337,13 +327,11 @@ export function DataExplorer({ lab }: Props) {
                 marginBottom: 14,
               }}
             >
-              <span
+              <span className="font-mono text-fame-blue"
                 style={{
-                  fontFamily: 'IBM Plex Mono, monospace',
                   fontSize: 10,
                   textTransform: 'uppercase',
                   letterSpacing: '0.2em',
-                  color: '#2f4486',
                   flexShrink: 0,
                 }}
               >
@@ -356,9 +344,8 @@ export function DataExplorer({ lab }: Props) {
                   background: 'rgba(20,40,90,0.12)',
                 }}
               />
-              <span
+              <span className="font-mono"
                 style={{
-                  fontFamily: 'IBM Plex Mono, monospace',
                   fontSize: 10,
                   letterSpacing: '0.08em',
                   color: '#6b7596',
@@ -371,8 +358,8 @@ export function DataExplorer({ lab }: Props) {
 
             {/* Tree card */}
             <div
+              className="bg-fame-sand"
               style={{
-                background: '#fbf9f3',
                 borderRadius: 11,
                 boxShadow:
                   '0 16px 40px -24px rgba(0,5,30,0.4), inset 0 0 0 1px rgba(0,0,0,0.05)',
@@ -380,9 +367,8 @@ export function DataExplorer({ lab }: Props) {
               }}
             >
               {treeError === 'not_configured' ? (
-                <div
+                <div className="font-mono"
                   style={{
-                    fontFamily: 'IBM Plex Mono, monospace',
                     fontSize: 12,
                     color: '#6b7596',
                     textAlign: 'center',
@@ -392,11 +378,9 @@ export function DataExplorer({ lab }: Props) {
                   {t('notConfigured')}
                 </div>
               ) : treeError === 'generic' ? (
-                <div
+                <div className="font-mono text-fame-red"
                   style={{
-                    fontFamily: 'IBM Plex Mono, monospace',
                     fontSize: 12,
-                    color: '#c0473b',
                     textAlign: 'center',
                     padding: '40px 20px',
                   }}
@@ -404,9 +388,8 @@ export function DataExplorer({ lab }: Props) {
                   {t('errorGeneric')}
                 </div>
               ) : loading ? (
-                <div
+                <div className="font-mono"
                   style={{
-                    fontFamily: 'IBM Plex Mono, monospace',
                     fontSize: 12,
                     color: '#6b7596',
                     textAlign: 'center',
@@ -457,7 +440,7 @@ export function DataExplorer({ lab }: Props) {
                         <div style={{ width: depth * 18, flexShrink: 0 }} />
 
                         {/* Chevron */}
-                        <button
+                        <button className="font-mono"
                           onClick={e => {
                             e.stopPropagation()
                             if (node.is_folder) void toggleExpand(node)
@@ -472,7 +455,6 @@ export function DataExplorer({ lab }: Props) {
                             border: 'none',
                             cursor: node.is_folder ? 'pointer' : 'default',
                             color: '#6b7596',
-                            fontFamily: 'IBM Plex Mono, monospace',
                             fontSize: 10,
                             flexShrink: 0,
                             padding: 0,
@@ -576,7 +558,7 @@ export function DataExplorer({ lab }: Props) {
                             flexShrink: 0,
                             borderRadius: 6,
                           }}
-                          title="Open in Dropbox"
+                          title={t('openInDropbox')}
                         >
                           ↗
                         </a>
@@ -584,9 +566,8 @@ export function DataExplorer({ lab }: Props) {
                     )
                   })}
                   {flatRows.length === 0 && !loading && (
-                    <div
+                    <div className="font-mono"
                       style={{
-                        fontFamily: 'IBM Plex Mono, monospace',
                         fontSize: 12,
                         color: '#6b7596',
                         textAlign: 'center',
@@ -637,9 +618,8 @@ export function DataExplorer({ lab }: Props) {
                   boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.35)',
                 }}
               />
-              <span
+              <span className="font-serif"
                 style={{
-                  fontFamily: "'Roboto Slab', Georgia, serif",
                   fontSize: 13.5,
                   lineHeight: 1.55,
                   color: '#6b7596',
@@ -653,9 +633,8 @@ export function DataExplorer({ lab }: Props) {
             /* Node detail */
             <div>
               {/* Path kicker */}
-              <div
+              <div className="font-mono"
                 style={{
-                  fontFamily: 'IBM Plex Mono, monospace',
                   fontSize: 10,
                   letterSpacing: '0.06em',
                   color: '#6b7596',
@@ -702,11 +681,11 @@ export function DataExplorer({ lab }: Props) {
                   />
                 )}
                 <h2
+                  className="text-fame-text-dark"
                   style={{
                     fontSize: 17,
                     fontWeight: 600,
                     lineHeight: 1.2,
-                    color: '#15203f',
                     margin: 0,
                     wordBreak: 'break-word',
                   }}
@@ -716,7 +695,7 @@ export function DataExplorer({ lab }: Props) {
               </div>
 
               {/* Open in Dropbox button */}
-              <a
+              <a className="font-mono"
                 href={dropboxUrl(selectedNode)}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -727,7 +706,6 @@ export function DataExplorer({ lab }: Props) {
                   color: '#fff',
                   borderRadius: 9,
                   padding: '10px 14px',
-                  fontFamily: 'IBM Plex Mono, monospace',
                   fontSize: 12,
                   letterSpacing: '0.04em',
                   textDecoration: 'none',
@@ -740,13 +718,11 @@ export function DataExplorer({ lab }: Props) {
               </a>
 
               {/* Links section */}
-              <div
+              <div className="font-mono text-fame-blue"
                 style={{
-                  fontFamily: 'IBM Plex Mono, monospace',
                   fontSize: 10,
                   textTransform: 'uppercase',
                   letterSpacing: '0.16em',
-                  color: '#2f4486',
                   marginBottom: 10,
                 }}
               >
@@ -755,9 +731,8 @@ export function DataExplorer({ lab }: Props) {
 
               {/* Existing links */}
               {selectedNodeLinks.length === 0 ? (
-                <div
+                <div className="font-mono"
                   style={{
-                    fontFamily: 'IBM Plex Mono, monospace',
                     fontSize: 11,
                     color: '#6b7596',
                     lineHeight: 1.5,
@@ -799,9 +774,8 @@ export function DataExplorer({ lab }: Props) {
                           }}
                         />
                         {/* Label */}
-                        <span
+                        <span className="font-mono"
                           style={{
-                            fontFamily: 'IBM Plex Mono, monospace',
                             fontSize: 8.5,
                             textTransform: 'uppercase',
                             letterSpacing: '0.1em',
@@ -813,10 +787,10 @@ export function DataExplorer({ lab }: Props) {
                         </span>
                         {/* Title */}
                         <span
+                          className="text-fame-text-body"
                           style={{
                             flex: 1,
                             fontSize: 12.5,
-                            color: '#2a3457',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
                             whiteSpace: 'nowrap',
@@ -838,7 +812,7 @@ export function DataExplorer({ lab }: Props) {
                             lineHeight: 1,
                             flexShrink: 0,
                           }}
-                          title="Remove link"
+                          title={t('removeLink')}
                         >
                           ✕
                         </button>
@@ -850,10 +824,9 @@ export function DataExplorer({ lab }: Props) {
 
               {/* Link to subject select */}
               <div style={{ marginBottom: 12 }}>
-                <label
+                <label className="font-mono"
                   style={{
                     display: 'block',
-                    fontFamily: 'IBM Plex Mono, monospace',
                     fontSize: 9.5,
                     letterSpacing: '0.12em',
                     textTransform: 'uppercase',
@@ -863,7 +836,7 @@ export function DataExplorer({ lab }: Props) {
                 >
                   {t('linkToSubject')}
                 </label>
-                <select
+                <select className="font-serif"
                   key={`subject-${subjectSelectKey}`}
                   defaultValue=""
                   onChange={e => {
@@ -878,7 +851,6 @@ export function DataExplorer({ lab }: Props) {
                     borderRadius: 9,
                     border: '1px solid rgba(20,40,90,0.18)',
                     background: '#fff',
-                    fontFamily: "'Roboto Slab', Georgia, serif",
                     fontSize: 13,
                     color: '#18244c',
                     cursor: 'pointer',
@@ -893,10 +865,9 @@ export function DataExplorer({ lab }: Props) {
 
               {/* Link to task select */}
               <div>
-                <label
+                <label className="font-mono"
                   style={{
                     display: 'block',
-                    fontFamily: 'IBM Plex Mono, monospace',
                     fontSize: 9.5,
                     letterSpacing: '0.12em',
                     textTransform: 'uppercase',
@@ -906,7 +877,7 @@ export function DataExplorer({ lab }: Props) {
                 >
                   {t('linkToTask')}
                 </label>
-                <select
+                <select className="font-serif"
                   key={`task-${taskSelectKey}`}
                   defaultValue=""
                   onChange={e => {
@@ -921,7 +892,6 @@ export function DataExplorer({ lab }: Props) {
                     borderRadius: 9,
                     border: '1px solid rgba(20,40,90,0.18)',
                     background: '#fff',
-                    fontFamily: "'Roboto Slab', Georgia, serif",
                     fontSize: 13,
                     color: '#18244c',
                     cursor: 'pointer',

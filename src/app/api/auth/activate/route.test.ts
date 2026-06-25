@@ -29,7 +29,7 @@ import { POST } from './route'
 
 function req() {
   return new NextRequest('http://localhost/api/auth/activate', {
-    method: 'POST', body: JSON.stringify({ token: 'tok', password: 'password123' }),
+    method: 'POST', body: JSON.stringify({ token: 'tok', password: 'Password123' }),
   })
 }
 
@@ -47,4 +47,15 @@ describe('POST /api/auth/activate', () => {
     invitationDeleteError = { message: 'delete failed' }
     expect((await POST(req())).status).toBe(200)
   })
+})
+
+describe('activate — complexité mot de passe', () => {
+  const reqPw = (b: unknown) =>
+    new NextRequest('http://localhost/api/auth/activate', { method: 'POST', body: JSON.stringify(b) })
+  it('refuse sans majuscule (400)', async () =>
+    expect((await POST(reqPw({ token: 't', password: 'abcd1234' }))).status).toBe(400))
+  it('refuse sans chiffre (400)', async () =>
+    expect((await POST(reqPw({ token: 't', password: 'Abcdefgh' }))).status).toBe(400))
+  it('refuse trop court (400)', async () =>
+    expect((await POST(reqPw({ token: 't', password: 'Ab1' }))).status).toBe(400))
 })

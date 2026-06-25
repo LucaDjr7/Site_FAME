@@ -1,4 +1,6 @@
+import { notFound } from 'next/navigation'
 import { TopBar } from '@/components/layout/TopBar'
+import { requireAdmin } from '@/lib/auth'
 
 type Props = {
   children: React.ReactNode
@@ -7,6 +9,12 @@ type Props = {
 
 export default async function AdminLayout({ children, params }: Props) {
   const { locale } = await params
+
+  try {
+    await requireAdmin()
+  } catch {
+    notFound()
+  }
 
   return (
     <>

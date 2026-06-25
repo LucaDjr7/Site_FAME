@@ -1,5 +1,6 @@
 import type { Subject, MemberRef, Difficulty } from '@/types'
 import { Avatar } from '@/components/ui/Avatar'
+import { DiffDots } from '@/components/ui/DiffDots'
 
 const STATUS_DOT: Record<string, string> = {
   active: '#1e9b7e',
@@ -7,31 +8,8 @@ const STATUS_DOT: Record<string, string> = {
   done: '#2f4486',
 }
 
-const DIFF_COLOR = '#15203f'
-const DIFF_FAINT = 'rgba(120,140,190,0.28)'
-
 function diffLevel(d: Difficulty): number {
   return d === 'easy' ? 1 : d === 'intermediate' ? 2 : 3
-}
-
-type DiffDotsProps = { difficulty: Difficulty }
-function DiffDots({ difficulty }: DiffDotsProps) {
-  const level = diffLevel(difficulty)
-  return (
-    <span style={{ display: 'flex', gap: 3, alignItems: 'center' }}>
-      {[1, 2, 3].map(i => (
-        <span
-          key={i}
-          style={{
-            display: 'inline-block',
-            width: 5,
-            height: 5,
-            background: i <= level ? DIFF_COLOR : DIFF_FAINT,
-          }}
-        />
-      ))}
-    </span>
-  )
 }
 
 type Props = {
@@ -42,6 +20,7 @@ type Props = {
   statusLabel: string
   doneLabel: string
   transversalLabel?: string
+  deleteTitle?: string
   onDelete?: () => void
   onCardClick?: () => void
 }
@@ -54,6 +33,7 @@ export function SubjectCard({
   statusLabel,
   doneLabel,
   transversalLabel,
+  deleteTitle,
   onDelete,
   onCardClick,
 }: Props) {
@@ -66,9 +46,9 @@ export function SubjectCard({
     <div style={{ position: 'relative' }}>
       {/* Delete button — only in edit mode */}
       {editMode && onDelete && (
-        <button
+        <button className="font-mono bg-fame-red text-white"
           onClick={e => { e.stopPropagation(); onDelete() }}
-          title="Delete"
+          title={deleteTitle}
           style={{
             position: 'absolute',
             top: -8,
@@ -77,8 +57,6 @@ export function SubjectCard({
             width: 22,
             height: 22,
             borderRadius: '50%',
-            background: '#c0473b',
-            color: '#fff',
             border: 'none',
             cursor: 'pointer',
             fontSize: 13,
@@ -86,7 +64,6 @@ export function SubjectCard({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontFamily: 'IBM Plex Mono, monospace',
           }}
         >
           ✕
@@ -128,8 +105,7 @@ export function SubjectCard({
               width: 7, height: 7, borderRadius: '50%', flexShrink: 0,
               background: STATUS_DOT[subject.statut] ?? '#ccc',
             }} />
-            <span style={{
-              fontFamily: 'IBM Plex Mono, monospace',
+            <span className="font-mono" style={{
               fontSize: 11,
               fontWeight: 500,
               letterSpacing: '0.08em',
@@ -143,14 +119,12 @@ export function SubjectCard({
               {subject.kicker || statusLabel}
             </span>
             {subject.is_transversal && transversalLabel && (
-              <span style={{
+              <span className="font-mono text-fame-teal" style={{
                 marginLeft: 'auto',
-                fontFamily: 'IBM Plex Mono, monospace',
                 fontSize: 11,
                 fontWeight: 600,
                 letterSpacing: '0.08em',
                 textTransform: 'uppercase',
-                color: '#1e9b7e',
                 background: 'rgba(30,155,126,0.12)',
                 border: '1px solid rgba(30,155,126,0.3)',
                 borderRadius: 10,
@@ -165,11 +139,9 @@ export function SubjectCard({
 
           {/* Title */}
           <div style={{ padding: '2px 10px 6px' }}>
-            <span style={{
-              fontFamily: 'Roboto Slab, Georgia, serif',
+            <span className="font-serif text-fame-text-dark" style={{
               fontSize: 12,
               fontWeight: 600,
-              color: '#15203f',
               lineHeight: 1.3,
               display: '-webkit-box',
               WebkitLineClamp: 3,
@@ -193,11 +165,10 @@ export function SubjectCard({
             {/* A10 exemption: "fig." is a purely decorative watermark, not
                 functional text — opacity 0.55 on a patterned background further
                 reduces its legibility expectation. Kept at 7px intentionally. */}
-            <span style={{
+            <span className="font-mono" style={{
               position: 'absolute',
               bottom: 3,
               right: 5,
-              fontFamily: 'IBM Plex Mono, monospace',
               fontSize: 7,
               color: 'rgba(90,100,140,0.55)',
               fontStyle: 'italic',
@@ -209,8 +180,7 @@ export function SubjectCard({
           {/* Abstract */}
           {subject.context && (
             <div style={{ padding: '5px 10px 4px' }}>
-              <span style={{
-                fontFamily: 'IBM Plex Mono, monospace',
+              <span className="font-mono" style={{
                 fontSize: 11,
                 color: '#43507a',
                 lineHeight: 1.5,
@@ -239,17 +209,16 @@ export function SubjectCard({
               {authorName ? (
                 <Avatar name={authorName} photoUrl={author?.photo_url} size={18} />
               ) : (
-                <span style={{ fontSize: 8, color: '#aaa', fontFamily: 'IBM Plex Mono, monospace' }}>—</span>
+                <span className="font-mono" style={{ fontSize: 8, color: '#aaa' }}>—</span>
               )}
-              <span style={{
-                fontFamily: 'IBM Plex Mono, monospace',
+              <span className="font-mono" style={{
                 fontSize: 8.5,
                 color: '#43507a',
               }}>
                 {dateStr}
               </span>
             </div>
-            <DiffDots difficulty={subject.difficulte} />
+            <DiffDots level={diffLevel(subject.difficulte)} />
           </div>
 
           {/* DONE stamp overlay */}
@@ -262,15 +231,13 @@ export function SubjectCard({
               justifyContent: 'center',
               pointerEvents: 'none',
             }}>
-              <div style={{
+              <div className="font-mono text-fame-coral" style={{
                 transform: 'rotate(-15deg)',
-                border: '2.5px solid #ff6f61',
+                border: '2.5px solid',
                 borderRadius: 4,
                 padding: '3px 8px',
-                fontFamily: 'IBM Plex Mono, monospace',
                 fontSize: 14,
                 fontWeight: 700,
-                color: '#ff6f61',
                 letterSpacing: '0.12em',
                 textTransform: 'uppercase',
                 opacity: 0.7,

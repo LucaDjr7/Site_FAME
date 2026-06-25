@@ -69,8 +69,6 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
     borderRadius: 9,
     padding: '11px 13px',
     fontSize: 14,
-    fontFamily: "'Roboto Slab', Georgia, serif",
-    color: '#15203f',
     outline: 'none',
     boxShadow: focusedField === field ? '0 0 0 3px rgba(47,68,134,0.12)' : 'none',
     transition: 'border-color 0.15s, box-shadow 0.15s',
@@ -79,12 +77,10 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
 
   const emailInputStyle = (field: string): React.CSSProperties => ({
     ...inputStyle(field),
-    fontFamily: "'IBM Plex Mono', monospace",
     fontSize: 13,
   })
 
   const labelStyle: React.CSSProperties = {
-    fontFamily: "'IBM Plex Mono', monospace",
     fontSize: 10,
     letterSpacing: '0.16em',
     textTransform: 'uppercase' as const,
@@ -100,7 +96,6 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
     border: active ? '1px solid #2f4486' : '1px solid rgba(20,40,90,0.14)',
     background: active ? 'rgba(47,68,134,0.12)' : '#fff',
     color: active ? '#2f4486' : '#5a6486',
-    fontFamily: "'Roboto Slab', Georgia, serif",
     fontSize: 12,
     fontWeight: active ? 600 : 400,
     cursor: 'pointer',
@@ -110,14 +105,13 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
   return (
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
       {error && (
-        <div style={{
+        <div className="font-mono" style={{
           background: 'rgba(220,68,55,0.08)',
           border: '1px solid rgba(220,68,55,0.28)',
           color: '#b53f33',
           borderRadius: 9,
           padding: '10px 13px',
           fontSize: 13,
-          fontFamily: "'IBM Plex Mono', monospace",
         }}>
           {error}
         </div>
@@ -125,8 +119,8 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
 
       {/* Title */}
       <label style={{ display: 'flex', flexDirection: 'column' }}>
-        <span style={labelStyle}>{t('fieldTitle')} *</span>
-        <input
+        <span className="font-mono" style={labelStyle}>{t('fieldTitle')} *</span>
+        <input className="font-mono text-fame-text-dark"
           type="text"
           value={titre}
           onChange={e => setTitre(e.target.value)}
@@ -138,8 +132,8 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
 
       {/* Domain */}
       <label style={{ display: 'flex', flexDirection: 'column' }}>
-        <span style={labelStyle}>{t('fieldDomain')}</span>
-        <select
+        <span className="font-mono" style={labelStyle}>{t('fieldDomain')}</span>
+        <select className="font-mono text-fame-text-dark"
           value={domaine}
           onChange={e => setDomaine(e.target.value)}
           onFocus={() => setFocusedField('domaine')}
@@ -154,11 +148,12 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
 
       {/* Difficulty — 3 toggle buttons */}
       <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <span style={labelStyle}>{t('fieldDifficulty')}</span>
+        <span className="font-mono" style={labelStyle}>{t('fieldDifficulty')}</span>
         <div style={{ display: 'flex', gap: 8 }}>
           {DIFFS.map(d => (
             <button
               key={d}
+              className="font-mono"
               type="button"
               onClick={() => setDifficulte(d)}
               style={diffButtonStyle(difficulte === d)}
@@ -171,8 +166,8 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
 
       {/* Description */}
       <label style={{ display: 'flex', flexDirection: 'column' }}>
-        <span style={labelStyle}>{t('fieldDescription')} *</span>
-        <textarea
+        <span className="font-mono" style={labelStyle}>{t('fieldDescription')} *</span>
+        <textarea className="font-mono text-fame-text-dark"
           value={description}
           onChange={e => setDescription(e.target.value)}
           onFocus={() => setFocusedField('description')}
@@ -185,8 +180,8 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
       {/* First name + Last name */}
       <div style={{ display: 'flex', gap: 14 }}>
         <label style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-          <span style={labelStyle}>{t('fieldFirstName')} *</span>
-          <input
+          <span className="font-mono" style={labelStyle}>{t('fieldFirstName')} *</span>
+          <input className="font-mono text-fame-text-dark"
             type="text"
             value={prenom}
             onChange={e => setPrenom(e.target.value)}
@@ -196,8 +191,8 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
           />
         </label>
         <label style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-          <span style={labelStyle}>{t('fieldLastName')} *</span>
-          <input
+          <span className="font-mono" style={labelStyle}>{t('fieldLastName')} *</span>
+          <input className="font-mono text-fame-text-dark"
             type="text"
             value={nom}
             onChange={e => setNom(e.target.value)}
@@ -210,8 +205,8 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
 
       {/* Email (optional) */}
       <label style={{ display: 'flex', flexDirection: 'column' }}>
-        <span style={labelStyle}>{t('fieldEmail')}</span>
-        <input
+        <span className="font-mono" style={labelStyle}>{t('fieldEmail')}</span>
+        <input className="font-mono text-fame-text-dark"
           type="email"
           value={email}
           onChange={e => setEmail(e.target.value)}
@@ -222,10 +217,9 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
       </label>
 
       {/* RGPD notice */}
-      <p style={{
+      <p className="font-mono" style={{
         fontSize: 11,
         color: '#6b7596',
-        fontFamily: "'IBM Plex Mono', monospace",
         lineHeight: 1.6,
         margin: 0,
       }}>
@@ -234,16 +228,14 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
 
       {/* Submit button */}
       <div>
-        <button
+        <button className={`font-serif text-fame-text-light ${saving ? '' : 'bg-fame-blue'}`}
           type="submit"
           disabled={saving}
           style={{
-            background: saving ? 'rgba(47,68,134,0.5)' : '#2f4486',
-            color: '#eef3ff',
+            background: saving ? 'rgba(47,68,134,0.5)' : undefined,
             padding: '12px 22px',
             borderRadius: 10,
             border: 'none',
-            fontFamily: "'Roboto Slab', Georgia, serif",
             fontSize: 14,
             fontWeight: 600,
             cursor: saving ? 'not-allowed' : 'pointer',

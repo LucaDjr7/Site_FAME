@@ -8,6 +8,7 @@ import { FilesPanel } from './FilesPanel'
 import { CommentsPanel } from './CommentsPanel'
 import { PaperNav } from './PaperNav'
 import type { Lab, Subject, MemberRef, TaskWithRelations, Comment, DropboxLink } from '@/types'
+import { LAB_LABELS } from '@/lib/constants'
 
 type Props = {
   locale: string
@@ -57,7 +58,7 @@ export function PaperView({
     }
   }, [])
 
-  const labName = lab === 'paris' ? 'Paris' : 'Montréal'
+  const labName = LAB_LABELS[lab] ?? lab
 
   return (
     <div

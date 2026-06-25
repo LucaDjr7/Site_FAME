@@ -1,7 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { routing } from '@/i18n/routing'
-
-const LABS = ['paris', 'montreal'] as const
+import { VALID_LABS } from '@/lib/constants'
 const LAB_PAGES = ['', '/publications', '/team', '/propose', '/tasks'] as const // public only
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -10,7 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const entries: MetadataRoute.Sitemap = []
   for (const locale of routing.locales) {
     entries.push({ url: `${BASE}/${locale}`, lastModified: now, changeFrequency: 'monthly', priority: 1 })
-    for (const lab of LABS) {
+    for (const lab of VALID_LABS) {
       for (const page of LAB_PAGES) {
         entries.push({ url: `${BASE}/${locale}/${lab}${page}`, lastModified: now, changeFrequency: 'weekly', priority: page === '' ? 0.8 : 0.6 })
       }

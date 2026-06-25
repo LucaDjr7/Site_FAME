@@ -74,8 +74,6 @@
       "submit": "Ajouter le sujet →"
     },
     "delete": {
-      "kicker": "SUPPRIMER LE SUJET",
-      "title": "Supprimer le sujet",
       "body": "Supprimer « {title} » ? Cette action est irréversible.",
       "cancel": "Annuler",
       "confirm": "Supprimer"
@@ -107,9 +105,7 @@
     "openDropbox": "Ouvrir le dossier de données",
     "dropboxSub": "Dropbox · données liées au sujet",
     "progress": "Avancement du sujet",
-    "saved": "Enregistré",
     "responsible": "Responsable",
-    "keywords": "Mots-clés",
     "noTasks": "Aucune tâche liée",
     "commentNameLabel": "Votre nom",
     "commentTextLabel": "Ajouter un commentaire",
@@ -124,8 +120,6 @@
     "claimTask": "Se positionner",
     "unclaimTask": "Me retirer",
     "subtasks": "Sous-tâches",
-    "assignees": "Assignés",
-    "history": "Historique",
     "difficulty": {
       "easy": "Facile",
       "intermediate": "Intermédiaire",
@@ -254,6 +248,7 @@
     "rejected": "Refusée"
   },
   "publications": {
+    "kicker": "FAME / {lab}",
     "title": "Publications",
     "filters": "Filtres",
     "reset": "Réinitialiser",
@@ -266,9 +261,9 @@
     "loading": "Chargement…",
     "types": {
       "article": "Article",
-      "preprint": "Preprint",
+      "preprint": "Prépublication",
       "conference": "Conférence",
-      "working": "Working paper"
+      "working": "Document de travail"
     },
     "statPublications": "Publications",
     "statAuthors": "Auteurs",
@@ -294,6 +289,7 @@
     "linkLabel": "DOI / Lien"
   },
   "team": {
+    "kicker": "FAME / {lab}",
     "title": "Trombinoscope",
     "roles": {
       "direction": "Direction",
@@ -332,6 +328,7 @@
     "errorRequired": "Tous les champs sont obligatoires."
   },
   "data": {
+    "kicker": "FAME / {lab}",
     "title": "Données — Dropbox d'équipe",
     "tree": "Arborescence",
     "linkedFolders": "dossier(s) lié(s)",
@@ -340,6 +337,8 @@
     "chooseSubject": "Choisir un sujet…",
     "chooseTask": "Choisir une tâche…",
     "openDropbox": "Ouvrir dans Dropbox →",
+    "openInDropbox": "Ouvrir dans Dropbox",
+    "removeLink": "Supprimer le lien",
     "noSelection": "Sélectionnez un dossier ou un fichier pour le lier à un sujet ou une tâche.",
     "linkedTo": "Lié à",
     "openRoot": "Ouvrir le Dropbox →",
@@ -353,6 +352,7 @@
     "errorGeneric": "Impossible de charger le Dropbox."
   },
   "prompts": {
+    "kicker": "FAME / {lab}",
     "title": "Bibliothèque de prompts",
     "subtitle": "Ces gabarits permettent de produire chaque fiche de manière homogène. Les variables entre",
     "subtitleEnd": "sont à compléter au moment de la génération.",
@@ -388,7 +388,7 @@
     "transversalBadge": "Transversal"
   },
   "admin": {
-    "proposals": "Propositions",
+    "kicker": "FAME / Admin",
     "proposalsTitle": "Propositions",
     "status": {
       "pending": "En attente",
@@ -410,21 +410,9 @@
     "actionError": "Échec de l'action"
   },
   "common": {
-    "loading": "Chargement…",
-    "save": "Enregistrer",
     "cancel": "Annuler",
     "close": "Fermer",
-    "delete": "Supprimer",
-    "confirm": "Confirmer",
-    "edit": "Modifier",
-    "add": "Ajouter",
-    "search": "Rechercher",
-    "filters": "Filtres",
-    "noResults": "Aucun résultat",
-    "paris": "Paris",
-    "montreal": "Montréal",
-    "lab": "Laboratoire",
-    "by": "par"
+    "confirm": "Confirmer"
   },
   "meta": {
     "siteName": "FAME",

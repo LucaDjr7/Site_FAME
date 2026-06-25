@@ -1,11 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { getSession } from '@/lib/auth'
+import { rateLimit, clientIp } from '@/lib/rate-limit'
 
 export async function POST(req: NextRequest) {
+  if (!rateLimit('comment:' + clientIp(req), 20, 60_000)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  }
   const { sujet_id, texte, visitor_prenom, visitor_nom } = await req.json()
   if (!sujet_id || !texte?.trim()) {
     return NextResponse.json({ error: 'sujet_id and texte required' }, { status: 400 })
+  }
+  if (typeof texte !== 'string' || texte.length > 4000) {
+    return NextResponse.json({ error: 'texte too long' }, { status: 400 })
   }
 
   const session = await getSession()
@@ -22,6 +29,9 @@ export async function POST(req: NextRequest) {
   } else {
     if (!visitor_prenom?.trim() || !visitor_nom?.trim()) {
       return NextResponse.json({ error: 'First name and last name required for visitors' }, { status: 400 })
+    }
+    if (visitor_prenom.trim().length > 80 || visitor_nom.trim().length > 80) {
+      return NextResponse.json({ error: 'visitor name too long' }, { status: 400 })
     }
     auteur_type = 'visitor'
     auteur_nom = `${visitor_prenom.trim()} ${visitor_nom.trim()}`

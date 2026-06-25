@@ -7,8 +7,13 @@ import WebSocket from 'ws'
 // Next.js stores local secrets in .env.local (not .env), so load that first.
 config({ path: ['.env.local', '.env'] })
 
-const ADMIN_EMAIL = 'luca.desjardin@dauphine.eu'
+const ADMIN_EMAIL = process.env.SEED_ADMIN_EMAIL ?? ''
 const ADMIN_PASSWORD = process.env.SEED_ADMIN_PASSWORD ?? ''
+
+if (!ADMIN_EMAIL) {
+  console.error('Set SEED_ADMIN_EMAIL in .env.local before running this script.')
+  process.exit(1)
+}
 
 if (!ADMIN_PASSWORD) {
   console.error('Set SEED_ADMIN_PASSWORD in .env.local before running this script.')

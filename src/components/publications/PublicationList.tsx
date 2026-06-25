@@ -2,19 +2,20 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useTranslations } from 'next-intl'
 import type { Lab, Publication, PublicationType } from '@/types'
+import { LAB_LABELS } from '@/lib/constants'
 import { useToast } from '@/components/ui/Toast'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { AddPublicationModal } from './AddPublicationModal'
 
 // ─── Type badge config ───────────────────────────────────────────────────────
 
-type BadgeCfg = { color: string; bg: string; border: string }
+type BadgeCfg = { hex: string; bg: string; border: string }
 
 const TYPE_BADGE: Record<PublicationType, BadgeCfg> = {
-  article:       { color: '#1e9b7e', bg: 'rgba(30,155,126,0.08)',   border: 'rgba(30,155,126,0.3)' },
-  preprint:      { color: '#5768ac', bg: 'rgba(87,104,172,0.08)',   border: 'rgba(87,104,172,0.3)' },
-  conference:    { color: '#e8b149', bg: 'rgba(232,177,73,0.1)',    border: 'rgba(232,177,73,0.35)' },
-  'working-paper': { color: '#ec6553', bg: 'rgba(236,101,83,0.08)', border: 'rgba(236,101,83,0.3)' },
+  article:       { hex: '#1e9b7e', bg: 'rgba(30,155,126,0.08)',   border: 'rgba(30,155,126,0.3)' },
+  preprint:      { hex: '#5768ac', bg: 'rgba(87,104,172,0.08)',   border: 'rgba(87,104,172,0.3)' },
+  conference:    { hex: '#e8b149', bg: 'rgba(232,177,73,0.1)',    border: 'rgba(232,177,73,0.35)' },
+  'working-paper': { hex: '#ec6553', bg: 'rgba(236,101,83,0.08)', border: 'rgba(236,101,83,0.3)' },
 }
 
 // i18n key: 'working-paper' → 'types.working', others → 'types.<type>'
@@ -24,9 +25,12 @@ function typeI18nKey(tp: PublicationType): string {
 
 // Derive initials from a name string
 function initials(name: string): string {
-  const parts = name.trim().split(/\s+/)
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase()
-  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+  const parts = name.trim().split(/\s+/).filter(Boolean)
+  const first = parts[0]
+  const last = parts[parts.length - 1]
+  if (!first || !last) return ''
+  if (parts.length === 1) return first.slice(0, 2).toUpperCase()
+  return ((first[0] ?? '') + (last[0] ?? '')).toUpperCase()
 }
 
 // ─── Filter logic ────────────────────────────────────────────────────────────
@@ -214,9 +218,10 @@ export function PublicationList({ lab, isMember }: Props) {
   }
 
   // ── Lab label ────────────────────────────────────────────────────────────
-  const labLabel = lab === 'paris' ? 'Paris' : 'Montréal'
+  const labLabel = LAB_LABELS[lab] ?? lab
 
   // ── Styles ───────────────────────────────────────────────────────────────
+  // Intentional variance: 3-gradient composite with specific position offsets (at 26%/78%/92%).
   const PAGE_BG =
     'radial-gradient(110% 80% at 26% 8%, rgba(181,157,135,0.28) 0%, rgba(181,157,135,0) 52%), ' +
     'radial-gradient(120% 110% at 78% 112%, rgba(113,120,132,0.2) 0%, rgba(113,120,132,0) 60%), ' +
@@ -225,13 +230,12 @@ export function PublicationList({ lab, isMember }: Props) {
 
   return (
     <>
-      <div
+      <div className="font-serif"
         style={{
           minHeight: 'calc(100vh - 6rem)',
           display: 'flex',
           flexDirection: 'column',
           background: PAGE_BG,
-          fontFamily: 'Roboto Slab, Georgia, serif',
           color: '#18244c',
         }}
       >
@@ -248,24 +252,20 @@ export function PublicationList({ lab, isMember }: Props) {
         >
           {/* Left: kicker + title */}
           <div>
-            <div
+            <div className="font-mono text-fame-text-muted"
               style={{
-                fontFamily: 'IBM Plex Mono, monospace',
                 fontSize: 9,
                 letterSpacing: '0.14em',
                 textTransform: 'uppercase',
-                color: '#7e95d6',
                 marginBottom: 3,
               }}
             >
-              FAME / {labLabel}
+              {t('kicker', { lab: labLabel })}
             </div>
-            <h1
+            <h1 className="font-serif text-fame-text-dark"
               style={{
-                fontFamily: 'Roboto Slab, Georgia, serif',
                 fontSize: 20,
                 fontWeight: 600,
-                color: '#15203f',
                 margin: 0,
               }}
             >
@@ -275,7 +275,7 @@ export function PublicationList({ lab, isMember }: Props) {
 
           {/* Right: search + controls */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <input
+            <input className="font-mono text-fame-text-dark"
               type="search"
               value={q}
               onChange={e => setQ(e.target.value)}
@@ -285,15 +285,13 @@ export function PublicationList({ lab, isMember }: Props) {
                 borderRadius: 6,
                 border: '1px solid rgba(20,40,90,0.15)',
                 background: 'rgba(255,255,255,0.7)',
-                color: '#15203f',
-                fontFamily: 'IBM Plex Mono, monospace',
                 fontSize: 11,
                 width: 200,
                 outline: 'none',
               }}
             />
             {isMember && (
-              <button
+              <button className="font-mono"
                 onClick={() => setEditMode(v => !v)}
                 style={{
                   padding: '6px 12px',
@@ -301,7 +299,6 @@ export function PublicationList({ lab, isMember }: Props) {
                   border: editMode ? '1.5px solid #e8b149' : '1px solid rgba(20,40,90,0.15)',
                   background: editMode ? 'rgba(232,177,73,0.12)' : 'rgba(255,255,255,0.6)',
                   color: editMode ? '#b88c30' : '#6b7596',
-                  fontFamily: 'IBM Plex Mono, monospace',
                   fontSize: 10,
                   cursor: 'pointer',
                   letterSpacing: '0.06em',
@@ -312,15 +309,12 @@ export function PublicationList({ lab, isMember }: Props) {
               </button>
             )}
             {isMember && editMode && (
-              <button
+              <button className="font-mono bg-fame-blue text-fame-text-light"
                 onClick={() => setAddOpen(true)}
                 style={{
                   padding: '6px 14px',
                   borderRadius: 6,
                   border: 'none',
-                  background: '#2f4486',
-                  color: '#eef3ff',
-                  fontFamily: 'IBM Plex Mono, monospace',
                   fontSize: 10,
                   cursor: 'pointer',
                   letterSpacing: '0.06em',
@@ -338,20 +332,16 @@ export function PublicationList({ lab, isMember }: Props) {
           {/* ── Publication list (scroll) ────────────────────────────────── */}
           <div style={{ flex: 1, overflowY: 'auto', padding: '28px 32px 40px' }}>
             {loading ? (
-              <div style={{
-                fontFamily: 'IBM Plex Mono, monospace',
+              <div className="font-mono text-fame-text-muted" style={{
                 fontSize: 12,
-                color: '#7e95d6',
                 textAlign: 'center',
                 paddingTop: 60,
               }}>
                 {t('loading')}
               </div>
             ) : visible.length === 0 ? (
-              <div style={{
-                fontFamily: 'IBM Plex Mono, monospace',
+              <div className="font-mono text-fame-text-muted" style={{
                 fontSize: 13,
-                color: '#7e95d6',
                 textAlign: 'center',
                 paddingTop: 60,
               }}>
@@ -368,11 +358,9 @@ export function PublicationList({ lab, isMember }: Props) {
                       gap: 12,
                       marginBottom: 14,
                     }}>
-                      <span style={{
-                        fontFamily: 'IBM Plex Mono, monospace',
+                      <span className="font-mono text-fame-blue" style={{
                         fontSize: 13,
                         fontWeight: 500,
-                        color: '#2f4486',
                         letterSpacing: '0.14em',
                         flexShrink: 0,
                       }}>
@@ -383,8 +371,7 @@ export function PublicationList({ lab, isMember }: Props) {
                         height: 1,
                         background: 'rgba(20,40,90,0.12)',
                       }} />
-                      <span style={{
-                        fontFamily: 'IBM Plex Mono, monospace',
+                      <span className="font-mono" style={{
                         fontSize: 10,
                         color: '#6b7596',
                         letterSpacing: '0.1em',
@@ -401,9 +388,9 @@ export function PublicationList({ lab, isMember }: Props) {
                         return (
                           <article
                             key={p.id}
+                            className="bg-fame-sand"
                             style={{
                               position: 'relative',
-                              background: '#fbf9f3',
                               borderRadius: 9,
                               boxShadow: '0 14px 34px -20px rgba(0,5,30,0.4), inset 0 0 0 1px rgba(0,0,0,0.05)',
                               padding: '20px 22px',
@@ -412,6 +399,7 @@ export function PublicationList({ lab, isMember }: Props) {
                             {/* Edit mode: delete button */}
                             {editMode && (
                               <button
+                                className="text-fame-red"
                                 onClick={() => setPendingDeleteId(p.id)}
                                 aria-label={t('deleteLabel')}
                                 style={{
@@ -423,7 +411,6 @@ export function PublicationList({ lab, isMember }: Props) {
                                   borderRadius: '50%',
                                   border: '1.5px solid rgba(220,68,55,0.5)',
                                   background: '#fff',
-                                  color: '#c0473b',
                                   cursor: 'pointer',
                                   display: 'flex',
                                   alignItems: 'center',
@@ -458,7 +445,7 @@ export function PublicationList({ lab, isMember }: Props) {
                               flexWrap: 'wrap',
                             }}>
                               {/* Type badge */}
-                              <span style={{
+                              <span className="font-mono" style={{
                                 display: 'inline-flex',
                                 alignItems: 'center',
                                 gap: 6,
@@ -466,18 +453,17 @@ export function PublicationList({ lab, isMember }: Props) {
                                 borderRadius: 6,
                                 border: `1px solid ${badge.border}`,
                                 background: badge.bg,
-                                fontFamily: 'IBM Plex Mono, monospace',
                                 fontSize: 9.5,
                                 fontWeight: 500,
                                 letterSpacing: '0.1em',
                                 textTransform: 'uppercase',
-                                color: badge.color,
+                                color: badge.hex,
                               }}>
                                 <span style={{
                                   width: 6,
                                   height: 6,
                                   borderRadius: '50%',
-                                  background: badge.color,
+                                  background: badge.hex,
                                   flexShrink: 0,
                                 }} />
                                 {t(typeI18nKey(p.type) as Parameters<typeof t>[0])}
@@ -485,8 +471,7 @@ export function PublicationList({ lab, isMember }: Props) {
 
                               {/* Venue */}
                               {p.revue_ou_conf && (
-                                <span style={{
-                                  fontFamily: 'IBM Plex Mono, monospace',
+                                <span className="font-mono" style={{
                                   fontSize: 10,
                                   color: '#6b7596',
                                 }}>
@@ -496,12 +481,10 @@ export function PublicationList({ lab, isMember }: Props) {
                             </div>
 
                             {/* Title */}
-                            <h3 style={{
+                            <h3 className="font-serif text-fame-text-dark" style={{
                               margin: '0 0 8px',
                               fontSize: 17,
                               fontWeight: 600,
-                              fontFamily: 'Roboto Slab, Georgia, serif',
-                              color: '#15203f',
                               lineHeight: 1.28,
                               letterSpacing: '-0.005em',
                             }}>
@@ -510,15 +493,14 @@ export function PublicationList({ lab, isMember }: Props) {
 
                             {/* Authors */}
                             {p.auteurs.length > 0 && (
-                              <div style={{
-                                fontFamily: 'Roboto Slab, Georgia, serif',
+                              <div className="font-serif" style={{
                                 fontSize: 12.5,
                                 color: '#43507a',
                                 marginBottom: p.lien ? 12 : 0,
                               }}>
                                 {p.auteurs.map((a, i) => (
                                   <span key={i}>
-                                    <span style={{ fontWeight: 600, color: '#2a3457' }}>{a}</span>
+                                    <span className="text-fame-text-body" style={{ fontWeight: 600 }}>{a}</span>
                                     {i < p.auteurs.length - 1 && <span>{', '}</span>}
                                   </span>
                                 ))}
@@ -527,7 +509,7 @@ export function PublicationList({ lab, isMember }: Props) {
 
                             {/* Link chip */}
                             {p.lien && (
-                              <a
+                              <a className="font-mono text-fame-blue"
                                 href={p.lien}
                                 target="_blank"
                                 rel="noreferrer"
@@ -539,9 +521,7 @@ export function PublicationList({ lab, isMember }: Props) {
                                   padding: '3px 9px',
                                   borderRadius: 5,
                                   border: '1px solid rgba(47,68,134,0.28)',
-                                  fontFamily: 'IBM Plex Mono, monospace',
                                   fontSize: 10,
-                                  color: '#2f4486',
                                   textDecoration: 'none',
                                   background: 'rgba(47,68,134,0.04)',
                                 }}
@@ -578,20 +558,17 @@ export function PublicationList({ lab, isMember }: Props) {
               justifyContent: 'space-between',
               marginBottom: 16,
             }}>
-              <span style={{
-                fontFamily: 'IBM Plex Mono, monospace',
+              <span className="font-mono text-fame-blue" style={{
                 fontSize: 9,
                 fontWeight: 700,
                 letterSpacing: '0.14em',
                 textTransform: 'uppercase',
-                color: '#2f4486',
               }}>
                 {t('filters')}
               </span>
-              <button
+              <button className="font-mono"
                 onClick={resetFilters}
                 style={{
-                  fontFamily: 'IBM Plex Mono, monospace',
                   fontSize: 9,
                   color: '#6b7596',
                   background: 'none',
@@ -615,18 +592,15 @@ export function PublicationList({ lab, isMember }: Props) {
                 padding: '10px 12px',
                 textAlign: 'center',
               }}>
-                <div style={{
-                  fontFamily: 'Roboto Slab, Georgia, serif',
+                <div className="font-serif text-fame-text-dark" style={{
                   fontSize: 22,
                   fontWeight: 700,
-                  color: '#15203f',
                   lineHeight: 1,
                   marginBottom: 4,
                 }}>
                   {visible.length}
                 </div>
-                <div style={{
-                  fontFamily: 'IBM Plex Mono, monospace',
+                <div className="font-mono" style={{
                   fontSize: 9,
                   color: '#6b7596',
                   textTransform: 'uppercase',
@@ -643,18 +617,15 @@ export function PublicationList({ lab, isMember }: Props) {
                 padding: '10px 12px',
                 textAlign: 'center',
               }}>
-                <div style={{
-                  fontFamily: 'Roboto Slab, Georgia, serif',
+                <div className="font-serif text-fame-teal" style={{
                   fontSize: 22,
                   fontWeight: 700,
-                  color: '#1e9b7e',
                   lineHeight: 1,
                   marginBottom: 4,
                 }}>
                   {visibleAuthorCount}
                 </div>
-                <div style={{
-                  fontFamily: 'IBM Plex Mono, monospace',
+                <div className="font-mono" style={{
                   fontSize: 9,
                   color: '#6b7596',
                   textTransform: 'uppercase',
@@ -677,7 +648,7 @@ export function PublicationList({ lab, isMember }: Props) {
                     active={active}
                     count={cnt}
                     onClick={() => toggleType(tp)}
-                    dot={badge.color}
+                    dot={badge.hex}
                   >
                     {t(typeI18nKey(tp) as Parameters<typeof t>[0])}
                   </FilterBtn>
@@ -752,13 +723,11 @@ export function PublicationList({ lab, isMember }: Props) {
 function FilterSection({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div style={{ marginBottom: 20 }}>
-      <div style={{
-        fontFamily: 'IBM Plex Mono, monospace',
+      <div className="font-mono text-fame-blue" style={{
         fontSize: 9,
         fontWeight: 700,
         letterSpacing: '0.12em',
         textTransform: 'uppercase',
-        color: '#2f4486',
         marginBottom: 8,
       }}>
         {label}
@@ -783,7 +752,7 @@ type FilterBtnProps = {
 
 function FilterBtn({ active, count, onClick, children, dot, initials: ini }: FilterBtnProps) {
   return (
-    <button
+    <button className={`font-mono ${active ? 'text-fame-blue border-fame-blue' : ''}`}
       onClick={onClick}
       style={{
         display: 'flex',
@@ -791,10 +760,9 @@ function FilterBtn({ active, count, onClick, children, dot, initials: ini }: Fil
         gap: 8,
         padding: '5px 10px',
         borderRadius: 6,
-        border: active ? '1.5px solid #2f4486' : '1px solid rgba(20,40,90,0.12)',
+        border: active ? '1.5px solid' : '1px solid rgba(20,40,90,0.12)',
         background: active ? 'rgba(47,68,134,0.12)' : 'rgba(20,30,60,0.03)',
-        color: active ? '#2f4486' : '#5a6486',
-        fontFamily: 'IBM Plex Mono, monospace',
+        color: active ? undefined : '#5a6486',
         fontSize: 11,
         cursor: 'pointer',
         textAlign: 'left',
@@ -814,12 +782,10 @@ function FilterBtn({ active, count, onClick, children, dot, initials: ini }: Fil
       )}
       {/* Initials bubble (author) */}
       {ini && (
-        <span style={{
+        <span className="bg-fame-blue text-white" style={{
           width: 20,
           height: 20,
           borderRadius: '50%',
-          background: '#2f4486',
-          color: '#fff',
           fontSize: 8,
           fontWeight: 700,
           display: 'flex',
@@ -831,9 +797,8 @@ function FilterBtn({ active, count, onClick, children, dot, initials: ini }: Fil
         </span>
       )}
       <span style={{ flex: 1 }}>{children}</span>
-      <span style={{
+      <span className={active ? 'text-fame-blue' : 'text-fame-text-dim'} style={{
         fontSize: 9,
-        color: active ? '#2f4486' : '#9fb2e6',
         fontVariantNumeric: 'tabular-nums',
       }}>
         {count}

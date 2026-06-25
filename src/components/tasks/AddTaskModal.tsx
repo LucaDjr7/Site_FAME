@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { Modal } from '@/components/ui/Modal'
+import { FORM_INPUT_STYLE, FORM_LABEL_STYLE, FORM_BTN_CANCEL_STYLE, FORM_BTN_SUBMIT_STYLE } from '@/components/ui/form-styles'
 import type { MemberRef, TaskStatus, Difficulty, Lab } from '@/types'
 
 type PillProps<T extends string> = { value: T; current: T; label: string; onChange: (v: T) => void }
@@ -9,13 +10,14 @@ function Pill<T extends string>({ value, current, label, onChange }: PillProps<T
   const active = value === current
   return (
     <button
+      className={`font-mono ${active ? 'text-fame-blue border-fame-blue' : 'text-fame-text-muted border-fame-ecru'}`}
       type="button"
       onClick={() => onChange(value)}
       style={{
-        padding: '4px 10px', borderRadius: 20, fontSize: 10, fontFamily: 'IBM Plex Mono, monospace', cursor: 'pointer',
-        border: active ? '1.5px solid #2f4486' : '1px solid #eceadf',
+        padding: '4px 10px', borderRadius: 20, fontSize: 10,  cursor: 'pointer',
+        border: active ? '1.5px solid' : '1px solid',
         background: active ? 'rgba(47,68,134,0.1)' : 'transparent',
-        color: active ? '#2f4486' : '#7e95d6', transition: 'all 0.1s',
+        transition: 'all 0.1s',
       }}
     >
       {label}
@@ -32,14 +34,8 @@ type Props = {
   onAdded: () => void
 }
 
-const inputStyle: React.CSSProperties = {
-  width: '100%', padding: '7px 10px', borderRadius: 5, border: '1px solid #eceadf', background: '#fff',
-  fontFamily: 'IBM Plex Mono, monospace', fontSize: 12, color: '#2a3457', outline: 'none',
-}
-const labelStyle: React.CSSProperties = {
-  display: 'block', fontFamily: 'IBM Plex Mono, monospace', fontSize: 9, fontWeight: 600, letterSpacing: '0.1em',
-  textTransform: 'uppercase', color: '#5768ac', marginBottom: 5,
-}
+const inputStyle = FORM_INPUT_STYLE
+const labelStyle = FORM_LABEL_STYLE
 
 export function AddTaskModal({ open, lab, subjectId, members, onClose, onAdded }: Props) {
   const t = useTranslations('tasks')
@@ -104,19 +100,19 @@ export function AddTaskModal({ open, lab, subjectId, members, onClose, onAdded }
   return (
     <Modal open={open} onClose={handleClose}>
       <form onSubmit={handleSubmit} noValidate>
-        <div style={{ fontFamily: 'Roboto Slab, Georgia, serif', fontSize: 18, fontWeight: 600, color: '#15203f', marginBottom: 18 }}>
+        <div className="font-serif text-fame-text-dark" style={{  fontSize: 18, fontWeight: 600, marginBottom: 18 }}>
           {t('modal.title')}
         </div>
 
         {/* Titre */}
         <div style={{ marginBottom: 14 }}>
-          <label htmlFor="add-task-title" style={labelStyle}>{t('modal.fTitle')} *</label>
-          <input id="add-task-title" type="text" value={titre} onChange={e => setTitre(e.target.value)} placeholder={t('modal.fTitle')} style={inputStyle} autoFocus />
+          <label htmlFor="add-task-title" className="font-mono" style={labelStyle}>{t('modal.fTitle')} *</label>
+          <input className="font-mono" id="add-task-title" type="text" value={titre} onChange={e => setTitre(e.target.value)} placeholder={t('modal.fTitle')} style={inputStyle} autoFocus />
         </div>
 
         {/* Statut */}
         <div style={{ marginBottom: 14 }}>
-          <label style={labelStyle}>{t('modal.fStatus')}</label>
+          <label className="font-mono" style={labelStyle}>{t('modal.fStatus')}</label>
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
             {(['to-do', 'in-progress', 'done'] as TaskStatus[]).map(s => (
               <Pill key={s} value={s} current={statut} label={t(`status.${s === 'to-do' ? 'todo' : s === 'in-progress' ? 'inProgress' : 'done'}`)} onChange={setStatut} />
@@ -126,7 +122,7 @@ export function AddTaskModal({ open, lab, subjectId, members, onClose, onAdded }
 
         {/* Difficulté */}
         <div style={{ marginBottom: 14 }}>
-          <label style={labelStyle}>{t('modal.fDifficulty')}</label>
+          <label className="font-mono" style={labelStyle}>{t('modal.fDifficulty')}</label>
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
             {(['easy', 'intermediate', 'advanced'] as Difficulty[]).map(d => (
               <Pill key={d} value={d} current={difficulte} label={t(`difficulty.${d}`)} onChange={setDifficulte} />
@@ -136,8 +132,8 @@ export function AddTaskModal({ open, lab, subjectId, members, onClose, onAdded }
 
         {/* Assigné à */}
         <div style={{ marginBottom: 14 }}>
-          <label htmlFor="add-task-assignee" style={labelStyle}>{t('modal.fAssignee')}</label>
-          <select id="add-task-assignee" value={assignee} onChange={e => setAssignee(e.target.value)} style={{ ...inputStyle, appearance: 'none' }}>
+          <label htmlFor="add-task-assignee" className="font-mono" style={labelStyle}>{t('modal.fAssignee')}</label>
+          <select className="font-mono" id="add-task-assignee" value={assignee} onChange={e => setAssignee(e.target.value)} style={{ ...inputStyle, appearance: 'none' }}>
             <option value="">{t('modal.none')}</option>
             {members.map(m => <option key={m.id} value={m.id}>{m.prenom} {m.nom}</option>)}
           </select>
@@ -145,54 +141,51 @@ export function AddTaskModal({ open, lab, subjectId, members, onClose, onAdded }
 
         {/* Description */}
         <div style={{ marginBottom: 14 }}>
-          <label htmlFor="add-task-description" style={labelStyle}>{t('modal.fDescription')}</label>
-          <textarea id="add-task-description" value={description} onChange={e => setDescription(e.target.value)} placeholder={t('modal.fDescription')} rows={3}
+          <label htmlFor="add-task-description" className="font-mono" style={labelStyle}>{t('modal.fDescription')}</label>
+          <textarea className="font-mono" id="add-task-description" value={description} onChange={e => setDescription(e.target.value)} placeholder={t('modal.fDescription')} rows={3}
             style={{ ...inputStyle, resize: 'vertical' }} />
         </div>
 
         {/* Sous-tâches */}
         <div style={{ marginBottom: 18 }}>
-          <label htmlFor="add-task-subtask-input" style={labelStyle}>{t('modal.fSubtasks')}</label>
+          <label htmlFor="add-task-subtask-input" className="font-mono" style={labelStyle}>{t('modal.fSubtasks')}</label>
           {subtasks.length > 0 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 8 }}>
               {subtasks.map((s, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ flex: 1, fontSize: 12, color: '#2a3457' }}>{s}</span>
+                  <span className="text-fame-text-body" style={{ flex: 1, fontSize: 12 }}>{s}</span>
                   <button type="button" onClick={() => setSubtasks(prev => prev.filter((_, j) => j !== i))}
                     aria-label={t('delete.confirm')}
-                    style={{ background: 'none', border: 'none', color: '#c0473b', cursor: 'pointer', fontSize: 13 }}>×</button>
+                    className="text-fame-red" style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13 }}>×</button>
                 </div>
               ))}
             </div>
           )}
           <div style={{ display: 'flex', gap: 6 }}>
-            <input
+            <input className="font-mono"
               id="add-task-subtask-input"
               type="text" value={subtaskDraft} onChange={e => setSubtaskDraft(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addSubtaskDraft() } }}
               placeholder={t('modal.subtaskPlaceholder')} style={inputStyle}
             />
-            <button type="button" onClick={addSubtaskDraft}
-              style={{ padding: '7px 12px', borderRadius: 5, border: '1px solid #eceadf', background: 'transparent',
-                fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: '#2f4486', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+            <button className="font-mono text-fame-blue border-fame-ecru" type="button" onClick={addSubtaskDraft}
+              style={{ padding: '7px 12px', borderRadius: 5, border: '1px solid', background: 'transparent',
+                 fontSize: 11, cursor: 'pointer', whiteSpace: 'nowrap' }}>
               {t('modal.addSubtask')}
             </button>
           </div>
         </div>
 
         {error && (
-          <div style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: '#c0473b', marginBottom: 12 }}>{error}</div>
+          <div className="font-mono text-fame-red" style={{  fontSize: 11, marginBottom: 12 }}>{error}</div>
         )}
 
         <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-          <button type="button" onClick={handleClose}
-            style={{ padding: '8px 16px', borderRadius: 6, border: '1px solid #eceadf', background: 'transparent',
-              fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: '#7e95d6', cursor: 'pointer' }}>
+          <button type="button" onClick={handleClose} className="font-mono" style={FORM_BTN_CANCEL_STYLE}>
             {t('modal.cancel')}
           </button>
           <button type="submit" disabled={submitting}
-            style={{ padding: '8px 16px', borderRadius: 6, border: 'none', background: '#2f4486', color: '#fff',
-              fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, cursor: submitting ? 'not-allowed' : 'pointer', opacity: submitting ? 0.7 : 1 }}>
+            className="font-mono" style={{ ...FORM_BTN_SUBMIT_STYLE, cursor: submitting ? 'not-allowed' : 'pointer', opacity: submitting ? 0.7 : 1 }}>
             {t('modal.submit')}
           </button>
         </div>

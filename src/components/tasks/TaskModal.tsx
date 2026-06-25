@@ -20,8 +20,8 @@ type Props = {
 }
 
 const labelStyle: React.CSSProperties = {
-  fontFamily: 'IBM Plex Mono, monospace', fontSize: 9, fontWeight: 600, letterSpacing: '0.1em',
-  textTransform: 'uppercase', color: '#5768ac', marginBottom: 7,
+   fontSize: 9, fontWeight: 600, letterSpacing: '0.1em',
+  textTransform: 'uppercase', marginBottom: 7,
 }
 
 export function TaskModal({ task, subjectTitle, isMember, currentMemberId, onClose, onPatch, onToggleSubtask, onClaim }: Props) {
@@ -35,33 +35,33 @@ export function TaskModal({ task, subjectTitle, isMember, currentMemberId, onClo
   return (
     <Modal open={!!task} onClose={onClose}>
       {/* kicker = subject */}
-      <div style={{
-        fontFamily: 'IBM Plex Mono, monospace', fontSize: 8, letterSpacing: '0.14em', textTransform: 'uppercase',
-        color: '#5768ac', marginBottom: 6,
+      <div className="font-mono text-fame-slate" style={{
+         fontSize: 8, letterSpacing: '0.14em', textTransform: 'uppercase',
+        marginBottom: 6,
       }}>
         {subjectTitle}
       </div>
-      <div style={{ fontFamily: 'Roboto Slab, Georgia, serif', fontSize: 18, fontWeight: 600, color: '#15203f', marginBottom: 18 }}>
+      <div className="font-serif text-fame-text-dark" style={{  fontSize: 18, fontWeight: 600, marginBottom: 18 }}>
         {task.titre}
       </div>
 
       {/* Status */}
       <div style={{ marginBottom: 16 }}>
-        <div style={labelStyle}>{t('section.status')}</div>
+        <div className="font-mono text-fame-slate" style={labelStyle}>{t('section.status')}</div>
         {isMember ? (
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
             {STATUS_OPTS.map(s => {
               const active = task.statut === s
               return (
                 <button
+                  className={`font-mono ${active ? 'text-fame-text-body' : 'text-fame-text-muted border-fame-ecru'}`}
                   key={s}
                   onClick={() => onPatch(task.id, { statut: s })}
                   style={{
                     display: 'flex', alignItems: 'center', gap: 5, padding: '5px 11px', borderRadius: 20,
-                    fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, cursor: 'pointer',
-                    border: active ? `1.5px solid ${TASK_STATUS_COLOR[s]}` : '1px solid #eceadf',
+                     fontSize: 10, cursor: 'pointer',
+                    border: active ? `1.5px solid ${TASK_STATUS_COLOR[s]}` : '1px solid',
                     background: active ? 'rgba(47,68,134,0.08)' : 'transparent',
-                    color: active ? '#2a3457' : '#7e95d6',
                   }}
                 >
                   <span style={{ width: 7, height: 7, borderRadius: '50%', background: TASK_STATUS_COLOR[s] }} />
@@ -71,7 +71,7 @@ export function TaskModal({ task, subjectTitle, isMember, currentMemberId, onClo
             })}
           </div>
         ) : (
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: '#2a3457' }}>
+          <span className="font-mono text-fame-text-body" style={{ display: 'inline-flex', alignItems: 'center', gap: 6,  fontSize: 11 }}>
             <span style={{ width: 8, height: 8, borderRadius: '50%', background: TASK_STATUS_COLOR[task.statut] }} />
             {t(`status.${STATUS_KEY[task.statut]}`)}
           </span>
@@ -80,24 +80,24 @@ export function TaskModal({ task, subjectTitle, isMember, currentMemberId, onClo
 
       {/* Difficulty */}
       <div style={{ marginBottom: 16 }}>
-        <div style={labelStyle}>{t('section.difficulty')}</div>
+        <div className="font-mono text-fame-slate" style={labelStyle}>{t('section.difficulty')}</div>
         {isMember ? (
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
             {DIFF_OPTS.map(d => {
               const active = task.difficulte === d
               return (
                 <button
+                  className={`font-mono ${active ? 'text-fame-blue border-fame-blue' : 'text-fame-text-muted border-fame-ecru'}`}
                   key={d}
                   onClick={() => onPatch(task.id, { difficulte: d })}
                   style={{
                     display: 'flex', alignItems: 'center', gap: 6, padding: '5px 11px', borderRadius: 20,
-                    fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, cursor: 'pointer',
-                    border: active ? '1.5px solid #2f4486' : '1px solid #eceadf',
+                     fontSize: 10, cursor: 'pointer',
+                    border: active ? '1.5px solid' : '1px solid',
                     background: active ? 'rgba(47,68,134,0.08)' : 'transparent',
-                    color: active ? '#2f4486' : '#7e95d6',
                   }}
                 >
-                  <DiffDots level={DIFF_LEVEL[d]} />
+                  <DiffDots level={DIFF_LEVEL[d] ?? 0} />
                   {t(`difficulty.${d}`)}
                 </button>
               )
@@ -105,15 +105,15 @@ export function TaskModal({ task, subjectTitle, isMember, currentMemberId, onClo
           </div>
         ) : (
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-            <DiffDots level={DIFF_LEVEL[task.difficulte]} />
-            <span style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, color: '#2a3457' }}>{t(`difficulty.${task.difficulte}`)}</span>
+            <DiffDots level={DIFF_LEVEL[task.difficulte] ?? 0} />
+            <span className="font-mono text-fame-text-body" style={{  fontSize: 10 }}>{t(`difficulty.${task.difficulte}`)}</span>
           </span>
         )}
       </div>
 
       {/* Progress (derived, read-only) */}
       <div style={{ marginBottom: 16 }}>
-        <div style={{ ...labelStyle, display: 'flex', justifyContent: 'space-between' }}>
+        <div className="font-mono text-fame-slate" style={{ ...labelStyle, display: 'flex', justifyContent: 'space-between' }}>
           <span>{t('progress')}</span>
           <span>{pct}%</span>
         </div>
@@ -123,7 +123,7 @@ export function TaskModal({ task, subjectTitle, isMember, currentMemberId, onClo
       {/* Subtasks */}
       {subs.length > 0 && (
         <div style={{ marginBottom: 16 }}>
-          <div style={labelStyle}>{t('subtasks')}</div>
+          <div className="font-mono text-fame-slate" style={labelStyle}>{t('subtasks')}</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
             {subs.map(s => (
               <label key={s.id} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: isMember ? 'pointer' : 'default' }}>
@@ -132,9 +132,9 @@ export function TaskModal({ task, subjectTitle, isMember, currentMemberId, onClo
                   checked={s.done}
                   disabled={!isMember}
                   onChange={e => onToggleSubtask(task.id, s.id, e.target.checked)}
-                  style={{ accentColor: '#1e9b7e' }}
+                  className="accent-fame-teal"
                 />
-                <span style={{ fontSize: 13, color: s.done ? '#7e95d6' : '#2a3457', textDecoration: s.done ? 'line-through' : 'none' }}>
+                <span className={s.done ? 'text-fame-text-muted' : 'text-fame-text-body'} style={{ fontSize: 13, textDecoration: s.done ? 'line-through' : 'none' }}>
                   {s.label}
                 </span>
               </label>
@@ -145,26 +145,26 @@ export function TaskModal({ task, subjectTitle, isMember, currentMemberId, onClo
 
       {/* Positioning */}
       <div style={{ marginBottom: 16 }}>
-        <div style={labelStyle}>{t('positioning')}</div>
+        <div className="font-mono text-fame-slate" style={labelStyle}>{t('positioning')}</div>
         {task.assignees.length > 0 ? (
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: isMember ? 8 : 0 }}>
             {task.assignees.map(a => (
               <span key={a.id} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
                 <Avatar name={`${a.prenom} ${a.nom}`} photoUrl={a.photo_url} size={22} />
-                <span style={{ fontSize: 12, color: '#2a3457' }}>{a.prenom}</span>
+                <span className="text-fame-text-body" style={{ fontSize: 12 }}>{a.prenom}</span>
               </span>
             ))}
           </div>
         ) : (
-          <div style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: '#7e95d6', marginBottom: isMember ? 8 : 0 }}>
+          <div className="font-mono text-fame-text-muted" style={{  fontSize: 11, marginBottom: isMember ? 8 : 0 }}>
             {t('noAssignees')}
           </div>
         )}
         {isMember && (
-          <button
+          <button className="font-mono text-fame-blue"
             onClick={() => onClaim(task.id)}
             style={{
-              fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, color: '#2f4486', background: 'none',
+               fontSize: 10, background: 'none',
               border: '1px solid rgba(47,68,134,0.35)', borderRadius: 6, padding: '5px 11px', cursor: 'pointer', letterSpacing: '0.04em',
             }}
           >
@@ -176,8 +176,8 @@ export function TaskModal({ task, subjectTitle, isMember, currentMemberId, onClo
       {/* Description */}
       {task.description && (
         <div>
-          <div style={labelStyle}>{t('section.description')}</div>
-          <p style={{ fontSize: 13, color: '#2a3457', lineHeight: 1.5, margin: 0 }}>{task.description}</p>
+          <div className="font-mono text-fame-slate" style={labelStyle}>{t('section.description')}</div>
+          <p className="text-fame-text-body" style={{ fontSize: 13, lineHeight: 1.5, margin: 0 }}>{task.description}</p>
         </div>
       )}
     </Modal>

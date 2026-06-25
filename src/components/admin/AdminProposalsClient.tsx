@@ -5,10 +5,11 @@ import { useLocale, useTranslations } from 'next-intl'
 import { ProposalStatusBadge } from '@/components/ui/StatusBadge'
 import { useToast } from '@/components/ui/Toast'
 import type { Proposal, Lab, ProposalStatus } from '@/types'
+import { VALID_LABS } from '@/lib/constants'
 
-const LABS: Lab[] = ['paris', 'montreal']
 const STATUSES: (ProposalStatus | 'all')[] = ['all', 'pending', 'accepted', 'rejected']
 
+// Intentional variance: 3-gradient composite with specific position offsets (at 22%/80%/90%).
 const PAGE_BG =
   'radial-gradient(110% 80% at 22% 8%, rgba(181,157,135,0.28) 0%, rgba(181,157,135,0) 52%), ' +
   'radial-gradient(120% 110% at 80% 112%, rgba(113,120,132,0.2) 0%, rgba(113,120,132,0) 60%), ' +
@@ -18,10 +19,8 @@ const PAGE_BG =
 const filterBtnStyle = (active: boolean): React.CSSProperties => ({
   padding: '6px 12px',
   borderRadius: 6,
-  border: active ? '1px solid #2f4486' : '1px solid rgba(20,40,90,0.14)',
+  border: active ? '1px solid' : '1px solid rgba(20,40,90,0.14)',
   background: active ? 'rgba(47,68,134,0.12)' : 'rgba(255,255,255,0.6)',
-  color: active ? '#2f4486' : '#6b7596',
-  fontFamily: "'IBM Plex Mono', monospace",
   fontSize: 10,
   letterSpacing: '0.06em',
   textTransform: 'capitalize',
@@ -86,22 +85,19 @@ export function AdminProposalsClient() {
   const actionBtn = (kind: 'accept' | 'reject' | 'convert'): React.CSSProperties => ({
     padding: '8px 14px',
     borderRadius: 8,
-    fontFamily: "'IBM Plex Mono', monospace",
     fontSize: 11,
     letterSpacing: '0.04em',
     cursor: 'pointer',
-    border: kind === 'convert' ? '1px solid #2f4486' : 'none',
-    background: kind === 'accept' ? '#1e9b7e' : kind === 'reject' ? '#c0473b' : 'transparent',
-    color: kind === 'convert' ? '#2f4486' : '#eef3ff',
+    border: kind === 'convert' ? '1px solid' : 'none',
+    background: kind === 'convert' ? 'transparent' : undefined,
   })
 
   return (
-    <div
+    <div className="font-serif"
       style={{
         minHeight: 'calc(100vh - 3rem)',
         display: 'flex',
         flexDirection: 'column',
-        fontFamily: "'Roboto Slab', Georgia, serif",
         color: '#18244c',
         background: PAGE_BG,
       }}
@@ -121,24 +117,20 @@ export function AdminProposalsClient() {
       >
         {/* Left: kicker + title */}
         <div>
-          <div
+          <div className="font-mono text-fame-text-muted"
             style={{
-              fontFamily: "'IBM Plex Mono', monospace",
               fontSize: 9,
               letterSpacing: '0.14em',
               textTransform: 'uppercase',
-              color: '#7e95d6',
               marginBottom: 3,
             }}
           >
-            FAME / Admin
+            {t('kicker')}
           </div>
-          <h1
+          <h1 className="font-serif text-fame-text-dark"
             style={{
-              fontFamily: "'Roboto Slab', Georgia, serif",
               fontSize: 20,
               fontWeight: 600,
-              color: '#15203f',
               margin: 0,
             }}
           >
@@ -149,11 +141,12 @@ export function AdminProposalsClient() {
         {/* Right: lab + status filters */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', gap: 6 }}>
-            {LABS.map(l => (
+            {VALID_LABS.map(l => (
               <button
                 key={l}
+                className={`font-mono ${lab === l ? 'text-fame-blue' : ''}`}
                 onClick={() => { setProposals([]); setLab(l) }}
-                style={filterBtnStyle(lab === l)}
+                style={{ ...filterBtnStyle(lab === l), color: lab === l ? undefined : '#6b7596' }}
               >
                 {l}
               </button>
@@ -164,8 +157,9 @@ export function AdminProposalsClient() {
             {STATUSES.map(s => (
               <button
                 key={s}
+                className={`font-mono ${statusFilter === s ? 'text-fame-blue' : ''}`}
                 onClick={() => setStatusFilter(s)}
-                style={filterBtnStyle(statusFilter === s)}
+                style={{ ...filterBtnStyle(statusFilter === s), color: statusFilter === s ? undefined : '#6b7596' }}
               >
                 {s === 'all' ? t('filterAll') : t(`filter${s.charAt(0).toUpperCase()}${s.slice(1)}` as 'filterPending' | 'filterAccepted' | 'filterRejected')}
               </button>
@@ -178,11 +172,9 @@ export function AdminProposalsClient() {
       <div style={{ flex: 1, overflowY: 'auto', padding: '28px 32px 48px' }}>
         <div style={{ maxWidth: 820, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
           {visible.length === 0 && (
-            <p
+            <p className="font-mono text-fame-text-muted"
               style={{
-                fontFamily: "'IBM Plex Mono', monospace",
                 fontSize: 12,
-                color: '#7e95d6',
                 textAlign: 'center',
                 paddingTop: 50,
               }}
@@ -194,8 +186,8 @@ export function AdminProposalsClient() {
           {visible.map(p => (
             <div
               key={p.id}
+              className="bg-fame-sand"
               style={{
-                background: '#fbf9f3',
                 borderRadius: 11,
                 boxShadow: '0 16px 40px -24px rgba(0,5,30,0.4), inset 0 0 0 1px rgba(0,0,0,0.05)',
                 padding: '18px 20px',
@@ -204,21 +196,18 @@ export function AdminProposalsClient() {
               {/* Header */}
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 10 }}>
                 <div style={{ minWidth: 0 }}>
-                  <h3
+                  <h3 className="font-serif text-fame-text-dark"
                     style={{
-                      fontFamily: "'Roboto Slab', Georgia, serif",
                       fontSize: 16,
                       fontWeight: 700,
-                      color: '#15203f',
                       margin: 0,
                       lineHeight: 1.25,
                     }}
                   >
                     {p.titre}
                   </h3>
-                  <p
+                  <p className="font-mono"
                     style={{
-                      fontFamily: "'IBM Plex Mono', monospace",
                       fontSize: 10,
                       letterSpacing: '0.12em',
                       textTransform: 'uppercase',
@@ -232,9 +221,8 @@ export function AdminProposalsClient() {
                 <ProposalStatusBadge status={p.statut} label={ts(p.statut)} />
               </div>
 
-              <p
+              <p className="font-serif"
                 style={{
-                  fontFamily: "'Roboto Slab', Georgia, serif",
                   fontSize: 13.5,
                   color: '#43507a',
                   lineHeight: 1.6,
@@ -247,7 +235,7 @@ export function AdminProposalsClient() {
 
               {p.statut === 'pending' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10, borderTop: '1px solid rgba(0,0,0,0.06)', paddingTop: 14 }}>
-                  <input
+                  <input className="font-mono text-fame-text-body"
                     type="text"
                     placeholder={t('commentPlaceholder')}
                     value={comments[p.id] ?? ''}
@@ -258,25 +246,22 @@ export function AdminProposalsClient() {
                       border: '1px solid rgba(20,40,90,0.18)',
                       borderRadius: 9,
                       padding: '9px 11px',
-                      fontFamily: "'IBM Plex Mono', monospace",
                       fontSize: 12,
-                      color: '#2a3457',
                       outline: 'none',
                       boxSizing: 'border-box',
                     }}
                   />
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                    <button onClick={() => decide(p.id, 'accepted')} style={actionBtn('accept')}>{t('accept')}</button>
-                    <button onClick={() => decide(p.id, 'rejected')} style={actionBtn('reject')}>{t('reject')}</button>
-                    <button onClick={() => convert(p.id)} style={actionBtn('convert')}>{t('convert')}</button>
+                    <button className="font-mono bg-fame-teal text-fame-text-light" onClick={() => decide(p.id, 'accepted')} style={actionBtn('accept')}>{t('accept')}</button>
+                    <button className="font-mono bg-fame-red text-fame-text-light" onClick={() => decide(p.id, 'rejected')} style={actionBtn('reject')}>{t('reject')}</button>
+                    <button className="font-mono text-fame-blue" onClick={() => convert(p.id)} style={actionBtn('convert')}>{t('convert')}</button>
                   </div>
                 </div>
               )}
 
               {p.statut !== 'pending' && p.commentaire_admin && (
-                <p
+                <p className="font-mono"
                   style={{
-                    fontFamily: "'IBM Plex Mono', monospace",
                     fontSize: 11.5,
                     color: '#6b7596',
                     fontStyle: 'italic',
@@ -290,7 +275,7 @@ export function AdminProposalsClient() {
               )}
 
               {p.statut === 'accepted' && (
-                <button onClick={() => convert(p.id)} style={{ ...actionBtn('convert'), marginTop: 12 }}>
+                <button className="font-mono text-fame-blue" onClick={() => convert(p.id)} style={{ ...actionBtn('convert'), marginTop: 12 }}>
                   {t('convert')}
                 </button>
               )}

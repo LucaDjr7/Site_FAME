@@ -21,9 +21,9 @@ export function PaperNav({ subjects, currentId, lab, locale }: Props) {
   const href = (id: string) => `/${locale}/${lab}/paper/${id}`
 
   return (
-    <div style={{
+    <div className="bg-fame-blue" style={{
       position: 'absolute', left: 0, right: 0, bottom: 0, height: 108, pointerEvents: 'auto',
-      display: 'flex', alignItems: 'center', gap: 16, padding: '0 26px', background: '#2f4486',
+      display: 'flex', alignItems: 'center', gap: 16, padding: '0 26px',
       borderTop: '1px solid rgba(20,40,90,0.4)',
     }}>
       {prev ? (
@@ -39,9 +39,9 @@ export function PaperNav({ subjects, currentId, lab, locale }: Props) {
               <div style={{ position: 'relative', height: 58, borderRadius: 5, background: '#f5f4ee', overflow: 'hidden', boxShadow: '0 4px 14px -6px rgba(0,5,30,0.6)', outline: active ? '2px solid #5b7cf0' : '2px solid transparent', outlineOffset: 2 }}>
                 <div style={{ height: 13, margin: '6px 6px 0', borderRadius: 2, background: 'rgba(20,32,63,0.16)' }} />
                 <div style={{ margin: '5px 6px', height: 24, borderRadius: 2, background: 'repeating-linear-gradient(135deg,#e4e2d6 0 5px,#eceadf 5px 10px)' }} />
-                <span style={{ position: 'absolute', top: 5, right: 6, width: 6, height: 6, borderRadius: '50%', background: STATUS_COLOR[s.statut] ?? '#5768ac' }} />
+                <span style={{ position: 'absolute', top: 5, right: 6, width: 6, height: 6, borderRadius: '50%', background: STATUS_COLOR[s.statut] }} />
               </div>
-              <div style={{ marginTop: 6, fontSize: 10, lineHeight: 1.25, color: active ? '#eef3ff' : '#8a9bcb', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.02em' }}>{s.titre}</div>
+              <div className="font-mono" style={{ marginTop: 6, fontSize: 10, lineHeight: 1.25, color: active ? '#eef3ff' : '#8a9bcb', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',  letterSpacing: '0.02em' }}>{s.titre}</div>
             </Link>
           )
         })}

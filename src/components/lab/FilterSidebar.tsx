@@ -1,16 +1,9 @@
 'use client'
 import { useTranslations } from 'next-intl'
-import type { Subject, SubjectStatus, Difficulty, MemberRef } from '@/types'
+import type { Subject, SubjectStatus, Difficulty, MemberRef, DateBucket } from '@/types'
 import { Avatar } from '@/components/ui/Avatar'
-
-type DateBucket = '2025' | '2024' | 'older'
-
-function dateBucket(s: Subject): DateBucket {
-  const year = s.created_at.slice(0, 4)
-  if (year === '2025') return '2025'
-  if (year === '2024') return '2024'
-  return 'older'
-}
+import { DiffDots } from '@/components/ui/DiffDots'
+import { dateBucket } from '@/lib/utils'
 
 // Count subjects matching all filters except one dimension
 function countExcluding(
@@ -28,12 +21,12 @@ function countExcluding(
     if (ignoreDim !== 'status' && fStatus.size > 0 && !fStatus.has(s.statut)) return false
     if (ignoreDim !== 'diff' && fDiff.size > 0 && !fDiff.has(s.difficulte)) return false
     if (ignoreDim !== 'person' && fPerson.size > 0 && !s.auteurs.some(id => fPerson.has(id))) return false
-    if (ignoreDim !== 'date' && fDate.size > 0 && !fDate.has(dateBucket(s))) return false
+    if (ignoreDim !== 'date' && fDate.size > 0 && !fDate.has(dateBucket(s.created_at))) return false
     // Now check if this subject matches the "value" for the ignored dimension
     if (ignoreDim === 'status') return s.statut === value
     if (ignoreDim === 'diff') return s.difficulte === value
     if (ignoreDim === 'person') return s.auteurs.includes(value)
-    if (ignoreDim === 'date') return dateBucket(s) === value
+    if (ignoreDim === 'date') return dateBucket(s.created_at) === value
     return true
   }).length
 }
@@ -44,21 +37,6 @@ const STATUS_DOT: Record<string, string> = {
   done: '#2f4486',
 }
 
-const DIFF_COLOR = '#15203f'
-const DIFF_FAINT = 'rgba(120,140,190,0.28)'
-
-function DiffDots({ level }: { level: number }) {
-  return (
-    <span style={{ display: 'inline-flex', gap: 2.5, alignItems: 'center' }}>
-      {[1, 2, 3].map(i => (
-        <span key={i} style={{
-          display: 'inline-block', width: 5, height: 5,
-          background: i <= level ? DIFF_COLOR : DIFF_FAINT,
-        }} />
-      ))}
-    </span>
-  )
-}
 
 type Props = {
   subjects: Subject[]
@@ -79,14 +57,12 @@ type Props = {
 
 const ACTIVE_FILTER_STYLE: React.CSSProperties = {
   background: 'rgba(47,68,134,0.12)',
-  border: '1px solid #2f4486',
-  color: '#2f4486',
+  border: '1px solid',
 }
 
 const INACTIVE_FILTER_STYLE: React.CSSProperties = {
   background: 'transparent',
   border: '1px solid rgba(87,104,172,0.25)',
-  color: '#7e95d6',
 }
 
 export function FilterSidebar({
@@ -104,7 +80,7 @@ export function FilterSidebar({
 
   const btnBase: React.CSSProperties = {
     display: 'flex', alignItems: 'center', gap: 6, padding: '5px 8px',
-    borderRadius: 5, cursor: 'pointer', fontSize: 11, fontFamily: 'IBM Plex Mono, monospace',
+    borderRadius: 5, cursor: 'pointer', fontSize: 11, 
     transition: 'all 0.12s', width: '100%', textAlign: 'left',
   }
 
@@ -127,22 +103,20 @@ export function FilterSidebar({
         onClick={onToggle}
         title={t('filters')}
       >
-        <span style={{
-          fontFamily: 'IBM Plex Mono, monospace',
+        <span className="font-mono text-fame-slate" style={{
           fontSize: 10,
           fontWeight: 500,
           letterSpacing: '0.12em',
           textTransform: 'uppercase',
-          color: '#5768ac',
           writingMode: 'vertical-rl',
           marginTop: 8,
         }}>
           {t('filters')}
         </span>
         {hasActiveFilters && (
-          <span style={{
+          <span className="bg-fame-blue" style={{
             width: 7, height: 7, borderRadius: '50%',
-            background: '#2f4486', marginTop: 10,
+            marginTop: 10,
           }} />
         )}
       </div>
@@ -171,30 +145,30 @@ export function FilterSidebar({
     }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 14px 12px' }}>
-        <span style={{
-          fontFamily: 'IBM Plex Mono, monospace', fontSize: 10,
-          fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#2a3457',
+        <span className="font-mono text-fame-text-body" style={{
+           fontSize: 10,
+          fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase',
         }}>
           {t('filters')}
         </span>
         <div style={{ display: 'flex', gap: 6 }}>
           {hasActiveFilters && (
-            <button
+            <button className="font-mono text-fame-slate"
               onClick={onReset}
               style={{
-                fontFamily: 'IBM Plex Mono, monospace', fontSize: 9,
-                color: '#5768ac', background: 'none', border: 'none', cursor: 'pointer',
+                 fontSize: 9,
+                background: 'none', border: 'none', cursor: 'pointer',
                 textTransform: 'uppercase', letterSpacing: '0.08em',
               }}
             >
               {t('reset')}
             </button>
           )}
-          <button
+          <button className="font-mono text-fame-slate"
             onClick={onToggle}
             style={{
-              fontFamily: 'IBM Plex Mono, monospace', fontSize: 12,
-              color: '#5768ac', background: 'none', border: 'none', cursor: 'pointer',
+               fontSize: 12,
+              background: 'none', border: 'none', cursor: 'pointer',
             }}
           >
             »
@@ -204,10 +178,10 @@ export function FilterSidebar({
 
       {/* Statut */}
       <div style={{ padding: '0 14px 14px' }}>
-        <div style={{
-          fontFamily: 'IBM Plex Mono, monospace', fontSize: 8,
+        <div className="font-mono text-fame-slate" style={{
+           fontSize: 8,
           fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase',
-          color: '#5768ac', marginBottom: 6,
+          marginBottom: 6,
         }}>
           {t('section.status')}
         </div>
@@ -219,7 +193,7 @@ export function FilterSidebar({
               key={s}
               onClick={() => onToggleStatus(s)}
               aria-pressed={active}
-              style={{ ...btnBase, ...(active ? ACTIVE_FILTER_STYLE : INACTIVE_FILTER_STYLE) }}
+              className={`font-mono ${active ? 'text-fame-blue border-fame-blue' : 'text-fame-text-muted'}`} style={{ ...btnBase, ...(active ? ACTIVE_FILTER_STYLE : INACTIVE_FILTER_STYLE) }}
             >
               <span style={{ width: 7, height: 7, borderRadius: '50%', background: STATUS_DOT[s], flexShrink: 0 }} />
               <span style={{ flex: 1, fontSize: 10 }}>{t(`status.${s}`)}</span>
@@ -231,10 +205,10 @@ export function FilterSidebar({
 
       {/* Difficulté */}
       <div style={{ padding: '0 14px 14px' }}>
-        <div style={{
-          fontFamily: 'IBM Plex Mono, monospace', fontSize: 8,
+        <div className="font-mono text-fame-slate" style={{
+           fontSize: 8,
           fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase',
-          color: '#5768ac', marginBottom: 6,
+          marginBottom: 6,
         }}>
           {t('section.difficulty')}
         </div>
@@ -246,7 +220,7 @@ export function FilterSidebar({
               key={key}
               onClick={() => onToggleDiff(key)}
               aria-pressed={active}
-              style={{ ...btnBase, ...(active ? ACTIVE_FILTER_STYLE : INACTIVE_FILTER_STYLE) }}
+              className={`font-mono ${active ? 'text-fame-blue border-fame-blue' : 'text-fame-text-muted'}`} style={{ ...btnBase, ...(active ? ACTIVE_FILTER_STYLE : INACTIVE_FILTER_STYLE) }}
             >
               <DiffDots level={level} />
               <span style={{ flex: 1, fontSize: 10 }}>{t(`difficulty.${key}`)}</span>
@@ -259,10 +233,10 @@ export function FilterSidebar({
       {/* Personnes — hidden if no members in subjects */}
       {filteredMembers.length > 0 && (
         <div style={{ padding: '0 14px 14px' }}>
-          <div style={{
-            fontFamily: 'IBM Plex Mono, monospace', fontSize: 8,
+          <div className="font-mono text-fame-slate" style={{
+             fontSize: 8,
             fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase',
-            color: '#5768ac', marginBottom: 6,
+            marginBottom: 6,
           }}>
             {t('section.people')}
           </div>
@@ -275,7 +249,7 @@ export function FilterSidebar({
                 key={m.id}
                 onClick={() => onTogglePerson(m.id)}
                 aria-pressed={active}
-                style={{ ...btnBase, ...(active ? ACTIVE_FILTER_STYLE : INACTIVE_FILTER_STYLE) }}
+                className={`font-mono ${active ? 'text-fame-blue border-fame-blue' : 'text-fame-text-muted'}`} style={{ ...btnBase, ...(active ? ACTIVE_FILTER_STYLE : INACTIVE_FILTER_STYLE) }}
               >
                 <Avatar name={name} photoUrl={m.photo_url} size={16} />
                 <span style={{ flex: 1, fontSize: 10, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -290,10 +264,10 @@ export function FilterSidebar({
 
       {/* Date d'existence */}
       <div style={{ padding: '0 14px 14px' }}>
-        <div style={{
-          fontFamily: 'IBM Plex Mono, monospace', fontSize: 8,
+        <div className="font-mono text-fame-slate" style={{
+           fontSize: 8,
           fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase',
-          color: '#5768ac', marginBottom: 6,
+          marginBottom: 6,
         }}>
           {t('section.date')}
         </div>
@@ -305,7 +279,7 @@ export function FilterSidebar({
               key={d}
               onClick={() => onToggleDate(d)}
               aria-pressed={active}
-              style={{ ...btnBase, ...(active ? ACTIVE_FILTER_STYLE : INACTIVE_FILTER_STYLE) }}
+              className={`font-mono ${active ? 'text-fame-blue border-fame-blue' : 'text-fame-text-muted'}`} style={{ ...btnBase, ...(active ? ACTIVE_FILTER_STYLE : INACTIVE_FILTER_STYLE) }}
             >
               <span style={{ flex: 1, fontSize: 10 }}>{t(`date.${d}`)}</span>
               <span style={{ fontSize: 9, opacity: 0.65 }}>{count}</span>

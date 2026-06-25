@@ -74,8 +74,6 @@
       "submit": "Add subject →"
     },
     "delete": {
-      "kicker": "DELETE SUBJECT",
-      "title": "Delete subject",
       "body": "Delete \"{title}\"? This cannot be undone.",
       "cancel": "Cancel",
       "confirm": "Delete"
@@ -107,9 +105,7 @@
     "openDropbox": "Open data folder",
     "dropboxSub": "Dropbox · data linked to this subject",
     "progress": "Subject progress",
-    "saved": "Saved",
     "responsible": "Lead",
-    "keywords": "Keywords",
     "noTasks": "No linked tasks",
     "commentNameLabel": "Your name",
     "commentTextLabel": "Add a comment",
@@ -124,8 +120,6 @@
     "claimTask": "Claim task",
     "unclaimTask": "Unclaim",
     "subtasks": "Subtasks",
-    "assignees": "Assignees",
-    "history": "History",
     "difficulty": {
       "easy": "Easy",
       "intermediate": "Intermediate",
@@ -254,6 +248,7 @@
     "rejected": "Rejected"
   },
   "publications": {
+    "kicker": "FAME / {lab}",
     "title": "Publications",
     "filters": "Filters",
     "reset": "Reset",
@@ -294,6 +289,7 @@
     "linkLabel": "DOI / Link"
   },
   "team": {
+    "kicker": "FAME / {lab}",
     "title": "Team",
     "roles": {
       "direction": "Direction",
@@ -332,6 +328,7 @@
     "errorRequired": "All fields are required."
   },
   "data": {
+    "kicker": "FAME / {lab}",
     "title": "Data — Team Dropbox",
     "tree": "File tree",
     "linkedFolders": "linked folder(s)",
@@ -340,6 +337,8 @@
     "chooseSubject": "Choose a subject…",
     "chooseTask": "Choose a task…",
     "openDropbox": "Open in Dropbox →",
+    "openInDropbox": "Open in Dropbox",
+    "removeLink": "Remove link",
     "noSelection": "Select a folder or file to link it to a subject or task.",
     "linkedTo": "Linked to",
     "openRoot": "Open Dropbox →",
@@ -353,6 +352,7 @@
     "errorGeneric": "Could not load Dropbox."
   },
   "prompts": {
+    "kicker": "FAME / {lab}",
     "title": "Prompt library",
     "subtitle": "Standardised templates to produce site content. Variables between",
     "subtitleEnd": "are to be filled in at generation time.",
@@ -388,7 +388,7 @@
     "transversalBadge": "Transversal"
   },
   "admin": {
-    "proposals": "Proposals",
+    "kicker": "FAME / Admin",
     "proposalsTitle": "Proposals",
     "status": {
       "pending": "Pending",
@@ -410,21 +410,9 @@
     "actionError": "Action failed"
   },
   "common": {
-    "loading": "Loading…",
-    "save": "Save",
     "cancel": "Cancel",
     "close": "Close",
-    "delete": "Delete",
-    "confirm": "Confirm",
-    "edit": "Edit",
-    "add": "Add",
-    "search": "Search",
-    "filters": "Filters",
-    "noResults": "No results",
-    "paris": "Paris",
-    "montreal": "Montréal",
-    "lab": "Lab",
-    "by": "by"
+    "confirm": "Confirm"
   },
   "meta": {
     "siteName": "FAME",
