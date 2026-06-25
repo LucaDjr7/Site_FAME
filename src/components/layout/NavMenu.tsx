@@ -110,7 +110,7 @@ export function NavMenu({ locale, lab, member }: Props) {
                     key={key}
                     href={`${base}${href}`}
                     onClick={() => setOpen(false)}
-                    className="font-serif hover:bg-[rgba(47,68,134,0.08)] transition-colors"
+                    className="font-serif hover:bg-[rgba(47,68,134,0.08)] transition-colors text-fame-text-body"
                     style={itemStyle}
                   >
                     {t(key)}

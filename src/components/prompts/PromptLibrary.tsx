@@ -273,7 +273,7 @@ export function PromptLibrary({ lab }: Props) {
                 flexWrap: 'wrap',
               }}
             >
-              <p className="font-mono"
+              <p className="font-serif"
                 style={{
                   margin: 0,
                   maxWidth: 560,
