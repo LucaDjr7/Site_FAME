@@ -230,9 +230,28 @@ export function Globe() {
     }
     window.addEventListener('resize', onResize)
 
+    // ---- visibility: pause rAF when tab is hidden (P1) ----
+    function onVisibilityChange() {
+      if (document.hidden) {
+        cancelAnimationFrame(state.rafId)
+        state.rafId = 0
+      } else if (state.mounted && state.rafId === 0) {
+        state.lastTime = 0
+        state.rafId = requestAnimationFrame(loop)
+      }
+    }
+    document.addEventListener('visibilitychange', onVisibilityChange)
+
     // ---- init ----
     setupCanvas()
     draw()
+    // P5: respect prefers-reduced-motion — skip auto-rotation but still draw
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (prefersReducedMotion) {
+      state.paused = true
+    }
     state.rafId = requestAnimationFrame(loop)
 
     // ---- load atlas ----
@@ -259,6 +278,7 @@ export function Globe() {
     return () => {
       state.mounted = false
       cancelAnimationFrame(state.rafId)
+      document.removeEventListener('visibilitychange', onVisibilityChange)
       window.removeEventListener('resize', onResize)
       canvas.removeEventListener('pointerdown', onPointerDown)
       canvas.removeEventListener('pointermove', onPointerMove)

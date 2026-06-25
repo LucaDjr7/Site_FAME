@@ -130,7 +130,7 @@ export function SubjectCard({
             }} />
             <span style={{
               fontFamily: 'IBM Plex Mono, monospace',
-              fontSize: 7,
+              fontSize: 11,
               fontWeight: 500,
               letterSpacing: '0.08em',
               textTransform: 'uppercase',
@@ -146,7 +146,7 @@ export function SubjectCard({
               <span style={{
                 marginLeft: 'auto',
                 fontFamily: 'IBM Plex Mono, monospace',
-                fontSize: 6.5,
+                fontSize: 11,
                 fontWeight: 600,
                 letterSpacing: '0.08em',
                 textTransform: 'uppercase',
@@ -190,6 +190,9 @@ export function SubjectCard({
             position: 'relative',
             overflow: 'hidden',
           }}>
+            {/* A10 exemption: "fig." is a purely decorative watermark, not
+                functional text — opacity 0.55 on a patterned background further
+                reduces its legibility expectation. Kept at 7px intentionally. */}
             <span style={{
               position: 'absolute',
               bottom: 3,
@@ -208,7 +211,7 @@ export function SubjectCard({
             <div style={{ padding: '5px 10px 4px' }}>
               <span style={{
                 fontFamily: 'IBM Plex Mono, monospace',
-                fontSize: 7.5,
+                fontSize: 11,
                 color: '#43507a',
                 lineHeight: 1.5,
                 display: '-webkit-box',

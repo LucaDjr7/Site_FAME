@@ -73,12 +73,8 @@ export function PaperView({
         fontFamily: "'Roboto Slab', Georgia, serif",
       }}
     >
-      {/* Local keyframes for the drifting ghost papers (not in globals.css). */}
+      {/* drift1..4 keyframes moved to globals.css under "Paper view animations". */}
       <style>{`
-        @keyframes drift1{0%{transform:translate(0,0) rotate(-9deg);}100%{transform:translate(70px,-46px) rotate(-3deg);}}
-        @keyframes drift2{0%{transform:translate(0,0) rotate(7deg);}100%{transform:translate(-54px,40px) rotate(13deg);}}
-        @keyframes drift3{0%{transform:translate(0,0) rotate(-4deg);}100%{transform:translate(40px,52px) rotate(3deg);}}
-        @keyframes drift4{0%{transform:translate(0,0) rotate(11deg);}100%{transform:translate(-66px,-30px) rotate(4deg);}}
         .fame-scroll::-webkit-scrollbar{width:8px;height:8px;}
         .fame-scroll::-webkit-scrollbar-thumb{background:rgba(150,180,255,0.22);border-radius:8px;}
         .fame-scroll::-webkit-scrollbar-track{background:transparent;}
