@@ -25,7 +25,7 @@ Dernière mise à jour : 2026-06-25
 > - **Sec-4** bornes de longueur : `POST /api/comments` (texte ≤ 4000, nom visiteur ≤ 80) ; `POST /api/proposals` (titre ≤ 300, description ≤ 5000, email validé). **§3** `GET /api/proposals?ids=` (public) : `select` restreint excluant `proposant_email` + `commentaire_admin` (fuite de données fermée ; branche admin `select('*')` intacte).
 > - **CONV-04/§5** complexité mdp activation (≥ 8 + majuscule + chiffre → 400) ; garde array `order` (déjà en place, test ajouté).
 > - **Sec-6** rate-limit mémoire sliding-window (`src/lib/rate-limit.ts`) branché sur sign-in (10/min), comments (20/min), proposals (10/min) → **429**. ⚠️ **Limiteur par instance** (Map mémoire) : suffisant pour la cible Vercel actuelle ; passer à un store partagé (Redis/Upstash) si multi-instance. ⚠️ **`clientIp` lit `x-forwarded-for`** : fiable uniquement derrière le proxy Vercel (qui réécrit l'en-tête) ; sur un déploiement self-hosted derrière un proxy mal configuré, l'en-tête est falsifiable → ré-évaluer la dérivation d'IP (en-tête de confiance plateforme) ou passer à un throttling scopé au compte pour sign-in.
-> - **§6** migration `005_drop_password_hash.sql` (colonne morte ; auth via Supabase Auth). **⚠️ À APPLIQUER EN BDD par l'utilisateur** (comme 004).
+> - **§6** migration `005_drop_password_hash.sql` (colonne morte ; auth via Supabase Auth). **✅ APPLIQUÉE EN BDD** par l'utilisateur (2026-06-25).
 > - **D7** 4 headers de sécurité (`X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`) sur `/:path*` ; `.env.example` (clés sans valeurs, prefixes `NEXT_PUBLIC_` corrects) ; `requireAdmin()` sur le layout admin (defense in depth au-delà du middleware) ; guards env explicites dans `server.ts` (plus de `process.env.X!` ; **`createServiceClient()` reste sans cookies**) ; `seed-admin` email via `SEED_ADMIN_EMAIL`.
 > - **CI** `.github/workflows/ci.yml` (typecheck + lint + test + `npm audit`) + script `typecheck`. **CFG-02** `noUncheckedIndexedAccess` activé + 10 sites d'accès indexé gardés (vraies gardes, aucun `!`).
 > - **108 tests verts, `tsc`/`lint` à 0, build OK.** Revue finale Opus 4.8 à venir. **PR `vague3 → vague2` (stacked).**
@@ -50,7 +50,7 @@ Dernière mise à jour : 2026-06-25
 _(Historique : Phase 3 — Secondary code terminé → PR #3 mergée dans `main`. `tsc`/`lint`/`build` clean tout du long.)_
 
 > ⚠️ **Deploy gates avant mise en ligne** — état :
-> - ✅ **Migrations Supabase prod appliquées** : `001` + `002_subject_difficulte_and_indexes.sql` + `003_proposal_subject_link.sql` + `004_transversal.sql` (Vague 1).
+> - ✅ **Migrations Supabase appliquées** : `001` + `002_subject_difficulte_and_indexes.sql` + `003_proposal_subject_link.sql` + `004_transversal.sql` (Vague 1) + `005_drop_password_hash.sql` (Vague 3).
 > - ✅ **Finition graphique (A+B+C)** close — voir [`docs/REVUE_PRE_PROD.md`](./REVUE_PRE_PROD.md).
 > - ⏳ **Variables d'env prod** (Vercel) : `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_APP_URL` (URL prod, sert aux liens d'activation), `DROPBOX_ACCESS_TOKEN` (sinon page Data → 503 dégradé), `RESEND_API_KEY` + `EMAIL_FROM` (sinon emails skip avec warn). Domaine expéditeur à vérifier dans Resend.
 > - ⏳ `npm run seed:admin` à exécuter une fois sur la prod (compte admin `luca.desjardin@dauphine.eu`).
