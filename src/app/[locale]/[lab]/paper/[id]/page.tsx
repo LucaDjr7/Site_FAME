@@ -12,7 +12,8 @@ type Props = { params: Promise<{ locale: string; lab: string; id: string }> }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, lab, id } = await params
-  const labLabel = lab === 'paris' ? 'Paris' : lab === 'montreal' ? 'Montréal' : lab
+  if (!LABS.includes(lab as Lab)) return { title: '' }
+  const labLabel = lab === 'paris' ? 'Paris' : 'Montréal'
   const t = await getTranslations({ locale, namespace: 'meta' })
   const service = await createServiceClient()
   const { data: subject } = await service.from('subjects').select('titre').eq('id', id).single()
