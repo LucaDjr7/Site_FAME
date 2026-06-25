@@ -190,8 +190,9 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
         <form onSubmit={handleSubmit}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px 12px', marginBottom: 14 }}>
             <div>
-              <label style={labelStyle}>{t('fFirstName')} *</label>
+              <label htmlFor="invite-firstname" style={labelStyle}>{t('fFirstName')} *</label>
               <input
+                id="invite-firstname"
                 value={prenom}
                 onChange={e => setPrenom(e.target.value)}
                 style={inputStyle}
@@ -200,8 +201,9 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
               />
             </div>
             <div>
-              <label style={labelStyle}>{t('fLastName')} *</label>
+              <label htmlFor="invite-lastname" style={labelStyle}>{t('fLastName')} *</label>
               <input
+                id="invite-lastname"
                 value={nom}
                 onChange={e => setNom(e.target.value)}
                 style={inputStyle}
@@ -212,8 +214,9 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
           </div>
 
           <div style={{ marginBottom: 14 }}>
-            <label style={labelStyle}>{t('fEmail')} *</label>
+            <label htmlFor="invite-email" style={labelStyle}>{t('fEmail')} *</label>
             <input
+              id="invite-email"
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
@@ -224,8 +227,9 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
           </div>
 
           <div style={{ marginBottom: 20 }}>
-            <label style={labelStyle}>{t('fRole')}</label>
+            <label htmlFor="invite-role" style={labelStyle}>{t('fRole')}</label>
             <select
+              id="invite-role"
               value={role}
               onChange={e => setRole(e.target.value as Role)}
               style={{ ...inputStyle, cursor: 'pointer' }}

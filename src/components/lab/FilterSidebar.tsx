@@ -218,6 +218,7 @@ export function FilterSidebar({
             <button
               key={s}
               onClick={() => onToggleStatus(s)}
+              aria-pressed={active}
               style={{ ...btnBase, ...(active ? ACTIVE_FILTER_STYLE : INACTIVE_FILTER_STYLE) }}
             >
               <span style={{ width: 7, height: 7, borderRadius: '50%', background: STATUS_DOT[s], flexShrink: 0 }} />
@@ -244,6 +245,7 @@ export function FilterSidebar({
             <button
               key={key}
               onClick={() => onToggleDiff(key)}
+              aria-pressed={active}
               style={{ ...btnBase, ...(active ? ACTIVE_FILTER_STYLE : INACTIVE_FILTER_STYLE) }}
             >
               <DiffDots level={level} />
@@ -272,6 +274,7 @@ export function FilterSidebar({
               <button
                 key={m.id}
                 onClick={() => onTogglePerson(m.id)}
+                aria-pressed={active}
                 style={{ ...btnBase, ...(active ? ACTIVE_FILTER_STYLE : INACTIVE_FILTER_STYLE) }}
               >
                 <Avatar name={name} photoUrl={m.photo_url} size={16} />
@@ -301,6 +304,7 @@ export function FilterSidebar({
             <button
               key={d}
               onClick={() => onToggleDate(d)}
+              aria-pressed={active}
               style={{ ...btnBase, ...(active ? ACTIVE_FILTER_STYLE : INACTIVE_FILTER_STYLE) }}
             >
               <span style={{ flex: 1, fontSize: 10 }}>{t(`date.${d}`)}</span>

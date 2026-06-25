@@ -116,8 +116,9 @@ export function AddPublicationModal({ open, lab, onClose, onCreated }: Props) {
       <form onSubmit={handleSubmit} noValidate>
         {/* Title */}
         <div style={{ marginBottom: 14 }}>
-          <label style={labelStyle}>{t('fTitle')} *</label>
+          <label htmlFor="add-pub-title" style={labelStyle}>{t('fTitle')} *</label>
           <input
+            id="add-pub-title"
             type="text"
             value={titre}
             onChange={e => setTitre(e.target.value)}
@@ -129,8 +130,9 @@ export function AddPublicationModal({ open, lab, onClose, onCreated }: Props) {
 
         {/* Authors */}
         <div style={{ marginBottom: 14 }}>
-          <label style={labelStyle}>{t('fAuthors')} *</label>
+          <label htmlFor="add-pub-authors" style={labelStyle}>{t('fAuthors')} *</label>
           <input
+            id="add-pub-authors"
             type="text"
             value={authorsRaw}
             onChange={e => setAuthorsRaw(e.target.value)}
@@ -142,8 +144,9 @@ export function AddPublicationModal({ open, lab, onClose, onCreated }: Props) {
         {/* Year + Type row */}
         <div style={{ display: 'flex', gap: 12, marginBottom: 14 }}>
           <div style={{ flex: 1 }}>
-            <label style={labelStyle}>{t('fYear')} *</label>
+            <label htmlFor="add-pub-year" style={labelStyle}>{t('fYear')} *</label>
             <input
+              id="add-pub-year"
               type="number"
               value={annee}
               min={1900}
@@ -153,8 +156,9 @@ export function AddPublicationModal({ open, lab, onClose, onCreated }: Props) {
             />
           </div>
           <div style={{ flex: 1 }}>
-            <label style={labelStyle}>{t('type')} *</label>
+            <label htmlFor="add-pub-type" style={labelStyle}>{t('type')} *</label>
             <select
+              id="add-pub-type"
               value={type}
               onChange={e => setType(e.target.value as PublicationType)}
               style={{ ...inputStyle, appearance: 'none' }}
@@ -168,8 +172,9 @@ export function AddPublicationModal({ open, lab, onClose, onCreated }: Props) {
 
         {/* Journal / Conference */}
         <div style={{ marginBottom: 14 }}>
-          <label style={labelStyle}>{t('fJournal')}</label>
+          <label htmlFor="add-pub-journal" style={labelStyle}>{t('fJournal')}</label>
           <input
+            id="add-pub-journal"
             type="text"
             value={revue}
             onChange={e => setRevue(e.target.value)}
@@ -180,8 +185,9 @@ export function AddPublicationModal({ open, lab, onClose, onCreated }: Props) {
 
         {/* DOI / URL */}
         <div style={{ marginBottom: 18 }}>
-          <label style={labelStyle}>{t('fLink')}</label>
+          <label htmlFor="add-pub-link" style={labelStyle}>{t('fLink')}</label>
           <input
+            id="add-pub-link"
             type="url"
             value={lien}
             onChange={e => setLien(e.target.value)}

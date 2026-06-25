@@ -91,15 +91,15 @@ export function CommentsPanel({ subjectId, isMember, initialComments, open, onTo
           <div style={{ padding: '10px 12px 13px', borderTop: '1px solid rgba(150,180,255,0.12)', display: 'flex', flexDirection: 'column', gap: 8 }}>
             {!isMember && (
               <div style={{ display: 'flex', gap: 8 }}>
-                <input value={firstName} onChange={e => setFirstName(e.target.value)} placeholder={tc('firstName')} style={inputStyle} />
-                <input value={lastName} onChange={e => setLastName(e.target.value)} placeholder={tc('lastName')} style={inputStyle} />
+                <input value={firstName} onChange={e => setFirstName(e.target.value)} placeholder={tc('firstName')} aria-label={t('commentNameLabel')} style={inputStyle} />
+                <input value={lastName} onChange={e => setLastName(e.target.value)} placeholder={tc('lastName')} aria-label={t('commentNameLabel')} style={inputStyle} />
               </div>
             )}
             <div style={{ display: 'flex', gap: 8 }}>
               <input
                 value={draft} onChange={e => setDraft(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addComment() } }}
-                placeholder={t('addComment')} style={{ ...inputStyle, flex: 1 }}
+                placeholder={t('addComment')} aria-label={t('commentTextLabel')} style={{ ...inputStyle, flex: 1 }}
               />
               <button onClick={addComment} disabled={posting} aria-label={tc('post')} style={{ flex: 'none', background: 'rgba(120,150,255,0.24)', border: '1px solid rgba(150,180,255,0.32)', color: '#fff', borderRadius: 8, cursor: 'pointer', fontSize: 14, width: 36 }}>↑</button>
             </div>
