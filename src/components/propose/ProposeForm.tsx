@@ -69,7 +69,6 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
     borderRadius: 9,
     padding: '11px 13px',
     fontSize: 14,
-    fontFamily: "'Roboto Slab', Georgia, serif",
     color: '#15203f',
     outline: 'none',
     boxShadow: focusedField === field ? '0 0 0 3px rgba(47,68,134,0.12)' : 'none',
@@ -79,12 +78,10 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
 
   const emailInputStyle = (field: string): React.CSSProperties => ({
     ...inputStyle(field),
-    fontFamily: "'IBM Plex Mono', monospace",
     fontSize: 13,
   })
 
   const labelStyle: React.CSSProperties = {
-    fontFamily: "'IBM Plex Mono', monospace",
     fontSize: 10,
     letterSpacing: '0.16em',
     textTransform: 'uppercase' as const,
@@ -100,7 +97,6 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
     border: active ? '1px solid #2f4486' : '1px solid rgba(20,40,90,0.14)',
     background: active ? 'rgba(47,68,134,0.12)' : '#fff',
     color: active ? '#2f4486' : '#5a6486',
-    fontFamily: "'Roboto Slab', Georgia, serif",
     fontSize: 12,
     fontWeight: active ? 600 : 400,
     cursor: 'pointer',
@@ -110,14 +106,13 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
   return (
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
       {error && (
-        <div style={{
+        <div className="font-mono" style={{
           background: 'rgba(220,68,55,0.08)',
           border: '1px solid rgba(220,68,55,0.28)',
           color: '#b53f33',
           borderRadius: 9,
           padding: '10px 13px',
           fontSize: 13,
-          fontFamily: "'IBM Plex Mono', monospace",
         }}>
           {error}
         </div>
@@ -222,10 +217,9 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
       </label>
 
       {/* RGPD notice */}
-      <p style={{
+      <p className="font-mono" style={{
         fontSize: 11,
         color: '#6b7596',
-        fontFamily: "'IBM Plex Mono', monospace",
         lineHeight: 1.6,
         margin: 0,
       }}>
@@ -234,7 +228,7 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
 
       {/* Submit button */}
       <div>
-        <button
+        <button className="font-serif"
           type="submit"
           disabled={saving}
           style={{
@@ -243,7 +237,6 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
             padding: '12px 22px',
             borderRadius: 10,
             border: 'none',
-            fontFamily: "'Roboto Slab', Georgia, serif",
             fontSize: 14,
             fontWeight: 600,
             cursor: saving ? 'not-allowed' : 'pointer',

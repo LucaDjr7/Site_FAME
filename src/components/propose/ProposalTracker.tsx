@@ -70,8 +70,7 @@ export function ProposalTracker({ lab, isMember, refreshKey }: Props) {
         gap: 8,
         marginBottom: 10,
       }}>
-        <span style={{
-          fontFamily: "'IBM Plex Mono', monospace",
+        <span className="font-mono" style={{
           fontSize: 10,
           letterSpacing: '0.2em',
           textTransform: 'uppercase' as const,
@@ -81,13 +80,12 @@ export function ProposalTracker({ lab, isMember, refreshKey }: Props) {
           {heading}
         </span>
         {proposals.length > 0 && (
-          <span style={{
+          <span className="font-mono" style={{
             background: '#2f4486',
             color: '#eef3ff',
             borderRadius: 99,
             padding: '1px 7px',
             fontSize: 10,
-            fontFamily: "'IBM Plex Mono', monospace",
             fontWeight: 600,
           }}>
             {proposals.length}
@@ -97,13 +95,12 @@ export function ProposalTracker({ lab, isMember, refreshKey }: Props) {
 
       {/* Empty state */}
       {proposals.length === 0 && (
-        <div style={{
+        <div className="font-mono" style={{
           border: '1px dashed rgba(20,40,90,0.18)',
           borderRadius: 12,
           padding: '24px 16px',
           textAlign: 'center' as const,
           color: '#6b7596',
-          fontFamily: "'IBM Plex Mono', monospace",
           fontSize: 11,
           lineHeight: 1.6,
         }}>
@@ -134,8 +131,7 @@ export function ProposalTracker({ lab, isMember, refreshKey }: Props) {
               <ProposalStatusBadge status={p.statut} label={ts(p.statut)} />
             </div>
             {/* Title */}
-            <p style={{
-              fontFamily: "'Roboto Slab', Georgia, serif",
+            <p className="font-serif" style={{
               fontSize: 13.5,
               fontWeight: 600,
               color: '#15203f',
@@ -146,28 +142,25 @@ export function ProposalTracker({ lab, isMember, refreshKey }: Props) {
             </p>
             {/* Footer */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' as const }}>
-              <span style={{
+              <span className="font-mono" style={{
                 background: 'rgba(47,68,134,0.08)',
                 color: '#2f4486',
                 borderRadius: 5,
                 padding: '2px 7px',
-                fontFamily: "'IBM Plex Mono', monospace",
                 fontSize: 9,
                 letterSpacing: '0.08em',
                 textTransform: 'uppercase' as const,
               }}>
                 {p.domaine}
               </span>
-              <span style={{
-                fontFamily: "'IBM Plex Mono', monospace",
+              <span className="font-mono" style={{
                 fontSize: 9,
                 color: '#8e9ab8',
                 letterSpacing: '0.06em',
               }}>
                 {p.difficulte}
               </span>
-              <span style={{
-                fontFamily: "'IBM Plex Mono', monospace",
+              <span className="font-mono" style={{
                 fontSize: 9,
                 color: '#aab0c4',
                 marginLeft: 'auto',

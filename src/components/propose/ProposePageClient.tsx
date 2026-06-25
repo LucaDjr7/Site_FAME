@@ -20,10 +20,9 @@ export function ProposePageClient({ lab, isMember }: Props) {
   }
 
   return (
-    <div style={{
+    <div className="font-serif" style={{
       height: 'calc(100vh - 6rem)',
       display: 'flex',
-      fontFamily: "'Roboto Slab', Georgia, serif",
       color: '#18244c',
       background: [
         'radial-gradient(110% 80% at 24% 8%, rgba(181,157,135,0.28) 0%, rgba(181,157,135,0) 52%)',
@@ -48,8 +47,7 @@ export function ProposePageClient({ lab, isMember }: Props) {
             color: '#15203f',
           }}>
             {/* Eyebrow kicker */}
-            <p style={{
-              fontFamily: "'IBM Plex Mono', monospace",
+            <p className="font-mono" style={{
               fontSize: 10,
               letterSpacing: '0.2em',
               textTransform: 'uppercase' as const,
@@ -60,8 +58,7 @@ export function ProposePageClient({ lab, isMember }: Props) {
             </p>
 
             {/* Title */}
-            <h2 style={{
-              fontFamily: "'Roboto Slab', Georgia, serif",
+            <h2 className="font-serif" style={{
               fontSize: 24,
               fontWeight: 700,
               color: '#15203f',
