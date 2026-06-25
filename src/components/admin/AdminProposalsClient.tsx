@@ -119,22 +119,20 @@ export function AdminProposalsClient() {
       >
         {/* Left: kicker + title */}
         <div>
-          <div className="font-mono"
+          <div className="font-mono text-fame-text-muted"
             style={{
               fontSize: 9,
               letterSpacing: '0.14em',
               textTransform: 'uppercase',
-              color: '#7e95d6',
               marginBottom: 3,
             }}
           >
             {t('kicker')}
           </div>
-          <h1 className="font-serif"
+          <h1 className="font-serif text-fame-text-dark"
             style={{
               fontSize: 20,
               fontWeight: 600,
-              color: '#15203f',
               margin: 0,
             }}
           >
@@ -176,10 +174,9 @@ export function AdminProposalsClient() {
       <div style={{ flex: 1, overflowY: 'auto', padding: '28px 32px 48px' }}>
         <div style={{ maxWidth: 820, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
           {visible.length === 0 && (
-            <p className="font-mono"
+            <p className="font-mono text-fame-text-muted"
               style={{
                 fontSize: 12,
-                color: '#7e95d6',
                 textAlign: 'center',
                 paddingTop: 50,
               }}
@@ -191,8 +188,8 @@ export function AdminProposalsClient() {
           {visible.map(p => (
             <div
               key={p.id}
+              className="bg-fame-sand"
               style={{
-                background: '#fbf9f3',
                 borderRadius: 11,
                 boxShadow: '0 16px 40px -24px rgba(0,5,30,0.4), inset 0 0 0 1px rgba(0,0,0,0.05)',
                 padding: '18px 20px',
@@ -201,11 +198,10 @@ export function AdminProposalsClient() {
               {/* Header */}
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 10 }}>
                 <div style={{ minWidth: 0 }}>
-                  <h3 className="font-serif"
+                  <h3 className="font-serif text-fame-text-dark"
                     style={{
                       fontSize: 16,
                       fontWeight: 700,
-                      color: '#15203f',
                       margin: 0,
                       lineHeight: 1.25,
                     }}
@@ -241,7 +237,7 @@ export function AdminProposalsClient() {
 
               {p.statut === 'pending' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10, borderTop: '1px solid rgba(0,0,0,0.06)', paddingTop: 14 }}>
-                  <input className="font-mono"
+                  <input className="font-mono text-fame-text-body"
                     type="text"
                     placeholder={t('commentPlaceholder')}
                     value={comments[p.id] ?? ''}
@@ -253,7 +249,6 @@ export function AdminProposalsClient() {
                       borderRadius: 9,
                       padding: '9px 11px',
                       fontSize: 12,
-                      color: '#2a3457',
                       outline: 'none',
                       boxSizing: 'border-box',
                     }}
