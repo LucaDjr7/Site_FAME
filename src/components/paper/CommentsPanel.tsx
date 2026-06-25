@@ -104,7 +104,6 @@ export function CommentsPanel({ subjectId, isMember, initialComments, open, onTo
               {isMember ? (
                 <textarea
                   value={draft} onChange={e => setDraft(e.target.value)}
-                  onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); addComment() } }}
                   placeholder={t('addComment')} aria-label={t('commentTextLabel')}
                   rows={3}
                   style={{ ...inputStyle, flex: 1, resize: 'none' }}
