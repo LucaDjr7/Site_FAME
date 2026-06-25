@@ -159,6 +159,7 @@ export function AddTaskModal({ open, lab, subjectId, members, onClose, onAdded }
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <span style={{ flex: 1, fontSize: 12, color: '#2a3457' }}>{s}</span>
                   <button type="button" onClick={() => setSubtasks(prev => prev.filter((_, j) => j !== i))}
+                    aria-label={t('delete.confirm')}
                     style={{ background: 'none', border: 'none', color: '#c0473b', cursor: 'pointer', fontSize: 13 }}>×</button>
                 </div>
               ))}

@@ -322,6 +322,7 @@ export function Globe() {
       {/* Canvas globe */}
       <canvas
         ref={canvasRef}
+        aria-label={tHome('globeLabel')}
         style={{
           position: 'relative',
           zIndex: 2,
@@ -335,7 +336,7 @@ export function Globe() {
 
       {/* Pin overlay */}
       <div
-        aria-label="Lab locations"
+        aria-label={tHome('globeLabel')}
         style={{
           position: 'absolute',
           inset: 0,

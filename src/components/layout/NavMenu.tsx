@@ -41,6 +41,7 @@ export function NavMenu({ locale, lab, member }: Props) {
       <button
         onClick={() => setOpen(o => !o)}
         aria-expanded={open}
+        aria-controls="nav-menu"
         aria-haspopup="menu"
         style={{
           display: 'flex',
@@ -69,6 +70,7 @@ export function NavMenu({ locale, lab, member }: Props) {
         <>
           <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
           <div
+            id="nav-menu"
             className="absolute right-0 z-40"
             style={{
               top: 'calc(100% + 12px)',

@@ -16,7 +16,8 @@
   "home": {
     "tagline": "Paris · Montréal",
     "cta": "Click on a lab to enter",
-    "enteringLab": "Opening {city} lab…"
+    "enteringLab": "Opening {city} lab…",
+    "globeLabel": "Lab locations"
   },
   "lab": {
     "title": {
