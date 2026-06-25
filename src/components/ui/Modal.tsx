@@ -8,6 +8,10 @@ export function Modal({ open, onClose, children, title }: Props) {
   const t = useTranslations('common')
   const panelRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<Element | null>(null)
+  const onCloseRef = useRef(onClose)
+
+  // Keep onCloseRef current without adding onClose to the main effect's deps
+  useEffect(() => { onCloseRef.current = onClose })
 
   useEffect(() => {
     if (!open) return
@@ -15,7 +19,7 @@ export function Modal({ open, onClose, children, title }: Props) {
     const panel = panelRef.current
     panel?.querySelector<HTMLElement>('button, [href], input, textarea, select, [tabindex]:not([tabindex="-1"])')?.focus()
     const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') { onClose(); return }
+      if (e.key === 'Escape') { onCloseRef.current(); return }
       if (e.key !== 'Tab' || !panel) return
       const f = panel.querySelectorAll<HTMLElement>('button, [href], input, textarea, select, [tabindex]:not([tabindex="-1"])')
       if (f.length === 0) return
@@ -28,7 +32,7 @@ export function Modal({ open, onClose, children, title }: Props) {
       window.removeEventListener('keydown', handler)
       ;(triggerRef.current as HTMLElement | null)?.focus?.()
     }
-  }, [open, onClose])
+  }, [open])
 
   if (!open) return null
 
