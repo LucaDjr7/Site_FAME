@@ -419,6 +419,22 @@
     "lab": "Lab",
     "by": "by"
   },
+  "meta": {
+    "siteName": "FAME",
+    "homeTitle": "FAME — Financial and Monetary Economics",
+    "homeDesc": "Independent research labs in Paris and Montréal.",
+    "labTitle": "{lab} Lab",
+    "labDesc": "Research subjects and progress at the {lab} lab.",
+    "publicationsTitle": "Publications — {lab}",
+    "publicationsDesc": "Papers and preprints from the {lab} lab.",
+    "teamTitle": "Team — {lab}",
+    "teamDesc": "Members of the {lab} lab.",
+    "tasksTitle": "Tasks — {lab}",
+    "proposeTitle": "Propose a subject — {lab}",
+    "dataTitle": "Data — {lab}",
+    "promptsTitle": "Prompts — {lab}",
+    "paperTitle": "{title} — {lab}"
+  },
   "privacy": {
     "link": "Privacy policy",
     "title": "Privacy Policy",

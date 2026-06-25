@@ -419,6 +419,22 @@
     "lab": "Laboratoire",
     "by": "par"
   },
+  "meta": {
+    "siteName": "FAME",
+    "homeTitle": "FAME — Économie financière et monétaire",
+    "homeDesc": "Laboratoires de recherche indépendants à Paris et Montréal.",
+    "labTitle": "Laboratoire {lab}",
+    "labDesc": "Sujets de recherche et avancement du laboratoire {lab}.",
+    "publicationsTitle": "Publications — {lab}",
+    "publicationsDesc": "Articles et prépublications du laboratoire {lab}.",
+    "teamTitle": "Équipe — {lab}",
+    "teamDesc": "Membres du laboratoire {lab}.",
+    "tasksTitle": "Tâches — {lab}",
+    "proposeTitle": "Proposer un sujet — {lab}",
+    "dataTitle": "Données — {lab}",
+    "promptsTitle": "Prompts — {lab}",
+    "paperTitle": "{title} — {lab}"
+  },
   "privacy": {
     "link": "Politique de confidentialité",
     "title": "Politique de confidentialité",
