@@ -15,7 +15,8 @@ type PillBtnProps<T extends string> = {
 function PillBtn<T extends string>({ value, current, label, onChange }: PillBtnProps<T>) {
   const active = value === current
   return (
-    <button className="font-mono"
+    <button
+      className={`font-mono ${active ? 'text-fame-blue border-fame-blue' : 'text-fame-text-muted border-fame-ecru'}`}
       type="button"
       onClick={() => onChange(value)}
       style={{
@@ -23,9 +24,8 @@ function PillBtn<T extends string>({ value, current, label, onChange }: PillBtnP
         borderRadius: 20,
         fontSize: 10,
         cursor: 'pointer',
-        border: active ? '1.5px solid #2f4486' : '1px solid #eceadf',
+        border: active ? '1.5px solid' : '1px solid',
         background: active ? 'rgba(47,68,134,0.1)' : 'transparent',
-        color: active ? '#2f4486' : '#7e95d6',
         transition: 'all 0.1s',
       }}
     >
@@ -123,15 +123,15 @@ export function AddSubjectModal({ open, lab, members, onClose, onAdded }: Props)
     <Modal open={open} onClose={handleClose}>
       <form onSubmit={handleSubmit} noValidate>
         {/* Kicker */}
-        <div className="font-mono" style={{
+        <div className="font-mono text-fame-slate" style={{
            fontSize: 8,
-          letterSpacing: '0.14em', textTransform: 'uppercase', color: '#5768ac',
+          letterSpacing: '0.14em', textTransform: 'uppercase',
           marginBottom: 6,
         }}>
           {t('modal.newSubjectKicker')}
         </div>
-        <div className="font-serif" style={{
-          fontSize: 18, fontWeight: 600, color: '#15203f', marginBottom: 20,
+        <div className="font-serif text-fame-text-dark" style={{
+          fontSize: 18, fontWeight: 600, marginBottom: 20,
         }}>
           {t('modal.title')}
         </div>
@@ -227,8 +227,8 @@ export function AddSubjectModal({ open, lab, members, onClose, onAdded }: Props)
 
         {/* Error */}
         {error && (
-          <div className="font-mono" style={{
-             fontSize: 11, color: '#c0473b',
+          <div className="font-mono text-fame-red" style={{
+             fontSize: 11,
             marginBottom: 12,
           }}>
             {error}

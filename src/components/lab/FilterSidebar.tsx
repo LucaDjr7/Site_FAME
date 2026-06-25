@@ -57,14 +57,12 @@ type Props = {
 
 const ACTIVE_FILTER_STYLE: React.CSSProperties = {
   background: 'rgba(47,68,134,0.12)',
-  border: '1px solid #2f4486',
-  color: '#2f4486',
+  border: '1px solid',
 }
 
 const INACTIVE_FILTER_STYLE: React.CSSProperties = {
   background: 'transparent',
   border: '1px solid rgba(87,104,172,0.25)',
-  color: '#7e95d6',
 }
 
 export function FilterSidebar({
@@ -105,21 +103,20 @@ export function FilterSidebar({
         onClick={onToggle}
         title={t('filters')}
       >
-        <span className="font-mono" style={{
+        <span className="font-mono text-fame-slate" style={{
           fontSize: 10,
           fontWeight: 500,
           letterSpacing: '0.12em',
           textTransform: 'uppercase',
-          color: '#5768ac',
           writingMode: 'vertical-rl',
           marginTop: 8,
         }}>
           {t('filters')}
         </span>
         {hasActiveFilters && (
-          <span style={{
+          <span className="bg-fame-blue" style={{
             width: 7, height: 7, borderRadius: '50%',
-            background: '#2f4486', marginTop: 10,
+            marginTop: 10,
           }} />
         )}
       </div>
@@ -148,30 +145,30 @@ export function FilterSidebar({
     }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 14px 12px' }}>
-        <span className="font-mono" style={{
+        <span className="font-mono text-fame-text-body" style={{
            fontSize: 10,
-          fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#2a3457',
+          fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase',
         }}>
           {t('filters')}
         </span>
         <div style={{ display: 'flex', gap: 6 }}>
           {hasActiveFilters && (
-            <button className="font-mono"
+            <button className="font-mono text-fame-slate"
               onClick={onReset}
               style={{
                  fontSize: 9,
-                color: '#5768ac', background: 'none', border: 'none', cursor: 'pointer',
+                background: 'none', border: 'none', cursor: 'pointer',
                 textTransform: 'uppercase', letterSpacing: '0.08em',
               }}
             >
               {t('reset')}
             </button>
           )}
-          <button className="font-mono"
+          <button className="font-mono text-fame-slate"
             onClick={onToggle}
             style={{
                fontSize: 12,
-              color: '#5768ac', background: 'none', border: 'none', cursor: 'pointer',
+              background: 'none', border: 'none', cursor: 'pointer',
             }}
           >
             »
@@ -181,10 +178,10 @@ export function FilterSidebar({
 
       {/* Statut */}
       <div style={{ padding: '0 14px 14px' }}>
-        <div className="font-mono" style={{
+        <div className="font-mono text-fame-slate" style={{
            fontSize: 8,
           fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase',
-          color: '#5768ac', marginBottom: 6,
+          marginBottom: 6,
         }}>
           {t('section.status')}
         </div>
@@ -196,7 +193,7 @@ export function FilterSidebar({
               key={s}
               onClick={() => onToggleStatus(s)}
               aria-pressed={active}
-              className="font-mono" style={{ ...btnBase, ...(active ? ACTIVE_FILTER_STYLE : INACTIVE_FILTER_STYLE) }}
+              className={`font-mono ${active ? 'text-fame-blue border-fame-blue' : 'text-fame-text-muted'}`} style={{ ...btnBase, ...(active ? ACTIVE_FILTER_STYLE : INACTIVE_FILTER_STYLE) }}
             >
               <span style={{ width: 7, height: 7, borderRadius: '50%', background: STATUS_DOT[s], flexShrink: 0 }} />
               <span style={{ flex: 1, fontSize: 10 }}>{t(`status.${s}`)}</span>
@@ -208,10 +205,10 @@ export function FilterSidebar({
 
       {/* Difficulté */}
       <div style={{ padding: '0 14px 14px' }}>
-        <div className="font-mono" style={{
+        <div className="font-mono text-fame-slate" style={{
            fontSize: 8,
           fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase',
-          color: '#5768ac', marginBottom: 6,
+          marginBottom: 6,
         }}>
           {t('section.difficulty')}
         </div>
@@ -223,7 +220,7 @@ export function FilterSidebar({
               key={key}
               onClick={() => onToggleDiff(key)}
               aria-pressed={active}
-              className="font-mono" style={{ ...btnBase, ...(active ? ACTIVE_FILTER_STYLE : INACTIVE_FILTER_STYLE) }}
+              className={`font-mono ${active ? 'text-fame-blue border-fame-blue' : 'text-fame-text-muted'}`} style={{ ...btnBase, ...(active ? ACTIVE_FILTER_STYLE : INACTIVE_FILTER_STYLE) }}
             >
               <DiffDots level={level} />
               <span style={{ flex: 1, fontSize: 10 }}>{t(`difficulty.${key}`)}</span>
@@ -236,10 +233,10 @@ export function FilterSidebar({
       {/* Personnes — hidden if no members in subjects */}
       {filteredMembers.length > 0 && (
         <div style={{ padding: '0 14px 14px' }}>
-          <div className="font-mono" style={{
+          <div className="font-mono text-fame-slate" style={{
              fontSize: 8,
             fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase',
-            color: '#5768ac', marginBottom: 6,
+            marginBottom: 6,
           }}>
             {t('section.people')}
           </div>
@@ -252,7 +249,7 @@ export function FilterSidebar({
                 key={m.id}
                 onClick={() => onTogglePerson(m.id)}
                 aria-pressed={active}
-                className="font-mono" style={{ ...btnBase, ...(active ? ACTIVE_FILTER_STYLE : INACTIVE_FILTER_STYLE) }}
+                className={`font-mono ${active ? 'text-fame-blue border-fame-blue' : 'text-fame-text-muted'}`} style={{ ...btnBase, ...(active ? ACTIVE_FILTER_STYLE : INACTIVE_FILTER_STYLE) }}
               >
                 <Avatar name={name} photoUrl={m.photo_url} size={16} />
                 <span style={{ flex: 1, fontSize: 10, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -267,10 +264,10 @@ export function FilterSidebar({
 
       {/* Date d'existence */}
       <div style={{ padding: '0 14px 14px' }}>
-        <div className="font-mono" style={{
+        <div className="font-mono text-fame-slate" style={{
            fontSize: 8,
           fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase',
-          color: '#5768ac', marginBottom: 6,
+          marginBottom: 6,
         }}>
           {t('section.date')}
         </div>
@@ -282,7 +279,7 @@ export function FilterSidebar({
               key={d}
               onClick={() => onToggleDate(d)}
               aria-pressed={active}
-              className="font-mono" style={{ ...btnBase, ...(active ? ACTIVE_FILTER_STYLE : INACTIVE_FILTER_STYLE) }}
+              className={`font-mono ${active ? 'text-fame-blue border-fame-blue' : 'text-fame-text-muted'}`} style={{ ...btnBase, ...(active ? ACTIVE_FILTER_STYLE : INACTIVE_FILTER_STYLE) }}
             >
               <span style={{ flex: 1, fontSize: 10 }}>{t(`date.${d}`)}</span>
               <span style={{ fontSize: 9, opacity: 0.65 }}>{count}</span>

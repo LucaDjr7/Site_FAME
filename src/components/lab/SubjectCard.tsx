@@ -46,7 +46,7 @@ export function SubjectCard({
     <div style={{ position: 'relative' }}>
       {/* Delete button — only in edit mode */}
       {editMode && onDelete && (
-        <button className="font-mono"
+        <button className="font-mono bg-fame-red text-white"
           onClick={e => { e.stopPropagation(); onDelete() }}
           title={deleteTitle}
           style={{
@@ -57,8 +57,6 @@ export function SubjectCard({
             width: 22,
             height: 22,
             borderRadius: '50%',
-            background: '#c0473b',
-            color: '#fff',
             border: 'none',
             cursor: 'pointer',
             fontSize: 13,
@@ -121,13 +119,12 @@ export function SubjectCard({
               {subject.kicker || statusLabel}
             </span>
             {subject.is_transversal && transversalLabel && (
-              <span className="font-mono" style={{
+              <span className="font-mono text-fame-teal" style={{
                 marginLeft: 'auto',
                 fontSize: 11,
                 fontWeight: 600,
                 letterSpacing: '0.08em',
                 textTransform: 'uppercase',
-                color: '#1e9b7e',
                 background: 'rgba(30,155,126,0.12)',
                 border: '1px solid rgba(30,155,126,0.3)',
                 borderRadius: 10,
@@ -142,10 +139,9 @@ export function SubjectCard({
 
           {/* Title */}
           <div style={{ padding: '2px 10px 6px' }}>
-            <span className="font-serif" style={{
+            <span className="font-serif text-fame-text-dark" style={{
               fontSize: 12,
               fontWeight: 600,
-              color: '#15203f',
               lineHeight: 1.3,
               display: '-webkit-box',
               WebkitLineClamp: 3,
@@ -235,14 +231,13 @@ export function SubjectCard({
               justifyContent: 'center',
               pointerEvents: 'none',
             }}>
-              <div className="font-mono" style={{
+              <div className="font-mono text-fame-coral" style={{
                 transform: 'rotate(-15deg)',
-                border: '2.5px solid #ff6f61',
+                border: '2.5px solid',
                 borderRadius: 4,
                 padding: '3px 8px',
                 fontSize: 14,
                 fontWeight: 700,
-                color: '#ff6f61',
                 letterSpacing: '0.12em',
                 textTransform: 'uppercase',
                 opacity: 0.7,

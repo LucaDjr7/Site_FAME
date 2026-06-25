@@ -266,19 +266,17 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
         }}>
           {/* Left: title block */}
           <div>
-            <div className="font-mono" style={{
+            <div className="font-mono text-fame-text-muted" style={{
               fontSize: 9,
               letterSpacing: '0.14em',
               textTransform: 'uppercase',
-              color: '#7e95d6',
               marginBottom: 3,
             }}>
               {t('kicker')}
             </div>
-            <h1 className="font-serif" style={{
+            <h1 className="font-serif text-fame-text-dark" style={{
               fontSize: 20,
               fontWeight: 600,
-              color: '#15203f',
               margin: 0,
             }}>
               {t(`title.${lab}`)}
@@ -288,7 +286,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
           {/* Right cluster */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             {/* Search */}
-            <input className="font-mono"
+            <input className="font-mono text-fame-text-dark"
               type="search"
               value={q}
               onChange={e => setQ(e.target.value)}
@@ -299,7 +297,6 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
                 borderRadius: 6,
                 border: '1px solid rgba(20,40,90,0.15)',
                 background: 'rgba(255,255,255,0.6)',
-                color: '#15203f',
                 fontSize: 11,
                 width: 180,
                 outline: 'none',
@@ -326,14 +323,12 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
             )}
             {/* Add subject — member only */}
             {canEdit && (
-              <button className="font-mono"
+              <button className="font-mono bg-fame-blue text-fame-text-light"
                 onClick={() => setAddOpen(true)}
                 style={{
                   padding: '6px 14px',
                   borderRadius: 6,
                   border: 'none',
-                  background: '#2f4486',
-                  color: '#eef3ff',
                   fontSize: 10,
                   cursor: 'pointer',
                   letterSpacing: '0.06em',
@@ -370,9 +365,8 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
           {/* Grid area */}
           <div style={{ flex: 1, overflowY: 'auto', padding: '10px 24px 0' }}>
             {displaySubjects.length === 0 ? (
-              <div className="font-mono" style={{
+              <div className="font-mono text-fame-text-muted" style={{
                 fontSize: 13,
-                color: '#7e95d6',
                 textAlign: 'center',
                 paddingTop: 60,
               }}>
