@@ -26,7 +26,6 @@ const itemStyle: React.CSSProperties = {
   textDecoration: 'none',
   padding: '9px 11px',
   borderRadius: 9,
-  fontFamily: "'Roboto Slab', Georgia, serif",
   fontSize: 13.5,
   color: '#2a3457',
 }
@@ -38,7 +37,7 @@ export function NavMenu({ locale, lab, member }: Props) {
 
   return (
     <div className="relative">
-      <button
+      <button className="font-mono"
         onClick={() => setOpen(o => !o)}
         aria-expanded={open}
         aria-controls="nav-menu"
@@ -53,7 +52,6 @@ export function NavMenu({ locale, lab, member }: Props) {
           padding: '7px 14px',
           cursor: 'pointer',
           color: '#eef3ff',
-          fontFamily: "'IBM Plex Mono', monospace",
           fontSize: 12,
           letterSpacing: '0.12em',
         }}
@@ -85,9 +83,8 @@ export function NavMenu({ locale, lab, member }: Props) {
               gap: 2,
             }}
           >
-            <div
+            <div className="font-mono"
               style={{
-                fontFamily: "'IBM Plex Mono', monospace",
                 fontSize: 9,
                 letterSpacing: '0.2em',
                 textTransform: 'uppercase',
