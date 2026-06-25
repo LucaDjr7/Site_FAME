@@ -18,7 +18,9 @@ export async function GET(req: NextRequest) {
     if (ids.length === 0) return NextResponse.json([])
     const service = await createServiceClient()
     const { data, error } = await service
-      .from('proposals').select('*').in('id', ids).order('created_at', { ascending: false })
+      .from('proposals')
+      .select('id,labo,titre,domaine,difficulte,description,proposant_prenom,proposant_nom,statut,created_at')
+      .in('id', ids).order('created_at', { ascending: false })
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
     return NextResponse.json(data)
   }
@@ -50,6 +52,12 @@ export async function POST(req: NextRequest) {
     typeof proposant_nom !== 'string' || !proposant_nom.trim()
   ) {
     return NextResponse.json({ error: 'titre, description, prenom, nom required' }, { status: 400 })
+  }
+  if (titre.trim().length > 300 || description.trim().length > 5000) {
+    return NextResponse.json({ error: 'titre or description too long' }, { status: 400 })
+  }
+  if (typeof proposant_email === 'string' && proposant_email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(proposant_email.trim())) {
+    return NextResponse.json({ error: 'Invalid email' }, { status: 400 })
   }
   if (!PROPOSAL_DOMAINS.includes(domaine)) return NextResponse.json({ error: 'Invalid domaine' }, { status: 400 })
   if (!VALID_DIFF.includes(difficulte)) return NextResponse.json({ error: 'Invalid difficulte' }, { status: 400 })
