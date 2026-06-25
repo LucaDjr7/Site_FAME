@@ -266,8 +266,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
         }}>
           {/* Left: title block */}
           <div>
-            <div style={{
-              fontFamily: 'IBM Plex Mono, monospace',
+            <div className="font-mono" style={{
               fontSize: 9,
               letterSpacing: '0.14em',
               textTransform: 'uppercase',
@@ -276,8 +275,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
             }}>
               {t('kicker')}
             </div>
-            <h1 style={{
-              fontFamily: 'Roboto Slab, Georgia, serif',
+            <h1 className="font-serif" style={{
               fontSize: 20,
               fontWeight: 600,
               color: '#15203f',
@@ -290,7 +288,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
           {/* Right cluster */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             {/* Search */}
-            <input
+            <input className="font-mono"
               type="search"
               value={q}
               onChange={e => setQ(e.target.value)}
@@ -302,7 +300,6 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
                 border: '1px solid rgba(20,40,90,0.15)',
                 background: 'rgba(255,255,255,0.6)',
                 color: '#15203f',
-                fontFamily: 'IBM Plex Mono, monospace',
                 fontSize: 11,
                 width: 180,
                 outline: 'none',
@@ -310,7 +307,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
             />
             {/* Edit mode toggle — member only */}
             {canEdit && (
-              <button
+              <button className="font-mono"
                 onClick={() => setEditMode(v => !v)}
                 style={{
                   padding: '6px 12px',
@@ -318,7 +315,6 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
                   border: editMode ? '1.5px solid #e8b149' : '1px solid rgba(20,40,90,0.15)',
                   background: editMode ? 'rgba(232,177,73,0.12)' : 'rgba(255,255,255,0.6)',
                   color: editMode ? '#b88c30' : '#6b7596',
-                  fontFamily: 'IBM Plex Mono, monospace',
                   fontSize: 10,
                   cursor: 'pointer',
                   letterSpacing: '0.06em',
@@ -330,7 +326,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
             )}
             {/* Add subject — member only */}
             {canEdit && (
-              <button
+              <button className="font-mono"
                 onClick={() => setAddOpen(true)}
                 style={{
                   padding: '6px 14px',
@@ -338,7 +334,6 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
                   border: 'none',
                   background: '#2f4486',
                   color: '#eef3ff',
-                  fontFamily: 'IBM Plex Mono, monospace',
                   fontSize: 10,
                   cursor: 'pointer',
                   letterSpacing: '0.06em',
@@ -348,14 +343,13 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
               </button>
             )}
             {/* Propose (visitor) link */}
-            <Link
+            <Link className="font-mono"
               href={`/${locale}/${lab}/propose`}
               style={{
                 padding: '6px 12px',
                 borderRadius: 6,
                 border: '1px solid rgba(20,40,90,0.15)',
                 color: '#6b7596',
-                fontFamily: 'IBM Plex Mono, monospace',
                 fontSize: 10,
                 textDecoration: 'none',
                 letterSpacing: '0.06em',
@@ -376,8 +370,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
           {/* Grid area */}
           <div style={{ flex: 1, overflowY: 'auto', padding: '10px 24px 0' }}>
             {displaySubjects.length === 0 ? (
-              <div style={{
-                fontFamily: 'IBM Plex Mono, monospace',
+              <div className="font-mono" style={{
                 fontSize: 13,
                 color: '#7e95d6',
                 textAlign: 'center',
@@ -450,17 +443,17 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
         }}>
           {/* Left: count + sort */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <span style={{
-              fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: '#6b7596',
+            <span className="font-mono" style={{
+               fontSize: 11, color: '#6b7596',
             }}>
               {t('count', { n: displaySubjects.length })}
             </span>
-            <button
+            <button className="font-mono"
               onClick={() => setSort(s => s === 'recent' ? 'oldest' : 'recent')}
               style={{
                 display: 'flex', alignItems: 'center', gap: 5,
                 background: 'none', border: 'none', cursor: 'pointer',
-                fontFamily: 'IBM Plex Mono, monospace', fontSize: 10,
+                 fontSize: 10,
                 color: sort === 'ordre' ? 'rgba(90,100,140,0.45)' : '#5a6486',
                 padding: 0,
               }}
@@ -470,10 +463,10 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
             </button>
           </div>
           {/* Right: tasks link */}
-          <Link
+          <Link className="font-mono"
             href={`/${locale}/${lab}/tasks`}
             style={{
-              fontFamily: 'IBM Plex Mono, monospace', fontSize: 10,
+               fontSize: 10,
               color: '#6b7596', textDecoration: 'none',
               letterSpacing: '0.06em',
             }}

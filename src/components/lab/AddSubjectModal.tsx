@@ -15,14 +15,13 @@ type PillBtnProps<T extends string> = {
 function PillBtn<T extends string>({ value, current, label, onChange }: PillBtnProps<T>) {
   const active = value === current
   return (
-    <button
+    <button className="font-mono"
       type="button"
       onClick={() => onChange(value)}
       style={{
         padding: '4px 10px',
         borderRadius: 20,
         fontSize: 10,
-        fontFamily: 'IBM Plex Mono, monospace',
         cursor: 'pointer',
         border: active ? '1.5px solid #2f4486' : '1px solid #eceadf',
         background: active ? 'rgba(47,68,134,0.1)' : 'transparent',
@@ -124,15 +123,14 @@ export function AddSubjectModal({ open, lab, members, onClose, onAdded }: Props)
     <Modal open={open} onClose={handleClose}>
       <form onSubmit={handleSubmit} noValidate>
         {/* Kicker */}
-        <div style={{
-          fontFamily: 'IBM Plex Mono, monospace', fontSize: 8,
+        <div className="font-mono" style={{
+           fontSize: 8,
           letterSpacing: '0.14em', textTransform: 'uppercase', color: '#5768ac',
           marginBottom: 6,
         }}>
           {t('modal.newSubjectKicker')}
         </div>
-        <div style={{
-          fontFamily: 'Roboto Slab, Georgia, serif',
+        <div className="font-serif" style={{
           fontSize: 18, fontWeight: 600, color: '#15203f', marginBottom: 20,
         }}>
           {t('modal.title')}
@@ -204,13 +202,13 @@ export function AddSubjectModal({ open, lab, members, onClose, onAdded }: Props)
         {/* Résumé */}
         <div style={{ marginBottom: 18 }}>
           <label htmlFor="add-subject-summary" style={labelStyle}>{t('modal.fSummary')}</label>
-          <textarea
+          <textarea className="font-mono"
             id="add-subject-summary"
             value={context}
             onChange={e => setContext(e.target.value)}
             placeholder={t('modal.fSummary')}
             rows={3}
-            style={{ ...inputStyle, resize: 'vertical', fontFamily: 'IBM Plex Mono, monospace' }}
+            style={{ ...inputStyle, resize: 'vertical' }}
           />
         </div>
 
@@ -228,8 +226,8 @@ export function AddSubjectModal({ open, lab, members, onClose, onAdded }: Props)
 
         {/* Error */}
         {error && (
-          <div style={{
-            fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: '#c0473b',
+          <div className="font-mono" style={{
+             fontSize: 11, color: '#c0473b',
             marginBottom: 12,
           }}>
             {error}

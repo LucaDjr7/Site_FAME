@@ -46,7 +46,7 @@ export function SubjectCard({
     <div style={{ position: 'relative' }}>
       {/* Delete button — only in edit mode */}
       {editMode && onDelete && (
-        <button
+        <button className="font-mono"
           onClick={e => { e.stopPropagation(); onDelete() }}
           title={deleteTitle}
           style={{
@@ -66,7 +66,6 @@ export function SubjectCard({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontFamily: 'IBM Plex Mono, monospace',
           }}
         >
           ✕
@@ -108,8 +107,7 @@ export function SubjectCard({
               width: 7, height: 7, borderRadius: '50%', flexShrink: 0,
               background: STATUS_DOT[subject.statut] ?? '#ccc',
             }} />
-            <span style={{
-              fontFamily: 'IBM Plex Mono, monospace',
+            <span className="font-mono" style={{
               fontSize: 11,
               fontWeight: 500,
               letterSpacing: '0.08em',
@@ -123,9 +121,8 @@ export function SubjectCard({
               {subject.kicker || statusLabel}
             </span>
             {subject.is_transversal && transversalLabel && (
-              <span style={{
+              <span className="font-mono" style={{
                 marginLeft: 'auto',
-                fontFamily: 'IBM Plex Mono, monospace',
                 fontSize: 11,
                 fontWeight: 600,
                 letterSpacing: '0.08em',
@@ -145,8 +142,7 @@ export function SubjectCard({
 
           {/* Title */}
           <div style={{ padding: '2px 10px 6px' }}>
-            <span style={{
-              fontFamily: 'Roboto Slab, Georgia, serif',
+            <span className="font-serif" style={{
               fontSize: 12,
               fontWeight: 600,
               color: '#15203f',
@@ -173,11 +169,10 @@ export function SubjectCard({
             {/* A10 exemption: "fig." is a purely decorative watermark, not
                 functional text — opacity 0.55 on a patterned background further
                 reduces its legibility expectation. Kept at 7px intentionally. */}
-            <span style={{
+            <span className="font-mono" style={{
               position: 'absolute',
               bottom: 3,
               right: 5,
-              fontFamily: 'IBM Plex Mono, monospace',
               fontSize: 7,
               color: 'rgba(90,100,140,0.55)',
               fontStyle: 'italic',
@@ -189,8 +184,7 @@ export function SubjectCard({
           {/* Abstract */}
           {subject.context && (
             <div style={{ padding: '5px 10px 4px' }}>
-              <span style={{
-                fontFamily: 'IBM Plex Mono, monospace',
+              <span className="font-mono" style={{
                 fontSize: 11,
                 color: '#43507a',
                 lineHeight: 1.5,
@@ -219,10 +213,9 @@ export function SubjectCard({
               {authorName ? (
                 <Avatar name={authorName} photoUrl={author?.photo_url} size={18} />
               ) : (
-                <span style={{ fontSize: 8, color: '#aaa', fontFamily: 'IBM Plex Mono, monospace' }}>—</span>
+                <span className="font-mono" style={{ fontSize: 8, color: '#aaa' }}>—</span>
               )}
-              <span style={{
-                fontFamily: 'IBM Plex Mono, monospace',
+              <span className="font-mono" style={{
                 fontSize: 8.5,
                 color: '#43507a',
               }}>
@@ -242,12 +235,11 @@ export function SubjectCard({
               justifyContent: 'center',
               pointerEvents: 'none',
             }}>
-              <div style={{
+              <div className="font-mono" style={{
                 transform: 'rotate(-15deg)',
                 border: '2.5px solid #ff6f61',
                 borderRadius: 4,
                 padding: '3px 8px',
-                fontFamily: 'IBM Plex Mono, monospace',
                 fontSize: 14,
                 fontWeight: 700,
                 color: '#ff6f61',

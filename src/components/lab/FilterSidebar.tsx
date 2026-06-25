@@ -82,7 +82,7 @@ export function FilterSidebar({
 
   const btnBase: React.CSSProperties = {
     display: 'flex', alignItems: 'center', gap: 6, padding: '5px 8px',
-    borderRadius: 5, cursor: 'pointer', fontSize: 11, fontFamily: 'IBM Plex Mono, monospace',
+    borderRadius: 5, cursor: 'pointer', fontSize: 11, 
     transition: 'all 0.12s', width: '100%', textAlign: 'left',
   }
 
@@ -105,8 +105,7 @@ export function FilterSidebar({
         onClick={onToggle}
         title={t('filters')}
       >
-        <span style={{
-          fontFamily: 'IBM Plex Mono, monospace',
+        <span className="font-mono" style={{
           fontSize: 10,
           fontWeight: 500,
           letterSpacing: '0.12em',
@@ -149,18 +148,18 @@ export function FilterSidebar({
     }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 14px 12px' }}>
-        <span style={{
-          fontFamily: 'IBM Plex Mono, monospace', fontSize: 10,
+        <span className="font-mono" style={{
+           fontSize: 10,
           fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#2a3457',
         }}>
           {t('filters')}
         </span>
         <div style={{ display: 'flex', gap: 6 }}>
           {hasActiveFilters && (
-            <button
+            <button className="font-mono"
               onClick={onReset}
               style={{
-                fontFamily: 'IBM Plex Mono, monospace', fontSize: 9,
+                 fontSize: 9,
                 color: '#5768ac', background: 'none', border: 'none', cursor: 'pointer',
                 textTransform: 'uppercase', letterSpacing: '0.08em',
               }}
@@ -168,10 +167,10 @@ export function FilterSidebar({
               {t('reset')}
             </button>
           )}
-          <button
+          <button className="font-mono"
             onClick={onToggle}
             style={{
-              fontFamily: 'IBM Plex Mono, monospace', fontSize: 12,
+               fontSize: 12,
               color: '#5768ac', background: 'none', border: 'none', cursor: 'pointer',
             }}
           >
@@ -182,8 +181,8 @@ export function FilterSidebar({
 
       {/* Statut */}
       <div style={{ padding: '0 14px 14px' }}>
-        <div style={{
-          fontFamily: 'IBM Plex Mono, monospace', fontSize: 8,
+        <div className="font-mono" style={{
+           fontSize: 8,
           fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase',
           color: '#5768ac', marginBottom: 6,
         }}>
@@ -209,8 +208,8 @@ export function FilterSidebar({
 
       {/* Difficulté */}
       <div style={{ padding: '0 14px 14px' }}>
-        <div style={{
-          fontFamily: 'IBM Plex Mono, monospace', fontSize: 8,
+        <div className="font-mono" style={{
+           fontSize: 8,
           fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase',
           color: '#5768ac', marginBottom: 6,
         }}>
@@ -237,8 +236,8 @@ export function FilterSidebar({
       {/* Personnes — hidden if no members in subjects */}
       {filteredMembers.length > 0 && (
         <div style={{ padding: '0 14px 14px' }}>
-          <div style={{
-            fontFamily: 'IBM Plex Mono, monospace', fontSize: 8,
+          <div className="font-mono" style={{
+             fontSize: 8,
             fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase',
             color: '#5768ac', marginBottom: 6,
           }}>
@@ -268,8 +267,8 @@ export function FilterSidebar({
 
       {/* Date d'existence */}
       <div style={{ padding: '0 14px 14px' }}>
-        <div style={{
-          fontFamily: 'IBM Plex Mono, monospace', fontSize: 8,
+        <div className="font-mono" style={{
+           fontSize: 8,
           fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase',
           color: '#5768ac', marginBottom: 6,
         }}>
