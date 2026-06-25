@@ -32,7 +32,7 @@ export function TasksPanel({ tasks, isMember, open, onToggleOpen, doneCount, tot
         <span style={{ display: 'flex', alignItems: 'center', gap: 9, fontSize: 13, fontWeight: 600, letterSpacing: '0.04em' }}>
           <span style={{ width: 8, height: 8, borderRadius: 2, background: '#5b7cf0' }} />{t('linkedTasks')}
         </span>
-        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: '#7e95d6' }}>{doneCount}/{total} {open ? '▾' : '▸'}</span>
+        <span className="font-mono" style={{  fontSize: 11, color: '#7e95d6' }}>{doneCount}/{total} {open ? '▾' : '▸'}</span>
       </button>
 
       {open && (
@@ -62,13 +62,13 @@ export function TasksPanel({ tasks, isMember, open, onToggleOpen, doneCount, tot
                   <span style={{ display: 'block', fontSize: 12.5, lineHeight: 1.35, color: done ? 'rgba(239,243,255,0.65)' : '#dfe7fb', textDecoration: done ? 'line-through' : 'none' }}>{task.titre}</span>
                   <span style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 5 }}>
                     {assignee && <Avatar name={`${assignee.prenom} ${assignee.nom}`} photoUrl={assignee.photo_url} size={16} />}
-                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 9, color: '#7e95d6' }}>{tt(`status.${STATUS_KEY[task.statut]}`)}</span>
+                    <span className="font-mono" style={{  fontSize: 9, color: '#7e95d6' }}>{tt(`status.${STATUS_KEY[task.statut]}`)}</span>
                   </span>
                 </span>
               </button>
             )
           })}
-          {tasks.length === 0 && <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: '#7e95d6', padding: '6px 2px' }}>{t('noTasks')}</p>}
+          {tasks.length === 0 && <p className="font-mono" style={{  fontSize: 11, color: '#7e95d6', padding: '6px 2px' }}>{t('noTasks')}</p>}
         </div>
       )}
     </section>

@@ -15,7 +15,7 @@ export function FilesPanel({ links, open, onToggleOpen }: Props) {
         <span style={{ display: 'flex', alignItems: 'center', gap: 9, fontSize: 13, fontWeight: 600, letterSpacing: '0.04em' }}>
           <span style={{ width: 8, height: 8, borderRadius: 2, background: '#4cd2a0' }} />{t('filesLinks')}
         </span>
-        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: '#7e95d6' }}>{links.length} {open ? '▾' : '▸'}</span>
+        <span className="font-mono" style={{  fontSize: 11, color: '#7e95d6' }}>{links.length} {open ? '▾' : '▸'}</span>
       </button>
       {open && (
         <div style={{ padding: '2px 12px 14px', display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -31,7 +31,7 @@ export function FilesPanel({ links, open, onToggleOpen }: Props) {
               <span style={{ color: '#8ea4df', fontSize: 13 }}>↗</span>
             </a>
           ))}
-          {links.length === 0 && <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, color: '#7e95d6', padding: '4px 2px' }}>{t('dropboxSub')}</p>}
+          {links.length === 0 && <p className="font-mono" style={{  fontSize: 10, color: '#7e95d6', padding: '4px 2px' }}>{t('dropboxSub')}</p>}
         </div>
       )}
     </section>

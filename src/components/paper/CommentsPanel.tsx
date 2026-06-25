@@ -69,7 +69,7 @@ export function CommentsPanel({ subjectId, isMember, initialComments, open, onTo
         <span style={{ display: 'flex', alignItems: 'center', gap: 9, fontSize: 13, fontWeight: 600, letterSpacing: '0.04em' }}>
           <span style={{ width: 8, height: 8, borderRadius: 2, background: '#f4b740' }} />{t('comments')}
         </span>
-        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: '#7e95d6' }}>{comments.length} {open ? '▾' : '▸'}</span>
+        <span className="font-mono" style={{  fontSize: 11, color: '#7e95d6' }}>{comments.length} {open ? '▾' : '▸'}</span>
       </button>
 
       {open && (
@@ -81,16 +81,16 @@ export function CommentsPanel({ subjectId, isMember, initialComments, open, onTo
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: 7 }}>
                     <span style={{ fontSize: 11.5, fontWeight: 600, color: '#dfe7fb' }}>{c.auteur_nom}</span>
-                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 9, color: '#7e95d6' }}>{new Date(c.created_at).toLocaleDateString()}</span>
+                    <span className="font-mono" style={{  fontSize: 9, color: '#7e95d6' }}>{new Date(c.created_at).toLocaleDateString()}</span>
                     {isMember && (
-                      <button onClick={() => remove(c.id)} style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: 9, color: '#ff6f61' }}>{tc('delete')}</button>
+                      <button className="font-mono" onClick={() => remove(c.id)} style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer',  fontSize: 9, color: '#ff6f61' }}>{tc('delete')}</button>
                     )}
                   </div>
                   <p style={{ margin: '3px 0 0', fontSize: 12, lineHeight: 1.45, color: '#b9c5ec' }}>{c.texte}</p>
                 </div>
               </div>
             ))}
-            {comments.length === 0 && <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, color: '#7e95d6', padding: '4px 2px' }}>{t('noComments')}</p>}
+            {comments.length === 0 && <p className="font-mono" style={{  fontSize: 10, color: '#7e95d6', padding: '4px 2px' }}>{t('noComments')}</p>}
           </div>
 
           <div style={{ padding: '10px 12px 13px', borderTop: '1px solid rgba(150,180,255,0.12)', display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -115,7 +115,7 @@ export function CommentsPanel({ subjectId, isMember, initialComments, open, onTo
                   placeholder={t('addComment')} aria-label={t('commentTextLabel')} style={{ ...inputStyle, flex: 1 }}
                 />
               )}
-              <button onClick={addComment} disabled={posting} aria-label={tc('post')} style={{ flex: 'none', background: 'rgba(120,150,255,0.24)', border: '1px solid rgba(150,180,255,0.32)', color: '#fff', borderRadius: 8, cursor: 'pointer', fontSize: 14, width: 36, height: 36 }}>↑</button>
+              <button className="font-mono" onClick={addComment} disabled={posting} aria-label={tc('post')} style={{ flex: 'none', background: 'rgba(120,150,255,0.24)', border: '1px solid rgba(150,180,255,0.32)', color: '#fff', borderRadius: 8, cursor: 'pointer', fontSize: 14, width: 36, height: 36 }}>↑</button>
             </div>
           </div>
         </div>
@@ -126,6 +126,6 @@ export function CommentsPanel({ subjectId, isMember, initialComments, open, onTo
 
 const inputStyle: React.CSSProperties = {
   minWidth: 0, background: 'rgba(31,46,92,0.6)', border: '1px solid rgba(150,180,255,0.16)',
-  borderRadius: 8, outline: 'none', color: '#eef3ff', fontFamily: "'IBM Plex Mono', monospace",
+  borderRadius: 8, outline: 'none', color: '#eef3ff', 
   fontSize: 11, padding: '8px 10px',
 }

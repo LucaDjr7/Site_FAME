@@ -41,7 +41,7 @@ export function PaperNav({ subjects, currentId, lab, locale }: Props) {
                 <div style={{ margin: '5px 6px', height: 24, borderRadius: 2, background: 'repeating-linear-gradient(135deg,#e4e2d6 0 5px,#eceadf 5px 10px)' }} />
                 <span style={{ position: 'absolute', top: 5, right: 6, width: 6, height: 6, borderRadius: '50%', background: STATUS_COLOR[s.statut] ?? '#5768ac' }} />
               </div>
-              <div style={{ marginTop: 6, fontSize: 10, lineHeight: 1.25, color: active ? '#eef3ff' : '#8a9bcb', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.02em' }}>{s.titre}</div>
+              <div className="font-mono" style={{ marginTop: 6, fontSize: 10, lineHeight: 1.25, color: active ? '#eef3ff' : '#8a9bcb', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',  letterSpacing: '0.02em' }}>{s.titre}</div>
             </Link>
           )
         })}
