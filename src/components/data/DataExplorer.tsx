@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl'
 import { useToast } from '@/components/ui/Toast'
 import type { Lab, DropboxNode, DropboxLink, Subject, Task } from '@/types'
 import { LAB_LABELS } from '@/lib/constants'
+import { apiFetch } from '@/lib/api-fetch'
 
 // Intentional variance: 3-gradient composite with specific position offsets (at 24%/80%/90%).
 const PAGE_BG =
@@ -205,7 +206,7 @@ export function DataExplorer({ lab }: Props) {
   }
 
   async function addLink(node: DropboxNode, opts: { subject_id?: string; task_id?: string }) {
-    const res = await fetch('/api/dropbox/links', {
+    const newLink = await apiFetch<DropboxLink>('/api/dropbox/links', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -216,27 +217,20 @@ export function DataExplorer({ lab }: Props) {
         subject_id: opts.subject_id,
         task_id: opts.task_id,
       }),
-    })
-    if (res.ok) {
-      const newLink: DropboxLink = await res.json()
-      setLinks(prev => [...prev, newLink])
-      addToast(t('linkAdded'), 'success')
-      // Reset select keys to clear the selects
-      setSubjectSelectKey(k => k + 1)
-      setTaskSelectKey(k => k + 1)
-    } else {
-      addToast(t('errorGeneric'), 'error')
-    }
+    }, (msg) => addToast(msg, 'error'), t('errorGeneric'))
+    if (newLink === null) return
+    setLinks(prev => [...prev, newLink])
+    addToast(t('linkAdded'), 'success')
+    // Reset select keys to clear the selects
+    setSubjectSelectKey(k => k + 1)
+    setTaskSelectKey(k => k + 1)
   }
 
   async function removeLink(id: string) {
-    const res = await fetch(`/api/dropbox/links/${id}`, { method: 'DELETE' })
-    if (res.ok) {
-      setLinks(prev => prev.filter(l => l.id !== id))
-      addToast(t('linkRemoved'), 'info')
-    } else {
-      addToast(t('errorGeneric'), 'error')
-    }
+    const result = await apiFetch<unknown>(`/api/dropbox/links/${id}`, { method: 'DELETE' }, (msg) => addToast(msg, 'error'), t('errorGeneric'))
+    if (result === null) return
+    setLinks(prev => prev.filter(l => l.id !== id))
+    addToast(t('linkRemoved'), 'info')
   }
 
   // Subjects/tasks not already linked to the selected node

@@ -11,6 +11,7 @@ import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { useToast } from '@/components/ui/Toast'
 import { flattenTasks } from './kanban-shared'
 import { dateBucket } from '@/lib/utils'
+import { apiFetch } from '@/lib/api-fetch'
 
 type Props = {
   lab: Lab
@@ -56,22 +57,22 @@ export function KanbanBoard({ lab, locale, subjects, initialTasks, members, isMe
   }
 
   async function handlePatch(taskId: string, fields: { statut?: TaskStatus; difficulte?: Difficulty }) {
-    const res = await fetch(`/api/tasks/${taskId}`, {
+    const result = await apiFetch<unknown>(`/api/tasks/${taskId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(fields),
-    })
-    if (!res.ok) { addToast(t('toast.error'), 'error'); return }
+    }, (msg) => addToast(msg, 'error'), t('toast.error'))
+    if (result === null) return
     await refresh()
   }
 
   async function handleToggleSubtask(taskId: string, subtaskId: string, done: boolean) {
-    const res = await fetch(`/api/tasks/${taskId}/subtasks`, {
+    const result = await apiFetch<unknown>(`/api/tasks/${taskId}/subtasks`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ subtask_id: subtaskId, done }),
-    })
-    if (!res.ok) { addToast(t('toast.error'), 'error'); return }
+    }, (msg) => addToast(msg, 'error'), t('toast.error'))
+    if (result === null) return
     await refresh()
   }
 
