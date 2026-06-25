@@ -91,12 +91,15 @@ async function buildBatch(
     const { data } = await service.from('tasks').select('*').eq('id', id).single()
     if (!data) return null
     // FK réelle vérifiée : tasks.sujet_id → subjects(id) (migration 001).
-    const { data: subj } = await service
+    // FAIL-CLOSED : si la lecture du sujet parent échoue ou ne renvoie aucune ligne,
+    // on traite la tâche comme confidentielle (jamais de fuite publique sur erreur transitoire).
+    // Seul un parent récupéré avec succès ET explicitement non confidentiel donne 'public'.
+    const { data: subj, error: subjError } = await service
       .from('subjects')
       .select('confidentiel')
       .eq('id', data.sujet_id)
       .single()
-    const conf = !!subj?.confidentiel
+    const conf = subjError || !subj ? true : !!subj.confidentiel
     return {
       chunks: chunkTask(data),
       labo: data.labo,
