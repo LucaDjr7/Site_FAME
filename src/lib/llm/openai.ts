@@ -1,4 +1,4 @@
-import type { EmbeddingProvider, ChatProvider, ChatMessage } from './provider'
+import type { EmbeddingProvider, ChatProvider, ChatMessage, ChatCompletion } from './provider'
 
 interface OpenAIEmbeddingResponse {
   data: { embedding: number[] }[]
@@ -68,6 +68,31 @@ export function createOpenAIChatProvider(opts: {
             if (delta) yield delta
           } catch { /* ligne partielle ignorée */ }
         }
+      }
+    },
+    async complete(messages: ChatMessage[], completeOpts): Promise<ChatCompletion> {
+      const res = await doFetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${opts.apiKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: opts.model, messages,
+          ...(completeOpts?.tools && completeOpts.tools.length ? { tools: completeOpts.tools } : {}),
+          max_tokens: completeOpts?.maxTokens ?? 600,
+        }),
+      })
+      if (!res.ok) throw new Error(`OpenAI complete failed: ${res.status}`)
+      const json = (await res.json()) as {
+        choices?: {
+          message?: {
+            content?: string | null
+            tool_calls?: { id: string; function: { name: string; arguments: string } }[]
+          }
+        }[]
+      }
+      const msg = json.choices?.[0]?.message
+      return {
+        content: msg?.content ?? null,
+        toolCalls: (msg?.tool_calls ?? []).map(tc => ({ id: tc.id, name: tc.function.name, arguments: tc.function.arguments })),
       }
     },
   }

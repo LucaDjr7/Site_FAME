@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
   if (!messages || !lastUser || !lastUser.content?.trim()) {
     return NextResponse.json({ error: 'messages required' }, { status: 400 })
   }
-  const question = lastUser.content.slice(0, MAX_QUESTION_LEN)
+  const question = (lastUser.content ?? '').slice(0, MAX_QUESTION_LEN)
 
   // 3. Tier + rate-limit persistant
   const session = await getSession()
@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
 
   // 6. Court-circuit : rien d'ancré → non traité + CTA propose
   if (chunks.length === 0) {
-    await logUnanswered(question, lastUser.content.match(/[à-ÿ]/i) ? 'fr' : 'en', ipHash)
+    await logUnanswered(question, (lastUser.content ?? '').match(/[à-ÿ]/i) ? 'fr' : 'en', ipHash)
     return sse(singleMessageStream('unanswered', {
       text: "This topic isn't covered in FAME's content yet. You can propose it to the team.",
       proposeQuestion: question,
@@ -103,7 +103,7 @@ export async function POST(req: NextRequest) {
       controller.enqueue(enc.encode('event: done\ndata: {}\n\n'))
       controller.close()
       // Comptabilité approximative (tokens ≈ chars/4) hors flux pour ne pas bloquer.
-      const tokensIn = Math.ceil(chatMessages.reduce((n, m) => n + m.content.length, 0) / 4)
+      const tokensIn = Math.ceil(chatMessages.reduce((n, m) => n + (m.content ?? '').length, 0) / 4)
       void recordUsage(tokensIn, Math.ceil(outChars / 4))
     },
   })
