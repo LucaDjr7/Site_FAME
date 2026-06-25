@@ -153,14 +153,16 @@ export function MemberGrid({ lab, currentMemberId, isAdmin }: Props) {
 
             {/* Edit-mode toggle (members only) */}
             {isMember && (
-              <button className="font-mono"
+              // border width is non-standard 1.5px (active) vs 1px (inactive) — kept inline;
+              // charted #e8b149 replaced by currentColor via text-fame-gold when active.
+              <button className={`font-mono ${editMode ? 'text-fame-gold' : ''}`}
                 onClick={() => setEditMode(v => !v)}
                 style={{
                   padding: '6px 12px',
                   borderRadius: 6,
-                  border: editMode ? '1.5px solid #e8b149' : '1px solid rgba(20,40,90,0.15)',
+                  border: editMode ? '1.5px solid currentColor' : '1px solid rgba(20,40,90,0.15)',
                   background: editMode ? 'rgba(232,177,73,0.12)' : 'rgba(255,255,255,0.6)',
-                  color: editMode ? '#b88c30' : '#6b7596',
+                  color: editMode ? undefined : '#6b7596',
                   fontSize: 10,
                   cursor: 'pointer',
                   letterSpacing: '0.06em',

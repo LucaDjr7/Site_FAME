@@ -193,7 +193,7 @@ function EditForm({ member, isAdmin, onClose, onSaved }: FormProps) {
               type="checkbox"
               checked={isAdminFlag}
               onChange={e => setIsAdminFlag(e.target.checked)}
-              style={{ accentColor: '#2f4486' }}
+              className="accent-fame-blue"
             />
             {t('fIsAdmin')}
           </label>

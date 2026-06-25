@@ -132,7 +132,7 @@ export function TaskModal({ task, subjectTitle, isMember, currentMemberId, onClo
                   checked={s.done}
                   disabled={!isMember}
                   onChange={e => onToggleSubtask(task.id, s.id, e.target.checked)}
-                  style={{ accentColor: '#1e9b7e' }}
+                  className="accent-fame-teal"
                 />
                 <span className={s.done ? 'text-fame-text-muted' : 'text-fame-text-body'} style={{ fontSize: 13, textDecoration: s.done ? 'line-through' : 'none' }}>
                   {s.label}

@@ -93,9 +93,8 @@ export function PromptLibrary({ lab }: Props) {
     justifyContent: 'space-between',
     padding: '9px 11px',
     borderRadius: 9,
-    border: active ? '1px solid #2f4486' : '1px solid rgba(20,40,90,0.12)',
+    border: active ? '1px solid' : '1px solid rgba(20,40,90,0.12)',
     background: active ? 'rgba(47,68,134,0.12)' : 'rgba(20,30,60,0.03)',
-    color: active ? '#2f4486' : '#5a6486',
     cursor: 'pointer',
     width: '100%',
     textAlign: 'left',
@@ -202,9 +201,9 @@ export function PromptLibrary({ lab }: Props) {
           {/* All types button */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             <button
-              className="font-serif"
+              className={`font-serif ${filter === null ? 'text-fame-blue' : ''}`}
               onClick={() => setFilter(null)}
-              style={filterBtnStyle(filter === null)}
+              style={{ ...filterBtnStyle(filter === null), color: filter === null ? undefined : '#5a6486' }}
             >
               <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 {t('allTypes')}
@@ -221,9 +220,9 @@ export function PromptLibrary({ lab }: Props) {
               return (
                 <button
                   key={tc}
-                  className="font-serif"
+                  className={`font-serif ${active ? 'text-fame-blue' : ''}`}
                   onClick={() => setFilter(active ? null : tc)}
-                  style={filterBtnStyle(active)}
+                  style={{ ...filterBtnStyle(active), color: active ? undefined : '#5a6486' }}
                 >
                   <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <span

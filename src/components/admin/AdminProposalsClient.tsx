@@ -19,9 +19,8 @@ const PAGE_BG =
 const filterBtnStyle = (active: boolean): React.CSSProperties => ({
   padding: '6px 12px',
   borderRadius: 6,
-  border: active ? '1px solid #2f4486' : '1px solid rgba(20,40,90,0.14)',
+  border: active ? '1px solid' : '1px solid rgba(20,40,90,0.14)',
   background: active ? 'rgba(47,68,134,0.12)' : 'rgba(255,255,255,0.6)',
-  color: active ? '#2f4486' : '#6b7596',
   fontSize: 10,
   letterSpacing: '0.06em',
   textTransform: 'capitalize',
@@ -89,9 +88,8 @@ export function AdminProposalsClient() {
     fontSize: 11,
     letterSpacing: '0.04em',
     cursor: 'pointer',
-    border: kind === 'convert' ? '1px solid #2f4486' : 'none',
-    background: kind === 'accept' ? '#1e9b7e' : kind === 'reject' ? '#c0473b' : 'transparent',
-    color: kind === 'convert' ? '#2f4486' : '#eef3ff',
+    border: kind === 'convert' ? '1px solid' : 'none',
+    background: kind === 'convert' ? 'transparent' : undefined,
   })
 
   return (
@@ -146,9 +144,9 @@ export function AdminProposalsClient() {
             {VALID_LABS.map(l => (
               <button
                 key={l}
-                className="font-mono"
+                className={`font-mono ${lab === l ? 'text-fame-blue' : ''}`}
                 onClick={() => { setProposals([]); setLab(l) }}
-                style={filterBtnStyle(lab === l)}
+                style={{ ...filterBtnStyle(lab === l), color: lab === l ? undefined : '#6b7596' }}
               >
                 {l}
               </button>
@@ -159,9 +157,9 @@ export function AdminProposalsClient() {
             {STATUSES.map(s => (
               <button
                 key={s}
-                className="font-mono"
+                className={`font-mono ${statusFilter === s ? 'text-fame-blue' : ''}`}
                 onClick={() => setStatusFilter(s)}
-                style={filterBtnStyle(statusFilter === s)}
+                style={{ ...filterBtnStyle(statusFilter === s), color: statusFilter === s ? undefined : '#6b7596' }}
               >
                 {s === 'all' ? t('filterAll') : t(`filter${s.charAt(0).toUpperCase()}${s.slice(1)}` as 'filterPending' | 'filterAccepted' | 'filterRejected')}
               </button>
@@ -254,9 +252,9 @@ export function AdminProposalsClient() {
                     }}
                   />
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                    <button className="font-mono" onClick={() => decide(p.id, 'accepted')} style={actionBtn('accept')}>{t('accept')}</button>
-                    <button className="font-mono" onClick={() => decide(p.id, 'rejected')} style={actionBtn('reject')}>{t('reject')}</button>
-                    <button className="font-mono" onClick={() => convert(p.id)} style={actionBtn('convert')}>{t('convert')}</button>
+                    <button className="font-mono bg-fame-teal text-fame-text-light" onClick={() => decide(p.id, 'accepted')} style={actionBtn('accept')}>{t('accept')}</button>
+                    <button className="font-mono bg-fame-red text-fame-text-light" onClick={() => decide(p.id, 'rejected')} style={actionBtn('reject')}>{t('reject')}</button>
+                    <button className="font-mono text-fame-blue" onClick={() => convert(p.id)} style={actionBtn('convert')}>{t('convert')}</button>
                   </div>
                 </div>
               )}
@@ -277,7 +275,7 @@ export function AdminProposalsClient() {
               )}
 
               {p.statut === 'accepted' && (
-                <button className="font-mono" onClick={() => convert(p.id)} style={{ ...actionBtn('convert'), marginTop: 12 }}>
+                <button className="font-mono text-fame-blue" onClick={() => convert(p.id)} style={{ ...actionBtn('convert'), marginTop: 12 }}>
                   {t('convert')}
                 </button>
               )}

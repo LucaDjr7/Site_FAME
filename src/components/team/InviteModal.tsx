@@ -135,14 +135,14 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
               }}
               onClick={e => (e.target as HTMLInputElement).select()}
             />
-            <button className="font-mono"
+            <button
+              className={`font-mono ${copied ? 'text-fame-teal' : 'text-fame-blue'}`}
               onClick={handleCopy}
               style={{
                 padding: '8px 12px',
                 borderRadius: 7,
-                border: copied ? '1px solid #1e9b7e' : '1px solid rgba(20,40,90,0.18)',
+                border: copied ? '1px solid' : '1px solid rgba(20,40,90,0.18)',
                 background: copied ? 'rgba(30,155,126,0.08)' : 'rgba(47,68,134,0.08)',
-                color: copied ? '#1e9b7e' : '#2f4486',
                 fontSize: 10,
                 cursor: 'pointer',
                 flexShrink: 0,
