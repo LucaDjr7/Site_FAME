@@ -27,7 +27,6 @@ const itemStyle: React.CSSProperties = {
   padding: '9px 11px',
   borderRadius: 9,
   fontSize: 13.5,
-  color: '#2a3457',
 }
 
 export function NavMenu({ locale, lab, member }: Props) {
@@ -37,7 +36,7 @@ export function NavMenu({ locale, lab, member }: Props) {
 
   return (
     <div className="relative">
-      <button className="font-mono"
+      <button className="font-mono text-fame-text-light"
         onClick={() => setOpen(o => !o)}
         aria-expanded={open}
         aria-controls="nav-menu"
@@ -51,7 +50,6 @@ export function NavMenu({ locale, lab, member }: Props) {
           borderRadius: 9,
           padding: '7px 14px',
           cursor: 'pointer',
-          color: '#eef3ff',
           fontSize: 12,
           letterSpacing: '0.12em',
         }}
@@ -69,11 +67,10 @@ export function NavMenu({ locale, lab, member }: Props) {
           <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
           <div
             id="nav-menu"
-            className="absolute right-0 z-40"
+            className="absolute right-0 z-40 bg-fame-sand"
             style={{
               top: 'calc(100% + 12px)',
               width: 236,
-              background: '#fbf9f3',
               border: '1px solid rgba(20,40,90,0.12)',
               borderRadius: 13,
               boxShadow: '0 30px 70px -24px rgba(0,5,30,0.62)',
@@ -99,7 +96,7 @@ export function NavMenu({ locale, lab, member }: Props) {
                 key={key}
                 href={`${base}${href}`}
                 onClick={() => setOpen(false)}
-                className="font-serif hover:bg-[rgba(47,68,134,0.08)] transition-colors"
+                className="font-serif hover:bg-[rgba(47,68,134,0.08)] transition-colors text-fame-text-body"
                 style={itemStyle}
               >
                 {t(key)}
