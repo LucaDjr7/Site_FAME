@@ -264,22 +264,20 @@ export function DataExplorer({ lab }: Props) {
       >
         {/* Left: kicker + title */}
         <div>
-          <div className="font-mono"
+          <div className="font-mono text-fame-text-muted"
             style={{
               fontSize: 9,
               letterSpacing: '0.14em',
               textTransform: 'uppercase',
-              color: '#7e95d6',
               marginBottom: 3,
             }}
           >
             {t('kicker', { lab: labLabel })}
           </div>
-          <h1 className="font-serif"
+          <h1 className="font-serif text-fame-text-dark"
             style={{
               fontSize: 20,
               fontWeight: 600,
-              color: '#15203f',
               margin: 0,
             }}
           >
@@ -329,12 +327,11 @@ export function DataExplorer({ lab }: Props) {
                 marginBottom: 14,
               }}
             >
-              <span className="font-mono"
+              <span className="font-mono text-fame-blue"
                 style={{
                   fontSize: 10,
                   textTransform: 'uppercase',
                   letterSpacing: '0.2em',
-                  color: '#2f4486',
                   flexShrink: 0,
                 }}
               >
@@ -361,8 +358,8 @@ export function DataExplorer({ lab }: Props) {
 
             {/* Tree card */}
             <div
+              className="bg-fame-sand"
               style={{
-                background: '#fbf9f3',
                 borderRadius: 11,
                 boxShadow:
                   '0 16px 40px -24px rgba(0,5,30,0.4), inset 0 0 0 1px rgba(0,0,0,0.05)',
@@ -381,10 +378,9 @@ export function DataExplorer({ lab }: Props) {
                   {t('notConfigured')}
                 </div>
               ) : treeError === 'generic' ? (
-                <div className="font-mono"
+                <div className="font-mono text-fame-red"
                   style={{
                     fontSize: 12,
-                    color: '#c0473b',
                     textAlign: 'center',
                     padding: '40px 20px',
                   }}
@@ -685,11 +681,11 @@ export function DataExplorer({ lab }: Props) {
                   />
                 )}
                 <h2
+                  className="text-fame-text-dark"
                   style={{
                     fontSize: 17,
                     fontWeight: 600,
                     lineHeight: 1.2,
-                    color: '#15203f',
                     margin: 0,
                     wordBreak: 'break-word',
                   }}
@@ -722,12 +718,11 @@ export function DataExplorer({ lab }: Props) {
               </a>
 
               {/* Links section */}
-              <div className="font-mono"
+              <div className="font-mono text-fame-blue"
                 style={{
                   fontSize: 10,
                   textTransform: 'uppercase',
                   letterSpacing: '0.16em',
-                  color: '#2f4486',
                   marginBottom: 10,
                 }}
               >
@@ -792,10 +787,10 @@ export function DataExplorer({ lab }: Props) {
                         </span>
                         {/* Title */}
                         <span
+                          className="text-fame-text-body"
                           style={{
                             flex: 1,
                             fontSize: 12.5,
-                            color: '#2a3457',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
                             whiteSpace: 'nowrap',
