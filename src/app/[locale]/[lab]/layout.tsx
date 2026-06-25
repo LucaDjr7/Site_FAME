@@ -2,8 +2,8 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
 import { TopBar } from '@/components/layout/TopBar'
-
-const LABS = ['paris', 'montreal'] as const
+import { VALID_LABS } from '@/lib/constants'
+import type { Lab } from '@/types'
 
 type Props = {
   children: React.ReactNode
@@ -12,7 +12,7 @@ type Props = {
 
 export default async function LabLayout({ children, params }: Props) {
   const { locale, lab } = await params
-  if (!LABS.includes(lab as typeof LABS[number])) notFound()
+  if (!VALID_LABS.includes(lab as Lab)) notFound()
 
   const t = await getTranslations({ locale, namespace: 'privacy' })
 

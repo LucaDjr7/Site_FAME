@@ -1,5 +1,7 @@
 import { Resend } from 'resend'
 import { escapeHtml } from './escape-html'
+import { LAB_LABELS } from '@/lib/constants'
+import type { Lab } from '@/types'
 
 const FROM = process.env.EMAIL_FROM ?? 'FAME <noreply@fame-lab.eu>'
 
@@ -15,7 +17,7 @@ export async function sendInvitationEmail(opts: {
     console.warn('RESEND_API_KEY not set — skipping invitation email')
     return
   }
-  const labLabel = lab === 'paris' ? 'Paris' : 'Montréal'
+  const labLabel = LAB_LABELS[lab as Lab] ?? lab
   const safePrenom = escapeHtml(prenom)
   const resend = new Resend(key)
   const { error } = await resend.emails.send({

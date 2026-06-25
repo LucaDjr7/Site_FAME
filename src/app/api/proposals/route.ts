@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { requireMember, authErrorResponse } from '@/lib/auth'
-import { PROPOSAL_DOMAINS } from '@/lib/constants'
+import { PROPOSAL_DOMAINS, VALID_LABS } from '@/lib/constants'
 import { rateLimit, clientIp } from '@/lib/rate-limit'
 import type { Lab, Difficulty } from '@/types'
-
-const VALID_LABS: Lab[] = ['paris', 'montreal']
 const VALID_DIFF: Difficulty[] = ['easy', 'intermediate', 'advanced']
 
 // GET ?ids=a,b,c  → public, returns just those proposals (visitor tracker)

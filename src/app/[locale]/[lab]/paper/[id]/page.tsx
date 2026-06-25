@@ -5,15 +5,14 @@ import { createServiceClient } from '@/lib/supabase/server'
 import { getSession } from '@/lib/auth'
 import { PaperView } from '@/components/paper/PaperView'
 import type { Lab, Subject, MemberRef, TaskWithRelations, Comment, DropboxLink } from '@/types'
-
-const LABS: Lab[] = ['paris', 'montreal']
+import { VALID_LABS, LAB_LABELS } from '@/lib/constants'
 
 type Props = { params: Promise<{ locale: string; lab: string; id: string }> }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, lab, id } = await params
-  if (!LABS.includes(lab as Lab)) return { title: '' }
-  const labLabel = lab === 'paris' ? 'Paris' : 'Montréal'
+  if (!VALID_LABS.includes(lab as Lab)) return { title: '' }
+  const labLabel = LAB_LABELS[lab as Lab] ?? lab
   const t = await getTranslations({ locale, namespace: 'meta' })
   const service = await createServiceClient()
   const { data: subject } = await service.from('subjects').select('titre').eq('id', id).single()
@@ -23,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PaperPage({ params }: Props) {
   const { locale, lab, id } = await params
-  if (!LABS.includes(lab as Lab)) notFound()
+  if (!VALID_LABS.includes(lab as Lab)) notFound()
 
   const service = await createServiceClient()
   const [{ data: subject }, { data: navRows }, { data: members }, { data: tasksRaw },

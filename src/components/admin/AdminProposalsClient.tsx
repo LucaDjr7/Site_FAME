@@ -5,10 +5,11 @@ import { useLocale, useTranslations } from 'next-intl'
 import { ProposalStatusBadge } from '@/components/ui/StatusBadge'
 import { useToast } from '@/components/ui/Toast'
 import type { Proposal, Lab, ProposalStatus } from '@/types'
+import { VALID_LABS } from '@/lib/constants'
 
-const LABS: Lab[] = ['paris', 'montreal']
 const STATUSES: (ProposalStatus | 'all')[] = ['all', 'pending', 'accepted', 'rejected']
 
+// Intentional variance: 3-gradient composite with specific position offsets (at 22%/80%/90%).
 const PAGE_BG =
   'radial-gradient(110% 80% at 22% 8%, rgba(181,157,135,0.28) 0%, rgba(181,157,135,0) 52%), ' +
   'radial-gradient(120% 110% at 80% 112%, rgba(113,120,132,0.2) 0%, rgba(113,120,132,0) 60%), ' +
@@ -149,7 +150,7 @@ export function AdminProposalsClient() {
         {/* Right: lab + status filters */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', gap: 6 }}>
-            {LABS.map(l => (
+            {VALID_LABS.map(l => (
               <button
                 key={l}
                 onClick={() => { setProposals([]); setLab(l) }}

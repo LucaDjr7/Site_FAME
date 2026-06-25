@@ -4,15 +4,15 @@ import { requireAdmin, authErrorResponse } from '@/lib/auth'
 import { sendInvitationEmail } from '@/lib/resend/send-invitation'
 import { getAppBaseUrl } from '@/lib/app-url'
 import crypto from 'crypto'
-import type { Lab, Role } from '@/types'
+import type { Role } from '@/types'
+import { VALID_LABS } from '@/lib/constants'
 
-const LABS: Lab[] = ['paris', 'montreal']
 const ROLES: Role[] = ['direction', 'researcher', 'phd', 'engineering']
 
 export async function POST(req: NextRequest) {
   try { await requireAdmin() } catch (e) { return authErrorResponse(e) }
   const { email, prenom, nom, role, labo } = await req.json()
-  if (!email?.trim() || !prenom?.trim() || !nom?.trim() || !ROLES.includes(role) || !LABS.includes(labo)) {
+  if (!email?.trim() || !prenom?.trim() || !nom?.trim() || !ROLES.includes(role) || !VALID_LABS.includes(labo)) {
     return NextResponse.json({ error: 'All fields required' }, { status: 400 })
   }
   const service = await createServiceClient()

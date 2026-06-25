@@ -3,7 +3,9 @@ import { useState, useEffect, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
 import { useToast } from '@/components/ui/Toast'
 import type { Lab, DropboxNode, DropboxLink, Subject, Task } from '@/types'
+import { LAB_LABELS } from '@/lib/constants'
 
+// Intentional variance: 3-gradient composite with specific position offsets (at 24%/80%/90%).
 const PAGE_BG =
   'radial-gradient(110% 80% at 24% 8%, rgba(181,157,135,0.28) 0%, rgba(181,157,135,0) 52%), ' +
   'radial-gradient(120% 110% at 80% 112%, rgba(113,120,132,0.2) 0%, rgba(113,120,132,0) 60%), ' +
@@ -86,7 +88,7 @@ export function DataExplorer({ lab }: Props) {
   const [subjectSelectKey, setSubjectSelectKey] = useState(0)
   const [taskSelectKey, setTaskSelectKey] = useState(0)
 
-  const labLabel = lab === 'paris' ? 'Paris' : 'Montréal'
+  const labLabel = LAB_LABELS[lab] ?? lab
 
   // Load on mount
   useEffect(() => {

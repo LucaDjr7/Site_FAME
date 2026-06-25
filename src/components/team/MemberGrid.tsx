@@ -7,6 +7,7 @@ import { MemberCard } from './MemberCard'
 import { InviteModal } from './InviteModal'
 import { EditMemberModal } from './EditMemberModal'
 import type { Lab, Member, Role } from '@/types'
+import { LAB_LABELS } from '@/lib/constants'
 
 type Props = {
   lab: Lab
@@ -23,6 +24,7 @@ const ROLE_GROUP_KEY: Record<Role, string> = {
   engineering: 'roles.engineering',
 }
 
+// Intentional variance: 3-gradient composite with specific position offsets (at 22%/80%/90%).
 const PAGE_BG =
   'radial-gradient(110% 80% at 22% 8%, rgba(181,157,135,0.28) 0%, rgba(181,157,135,0) 52%), ' +
   'radial-gradient(120% 110% at 80% 112%, rgba(113,120,132,0.2) 0%, rgba(113,120,132,0) 60%), ' +
@@ -91,7 +93,7 @@ export function MemberGrid({ lab, currentMemberId, isAdmin }: Props) {
     addToast(t('saved'), 'success')
   }
 
-  const labLabel = lab === 'paris' ? 'Paris' : 'Montréal'
+  const labLabel = LAB_LABELS[lab] ?? lab
 
   return (
     <>

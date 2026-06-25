@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl'
 import { useToast } from '@/components/ui/Toast'
 import { PromptCard } from './PromptCard'
 import type { Lab, Prompt, PromptTarget } from '@/types'
+import { LAB_LABELS } from '@/lib/constants'
 
 const TARGET_META: Record<PromptTarget, { i18nKey: string; color: string }> = {
   subject:     { i18nKey: 'sujet',       color: '#2f4486' },
@@ -15,6 +16,7 @@ const TARGET_META: Record<PromptTarget, { i18nKey: string; color: string }> = {
 
 const TARGET_ORDER: PromptTarget[] = ['subject', 'publication', 'data', 'member', 'task']
 
+// Intentional variance: 3-gradient composite with specific position offsets (at 26%/78%/92%).
 const PAGE_BG =
   'radial-gradient(110% 80% at 26% 8%, rgba(181,157,135,0.28) 0%, rgba(181,157,135,0) 52%), ' +
   'radial-gradient(120% 110% at 78% 112%, rgba(113,120,132,0.2) 0%, rgba(113,120,132,0) 60%), ' +
@@ -33,7 +35,7 @@ export function PromptLibrary({ lab }: Props) {
   const [reloadKey, setReloadKey] = useState(0)
   const [newlyCreatedId, setNewlyCreatedId] = useState<string | null>(null)
 
-  const labLabel = lab === 'paris' ? 'Paris' : 'Montréal'
+  const labLabel = LAB_LABELS[lab] ?? lab
 
   useEffect(() => {
     let cancelled = false

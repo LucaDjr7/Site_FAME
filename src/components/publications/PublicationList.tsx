@@ -2,6 +2,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useTranslations } from 'next-intl'
 import type { Lab, Publication, PublicationType } from '@/types'
+import { LAB_LABELS } from '@/lib/constants'
 import { useToast } from '@/components/ui/Toast'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { AddPublicationModal } from './AddPublicationModal'
@@ -217,9 +218,10 @@ export function PublicationList({ lab, isMember }: Props) {
   }
 
   // ── Lab label ────────────────────────────────────────────────────────────
-  const labLabel = lab === 'paris' ? 'Paris' : 'Montréal'
+  const labLabel = LAB_LABELS[lab] ?? lab
 
   // ── Styles ───────────────────────────────────────────────────────────────
+  // Intentional variance: 3-gradient composite with specific position offsets (at 26%/78%/92%).
   const PAGE_BG =
     'radial-gradient(110% 80% at 26% 8%, rgba(181,157,135,0.28) 0%, rgba(181,157,135,0) 52%), ' +
     'radial-gradient(120% 110% at 78% 112%, rgba(113,120,132,0.2) 0%, rgba(113,120,132,0) 60%), ' +

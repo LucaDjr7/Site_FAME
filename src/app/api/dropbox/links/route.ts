@@ -2,13 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { requireMember, authErrorResponse } from '@/lib/auth'
 import type { Lab } from '@/types'
-
-const LABS: Lab[] = ['paris', 'montreal']
+import { VALID_LABS } from '@/lib/constants'
 
 export async function GET(req: NextRequest) {
   try { await requireMember() } catch (e) { return authErrorResponse(e) }
   const lab = req.nextUrl.searchParams.get('lab') as Lab
-  if (!lab || !LABS.includes(lab)) {
+  if (!lab || !VALID_LABS.includes(lab)) {
     return NextResponse.json({ error: 'Invalid or missing lab' }, { status: 400 })
   }
   const subject_id = req.nextUrl.searchParams.get('subject_id')
@@ -34,7 +33,7 @@ export async function POST(req: NextRequest) {
   const body = await req.json()
   const { node_id, node_path, node_name, labo, subject_id, task_id } = body
 
-  if (!node_id || !LABS.includes(labo) || (!subject_id && !task_id)) {
+  if (!node_id || !VALID_LABS.includes(labo) || (!subject_id && !task_id)) {
     return NextResponse.json(
       { error: 'node_id, labo, and (subject_id or task_id) are required' },
       { status: 400 }
