@@ -178,8 +178,7 @@ export function AddPublicationModal({ open, lab, onClose, onCreated }: Props) {
 
         {/* Error */}
         {error && (
-          <div style={{
-            fontFamily: 'IBM Plex Mono, monospace',
+          <div className="font-mono" style={{
             fontSize: 11,
             color: '#c0473b',
             marginBottom: 12,

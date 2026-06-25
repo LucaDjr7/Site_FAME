@@ -230,13 +230,12 @@ export function PublicationList({ lab, isMember }: Props) {
 
   return (
     <>
-      <div
+      <div className="font-serif"
         style={{
           minHeight: 'calc(100vh - 6rem)',
           display: 'flex',
           flexDirection: 'column',
           background: PAGE_BG,
-          fontFamily: 'Roboto Slab, Georgia, serif',
           color: '#18244c',
         }}
       >
@@ -253,9 +252,8 @@ export function PublicationList({ lab, isMember }: Props) {
         >
           {/* Left: kicker + title */}
           <div>
-            <div
+            <div className="font-mono"
               style={{
-                fontFamily: 'IBM Plex Mono, monospace',
                 fontSize: 9,
                 letterSpacing: '0.14em',
                 textTransform: 'uppercase',
@@ -265,9 +263,8 @@ export function PublicationList({ lab, isMember }: Props) {
             >
               {t('kicker', { lab: labLabel })}
             </div>
-            <h1
+            <h1 className="font-serif"
               style={{
-                fontFamily: 'Roboto Slab, Georgia, serif',
                 fontSize: 20,
                 fontWeight: 600,
                 color: '#15203f',
@@ -280,7 +277,7 @@ export function PublicationList({ lab, isMember }: Props) {
 
           {/* Right: search + controls */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <input
+            <input className="font-mono"
               type="search"
               value={q}
               onChange={e => setQ(e.target.value)}
@@ -291,14 +288,13 @@ export function PublicationList({ lab, isMember }: Props) {
                 border: '1px solid rgba(20,40,90,0.15)',
                 background: 'rgba(255,255,255,0.7)',
                 color: '#15203f',
-                fontFamily: 'IBM Plex Mono, monospace',
                 fontSize: 11,
                 width: 200,
                 outline: 'none',
               }}
             />
             {isMember && (
-              <button
+              <button className="font-mono"
                 onClick={() => setEditMode(v => !v)}
                 style={{
                   padding: '6px 12px',
@@ -306,7 +302,6 @@ export function PublicationList({ lab, isMember }: Props) {
                   border: editMode ? '1.5px solid #e8b149' : '1px solid rgba(20,40,90,0.15)',
                   background: editMode ? 'rgba(232,177,73,0.12)' : 'rgba(255,255,255,0.6)',
                   color: editMode ? '#b88c30' : '#6b7596',
-                  fontFamily: 'IBM Plex Mono, monospace',
                   fontSize: 10,
                   cursor: 'pointer',
                   letterSpacing: '0.06em',
@@ -317,7 +312,7 @@ export function PublicationList({ lab, isMember }: Props) {
               </button>
             )}
             {isMember && editMode && (
-              <button
+              <button className="font-mono"
                 onClick={() => setAddOpen(true)}
                 style={{
                   padding: '6px 14px',
@@ -325,7 +320,6 @@ export function PublicationList({ lab, isMember }: Props) {
                   border: 'none',
                   background: '#2f4486',
                   color: '#eef3ff',
-                  fontFamily: 'IBM Plex Mono, monospace',
                   fontSize: 10,
                   cursor: 'pointer',
                   letterSpacing: '0.06em',
@@ -343,8 +337,7 @@ export function PublicationList({ lab, isMember }: Props) {
           {/* ── Publication list (scroll) ────────────────────────────────── */}
           <div style={{ flex: 1, overflowY: 'auto', padding: '28px 32px 40px' }}>
             {loading ? (
-              <div style={{
-                fontFamily: 'IBM Plex Mono, monospace',
+              <div className="font-mono" style={{
                 fontSize: 12,
                 color: '#7e95d6',
                 textAlign: 'center',
@@ -353,8 +346,7 @@ export function PublicationList({ lab, isMember }: Props) {
                 {t('loading')}
               </div>
             ) : visible.length === 0 ? (
-              <div style={{
-                fontFamily: 'IBM Plex Mono, monospace',
+              <div className="font-mono" style={{
                 fontSize: 13,
                 color: '#7e95d6',
                 textAlign: 'center',
@@ -373,8 +365,7 @@ export function PublicationList({ lab, isMember }: Props) {
                       gap: 12,
                       marginBottom: 14,
                     }}>
-                      <span style={{
-                        fontFamily: 'IBM Plex Mono, monospace',
+                      <span className="font-mono" style={{
                         fontSize: 13,
                         fontWeight: 500,
                         color: '#2f4486',
@@ -388,8 +379,7 @@ export function PublicationList({ lab, isMember }: Props) {
                         height: 1,
                         background: 'rgba(20,40,90,0.12)',
                       }} />
-                      <span style={{
-                        fontFamily: 'IBM Plex Mono, monospace',
+                      <span className="font-mono" style={{
                         fontSize: 10,
                         color: '#6b7596',
                         letterSpacing: '0.1em',
@@ -463,7 +453,7 @@ export function PublicationList({ lab, isMember }: Props) {
                               flexWrap: 'wrap',
                             }}>
                               {/* Type badge */}
-                              <span style={{
+                              <span className="font-mono" style={{
                                 display: 'inline-flex',
                                 alignItems: 'center',
                                 gap: 6,
@@ -471,7 +461,6 @@ export function PublicationList({ lab, isMember }: Props) {
                                 borderRadius: 6,
                                 border: `1px solid ${badge.border}`,
                                 background: badge.bg,
-                                fontFamily: 'IBM Plex Mono, monospace',
                                 fontSize: 9.5,
                                 fontWeight: 500,
                                 letterSpacing: '0.1em',
@@ -490,8 +479,7 @@ export function PublicationList({ lab, isMember }: Props) {
 
                               {/* Venue */}
                               {p.revue_ou_conf && (
-                                <span style={{
-                                  fontFamily: 'IBM Plex Mono, monospace',
+                                <span className="font-mono" style={{
                                   fontSize: 10,
                                   color: '#6b7596',
                                 }}>
@@ -501,11 +489,10 @@ export function PublicationList({ lab, isMember }: Props) {
                             </div>
 
                             {/* Title */}
-                            <h3 style={{
+                            <h3 className="font-serif" style={{
                               margin: '0 0 8px',
                               fontSize: 17,
                               fontWeight: 600,
-                              fontFamily: 'Roboto Slab, Georgia, serif',
                               color: '#15203f',
                               lineHeight: 1.28,
                               letterSpacing: '-0.005em',
@@ -515,8 +502,7 @@ export function PublicationList({ lab, isMember }: Props) {
 
                             {/* Authors */}
                             {p.auteurs.length > 0 && (
-                              <div style={{
-                                fontFamily: 'Roboto Slab, Georgia, serif',
+                              <div className="font-serif" style={{
                                 fontSize: 12.5,
                                 color: '#43507a',
                                 marginBottom: p.lien ? 12 : 0,
@@ -532,7 +518,7 @@ export function PublicationList({ lab, isMember }: Props) {
 
                             {/* Link chip */}
                             {p.lien && (
-                              <a
+                              <a className="font-mono"
                                 href={p.lien}
                                 target="_blank"
                                 rel="noreferrer"
@@ -544,7 +530,6 @@ export function PublicationList({ lab, isMember }: Props) {
                                   padding: '3px 9px',
                                   borderRadius: 5,
                                   border: '1px solid rgba(47,68,134,0.28)',
-                                  fontFamily: 'IBM Plex Mono, monospace',
                                   fontSize: 10,
                                   color: '#2f4486',
                                   textDecoration: 'none',
@@ -583,8 +568,7 @@ export function PublicationList({ lab, isMember }: Props) {
               justifyContent: 'space-between',
               marginBottom: 16,
             }}>
-              <span style={{
-                fontFamily: 'IBM Plex Mono, monospace',
+              <span className="font-mono" style={{
                 fontSize: 9,
                 fontWeight: 700,
                 letterSpacing: '0.14em',
@@ -593,10 +577,9 @@ export function PublicationList({ lab, isMember }: Props) {
               }}>
                 {t('filters')}
               </span>
-              <button
+              <button className="font-mono"
                 onClick={resetFilters}
                 style={{
-                  fontFamily: 'IBM Plex Mono, monospace',
                   fontSize: 9,
                   color: '#6b7596',
                   background: 'none',
@@ -620,8 +603,7 @@ export function PublicationList({ lab, isMember }: Props) {
                 padding: '10px 12px',
                 textAlign: 'center',
               }}>
-                <div style={{
-                  fontFamily: 'Roboto Slab, Georgia, serif',
+                <div className="font-serif" style={{
                   fontSize: 22,
                   fontWeight: 700,
                   color: '#15203f',
@@ -630,8 +612,7 @@ export function PublicationList({ lab, isMember }: Props) {
                 }}>
                   {visible.length}
                 </div>
-                <div style={{
-                  fontFamily: 'IBM Plex Mono, monospace',
+                <div className="font-mono" style={{
                   fontSize: 9,
                   color: '#6b7596',
                   textTransform: 'uppercase',
@@ -648,8 +629,7 @@ export function PublicationList({ lab, isMember }: Props) {
                 padding: '10px 12px',
                 textAlign: 'center',
               }}>
-                <div style={{
-                  fontFamily: 'Roboto Slab, Georgia, serif',
+                <div className="font-serif" style={{
                   fontSize: 22,
                   fontWeight: 700,
                   color: '#1e9b7e',
@@ -658,8 +638,7 @@ export function PublicationList({ lab, isMember }: Props) {
                 }}>
                   {visibleAuthorCount}
                 </div>
-                <div style={{
-                  fontFamily: 'IBM Plex Mono, monospace',
+                <div className="font-mono" style={{
                   fontSize: 9,
                   color: '#6b7596',
                   textTransform: 'uppercase',
@@ -757,8 +736,7 @@ export function PublicationList({ lab, isMember }: Props) {
 function FilterSection({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div style={{ marginBottom: 20 }}>
-      <div style={{
-        fontFamily: 'IBM Plex Mono, monospace',
+      <div className="font-mono" style={{
         fontSize: 9,
         fontWeight: 700,
         letterSpacing: '0.12em',
@@ -788,7 +766,7 @@ type FilterBtnProps = {
 
 function FilterBtn({ active, count, onClick, children, dot, initials: ini }: FilterBtnProps) {
   return (
-    <button
+    <button className="font-mono"
       onClick={onClick}
       style={{
         display: 'flex',
@@ -799,7 +777,6 @@ function FilterBtn({ active, count, onClick, children, dot, initials: ini }: Fil
         border: active ? '1.5px solid #2f4486' : '1px solid rgba(20,40,90,0.12)',
         background: active ? 'rgba(47,68,134,0.12)' : 'rgba(20,30,60,0.03)',
         color: active ? '#2f4486' : '#5a6486',
-        fontFamily: 'IBM Plex Mono, monospace',
         fontSize: 11,
         cursor: 'pointer',
         textAlign: 'left',
