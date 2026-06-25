@@ -13,6 +13,8 @@ Le périmètre est découpé en **5 plans séquentiels**, chacun livrant un incr
 | **P4 — UI** | `2026-06-25-assistant-p4-ui.md` | namespace i18n `assistant`, bulle flottante, panneau, page plein écran, entrée globe, citations, mode dégradé, streaming client |
 | **P5 — Admin, RGPD & câblage budget** | `2026-06-25-assistant-p5-admin-rgpd.md` | `/admin/assistant`, `POST /api/assistant/reindex`, kill-switch, `/privacy`, `.env.example`, jeu de prompts rouges |
 
+**Ordre d'exécution (décision 2026-06-25)** : **P1 → P2 → P3 → P5**, puis **pause avant P4**. P4 (UI) est **bloqué** tant qu'une maquette dédiée « FAME Assistant » n'existe pas dans le projet Claude Design — l'utilisateur a tranché « créer une maquette d'abord » (cf. encart en tête de P4). P5 (admin/RGPD) ne dépend pas de cette maquette (dérivé admin, pas de maquette requise) et passe donc avant P4.
+
 **Modèles SDD** : sécu/bridage/indexation/CI → Opus 4.8 ; UI/admin → Sonnet 4.6 ; revue finale whole-branch → Opus 4.8.
 
 **Prérequis runtime (fournis par l'utilisateur le moment venu)** : `OPENAI_API_KEY` (compte facturable) ; extension `pgvector` activée sur Supabase ; migration `006` appliquée comme `004`/`005`.

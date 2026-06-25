@@ -23,14 +23,15 @@ Dernière mise à jour : 2026-06-25
 | P1 | `…-assistant-p1-data-indexing.md` | Migration `006` (pgvector), embeddings, chunking, KB, indexeur, embed-on-write, backfill, **membres publics** | 🔲 à exécuter |
 | P2 | `…-assistant-p2-retrieval-chat.md` | Retrieve (**filtre permissions en SQL**) + seuil, modération, anti-injection, masquage PII, rate-limit persistant, budget, kill-switch, endpoint SSE | 🔲 |
 | P3 | `…-assistant-p3-tools.md` | 3 outils lecture seule (re-check permissions) + boucle d'outils | 🔲 |
-| P4 | `…-assistant-p4-ui.md` | i18n `assistant`, bulle + panneau, CTA globe, citations, streaming client | 🔲 |
 | P5 | `…-assistant-p5-admin-rgpd.md` | `/admin/assistant`, toggle/reindex, `/privacy`, `.env.example`, red-team | 🔲 |
+| P4 | `…-assistant-p4-ui.md` | i18n `assistant`, bulle + panneau, CTA globe, citations, streaming client | ⏸ **bloqué — maquette** |
 
-**Prochaine action** : l'utilisateur relit les 5 plans → puis exécution (Subagent-Driven recommandé : Opus 4.8 sécu/indexation, Sonnet 4.6 UI/admin, revue finale whole-branch Opus).
+**Ordre d'exécution** : **P1 → P2 → P3 → P5**, puis **pause avant P4**.
+**Exécution** : Subagent-Driven (Opus 4.8 sécu/indexation P1-P3 + admin P5 sécu, Sonnet 4.6 UI ; revue finale whole-branch Opus). Ledger : `.superpowers/sdd/progress.md`.
 
-**Points à trancher avant lancement** :
-1. **Maquette assistant (P4)** : aucune des 9 maquettes ne couvre l'assistant → aligner sur `FAME Accueil.dc.html` ou en faire créer une.
-2. **Champ `confidentiel` (P1)** : nouveau booléen sur `subjects` pilotant la visibilité visiteur/membre. C'est la frontière de confidentialité — valider la sémantique.
+**Décisions prises (2026-06-25)** :
+1. **Champ `confidentiel` (P1)** ✅ : booléen sur `subjects`, défaut `false`. `confidentiel=true` → jamais visible au visiteur (ni bot ni outils) ; membres voient tout ; tâches/fichiers héritent. Conforme aux plans tels qu'écrits.
+2. **Maquette assistant (P4)** ⏸ : **créer une maquette dédiée « FAME Assistant »** dans le projet Claude Design **avant** d'exécuter P4. P4 reste bloqué jusque-là. Auteur de la maquette à décider au moment venu (utilisateur, ou Opus via MCP `DesignSync` si scope write).
 
 **Prérequis runtime (utilisateur, le moment venu)** : `OPENAI_API_KEY` (compte facturable) ; extension `pgvector` activée sur Supabase ; migration `006` appliquée.
 

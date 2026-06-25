@@ -18,7 +18,7 @@
 - **Accessibilité** : bouton avec `aria-label` traduit, focus géré à l'ouverture, fermeture sur Échap (réutiliser le pattern de `Modal` existant si pertinent).
 - Pas de secret client. Commits atomiques ; `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>`.
 
-> ⚠️ **Maquettes** : il n'existe pas de maquette dédiée « assistant » dans le projet Claude Design (les 9 maquettes couvrent les pages existantes). L'orchestrateur Opus DOIT, avant de lancer ce plan, soit (a) lire `FAME Accueil.dc.html` via le MCP `DesignSync` pour aligner la bulle/CTA au style du globe et injecter les tokens/markup dans le prompt du sous-agent Sonnet, soit (b) demander à l'utilisateur si une maquette assistant doit être créée. Les couleurs/typos ci-dessous suivent les tokens FAME documentés (AGENTS.md) à défaut de maquette.
+> 🛑 **BLOQUÉ — maquette requise (décision utilisateur 2026-06-25)** : ce plan **ne démarre pas** tant qu'une maquette dédiée **« FAME Assistant »** n'a pas été créée dans le projet Claude Design (`5bd688a8-2928-4c09-8d94-63f35b89ec74`). L'utilisateur a tranché « créer une maquette d'abord » plutôt que dériver du globe. Séquencement : exécuter P1→P2→P3→P5, **puis** créer/obtenir la maquette, **puis** lancer P4. Au lancement de P4, l'orchestrateur Opus lit la maquette via le MCP `DesignSync` (`get_file`, `path = FAME Assistant.dc.html`) et injecte tokens/markup dans le prompt du sous-agent Sonnet. Les couleurs/typos ci-dessous restent la base de repli (tokens FAME documentés, AGENTS.md) mais **la maquette fait foi**.
 
 ## File Structure
 
