@@ -70,10 +70,10 @@ export function TaskFilterSidebar({
 
   const btnBase: React.CSSProperties = {
     display: 'flex', alignItems: 'center', gap: 6, padding: '5px 8px', borderRadius: 5, cursor: 'pointer',
-    fontSize: 11, fontFamily: 'IBM Plex Mono, monospace', transition: 'all 0.12s', width: '100%', textAlign: 'left',
+    fontSize: 11,  transition: 'all 0.12s', width: '100%', textAlign: 'left',
   }
   const sectionLabel: React.CSSProperties = {
-    fontFamily: 'IBM Plex Mono, monospace', fontSize: 8, fontWeight: 600, letterSpacing: '0.12em',
+     fontSize: 8, fontWeight: 600, letterSpacing: '0.12em',
     textTransform: 'uppercase', color: '#5768ac', marginBottom: 6,
   }
 
@@ -87,8 +87,8 @@ export function TaskFilterSidebar({
           background: 'rgba(244,243,236,0.92)', backdropFilter: 'blur(8px)', borderLeft: '1px solid rgba(87,104,172,0.15)', cursor: 'pointer',
         }}
       >
-        <span style={{
-          fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, fontWeight: 500, letterSpacing: '0.12em',
+        <span className="font-mono" style={{
+           fontSize: 10, fontWeight: 500, letterSpacing: '0.12em',
           textTransform: 'uppercase', color: '#5768ac', writingMode: 'vertical-rl', marginTop: 8,
         }}>
           {t('filters')}
@@ -111,22 +111,22 @@ export function TaskFilterSidebar({
     }}>
       {/* header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 14px 12px' }}>
-        <span style={{
-          fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, fontWeight: 600, letterSpacing: '0.12em',
+        <span className="font-mono" style={{
+           fontSize: 10, fontWeight: 600, letterSpacing: '0.12em',
           textTransform: 'uppercase', color: '#2a3457',
         }}>
           {t('filters')}
         </span>
         <div style={{ display: 'flex', gap: 6 }}>
           {hasActive && (
-            <button onClick={onReset} style={{
-              fontFamily: 'IBM Plex Mono, monospace', fontSize: 9, color: '#5768ac', background: 'none', border: 'none',
+            <button className="font-mono" onClick={onReset} style={{
+               fontSize: 9, color: '#5768ac', background: 'none', border: 'none',
               cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.08em',
             }}>
               {t('reset')}
             </button>
           )}
-          <button onClick={onToggle} style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 12, color: '#5768ac', background: 'none', border: 'none', cursor: 'pointer' }}>
+          <button className="font-mono" onClick={onToggle} style={{  fontSize: 12, color: '#5768ac', background: 'none', border: 'none', cursor: 'pointer' }}>
             »
           </button>
         </div>

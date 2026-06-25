@@ -9,11 +9,11 @@ type PillProps<T extends string> = { value: T; current: T; label: string; onChan
 function Pill<T extends string>({ value, current, label, onChange }: PillProps<T>) {
   const active = value === current
   return (
-    <button
+    <button className="font-mono"
       type="button"
       onClick={() => onChange(value)}
       style={{
-        padding: '4px 10px', borderRadius: 20, fontSize: 10, fontFamily: 'IBM Plex Mono, monospace', cursor: 'pointer',
+        padding: '4px 10px', borderRadius: 20, fontSize: 10,  cursor: 'pointer',
         border: active ? '1.5px solid #2f4486' : '1px solid #eceadf',
         background: active ? 'rgba(47,68,134,0.1)' : 'transparent',
         color: active ? '#2f4486' : '#7e95d6', transition: 'all 0.1s',
@@ -99,7 +99,7 @@ export function AddTaskModal({ open, lab, subjectId, members, onClose, onAdded }
   return (
     <Modal open={open} onClose={handleClose}>
       <form onSubmit={handleSubmit} noValidate>
-        <div style={{ fontFamily: 'Roboto Slab, Georgia, serif', fontSize: 18, fontWeight: 600, color: '#15203f', marginBottom: 18 }}>
+        <div className="font-serif" style={{  fontSize: 18, fontWeight: 600, color: '#15203f', marginBottom: 18 }}>
           {t('modal.title')}
         </div>
 
@@ -167,16 +167,16 @@ export function AddTaskModal({ open, lab, subjectId, members, onClose, onAdded }
               onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addSubtaskDraft() } }}
               placeholder={t('modal.subtaskPlaceholder')} style={inputStyle}
             />
-            <button type="button" onClick={addSubtaskDraft}
+            <button className="font-mono" type="button" onClick={addSubtaskDraft}
               style={{ padding: '7px 12px', borderRadius: 5, border: '1px solid #eceadf', background: 'transparent',
-                fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: '#2f4486', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                 fontSize: 11, color: '#2f4486', cursor: 'pointer', whiteSpace: 'nowrap' }}>
               {t('modal.addSubtask')}
             </button>
           </div>
         </div>
 
         {error && (
-          <div style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: '#c0473b', marginBottom: 12 }}>{error}</div>
+          <div className="font-mono" style={{  fontSize: 11, color: '#c0473b', marginBottom: 12 }}>{error}</div>
         )}
 
         <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>

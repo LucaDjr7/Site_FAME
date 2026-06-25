@@ -20,7 +20,7 @@ type Props = {
 }
 
 const labelStyle: React.CSSProperties = {
-  fontFamily: 'IBM Plex Mono, monospace', fontSize: 9, fontWeight: 600, letterSpacing: '0.1em',
+   fontSize: 9, fontWeight: 600, letterSpacing: '0.1em',
   textTransform: 'uppercase', color: '#5768ac', marginBottom: 7,
 }
 
@@ -35,13 +35,13 @@ export function TaskModal({ task, subjectTitle, isMember, currentMemberId, onClo
   return (
     <Modal open={!!task} onClose={onClose}>
       {/* kicker = subject */}
-      <div style={{
-        fontFamily: 'IBM Plex Mono, monospace', fontSize: 8, letterSpacing: '0.14em', textTransform: 'uppercase',
+      <div className="font-mono" style={{
+         fontSize: 8, letterSpacing: '0.14em', textTransform: 'uppercase',
         color: '#5768ac', marginBottom: 6,
       }}>
         {subjectTitle}
       </div>
-      <div style={{ fontFamily: 'Roboto Slab, Georgia, serif', fontSize: 18, fontWeight: 600, color: '#15203f', marginBottom: 18 }}>
+      <div className="font-serif" style={{  fontSize: 18, fontWeight: 600, color: '#15203f', marginBottom: 18 }}>
         {task.titre}
       </div>
 
@@ -53,12 +53,12 @@ export function TaskModal({ task, subjectTitle, isMember, currentMemberId, onClo
             {STATUS_OPTS.map(s => {
               const active = task.statut === s
               return (
-                <button
+                <button className="font-mono"
                   key={s}
                   onClick={() => onPatch(task.id, { statut: s })}
                   style={{
                     display: 'flex', alignItems: 'center', gap: 5, padding: '5px 11px', borderRadius: 20,
-                    fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, cursor: 'pointer',
+                     fontSize: 10, cursor: 'pointer',
                     border: active ? `1.5px solid ${TASK_STATUS_COLOR[s]}` : '1px solid #eceadf',
                     background: active ? 'rgba(47,68,134,0.08)' : 'transparent',
                     color: active ? '#2a3457' : '#7e95d6',
@@ -71,7 +71,7 @@ export function TaskModal({ task, subjectTitle, isMember, currentMemberId, onClo
             })}
           </div>
         ) : (
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: '#2a3457' }}>
+          <span className="font-mono" style={{ display: 'inline-flex', alignItems: 'center', gap: 6,  fontSize: 11, color: '#2a3457' }}>
             <span style={{ width: 8, height: 8, borderRadius: '50%', background: TASK_STATUS_COLOR[task.statut] }} />
             {t(`status.${STATUS_KEY[task.statut]}`)}
           </span>
@@ -86,12 +86,12 @@ export function TaskModal({ task, subjectTitle, isMember, currentMemberId, onClo
             {DIFF_OPTS.map(d => {
               const active = task.difficulte === d
               return (
-                <button
+                <button className="font-mono"
                   key={d}
                   onClick={() => onPatch(task.id, { difficulte: d })}
                   style={{
                     display: 'flex', alignItems: 'center', gap: 6, padding: '5px 11px', borderRadius: 20,
-                    fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, cursor: 'pointer',
+                     fontSize: 10, cursor: 'pointer',
                     border: active ? '1.5px solid #2f4486' : '1px solid #eceadf',
                     background: active ? 'rgba(47,68,134,0.08)' : 'transparent',
                     color: active ? '#2f4486' : '#7e95d6',
@@ -106,7 +106,7 @@ export function TaskModal({ task, subjectTitle, isMember, currentMemberId, onClo
         ) : (
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
             <DiffDots level={DIFF_LEVEL[task.difficulte] ?? 0} />
-            <span style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, color: '#2a3457' }}>{t(`difficulty.${task.difficulte}`)}</span>
+            <span className="font-mono" style={{  fontSize: 10, color: '#2a3457' }}>{t(`difficulty.${task.difficulte}`)}</span>
           </span>
         )}
       </div>
@@ -156,15 +156,15 @@ export function TaskModal({ task, subjectTitle, isMember, currentMemberId, onClo
             ))}
           </div>
         ) : (
-          <div style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: '#7e95d6', marginBottom: isMember ? 8 : 0 }}>
+          <div className="font-mono" style={{  fontSize: 11, color: '#7e95d6', marginBottom: isMember ? 8 : 0 }}>
             {t('noAssignees')}
           </div>
         )}
         {isMember && (
-          <button
+          <button className="font-mono"
             onClick={() => onClaim(task.id)}
             style={{
-              fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, color: '#2f4486', background: 'none',
+               fontSize: 10, color: '#2f4486', background: 'none',
               border: '1px solid rgba(47,68,134,0.35)', borderRadius: 6, padding: '5px 11px', cursor: 'pointer', letterSpacing: '0.04em',
             }}
           >
