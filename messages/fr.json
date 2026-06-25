@@ -117,7 +117,8 @@
     "figurePlaceholder": "Emplacement figure — déposer le graphique ici",
     "tasksLink": "Tâches →",
     "prev": "Sujet précédent",
-    "next": "Sujet suivant"
+    "next": "Sujet suivant",
+    "commentPosted": "Commentaire publié"
   },
   "tasks": {
     "claimTask": "Se positionner",

@@ -38,6 +38,11 @@ export function CommentsPanel({ subjectId, isMember, initialComments, open, onTo
       const created: Comment = await res.json()
       setComments(prev => [...prev, created])
       setDraft('')
+      if (!isMember) {
+        setFirstName('')
+        setLastName('')
+        addToast(t('commentPosted'), 'success')
+      }
     } catch {
       addToast(tc('error'), 'error')
     } finally {
@@ -95,13 +100,23 @@ export function CommentsPanel({ subjectId, isMember, initialComments, open, onTo
                 <input value={lastName} onChange={e => setLastName(e.target.value)} placeholder={tc('lastName')} aria-label={t('commentNameLabel')} style={inputStyle} />
               </div>
             )}
-            <div style={{ display: 'flex', gap: 8 }}>
-              <input
-                value={draft} onChange={e => setDraft(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addComment() } }}
-                placeholder={t('addComment')} aria-label={t('commentTextLabel')} style={{ ...inputStyle, flex: 1 }}
-              />
-              <button onClick={addComment} disabled={posting} aria-label={tc('post')} style={{ flex: 'none', background: 'rgba(120,150,255,0.24)', border: '1px solid rgba(150,180,255,0.32)', color: '#fff', borderRadius: 8, cursor: 'pointer', fontSize: 14, width: 36 }}>↑</button>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
+              {isMember ? (
+                <textarea
+                  value={draft} onChange={e => setDraft(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); addComment() } }}
+                  placeholder={t('addComment')} aria-label={t('commentTextLabel')}
+                  rows={3}
+                  style={{ ...inputStyle, flex: 1, resize: 'none' }}
+                />
+              ) : (
+                <input
+                  value={draft} onChange={e => setDraft(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addComment() } }}
+                  placeholder={t('addComment')} aria-label={t('commentTextLabel')} style={{ ...inputStyle, flex: 1 }}
+                />
+              )}
+              <button onClick={addComment} disabled={posting} aria-label={tc('post')} style={{ flex: 'none', background: 'rgba(120,150,255,0.24)', border: '1px solid rgba(150,180,255,0.32)', color: '#fff', borderRadius: 8, cursor: 'pointer', fontSize: 14, width: 36, height: 36 }}>↑</button>
             </div>
           </div>
         </div>

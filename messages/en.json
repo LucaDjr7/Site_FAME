@@ -117,7 +117,8 @@
     "figurePlaceholder": "Figure placeholder — drop the chart here",
     "tasksLink": "Tasks →",
     "prev": "Previous subject",
-    "next": "Next subject"
+    "next": "Next subject",
+    "commentPosted": "Comment posted"
   },
   "tasks": {
     "claimTask": "Claim task",
