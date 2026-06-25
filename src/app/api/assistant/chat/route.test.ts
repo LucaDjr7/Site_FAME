@@ -20,8 +20,12 @@ vi.mock('@/lib/rag/guardrails', () => ({ detectInjection: () => ({ flagged: fals
 vi.mock('@/lib/rag/retrieve', () => ({ retrieve: async () => mocks.chunks }))
 vi.mock('@/lib/rag/system-prompt', () => ({ buildSystemPrompt: () => 'sys' }))
 vi.mock('@/lib/rag/flagged-log', () => ({ logFlagged: async () => {}, logUnanswered: async () => {} }))
+vi.mock('@/lib/supabase/server', () => ({ createServiceClient: async () => ({ from: () => ({}) }) }))
+vi.mock('@/lib/rag/tools', () => ({ toolDefs: () => [], runTool: async () => ({}) }))
 vi.mock('@/lib/llm', () => ({
   getChatProvider: () => ({
+    // complete: no tool calls → the tool loop breaks immediately, leaving stream() the single model call.
+    complete: async () => ({ content: null, toolCalls: [] }),
     stream: streamSpy.mockImplementation(async function* () { yield 'hello' }),
   }),
 }))

@@ -11,6 +11,9 @@ import { retrieve, type Tier } from '@/lib/rag/retrieve'
 import { buildSystemPrompt } from '@/lib/rag/system-prompt'
 import { logFlagged, logUnanswered } from '@/lib/rag/flagged-log'
 import { getChatProvider, type ChatMessage } from '@/lib/llm'
+import { createServiceClient } from '@/lib/supabase/server'
+import { toolDefs, runTool } from '@/lib/rag/tools'
+import type { ToolContext } from '@/lib/rag/tools/types'
 
 const MAX_TURNS = 8
 const MAX_QUESTION_LEN = 2000
@@ -85,6 +88,22 @@ export async function POST(req: NextRequest) {
     ...trimmed,
   ]
   const sources = chunks.map(c => ({ source_type: c.source_type, source_id: c.source_id, labo: c.labo }))
+
+  // 7bis. Boucle d'outils (max 3 tours) avant le stream final.
+  const service = await createServiceClient()
+  const toolCtx: ToolContext = { tier, service: service as unknown as ToolContext['service'] }
+  const defs = toolDefs()
+  for (let i = 0; i < 3; i++) {
+    const completion = await provider.complete(chatMessages, { tools: defs, maxTokens: 600 })
+    if (completion.toolCalls.length === 0) break
+    chatMessages.push({ role: 'assistant', content: completion.content, tool_calls: completion.toolCalls.map(tc => ({ id: tc.id, type: 'function', function: { name: tc.name, arguments: tc.arguments } })) })
+    for (const call of completion.toolCalls) {
+      let parsed: Record<string, unknown> = {}
+      try { parsed = JSON.parse(call.arguments) as Record<string, unknown> } catch { parsed = {} }
+      const result = await runTool(call.name, parsed, toolCtx)
+      chatMessages.push({ role: 'tool', tool_call_id: call.id, name: call.name, content: JSON.stringify(result) })
+    }
+  }
 
   const stream = new ReadableStream({
     async start(controller) {
