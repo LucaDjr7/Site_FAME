@@ -180,7 +180,7 @@ export function TaskFilterSidebar({
           const active = fDiff.has(key)
           return (
             <button key={key} onClick={() => onToggleDiff(key)} aria-pressed={active} style={{ ...btnBase, ...(active ? ACTIVE : INACTIVE) }}>
-              <DiffDots level={DIFF_LEVEL[key]} />
+              <DiffDots level={DIFF_LEVEL[key] ?? 0} />
               <span style={{ flex: 1, fontSize: 10 }}>{t(`difficulty.${key}`)}</span>
               <span style={{ fontSize: 9, opacity: 0.65 }}>{count}</span>
             </button>

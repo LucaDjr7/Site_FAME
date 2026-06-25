@@ -22,8 +22,8 @@ export function Modal({ open, onClose, children, title }: Props) {
       if (e.key === 'Escape') { onCloseRef.current(); return }
       if (e.key !== 'Tab' || !panel) return
       const f = panel.querySelectorAll<HTMLElement>('button, [href], input, textarea, select, [tabindex]:not([tabindex="-1"])')
-      if (f.length === 0) return
       const first = f[0], last = f[f.length - 1]
+      if (!first || !last) return
       if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus() }
       else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus() }
     }

@@ -97,7 +97,7 @@ export function TaskModal({ task, subjectTitle, isMember, currentMemberId, onClo
                     color: active ? '#2f4486' : '#7e95d6',
                   }}
                 >
-                  <DiffDots level={DIFF_LEVEL[d]} />
+                  <DiffDots level={DIFF_LEVEL[d] ?? 0} />
                   {t(`difficulty.${d}`)}
                 </button>
               )
@@ -105,7 +105,7 @@ export function TaskModal({ task, subjectTitle, isMember, currentMemberId, onClo
           </div>
         ) : (
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-            <DiffDots level={DIFF_LEVEL[task.difficulte]} />
+            <DiffDots level={DIFF_LEVEL[task.difficulte] ?? 0} />
             <span style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, color: '#2a3457' }}>{t(`difficulty.${task.difficulte}`)}</span>
           </span>
         )}

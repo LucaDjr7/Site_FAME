@@ -49,7 +49,7 @@ export function TaskCard({ task, isMember, currentMemberId, editMode, onOpen, on
             {t(`status.${STATUS_KEY[task.statut]}`)}
           </span>
         </span>
-        <DiffDots level={DIFF_LEVEL[task.difficulte]} />
+        <DiffDots level={DIFF_LEVEL[task.difficulte] ?? 0} />
       </div>
 
       {/* title */}
