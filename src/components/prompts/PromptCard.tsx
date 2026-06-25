@@ -69,7 +69,6 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
   }
 
   const cardStyle: React.CSSProperties = {
-    background: '#fbf9f3',
     borderRadius: 11,
     boxShadow:
       '0 20px 50px -28px rgba(0,5,30,0.45), inset 0 0 0 1px rgba(0,0,0,0.05)',
@@ -85,7 +84,7 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
     borderRadius: 8,
     border: danger ? '1px solid rgba(220,68,55,0.2)' : '1px solid rgba(20,40,90,0.14)',
     background: '#fff',
-    color: danger ? '#c0473b' : '#3a4d86',
+    color: danger ? undefined : '#3a4d86',
     fontSize: danger ? 15 : 13,
     cursor: 'pointer',
     flexShrink: 0,
@@ -105,7 +104,7 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
   if (editing) {
     return (
       <>
-        <div style={cardStyle}>
+        <div className="bg-fame-sand" style={cardStyle}>
           {/* Edit header */}
           <div
             style={{
@@ -175,15 +174,13 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
               >
                 {t('cancel')}
               </button>
-              <button className="font-serif"
+              <button className="font-serif bg-fame-blue text-fame-text-light"
                 onClick={handleSave}
                 disabled={saving}
                 style={{
                   padding: '9px 18px',
                   borderRadius: 9,
                   border: 'none',
-                  background: '#2f4486',
-                  color: '#eef3ff',
                   fontSize: 13,
                   fontWeight: 600,
                   cursor: 'pointer',
@@ -212,7 +209,7 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
   // View state
   return (
     <>
-      <div style={cardStyle}>
+      <div className="bg-fame-sand" style={cardStyle}>
         {/* Card header */}
         <div
           style={{
@@ -253,14 +250,13 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
               {t(`types.${meta.i18nKey}` as Parameters<typeof t>[0])}
             </div>
             {prompt.is_transversal && (
-              <span className="font-mono" style={{
+              <span className="font-mono text-fame-teal" style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 marginLeft: 7,
                 fontSize: 9.5,
                 textTransform: 'uppercase',
                 letterSpacing: '0.1em',
-                color: '#1e9b7e',
                 background: 'rgba(30,155,126,0.08)',
                 border: '1px solid rgba(30,155,126,0.2)',
                 borderRadius: 20,
@@ -300,6 +296,7 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
               ✎
             </button>
             <button
+              className="text-fame-red"
               onClick={() => setConfirmOpen(true)}
               title={t('delete')}
               style={iconBtnStyle(true)}
@@ -312,13 +309,13 @@ export function PromptCard({ prompt, onSaved, onDeleted, onCopied, startEditing 
         {/* Card body */}
         <div className="font-mono" style={{ padding: '14px 18px 16px' }}>
           <pre
+            className="text-fame-text-body"
             style={{
               margin: 0,
               whiteSpace: 'pre-wrap',
               wordBreak: 'break-word',
               fontSize: 12.5,
               lineHeight: 1.7,
-              color: '#2a3457',
             }}
           >
             {prompt.texte}

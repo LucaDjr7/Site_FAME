@@ -125,22 +125,20 @@ export function PromptLibrary({ lab }: Props) {
       >
         {/* Left: kicker + title */}
         <div>
-          <div className="font-mono"
+          <div className="font-mono text-fame-text-muted"
             style={{
               fontSize: 9,
               letterSpacing: '0.14em',
               textTransform: 'uppercase',
-              color: '#7e95d6',
               marginBottom: 3,
             }}
           >
             {t('kicker', { lab: labLabel })}
           </div>
-          <h1 className="font-serif"
+          <h1 className="font-serif text-fame-text-dark"
             style={{
               fontSize: 20,
               fontWeight: 600,
-              color: '#15203f',
               margin: 0,
             }}
           >
@@ -149,14 +147,12 @@ export function PromptLibrary({ lab }: Props) {
         </div>
 
         {/* Right: new prompt button */}
-        <button className="font-mono"
+        <button className="font-mono bg-fame-blue text-fame-text-light"
           onClick={addPrompt}
           style={{
             padding: '6px 14px',
             borderRadius: 6,
             border: 'none',
-            background: '#2f4486',
-            color: '#eef3ff',
             fontSize: 10,
             cursor: 'pointer',
             letterSpacing: '0.06em',
@@ -181,13 +177,12 @@ export function PromptLibrary({ lab }: Props) {
             padding: '22px 18px 26px',
           }}
         >
-          <h2 className="font-serif"
+          <h2 className="font-serif text-fame-blue"
             style={{
               fontSize: 13,
               fontWeight: 600,
               textTransform: 'uppercase',
               letterSpacing: '0.2em',
-              color: '#2f4486',
               margin: '0 0 4px',
             }}
           >
@@ -315,10 +310,9 @@ export function PromptLibrary({ lab }: Props) {
 
             {/* Loading */}
             {loading ? (
-              <div className="font-mono"
+              <div className="font-mono text-fame-text-muted"
                 style={{
                   fontSize: 12,
-                  color: '#7e95d6',
                   textAlign: 'center',
                   paddingTop: 40,
                 }}
@@ -356,12 +350,11 @@ export function PromptLibrary({ lab }: Props) {
 
             {/* Add a prompt button at bottom */}
             {!loading && (
-              <button className="font-mono"
+              <button className="font-mono text-fame-blue"
                 onClick={addPrompt}
                 style={{
                   border: '1px dashed rgba(47,68,134,0.4)',
                   background: 'rgba(47,68,134,0.04)',
-                  color: '#2f4486',
                   borderRadius: 10,
                   padding: '11px 18px',
                   fontSize: 12,
