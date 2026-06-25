@@ -558,12 +558,11 @@ export function PublicationList({ lab, isMember }: Props) {
               justifyContent: 'space-between',
               marginBottom: 16,
             }}>
-              <span className="font-mono" style={{
+              <span className="font-mono text-fame-blue" style={{
                 fontSize: 9,
                 fontWeight: 700,
                 letterSpacing: '0.14em',
                 textTransform: 'uppercase',
-                color: '#2f4486',
               }}>
                 {t('filters')}
               </span>
@@ -724,12 +723,11 @@ export function PublicationList({ lab, isMember }: Props) {
 function FilterSection({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div style={{ marginBottom: 20 }}>
-      <div className="font-mono" style={{
+      <div className="font-mono text-fame-blue" style={{
         fontSize: 9,
         fontWeight: 700,
         letterSpacing: '0.12em',
         textTransform: 'uppercase',
-        color: '#2f4486',
         marginBottom: 8,
       }}>
         {label}
