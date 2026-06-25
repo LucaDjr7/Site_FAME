@@ -1,5 +1,4 @@
-// Interface fournisseur LLM — swappable par env. P1 : embeddings uniquement.
-// (ChatProvider sera ajouté en P2.)
+// Interfaces fournisseur LLM — swappable par env. P1 : EmbeddingProvider. P2 : ChatProvider.
 export interface EmbeddingProvider {
   embed(texts: string[]): Promise<number[][]>
 }

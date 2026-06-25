@@ -13,7 +13,7 @@ function sseResponse(chunks: string[]): typeof fetch {
 }
 
 describe('createOpenAIChatProvider.stream', () => {
-  it('yield les deltas de texte et s’arrête sur [DONE]', async () => {
+  it("yield les deltas de texte et s'arrete sur [DONE]", async () => {
     const fetchImpl = sseResponse([
       'data: {"choices":[{"delta":{"content":"Hel"}}]}\n\n',
       'data: {"choices":[{"delta":{"content":"lo"}}]}\n\n',
@@ -23,5 +23,14 @@ describe('createOpenAIChatProvider.stream', () => {
     let out = ''
     for await (const delta of p.stream([{ role: 'user', content: 'hi' }])) out += delta
     expect(out).toBe('Hello')
+  })
+
+  it("leve une erreur quand la reponse est non-ok (status 500)", async () => {
+    const fetchImpl = vi.fn(async () => new Response('err', { status: 500 })) as unknown as typeof fetch
+    const p = createOpenAIChatProvider({ apiKey: 'sk', model: 'm', fetchImpl })
+    await expect(
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      (async () => { for await (const _chunk of p.stream([{ role: 'user', content: 'hi' }])) {} })()
+    ).rejects.toThrow(/OpenAI chat failed/)
   })
 })
