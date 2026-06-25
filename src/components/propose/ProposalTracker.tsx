@@ -70,19 +70,16 @@ export function ProposalTracker({ lab, isMember, refreshKey }: Props) {
         gap: 8,
         marginBottom: 10,
       }}>
-        <span className="font-mono" style={{
+        <span className="font-mono text-fame-blue" style={{
           fontSize: 10,
           letterSpacing: '0.2em',
           textTransform: 'uppercase' as const,
-          color: '#2f4486',
           fontWeight: 600,
         }}>
           {heading}
         </span>
         {proposals.length > 0 && (
-          <span className="font-mono" style={{
-            background: '#2f4486',
-            color: '#eef3ff',
+          <span className="font-mono bg-fame-blue text-fame-text-light" style={{
             borderRadius: 99,
             padding: '1px 7px',
             fontSize: 10,
@@ -131,10 +128,9 @@ export function ProposalTracker({ lab, isMember, refreshKey }: Props) {
               <ProposalStatusBadge status={p.statut} label={ts(p.statut)} />
             </div>
             {/* Title */}
-            <p className="font-serif" style={{
+            <p className="font-serif text-fame-text-dark" style={{
               fontSize: 13.5,
               fontWeight: 600,
-              color: '#15203f',
               margin: '0 0 7px',
               lineHeight: 1.4,
             }}>
@@ -142,9 +138,8 @@ export function ProposalTracker({ lab, isMember, refreshKey }: Props) {
             </p>
             {/* Footer */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' as const }}>
-              <span className="font-mono" style={{
+              <span className="font-mono text-fame-blue" style={{
                 background: 'rgba(47,68,134,0.08)',
-                color: '#2f4486',
                 borderRadius: 5,
                 padding: '2px 7px',
                 fontSize: 9,

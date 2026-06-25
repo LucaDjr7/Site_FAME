@@ -39,12 +39,10 @@ export function ProposePageClient({ lab, isMember }: Props) {
       }}>
         <div style={{ maxWidth: 640, margin: '0 auto' }}>
           {/* Form card */}
-          <div style={{
-            background: '#fbf9f3',
+          <div className="bg-fame-sand text-fame-text-dark" style={{
             borderRadius: 10,
             boxShadow: '0 30px 70px -28px rgba(0,5,30,0.45), inset 0 0 0 1px rgba(0,0,0,0.05)',
             padding: '30px 34px 34px',
-            color: '#15203f',
           }}>
             {/* Eyebrow kicker */}
             <p className="font-mono" style={{
@@ -58,10 +56,9 @@ export function ProposePageClient({ lab, isMember }: Props) {
             </p>
 
             {/* Title */}
-            <h2 className="font-serif" style={{
+            <h2 className="font-serif text-fame-text-dark" style={{
               fontSize: 24,
               fontWeight: 700,
-              color: '#15203f',
               margin: '0 0 8px',
             }}>
               {t('title')}

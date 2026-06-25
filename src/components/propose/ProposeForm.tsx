@@ -69,7 +69,6 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
     borderRadius: 9,
     padding: '11px 13px',
     fontSize: 14,
-    color: '#15203f',
     outline: 'none',
     boxShadow: focusedField === field ? '0 0 0 3px rgba(47,68,134,0.12)' : 'none',
     transition: 'border-color 0.15s, box-shadow 0.15s',
@@ -121,7 +120,7 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
       {/* Title */}
       <label style={{ display: 'flex', flexDirection: 'column' }}>
         <span className="font-mono" style={labelStyle}>{t('fieldTitle')} *</span>
-        <input className="font-mono"
+        <input className="font-mono text-fame-text-dark"
           type="text"
           value={titre}
           onChange={e => setTitre(e.target.value)}
@@ -134,7 +133,7 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
       {/* Domain */}
       <label style={{ display: 'flex', flexDirection: 'column' }}>
         <span className="font-mono" style={labelStyle}>{t('fieldDomain')}</span>
-        <select className="font-mono"
+        <select className="font-mono text-fame-text-dark"
           value={domaine}
           onChange={e => setDomaine(e.target.value)}
           onFocus={() => setFocusedField('domaine')}
@@ -168,7 +167,7 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
       {/* Description */}
       <label style={{ display: 'flex', flexDirection: 'column' }}>
         <span className="font-mono" style={labelStyle}>{t('fieldDescription')} *</span>
-        <textarea className="font-mono"
+        <textarea className="font-mono text-fame-text-dark"
           value={description}
           onChange={e => setDescription(e.target.value)}
           onFocus={() => setFocusedField('description')}
@@ -182,7 +181,7 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
       <div style={{ display: 'flex', gap: 14 }}>
         <label style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <span className="font-mono" style={labelStyle}>{t('fieldFirstName')} *</span>
-          <input className="font-mono"
+          <input className="font-mono text-fame-text-dark"
             type="text"
             value={prenom}
             onChange={e => setPrenom(e.target.value)}
@@ -193,7 +192,7 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
         </label>
         <label style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <span className="font-mono" style={labelStyle}>{t('fieldLastName')} *</span>
-          <input className="font-mono"
+          <input className="font-mono text-fame-text-dark"
             type="text"
             value={nom}
             onChange={e => setNom(e.target.value)}
@@ -207,7 +206,7 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
       {/* Email (optional) */}
       <label style={{ display: 'flex', flexDirection: 'column' }}>
         <span className="font-mono" style={labelStyle}>{t('fieldEmail')}</span>
-        <input className="font-mono"
+        <input className="font-mono text-fame-text-dark"
           type="email"
           value={email}
           onChange={e => setEmail(e.target.value)}
@@ -229,12 +228,11 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
 
       {/* Submit button */}
       <div>
-        <button className="font-serif"
+        <button className={`font-serif text-fame-text-light ${saving ? '' : 'bg-fame-blue'}`}
           type="submit"
           disabled={saving}
           style={{
-            background: saving ? 'rgba(47,68,134,0.5)' : '#2f4486',
-            color: '#eef3ff',
+            background: saving ? 'rgba(47,68,134,0.5)' : undefined,
             padding: '12px 22px',
             borderRadius: 10,
             border: 'none',
