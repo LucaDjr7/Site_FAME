@@ -2,7 +2,7 @@
 
 _Mettre à jour ce fichier après chaque tâche complétée._
 
-Dernière mise à jour : 2026-06-24
+Dernière mise à jour : 2026-06-25
 
 ---
 
@@ -13,6 +13,13 @@ Dernière mise à jour : 2026-06-24
 > - **2 fixes UI livrés cette session** (`ed5d951`, commit direct sur `main`) : (1) bouton « confirmer » du `ConfirmDialog` invisible (blanc/blanc) → fond rouge rétabli ; (2) croix de suppression des tâches rognées → padding ajouté. Détails dans le Journal de Décisions.
 > - **✅ Bug systémique Tailwind CORRIGÉ** (`29d5f62`, commit direct sur `main`) : ajout de `@config "../../tailwind.config.ts"` dans `globals.css` → en Tailwind v4 le config JS n'est plus chargé sans cette directive, donc toutes les classes `bg-fame-*` / `text-fame-*` / `border-fame-*` ne généraient aucun CSS (12 tokens couleur morts). Désormais générées (vérifié dans le CSS compilé). Re-vérif des 9 fichiers consommateurs faite (`auth/login`, `auth/activate`, `ui/StatusBadge`, `ui/EditModeToggle`, `ui/ConfirmDialog`, layouts `[lab]`/`admin`, `privacy`, `layout/LanguageSwitcher`) : réactivation **sûre partout** — ils stylent en `className` seul, aucun inline écrasé ; corrige des éléments jusque-là invisibles (boutons login/activate, écran succès activation, badges de proposition tracker+admin, état actif du sélecteur de langue). `StatusBadge` côté sujets/tâches + `EditModeToggle` = code mort (non monté) → sans effet visible. `ConfirmDialog` repassé sur les tokens sémantiques (contournement `bg-[#hex]` de `ed5d951` retiré). **⚠️ Ne PAS supprimer la ligne `@config`** sous peine de re-casser tous les `fame-*`. Voir mémoire `tailwind-fame-tokens-dead`.
 > - **Prochaines pistes ouvertes** (non démarrées) : domaines **D4–D7 de l'audit** (dette technique, i18n résiduel, a11y/SEO, config) → Vagues 2–4 à cadrer (brainstorming → spec → plan) ; **déploiement (Task 20)**.
+
+> ✅ **Vague 2 — a11y / SEO / perf / UX (2026-06-25) TERMINÉE** sur `vague2` (branchée sur `main` `5e634bb`, subagent-driven, 8 tâches, 12 commits `d9edef9..bd81018`). Implementers/reviewers UI **Sonnet 4.6**, revue finale whole-branch **Opus 4.8**.
+> - **S2** `sitemap.ts` + `robots.ts` (toutes les pages publiques, dont `/tasks`). **S1/S3/S4/S5** `generateMetadata` localisée par page + `hreflang` + OpenGraph (paper valide le slug labo avant requête).
+> - **A1/A6/U6** Modal accessible (role=dialog, focus-trap, restitution du focus, × i18n, `onClose` via ref stable). **A7** Toast `role=status`/`aria-live`. **A2/A11/U7/U8** labels `htmlFor`/`id` + aria sur formulaires & filtres. **A3/A4/A5/A8/A9/A12/F-HC-03** interactifs opérables au clavier + ARIA + label globe i18n.
+> - **P1-P7/A10** perf : rAF en pause sur onglet caché, `prefers-reduced-motion`, `preconnect`, `next/image`, `useMemo`, keyframes déplacées dans `globals.css`.
+> - **U1-U5** anti double-submit, `loading.tsx` (skeletons `[lab]/` + `paper/[id]/`), toast succès commentaire visiteur, textarea commentaire admin, PaperNav neutralisé en sujet unique.
+> - **92 tests verts, `tsc`/`lint` à 0, build OK.** Parité i18n stricte vérifiée (383 clés en/fr identiques). `@config` intact. Revue finale Opus : **« Ready to merge »** (0 Critical/Important ; restes Minor cosmétiques loggés au ledger `.superpowers/sdd/progress.md`). **PR `vague2 → main` à ouvrir.** Suivront Vague 3 (durcissement sécu/CI, Opus) puis Vague 4 (dette/i18n, Sonnet), branches chaînées.
 
 **Phase de finition pré-prod (A+B+C) TERMINÉE** sur `feat/p4-pre-prod` → **PR #4** sur `main`. Audit fidélité graphique des 9 pages + TopBar (A0–A9), restyle admin immersif (B1) + nav admin vérifiée (B2), lot polish/dette technique (C1–C6). `tsc --noEmit` + `lint` (**0 warning**) + `npm run build` clean. Reste **D — Déploiement** (Task 20, plan superpowers dédié à venir).
 
