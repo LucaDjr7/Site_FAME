@@ -7,6 +7,9 @@ export async function POST(req: NextRequest) {
   if (!sujet_id || !texte?.trim()) {
     return NextResponse.json({ error: 'sujet_id and texte required' }, { status: 400 })
   }
+  if (typeof texte !== 'string' || texte.length > 4000) {
+    return NextResponse.json({ error: 'texte too long' }, { status: 400 })
+  }
 
   const session = await getSession()
   const service = await createServiceClient()
@@ -22,6 +25,9 @@ export async function POST(req: NextRequest) {
   } else {
     if (!visitor_prenom?.trim() || !visitor_nom?.trim()) {
       return NextResponse.json({ error: 'First name and last name required for visitors' }, { status: 400 })
+    }
+    if (visitor_prenom.trim().length > 80 || visitor_nom.trim().length > 80) {
+      return NextResponse.json({ error: 'visitor name too long' }, { status: 400 })
     }
     auteur_type = 'visitor'
     auteur_nom = `${visitor_prenom.trim()} ${visitor_nom.trim()}`
