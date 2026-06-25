@@ -9,14 +9,15 @@ type PillProps<T extends string> = { value: T; current: T; label: string; onChan
 function Pill<T extends string>({ value, current, label, onChange }: PillProps<T>) {
   const active = value === current
   return (
-    <button className="font-mono"
+    <button
+      className={`font-mono ${active ? 'text-fame-blue border-fame-blue' : 'text-fame-text-muted border-fame-ecru'}`}
       type="button"
       onClick={() => onChange(value)}
       style={{
         padding: '4px 10px', borderRadius: 20, fontSize: 10,  cursor: 'pointer',
-        border: active ? '1.5px solid #2f4486' : '1px solid #eceadf',
+        border: active ? '1.5px solid' : '1px solid',
         background: active ? 'rgba(47,68,134,0.1)' : 'transparent',
-        color: active ? '#2f4486' : '#7e95d6', transition: 'all 0.1s',
+        transition: 'all 0.1s',
       }}
     >
       {label}
@@ -99,7 +100,7 @@ export function AddTaskModal({ open, lab, subjectId, members, onClose, onAdded }
   return (
     <Modal open={open} onClose={handleClose}>
       <form onSubmit={handleSubmit} noValidate>
-        <div className="font-serif" style={{  fontSize: 18, fontWeight: 600, color: '#15203f', marginBottom: 18 }}>
+        <div className="font-serif text-fame-text-dark" style={{  fontSize: 18, fontWeight: 600, marginBottom: 18 }}>
           {t('modal.title')}
         </div>
 
@@ -152,10 +153,10 @@ export function AddTaskModal({ open, lab, subjectId, members, onClose, onAdded }
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 8 }}>
               {subtasks.map((s, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ flex: 1, fontSize: 12, color: '#2a3457' }}>{s}</span>
+                  <span className="text-fame-text-body" style={{ flex: 1, fontSize: 12 }}>{s}</span>
                   <button type="button" onClick={() => setSubtasks(prev => prev.filter((_, j) => j !== i))}
                     aria-label={t('delete.confirm')}
-                    style={{ background: 'none', border: 'none', color: '#c0473b', cursor: 'pointer', fontSize: 13 }}>×</button>
+                    className="text-fame-red" style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13 }}>×</button>
                 </div>
               ))}
             </div>
@@ -167,16 +168,16 @@ export function AddTaskModal({ open, lab, subjectId, members, onClose, onAdded }
               onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addSubtaskDraft() } }}
               placeholder={t('modal.subtaskPlaceholder')} style={inputStyle}
             />
-            <button className="font-mono" type="button" onClick={addSubtaskDraft}
-              style={{ padding: '7px 12px', borderRadius: 5, border: '1px solid #eceadf', background: 'transparent',
-                 fontSize: 11, color: '#2f4486', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+            <button className="font-mono text-fame-blue border-fame-ecru" type="button" onClick={addSubtaskDraft}
+              style={{ padding: '7px 12px', borderRadius: 5, border: '1px solid', background: 'transparent',
+                 fontSize: 11, cursor: 'pointer', whiteSpace: 'nowrap' }}>
               {t('modal.addSubtask')}
             </button>
           </div>
         </div>
 
         {error && (
-          <div className="font-mono" style={{  fontSize: 11, color: '#c0473b', marginBottom: 12 }}>{error}</div>
+          <div className="font-mono text-fame-red" style={{  fontSize: 11, marginBottom: 12 }}>{error}</div>
         )}
 
         <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>

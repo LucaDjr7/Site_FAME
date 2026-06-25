@@ -134,22 +134,22 @@ export function KanbanBoard({ lab, locale, subjects, initialTasks, members, isMe
         {/* Secondary toolbar */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 24px 12px', flexShrink: 0, borderBottom: '1px solid rgba(20,40,90,0.1)' }}>
           <div>
-            <div className="font-mono" style={{
+            <div className="font-mono text-fame-text-muted" style={{
                fontSize: 9, letterSpacing: '0.14em', textTransform: 'uppercase',
-              color: '#7e95d6', marginBottom: 3,
+              marginBottom: 3,
             }}>
               {t('kicker')}
             </div>
-            <h1 className="font-serif" style={{  fontSize: 20, fontWeight: 600, color: '#15203f', margin: 0 }}>
+            <h1 className="font-serif text-fame-text-dark" style={{  fontSize: 20, fontWeight: 600, margin: 0 }}>
               {t('pageTitle')}
             </h1>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <input className="font-mono"
+            <input className="font-mono text-fame-text-body border-fame-ecru"
               type="search" value={q} onChange={e => setQ(e.target.value)} placeholder={t('search')} aria-label={t('searchLabel')}
               style={{
-                padding: '6px 12px', borderRadius: 6, border: '1px solid #eceadf', background: '#fff',
-                color: '#2a3457',  fontSize: 11, width: 180, outline: 'none',
+                padding: '6px 12px', borderRadius: 6, border: '1px solid', background: '#fff',
+                 fontSize: 11, width: 180, outline: 'none',
               }}
             />
             {isMember && (
@@ -173,7 +173,7 @@ export function KanbanBoard({ lab, locale, subjects, initialTasks, members, isMe
         <div style={{ flex: 1, display: 'flex', overflow: 'hidden', minHeight: 0 }}>
           <div style={{ flex: 1, overflowX: 'auto', overflowY: 'hidden', padding: '18px 28px 0', display: 'flex', gap: 22, alignItems: 'stretch' }}>
             {visibleSubjects.length === 0 ? (
-              <div className="font-mono" style={{  fontSize: 13, color: '#7e95d6', margin: 'auto' }}>
+              <div className="font-mono text-fame-text-muted" style={{  fontSize: 13, margin: 'auto' }}>
                 {t('empty')}
               </div>
             ) : (
@@ -224,20 +224,20 @@ export function KanbanBoard({ lab, locale, subjects, initialTasks, members, isMe
             <span className="font-mono" style={{  fontSize: 11, color: '#6b7596' }}>
               {t('countTasks', { n: totalCount })} · {t('countOpen', { n: openCount })}
             </span>
-            <button className="font-mono"
+            <button className={`font-mono ${hideDone ? 'text-fame-blue' : ''}`}
               onClick={() => setHideDone(v => !v)}
               style={{
                 display: 'flex', alignItems: 'center', gap: 5, background: 'none', border: 'none', cursor: 'pointer',
-                 fontSize: 10, color: hideDone ? '#2f4486' : 'rgba(87,104,172,0.7)', padding: 0,
+                 fontSize: 10, color: hideDone ? undefined : 'rgba(87,104,172,0.7)', padding: 0,
               }}
             >
               <span style={{ fontSize: 12 }}>{hideDone ? '☑' : '☐'}</span>
               {t('hideCompleted')}
             </button>
           </div>
-          <Link className="font-mono"
+          <Link className="font-mono text-fame-slate"
             href={`/${locale}/${lab}`}
-            style={{  fontSize: 10, color: '#5768ac', textDecoration: 'none', letterSpacing: '0.06em' }}
+            style={{  fontSize: 10, textDecoration: 'none', letterSpacing: '0.06em' }}
           >
             {t('subjectsLink')}
           </Link>
