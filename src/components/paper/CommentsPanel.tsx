@@ -65,11 +65,11 @@ export function CommentsPanel({ subjectId, isMember, initialComments, open, onTo
       flex: 'none', pointerEvents: 'auto', background: 'rgba(47,68,134,0.84)', backdropFilter: 'blur(12px)',
       border: '1px solid rgba(150,180,255,0.18)', borderRadius: 14, boxShadow: '0 22px 60px -18px rgba(0,5,30,0.75)', overflow: 'hidden',
     }}>
-      <button onClick={onToggleOpen} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', background: 'none', border: 'none', cursor: 'pointer', color: '#eef3ff' }}>
+      <button onClick={onToggleOpen} className="text-fame-text-light" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', background: 'none', border: 'none', cursor: 'pointer' }}>
         <span style={{ display: 'flex', alignItems: 'center', gap: 9, fontSize: 13, fontWeight: 600, letterSpacing: '0.04em' }}>
           <span style={{ width: 8, height: 8, borderRadius: 2, background: '#f4b740' }} />{t('comments')}
         </span>
-        <span className="font-mono" style={{  fontSize: 11, color: '#7e95d6' }}>{comments.length} {open ? '▾' : '▸'}</span>
+        <span className="font-mono text-fame-text-muted" style={{  fontSize: 11 }}>{comments.length} {open ? '▾' : '▸'}</span>
       </button>
 
       {open && (
@@ -81,29 +81,29 @@ export function CommentsPanel({ subjectId, isMember, initialComments, open, onTo
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: 7 }}>
                     <span style={{ fontSize: 11.5, fontWeight: 600, color: '#dfe7fb' }}>{c.auteur_nom}</span>
-                    <span className="font-mono" style={{  fontSize: 9, color: '#7e95d6' }}>{new Date(c.created_at).toLocaleDateString()}</span>
+                    <span className="font-mono text-fame-text-muted" style={{  fontSize: 9 }}>{new Date(c.created_at).toLocaleDateString()}</span>
                     {isMember && (
-                      <button className="font-mono" onClick={() => remove(c.id)} style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer',  fontSize: 9, color: '#ff6f61' }}>{tc('delete')}</button>
+                      <button className="font-mono text-fame-coral" onClick={() => remove(c.id)} style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer',  fontSize: 9 }}>{tc('delete')}</button>
                     )}
                   </div>
                   <p style={{ margin: '3px 0 0', fontSize: 12, lineHeight: 1.45, color: '#b9c5ec' }}>{c.texte}</p>
                 </div>
               </div>
             ))}
-            {comments.length === 0 && <p className="font-mono" style={{  fontSize: 10, color: '#7e95d6', padding: '4px 2px' }}>{t('noComments')}</p>}
+            {comments.length === 0 && <p className="font-mono text-fame-text-muted" style={{  fontSize: 10, padding: '4px 2px' }}>{t('noComments')}</p>}
           </div>
 
           <div style={{ padding: '10px 12px 13px', borderTop: '1px solid rgba(150,180,255,0.12)', display: 'flex', flexDirection: 'column', gap: 8 }}>
             {!isMember && (
               <div style={{ display: 'flex', gap: 8 }}>
-                <input className="font-mono" value={firstName} onChange={e => setFirstName(e.target.value)} placeholder={tc('firstName')} aria-label={t('commentNameLabel')} style={inputStyle} />
-                <input className="font-mono" value={lastName} onChange={e => setLastName(e.target.value)} placeholder={tc('lastName')} aria-label={t('commentNameLabel')} style={inputStyle} />
+                <input className="font-mono text-fame-text-light" value={firstName} onChange={e => setFirstName(e.target.value)} placeholder={tc('firstName')} aria-label={t('commentNameLabel')} style={inputStyle} />
+                <input className="font-mono text-fame-text-light" value={lastName} onChange={e => setLastName(e.target.value)} placeholder={tc('lastName')} aria-label={t('commentNameLabel')} style={inputStyle} />
               </div>
             )}
             <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
               {isMember ? (
                 <textarea
-                  className="font-mono"
+                  className="font-mono text-fame-text-light"
                   value={draft} onChange={e => setDraft(e.target.value)}
                   placeholder={t('addComment')} aria-label={t('commentTextLabel')}
                   rows={3}
@@ -111,7 +111,7 @@ export function CommentsPanel({ subjectId, isMember, initialComments, open, onTo
                 />
               ) : (
                 <input
-                  className="font-mono"
+                  className="font-mono text-fame-text-light"
                   value={draft} onChange={e => setDraft(e.target.value)}
                   onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addComment() } }}
                   placeholder={t('addComment')} aria-label={t('commentTextLabel')} style={{ ...inputStyle, flex: 1 }}
@@ -128,6 +128,6 @@ export function CommentsPanel({ subjectId, isMember, initialComments, open, onTo
 
 const inputStyle: React.CSSProperties = {
   minWidth: 0, background: 'rgba(31,46,92,0.6)', border: '1px solid rgba(150,180,255,0.16)',
-  borderRadius: 8, outline: 'none', color: '#eef3ff', 
+  borderRadius: 8, outline: 'none',
   fontSize: 11, padding: '8px 10px',
 }

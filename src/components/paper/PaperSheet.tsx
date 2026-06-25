@@ -17,11 +17,10 @@ export function PaperSheet({ subject, members, labName, locale }: Props) {
     .filter((m): m is MemberRef => !!m)
 
   return (
-    <article className="paper-scroll" style={{
+    <article className="paper-scroll bg-fame-sand text-fame-text-dark" style={{
       position: 'absolute', left: '50%', top: 118, bottom: 124, transform: 'translateX(-50%)',
-      width: 'min(500px,40vw)', pointerEvents: 'auto', overflowY: 'auto', background: '#fbf9f3',
+      width: 'min(500px,40vw)', pointerEvents: 'auto', overflowY: 'auto',
       borderRadius: 8, boxShadow: '0 40px 90px -24px rgba(0,5,30,0.85), inset 0 0 0 1px rgba(0,0,0,0.05)',
-      color: '#15203f',
     }}>
       <div style={{ padding: '30px 34px 38px' }}>
         {/* Kicker + status pill */}
@@ -29,7 +28,7 @@ export function PaperSheet({ subject, members, labName, locale }: Props) {
           <span className="font-mono" style={{  fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#6b7596' }}>
             {subject.kicker ? `${subject.kicker} · ${labName}` : labName}
           </span>
-          <span className="font-mono" style={{ display: 'flex', alignItems: 'center', gap: 7,  fontSize: 10, letterSpacing: '0.06em', color: '#43507a', background: '#eceadf', padding: '5px 10px', borderRadius: 20 }}>
+          <span className="font-mono bg-fame-ecru" style={{ display: 'flex', alignItems: 'center', gap: 7,  fontSize: 10, letterSpacing: '0.06em', color: '#43507a', padding: '5px 10px', borderRadius: 20 }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: statusColor }} />
             {ts(`status.${subject.statut}`)}
           </span>
@@ -43,7 +42,7 @@ export function PaperSheet({ subject, members, labName, locale }: Props) {
           {authors.map((a, i) => (
             <span key={a.id} style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
               <Avatar name={`${a.prenom} ${a.nom}`} photoUrl={a.photo_url} size={24} />
-              <span style={{ fontSize: 12, color: '#2a3457' }}>
+              <span className="text-fame-text-body" style={{ fontSize: 12 }}>
                 {a.prenom} {a.nom}{i === 0 ? ` · ${t('responsible')}` : ''}
               </span>
             </span>
@@ -64,7 +63,7 @@ export function PaperSheet({ subject, members, labName, locale }: Props) {
         {subject.keywords.length > 0 && (
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
             {subject.keywords.map((k, i) => (
-              <span className="font-mono" key={i} style={{  fontSize: 10, letterSpacing: '0.04em', color: '#43507a', background: '#eceadf', border: '1px solid rgba(0,0,0,0.05)', padding: '5px 10px', borderRadius: 6 }}>{k}</span>
+              <span className="font-mono bg-fame-ecru" key={i} style={{  fontSize: 10, letterSpacing: '0.04em', color: '#43507a', border: '1px solid rgba(0,0,0,0.05)', padding: '5px 10px', borderRadius: 6 }}>{k}</span>
             ))}
           </div>
         )}
@@ -78,7 +77,7 @@ function Section({ heading, body }: { heading: string; body: string }) {
   return (
     <>
       <h2 style={{ margin: '0 0 6px', fontSize: 12, letterSpacing: '0.16em', textTransform: 'uppercase', color: '#5b7cf0', fontWeight: 600 }}>{heading}</h2>
-      <p style={{ margin: '0 0 18px', fontSize: 13.5, lineHeight: 1.6, color: '#2a3457', whiteSpace: 'pre-wrap' }}>{body}</p>
+      <p className="text-fame-text-body" style={{ margin: '0 0 18px', fontSize: 13.5, lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{body}</p>
     </>
   )
 }

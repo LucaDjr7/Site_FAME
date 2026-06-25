@@ -28,11 +28,11 @@ export function TasksPanel({ tasks, isMember, open, onToggleOpen, doneCount, tot
       border: '1px solid rgba(150,180,255,0.18)', borderRadius: 14,
       boxShadow: '0 22px 60px -18px rgba(0,5,30,0.75)', overflow: 'hidden',
     }}>
-      <button onClick={onToggleOpen} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', background: 'none', border: 'none', cursor: 'pointer', color: '#eef3ff' }}>
+      <button onClick={onToggleOpen} className="text-fame-text-light" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', background: 'none', border: 'none', cursor: 'pointer' }}>
         <span style={{ display: 'flex', alignItems: 'center', gap: 9, fontSize: 13, fontWeight: 600, letterSpacing: '0.04em' }}>
           <span style={{ width: 8, height: 8, borderRadius: 2, background: '#5b7cf0' }} />{t('linkedTasks')}
         </span>
-        <span className="font-mono" style={{  fontSize: 11, color: '#7e95d6' }}>{doneCount}/{total} {open ? '▾' : '▸'}</span>
+        <span className="font-mono text-fame-text-muted" style={{  fontSize: 11 }}>{doneCount}/{total} {open ? '▾' : '▸'}</span>
       </button>
 
       {open && (
@@ -52,23 +52,24 @@ export function TasksPanel({ tasks, isMember, open, onToggleOpen, doneCount, tot
                   background: done ? 'rgba(76,210,160,0.1)' : 'rgba(31,46,92,0.5)', transition: 'all .15s ease',
                 }}
               >
-                <span style={{
+                <span className={done ? 'bg-fame-teal border-fame-teal' : ''}
+                  style={{
                   flex: 'none', marginTop: 1, width: 16, height: 16, borderRadius: 5,
-                  border: `1.5px solid ${done ? '#1e9b7e' : 'rgba(150,180,255,0.4)'}`,
-                  background: done ? '#1e9b7e' : 'transparent', color: '#06112e', fontSize: 11,
+                  border: done ? '1.5px solid' : '1.5px solid rgba(150,180,255,0.4)',
+                  background: done ? undefined : 'transparent', color: '#06112e', fontSize: 11,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>{done ? '✓' : ''}</span>
                 <span style={{ flex: 1, minWidth: 0 }}>
                   <span style={{ display: 'block', fontSize: 12.5, lineHeight: 1.35, color: done ? 'rgba(239,243,255,0.65)' : '#dfe7fb', textDecoration: done ? 'line-through' : 'none' }}>{task.titre}</span>
                   <span style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 5 }}>
                     {assignee && <Avatar name={`${assignee.prenom} ${assignee.nom}`} photoUrl={assignee.photo_url} size={16} />}
-                    <span className="font-mono" style={{  fontSize: 9, color: '#7e95d6' }}>{tt(`status.${STATUS_KEY[task.statut]}`)}</span>
+                    <span className="font-mono text-fame-text-muted" style={{  fontSize: 9 }}>{tt(`status.${STATUS_KEY[task.statut]}`)}</span>
                   </span>
                 </span>
               </button>
             )
           })}
-          {tasks.length === 0 && <p className="font-mono" style={{  fontSize: 11, color: '#7e95d6', padding: '6px 2px' }}>{t('noTasks')}</p>}
+          {tasks.length === 0 && <p className="font-mono text-fame-text-muted" style={{  fontSize: 11, padding: '6px 2px' }}>{t('noTasks')}</p>}
         </div>
       )}
     </section>
