@@ -5,8 +5,8 @@ import type { Lab } from '@/types'
 import { VALID_LABS } from '@/lib/constants'
 
 export async function GET(req: NextRequest) {
-  const lab = req.nextUrl.searchParams.get('lab') as Lab
-  if (!VALID_LABS.includes(lab)) return NextResponse.json({ error: 'Invalid lab' }, { status: 400 })
+  const lab = req.nextUrl.searchParams.get('lab')
+  if (lab === null || !VALID_LABS.includes(lab as Lab)) return NextResponse.json({ error: 'Invalid lab' }, { status: 400 })
   const service = await createServiceClient()
   const { data, error } = await service
     .from('publications')

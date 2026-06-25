@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import * as d3 from 'd3'
 import * as topojson from 'topojson-client'
 import type { Topology, GeometryCollection } from 'topojson-specification'
+import type * as GeoJSON from 'geojson'
 import { LabPin } from './LabPin'
 import { useToast } from '@/components/ui/Toast'
 
@@ -45,10 +46,8 @@ export function Globe() {
     lastTime: 0,
     projection: null as d3.GeoProjection | null,
     path: null as d3.GeoPath | null,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    land: null as any,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    borders: null as any,
+    land: null as GeoJSON.FeatureCollection<GeoJSON.GeometryObject> | null,
+    borders: null as GeoJSON.MultiLineString | null,
     mounted: false,
   })
 
@@ -83,7 +82,8 @@ export function Globe() {
         wrapperRef.current.style.width  = `${s}px`
         wrapperRef.current.style.height = `${s}px`
       }
-      const ctx = canvas.getContext('2d')!
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 
       state.projection = d3
@@ -97,14 +97,14 @@ export function Globe() {
 
     function draw() {
       if (!state.projection || !state.path) return
-      const ctx = canvas.getContext('2d')!
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return
       const s = state.size
 
       ctx.clearRect(0, 0, s, s)
 
       // Ocean fill with radial gradient
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const sphere: any = { type: 'Sphere' }
+      const sphere: d3.GeoSphere = { type: 'Sphere' }
       ctx.beginPath()
       ;(state.path as d3.GeoPath)(sphere)
       const g = ctx.createRadialGradient(
@@ -144,8 +144,7 @@ export function Globe() {
 
       // Globe outline
       ctx.beginPath()
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ;(state.path as d3.GeoPath)(sphere as any)
+      ;(state.path as d3.GeoPath)(sphere)
       ctx.strokeStyle = 'rgba(31,46,92,0.45)'
       ctx.lineWidth = 1.1
       ctx.stroke()
@@ -286,10 +285,14 @@ export function Globe() {
       canvas.removeEventListener('pointerleave', onPointerUp)
       canvas.removeEventListener('pointercancel', onPointerUp)
     }
+  // CFG-01: deps intentionally empty — effect owns its own event listeners and animation loop;
+  // re-running on any dep change would duplicate listeners. All mutable state lives in stateRef.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const [size, setSize] = useState(400)
+  // CFG-01: calling setSize inside useEffect is deliberate — it reads window.innerWidth which is
+  // only available client-side; this runs once after mount to sync the SSR size placeholder.
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setSize(computeSize()) }, [])
 

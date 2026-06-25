@@ -4,7 +4,8 @@ import { getTranslations } from 'next-intl/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { getSession } from '@/lib/auth'
 import { PaperView } from '@/components/paper/PaperView'
-import type { Lab, Subject, MemberRef, TaskWithRelations, Comment, DropboxLink } from '@/types'
+import { flattenTasks } from '@/components/tasks/kanban-shared'
+import type { Lab, Subject, MemberRef, Comment, DropboxLink } from '@/types'
 import { VALID_LABS, LAB_LABELS } from '@/lib/constants'
 
 type Props = { params: Promise<{ locale: string; lab: string; id: string }> }
@@ -42,14 +43,7 @@ export default async function PaperPage({ params }: Props) {
   if (!subject || subject.labo !== lab) notFound()
 
   // Flatten nested task_assignees(members(...)) → assignees: MemberRef[]
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const tasks: TaskWithRelations[] = (tasksRaw ?? []).map((t: any) => {
-    const ta = (t.task_assignees as { members: MemberRef | null }[] | null) ?? []
-    const assignees = ta.map((a: { members: MemberRef | null }) => a.members).filter((m): m is MemberRef => !!m)
-    const { task_assignees, ...rest } = t
-    void task_assignees
-    return { ...rest, assignees, subtasks: t.subtasks ?? [] } as TaskWithRelations
-  })
+  const tasks = flattenTasks(tasksRaw ?? [])
 
   return (
     <PaperView

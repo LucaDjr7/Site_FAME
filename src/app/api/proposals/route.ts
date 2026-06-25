@@ -10,7 +10,7 @@ const VALID_DIFF: Difficulty[] = ['easy', 'intermediate', 'advanced']
 // GET ?lab=paris  → member only, returns all proposals for the lab
 export async function GET(req: NextRequest) {
   const idsParam = req.nextUrl.searchParams.get('ids')
-  const lab = req.nextUrl.searchParams.get('lab') as Lab | null
+  const lab = req.nextUrl.searchParams.get('lab')
 
   if (idsParam) {
     const ids = idsParam.split(',').map(s => s.trim()).filter(Boolean).slice(0, 100)
@@ -25,11 +25,12 @@ export async function GET(req: NextRequest) {
   }
 
   if (lab) {
-    if (!VALID_LABS.includes(lab)) return NextResponse.json({ error: 'Invalid lab' }, { status: 400 })
+    if (!VALID_LABS.includes(lab as Lab)) return NextResponse.json({ error: 'Invalid lab' }, { status: 400 })
+    const validLab = lab as Lab
     try { await requireMember() } catch (e) { return authErrorResponse(e) }
     const service = await createServiceClient()
     const { data, error } = await service
-      .from('proposals').select('*').eq('labo', lab).order('created_at', { ascending: false })
+      .from('proposals').select('*').eq('labo', validLab).order('created_at', { ascending: false })
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
     return NextResponse.json(data)
   }

@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
-import type { Lab, PublicationType } from '@/types'
+import type { Lab, PublicationType, Publication } from '@/types'
 import { Modal } from '@/components/ui/Modal'
 import { FORM_INPUT_STYLE, FORM_LABEL_STYLE, FORM_BTN_CANCEL_STYLE, FORM_BTN_SUBMIT_STYLE } from '@/components/ui/form-styles'
 
@@ -9,7 +9,7 @@ type Props = {
   open: boolean
   lab: Lab
   onClose: () => void
-  onCreated: (pub: unknown) => void
+  onCreated: (pub: Publication) => void
 }
 
 const TYPES: PublicationType[] = ['article', 'preprint', 'conference', 'working-paper']
@@ -76,7 +76,7 @@ export function AddPublicationModal({ open, lab, onClose, onCreated }: Props) {
         setError((err as { error?: string }).error ?? t('errorGeneric'))
         return
       }
-      const created = await res.json()
+      const created = (await res.json()) as Publication
       onCreated(created)
       reset()
     } catch {

@@ -9,7 +9,6 @@ type Props = {
   open: boolean
   member: Member | null
   isAdmin: boolean
-  isSelf: boolean
   onClose: () => void
   onSaved: (member: Member) => void
 }
@@ -261,7 +260,7 @@ function EditForm({ member, isAdmin, onClose, onSaved }: FormProps) {
   )
 }
 
-export function EditMemberModal({ open, member, isAdmin, onClose, onSaved }: Omit<Props, 'isSelf'> & { isSelf?: boolean }) {
+export function EditMemberModal({ open, member, isAdmin, onClose, onSaved }: Props) {
   const t = useTranslations('team')
   return (
     <Modal open={open} onClose={onClose} title={t('editTitle')}>

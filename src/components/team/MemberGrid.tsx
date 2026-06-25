@@ -313,7 +313,6 @@ export function MemberGrid({ lab, currentMemberId, isAdmin }: Props) {
         open={!!editTarget}
         member={editTarget}
         isAdmin={isAdmin}
-        isSelf={editTarget?.id === currentMemberId}
         onClose={() => setEditTarget(null)}
         onSaved={updated => {
           handleSaved(updated)

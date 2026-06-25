@@ -6,10 +6,11 @@ import { VALID_LABS } from '@/lib/constants'
 
 export async function GET(req: NextRequest) {
   try { await requireMember() } catch (e) { return authErrorResponse(e) }
-  const lab = req.nextUrl.searchParams.get('lab') as Lab
-  if (!lab || !VALID_LABS.includes(lab)) {
+  const lab = req.nextUrl.searchParams.get('lab')
+  if (!lab || !VALID_LABS.includes(lab as Lab)) {
     return NextResponse.json({ error: 'Invalid or missing lab' }, { status: 400 })
   }
+  const validLab = lab as Lab
   const subject_id = req.nextUrl.searchParams.get('subject_id')
   const task_id = req.nextUrl.searchParams.get('task_id')
 
@@ -17,7 +18,7 @@ export async function GET(req: NextRequest) {
   let query = service
     .from('dropbox_links')
     .select('*')
-    .eq('labo', lab)
+    .eq('labo', validLab)
     .order('created_at', { ascending: true })
 
   if (subject_id) query = query.eq('subject_id', subject_id)

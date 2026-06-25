@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
-import type { MemberRef, SubjectStatus, Difficulty, Lab } from '@/types'
+import type { MemberRef, SubjectStatus, Difficulty, Lab, Subject } from '@/types'
 import { Modal } from '@/components/ui/Modal'
 import { FORM_INPUT_STYLE, FORM_LABEL_STYLE, FORM_BTN_CANCEL_STYLE, FORM_BTN_SUBMIT_STYLE } from '@/components/ui/form-styles'
 
@@ -40,7 +40,7 @@ type Props = {
   lab: Lab
   members: MemberRef[]
   onClose: () => void
-  onAdded: (subject: unknown) => void
+  onAdded: (subject: Subject) => void
 }
 
 export function AddSubjectModal({ open, lab, members, onClose, onAdded }: Props) {
@@ -101,7 +101,7 @@ export function AddSubjectModal({ open, lab, members, onClose, onAdded }: Props)
         setError((err as { error?: string }).error ?? t('error.server'))
         return
       }
-      const created = await res.json()
+      const created = (await res.json()) as Subject
       onAdded(created)
       reset()
     } catch {
