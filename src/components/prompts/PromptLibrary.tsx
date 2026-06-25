@@ -207,6 +207,7 @@ export function PromptLibrary({ lab }: Props) {
           {/* All types button */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             <button
+              className="font-serif"
               onClick={() => setFilter(null)}
               style={filterBtnStyle(filter === null)}
             >
@@ -225,6 +226,7 @@ export function PromptLibrary({ lab }: Props) {
               return (
                 <button
                   key={tc}
+                  className="font-serif"
                   onClick={() => setFilter(active ? null : tc)}
                   style={filterBtnStyle(active)}
                 >

@@ -125,7 +125,7 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
             {t('activationNote')}
           </div>
           <div style={{ display: 'flex', gap: 6, marginBottom: 16 }}>
-            <input
+            <input className="font-mono"
               ref={urlRef}
               readOnly
               value={activationUrl}
@@ -177,8 +177,8 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
         <form onSubmit={handleSubmit}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px 12px', marginBottom: 14 }}>
             <div>
-              <label htmlFor="invite-firstname" style={labelStyle}>{t('fFirstName')} *</label>
-              <input
+              <label htmlFor="invite-firstname" className="font-mono" style={labelStyle}>{t('fFirstName')} *</label>
+              <input className="font-mono"
                 id="invite-firstname"
                 value={prenom}
                 onChange={e => setPrenom(e.target.value)}
@@ -188,8 +188,8 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
               />
             </div>
             <div>
-              <label htmlFor="invite-lastname" style={labelStyle}>{t('fLastName')} *</label>
-              <input
+              <label htmlFor="invite-lastname" className="font-mono" style={labelStyle}>{t('fLastName')} *</label>
+              <input className="font-mono"
                 id="invite-lastname"
                 value={nom}
                 onChange={e => setNom(e.target.value)}
@@ -201,8 +201,8 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
           </div>
 
           <div style={{ marginBottom: 14 }}>
-            <label htmlFor="invite-email" style={labelStyle}>{t('fEmail')} *</label>
-            <input
+            <label htmlFor="invite-email" className="font-mono" style={labelStyle}>{t('fEmail')} *</label>
+            <input className="font-mono"
               id="invite-email"
               type="email"
               value={email}
@@ -214,8 +214,8 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
           </div>
 
           <div style={{ marginBottom: 20 }}>
-            <label htmlFor="invite-role" style={labelStyle}>{t('fRole')}</label>
-            <select
+            <label htmlFor="invite-role" className="font-mono" style={labelStyle}>{t('fRole')}</label>
+            <select className="font-mono"
               id="invite-role"
               value={role}
               onChange={e => setRole(e.target.value as Role)}

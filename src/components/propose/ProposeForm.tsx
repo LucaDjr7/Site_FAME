@@ -120,8 +120,8 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
 
       {/* Title */}
       <label style={{ display: 'flex', flexDirection: 'column' }}>
-        <span style={labelStyle}>{t('fieldTitle')} *</span>
-        <input
+        <span className="font-mono" style={labelStyle}>{t('fieldTitle')} *</span>
+        <input className="font-mono"
           type="text"
           value={titre}
           onChange={e => setTitre(e.target.value)}
@@ -133,8 +133,8 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
 
       {/* Domain */}
       <label style={{ display: 'flex', flexDirection: 'column' }}>
-        <span style={labelStyle}>{t('fieldDomain')}</span>
-        <select
+        <span className="font-mono" style={labelStyle}>{t('fieldDomain')}</span>
+        <select className="font-mono"
           value={domaine}
           onChange={e => setDomaine(e.target.value)}
           onFocus={() => setFocusedField('domaine')}
@@ -149,11 +149,12 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
 
       {/* Difficulty — 3 toggle buttons */}
       <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <span style={labelStyle}>{t('fieldDifficulty')}</span>
+        <span className="font-mono" style={labelStyle}>{t('fieldDifficulty')}</span>
         <div style={{ display: 'flex', gap: 8 }}>
           {DIFFS.map(d => (
             <button
               key={d}
+              className="font-mono"
               type="button"
               onClick={() => setDifficulte(d)}
               style={diffButtonStyle(difficulte === d)}
@@ -166,8 +167,8 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
 
       {/* Description */}
       <label style={{ display: 'flex', flexDirection: 'column' }}>
-        <span style={labelStyle}>{t('fieldDescription')} *</span>
-        <textarea
+        <span className="font-mono" style={labelStyle}>{t('fieldDescription')} *</span>
+        <textarea className="font-mono"
           value={description}
           onChange={e => setDescription(e.target.value)}
           onFocus={() => setFocusedField('description')}
@@ -180,8 +181,8 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
       {/* First name + Last name */}
       <div style={{ display: 'flex', gap: 14 }}>
         <label style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-          <span style={labelStyle}>{t('fieldFirstName')} *</span>
-          <input
+          <span className="font-mono" style={labelStyle}>{t('fieldFirstName')} *</span>
+          <input className="font-mono"
             type="text"
             value={prenom}
             onChange={e => setPrenom(e.target.value)}
@@ -191,8 +192,8 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
           />
         </label>
         <label style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-          <span style={labelStyle}>{t('fieldLastName')} *</span>
-          <input
+          <span className="font-mono" style={labelStyle}>{t('fieldLastName')} *</span>
+          <input className="font-mono"
             type="text"
             value={nom}
             onChange={e => setNom(e.target.value)}
@@ -205,8 +206,8 @@ export function ProposeForm({ lab, onSubmitted }: Props) {
 
       {/* Email (optional) */}
       <label style={{ display: 'flex', flexDirection: 'column' }}>
-        <span style={labelStyle}>{t('fieldEmail')}</span>
-        <input
+        <span className="font-mono" style={labelStyle}>{t('fieldEmail')}</span>
+        <input className="font-mono"
           type="email"
           value={email}
           onChange={e => setEmail(e.target.value)}

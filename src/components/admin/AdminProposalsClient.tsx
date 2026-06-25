@@ -148,6 +148,7 @@ export function AdminProposalsClient() {
             {VALID_LABS.map(l => (
               <button
                 key={l}
+                className="font-mono"
                 onClick={() => { setProposals([]); setLab(l) }}
                 style={filterBtnStyle(lab === l)}
               >
@@ -160,6 +161,7 @@ export function AdminProposalsClient() {
             {STATUSES.map(s => (
               <button
                 key={s}
+                className="font-mono"
                 onClick={() => setStatusFilter(s)}
                 style={filterBtnStyle(statusFilter === s)}
               >
@@ -257,9 +259,9 @@ export function AdminProposalsClient() {
                     }}
                   />
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                    <button onClick={() => decide(p.id, 'accepted')} style={actionBtn('accept')}>{t('accept')}</button>
-                    <button onClick={() => decide(p.id, 'rejected')} style={actionBtn('reject')}>{t('reject')}</button>
-                    <button onClick={() => convert(p.id)} style={actionBtn('convert')}>{t('convert')}</button>
+                    <button className="font-mono" onClick={() => decide(p.id, 'accepted')} style={actionBtn('accept')}>{t('accept')}</button>
+                    <button className="font-mono" onClick={() => decide(p.id, 'rejected')} style={actionBtn('reject')}>{t('reject')}</button>
+                    <button className="font-mono" onClick={() => convert(p.id)} style={actionBtn('convert')}>{t('convert')}</button>
                   </div>
                 </div>
               )}
@@ -280,7 +282,7 @@ export function AdminProposalsClient() {
               )}
 
               {p.statut === 'accepted' && (
-                <button onClick={() => convert(p.id)} style={{ ...actionBtn('convert'), marginTop: 12 }}>
+                <button className="font-mono" onClick={() => convert(p.id)} style={{ ...actionBtn('convert'), marginTop: 12 }}>
                   {t('convert')}
                 </button>
               )}

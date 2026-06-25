@@ -134,12 +134,12 @@ export function TaskFilterSidebar({
 
       {/* Sujet */}
       <div style={{ padding: '0 14px 14px' }}>
-        <div style={sectionLabel}>{t('section.subject')}</div>
+        <div className="font-mono" style={sectionLabel}>{t('section.subject')}</div>
         {subjects.map(s => {
           const count = countFor(tasks, q, fSubject, fStatus, fDiff, fPerson, fDate, 'subject', s.id)
           const active = fSubject.has(s.id)
           return (
-            <button key={s.id} onClick={() => onToggleSubject(s.id)} aria-pressed={active} style={{ ...btnBase, ...(active ? ACTIVE : INACTIVE) }}>
+            <button key={s.id} onClick={() => onToggleSubject(s.id)} aria-pressed={active} className="font-mono" style={{ ...btnBase, ...(active ? ACTIVE : INACTIVE) }}>
               <span style={{ width: 7, height: 7, borderRadius: '50%', background: SUBJECT_STATUS_COLOR[s.statut], flexShrink: 0 }} />
               <span style={{ flex: 1, fontSize: 10, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.titre}</span>
               <span style={{ fontSize: 9, opacity: 0.65 }}>{count}</span>
@@ -150,12 +150,12 @@ export function TaskFilterSidebar({
 
       {/* Statut */}
       <div style={{ padding: '0 14px 14px' }}>
-        <div style={sectionLabel}>{t('section.status')}</div>
+        <div className="font-mono" style={sectionLabel}>{t('section.status')}</div>
         {statuses.map(s => {
           const count = countFor(tasks, q, fSubject, fStatus, fDiff, fPerson, fDate, 'status', s)
           const active = fStatus.has(s)
           return (
-            <button key={s} onClick={() => onToggleStatus(s)} aria-pressed={active} style={{ ...btnBase, ...(active ? ACTIVE : INACTIVE) }}>
+            <button key={s} onClick={() => onToggleStatus(s)} aria-pressed={active} className="font-mono" style={{ ...btnBase, ...(active ? ACTIVE : INACTIVE) }}>
               <span style={{ width: 7, height: 7, borderRadius: '50%', background: TASK_STATUS_COLOR[s], flexShrink: 0 }} />
               <span style={{ flex: 1, fontSize: 10 }}>{t(`status.${STATUS_KEY[s]}`)}</span>
               <span style={{ fontSize: 9, opacity: 0.65 }}>{count}</span>
@@ -166,12 +166,12 @@ export function TaskFilterSidebar({
 
       {/* Difficulté */}
       <div style={{ padding: '0 14px 14px' }}>
-        <div style={sectionLabel}>{t('section.difficulty')}</div>
+        <div className="font-mono" style={sectionLabel}>{t('section.difficulty')}</div>
         {diffs.map(({ key }) => {
           const count = countFor(tasks, q, fSubject, fStatus, fDiff, fPerson, fDate, 'diff', key)
           const active = fDiff.has(key)
           return (
-            <button key={key} onClick={() => onToggleDiff(key)} aria-pressed={active} style={{ ...btnBase, ...(active ? ACTIVE : INACTIVE) }}>
+            <button key={key} onClick={() => onToggleDiff(key)} aria-pressed={active} className="font-mono" style={{ ...btnBase, ...(active ? ACTIVE : INACTIVE) }}>
               <DiffDots level={DIFF_LEVEL[key] ?? 0} />
               <span style={{ flex: 1, fontSize: 10 }}>{t(`difficulty.${key}`)}</span>
               <span style={{ fontSize: 9, opacity: 0.65 }}>{count}</span>
@@ -183,13 +183,13 @@ export function TaskFilterSidebar({
       {/* Personnes */}
       {people.length > 0 && (
         <div style={{ padding: '0 14px 14px' }}>
-          <div style={sectionLabel}>{t('section.people')}</div>
+          <div className="font-mono" style={sectionLabel}>{t('section.people')}</div>
           {people.map(m => {
             const count = countFor(tasks, q, fSubject, fStatus, fDiff, fPerson, fDate, 'person', m.id)
             const active = fPerson.has(m.id)
             const name = `${m.prenom} ${m.nom}`
             return (
-              <button key={m.id} onClick={() => onTogglePerson(m.id)} aria-pressed={active} style={{ ...btnBase, ...(active ? ACTIVE : INACTIVE) }}>
+              <button key={m.id} onClick={() => onTogglePerson(m.id)} aria-pressed={active} className="font-mono" style={{ ...btnBase, ...(active ? ACTIVE : INACTIVE) }}>
                 <Avatar name={name} photoUrl={m.photo_url} size={16} />
                 <span style={{ flex: 1, fontSize: 10, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{name}</span>
                 <span style={{ fontSize: 9, opacity: 0.65 }}>{count}</span>
@@ -201,12 +201,12 @@ export function TaskFilterSidebar({
 
       {/* Date */}
       <div style={{ padding: '0 14px 14px' }}>
-        <div style={sectionLabel}>{t('section.date')}</div>
+        <div className="font-mono" style={sectionLabel}>{t('section.date')}</div>
         {dates.map(d => {
           const count = countFor(tasks, q, fSubject, fStatus, fDiff, fPerson, fDate, 'date', d)
           const active = fDate.has(d)
           return (
-            <button key={d} onClick={() => onToggleDate(d)} aria-pressed={active} style={{ ...btnBase, ...(active ? ACTIVE : INACTIVE) }}>
+            <button key={d} onClick={() => onToggleDate(d)} aria-pressed={active} className="font-mono" style={{ ...btnBase, ...(active ? ACTIVE : INACTIVE) }}>
               <span style={{ flex: 1, fontSize: 10 }}>{t(`date.${d}`)}</span>
               <span style={{ fontSize: 9, opacity: 0.65 }}>{count}</span>
             </button>

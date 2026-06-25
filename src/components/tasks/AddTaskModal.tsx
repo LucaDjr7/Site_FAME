@@ -105,13 +105,13 @@ export function AddTaskModal({ open, lab, subjectId, members, onClose, onAdded }
 
         {/* Titre */}
         <div style={{ marginBottom: 14 }}>
-          <label htmlFor="add-task-title" style={labelStyle}>{t('modal.fTitle')} *</label>
-          <input id="add-task-title" type="text" value={titre} onChange={e => setTitre(e.target.value)} placeholder={t('modal.fTitle')} style={inputStyle} autoFocus />
+          <label htmlFor="add-task-title" className="font-mono" style={labelStyle}>{t('modal.fTitle')} *</label>
+          <input className="font-mono" id="add-task-title" type="text" value={titre} onChange={e => setTitre(e.target.value)} placeholder={t('modal.fTitle')} style={inputStyle} autoFocus />
         </div>
 
         {/* Statut */}
         <div style={{ marginBottom: 14 }}>
-          <label style={labelStyle}>{t('modal.fStatus')}</label>
+          <label className="font-mono" style={labelStyle}>{t('modal.fStatus')}</label>
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
             {(['to-do', 'in-progress', 'done'] as TaskStatus[]).map(s => (
               <Pill key={s} value={s} current={statut} label={t(`status.${s === 'to-do' ? 'todo' : s === 'in-progress' ? 'inProgress' : 'done'}`)} onChange={setStatut} />
@@ -121,7 +121,7 @@ export function AddTaskModal({ open, lab, subjectId, members, onClose, onAdded }
 
         {/* Difficulté */}
         <div style={{ marginBottom: 14 }}>
-          <label style={labelStyle}>{t('modal.fDifficulty')}</label>
+          <label className="font-mono" style={labelStyle}>{t('modal.fDifficulty')}</label>
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
             {(['easy', 'intermediate', 'advanced'] as Difficulty[]).map(d => (
               <Pill key={d} value={d} current={difficulte} label={t(`difficulty.${d}`)} onChange={setDifficulte} />
@@ -131,8 +131,8 @@ export function AddTaskModal({ open, lab, subjectId, members, onClose, onAdded }
 
         {/* Assigné à */}
         <div style={{ marginBottom: 14 }}>
-          <label htmlFor="add-task-assignee" style={labelStyle}>{t('modal.fAssignee')}</label>
-          <select id="add-task-assignee" value={assignee} onChange={e => setAssignee(e.target.value)} style={{ ...inputStyle, appearance: 'none' }}>
+          <label htmlFor="add-task-assignee" className="font-mono" style={labelStyle}>{t('modal.fAssignee')}</label>
+          <select className="font-mono" id="add-task-assignee" value={assignee} onChange={e => setAssignee(e.target.value)} style={{ ...inputStyle, appearance: 'none' }}>
             <option value="">{t('modal.none')}</option>
             {members.map(m => <option key={m.id} value={m.id}>{m.prenom} {m.nom}</option>)}
           </select>
@@ -140,14 +140,14 @@ export function AddTaskModal({ open, lab, subjectId, members, onClose, onAdded }
 
         {/* Description */}
         <div style={{ marginBottom: 14 }}>
-          <label htmlFor="add-task-description" style={labelStyle}>{t('modal.fDescription')}</label>
-          <textarea id="add-task-description" value={description} onChange={e => setDescription(e.target.value)} placeholder={t('modal.fDescription')} rows={3}
+          <label htmlFor="add-task-description" className="font-mono" style={labelStyle}>{t('modal.fDescription')}</label>
+          <textarea className="font-mono" id="add-task-description" value={description} onChange={e => setDescription(e.target.value)} placeholder={t('modal.fDescription')} rows={3}
             style={{ ...inputStyle, resize: 'vertical' }} />
         </div>
 
         {/* Sous-tâches */}
         <div style={{ marginBottom: 18 }}>
-          <label htmlFor="add-task-subtask-input" style={labelStyle}>{t('modal.fSubtasks')}</label>
+          <label htmlFor="add-task-subtask-input" className="font-mono" style={labelStyle}>{t('modal.fSubtasks')}</label>
           {subtasks.length > 0 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 8 }}>
               {subtasks.map((s, i) => (
@@ -161,7 +161,7 @@ export function AddTaskModal({ open, lab, subjectId, members, onClose, onAdded }
             </div>
           )}
           <div style={{ display: 'flex', gap: 6 }}>
-            <input
+            <input className="font-mono"
               id="add-task-subtask-input"
               type="text" value={subtaskDraft} onChange={e => setSubtaskDraft(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addSubtaskDraft() } }}
@@ -180,11 +180,11 @@ export function AddTaskModal({ open, lab, subjectId, members, onClose, onAdded }
         )}
 
         <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-          <button type="button" onClick={handleClose} style={FORM_BTN_CANCEL_STYLE}>
+          <button type="button" onClick={handleClose} className="font-mono" style={FORM_BTN_CANCEL_STYLE}>
             {t('modal.cancel')}
           </button>
           <button type="submit" disabled={submitting}
-            style={{ ...FORM_BTN_SUBMIT_STYLE, cursor: submitting ? 'not-allowed' : 'pointer', opacity: submitting ? 0.7 : 1 }}>
+            className="font-mono" style={{ ...FORM_BTN_SUBMIT_STYLE, cursor: submitting ? 'not-allowed' : 'pointer', opacity: submitting ? 0.7 : 1 }}>
             {t('modal.submit')}
           </button>
         </div>

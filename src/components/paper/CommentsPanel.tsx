@@ -96,13 +96,14 @@ export function CommentsPanel({ subjectId, isMember, initialComments, open, onTo
           <div style={{ padding: '10px 12px 13px', borderTop: '1px solid rgba(150,180,255,0.12)', display: 'flex', flexDirection: 'column', gap: 8 }}>
             {!isMember && (
               <div style={{ display: 'flex', gap: 8 }}>
-                <input value={firstName} onChange={e => setFirstName(e.target.value)} placeholder={tc('firstName')} aria-label={t('commentNameLabel')} style={inputStyle} />
-                <input value={lastName} onChange={e => setLastName(e.target.value)} placeholder={tc('lastName')} aria-label={t('commentNameLabel')} style={inputStyle} />
+                <input className="font-mono" value={firstName} onChange={e => setFirstName(e.target.value)} placeholder={tc('firstName')} aria-label={t('commentNameLabel')} style={inputStyle} />
+                <input className="font-mono" value={lastName} onChange={e => setLastName(e.target.value)} placeholder={tc('lastName')} aria-label={t('commentNameLabel')} style={inputStyle} />
               </div>
             )}
             <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
               {isMember ? (
                 <textarea
+                  className="font-mono"
                   value={draft} onChange={e => setDraft(e.target.value)}
                   placeholder={t('addComment')} aria-label={t('commentTextLabel')}
                   rows={3}
@@ -110,6 +111,7 @@ export function CommentsPanel({ subjectId, isMember, initialComments, open, onTo
                 />
               ) : (
                 <input
+                  className="font-mono"
                   value={draft} onChange={e => setDraft(e.target.value)}
                   onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addComment() } }}
                   placeholder={t('addComment')} aria-label={t('commentTextLabel')} style={{ ...inputStyle, flex: 1 }}

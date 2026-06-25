@@ -96,8 +96,8 @@ export function AddPublicationModal({ open, lab, onClose, onCreated }: Props) {
       <form onSubmit={handleSubmit} noValidate>
         {/* Title */}
         <div style={{ marginBottom: 14 }}>
-          <label htmlFor="add-pub-title" style={labelStyle}>{t('fTitle')} *</label>
-          <input
+          <label htmlFor="add-pub-title" className="font-mono" style={labelStyle}>{t('fTitle')} *</label>
+          <input className="font-mono"
             id="add-pub-title"
             type="text"
             value={titre}
@@ -110,8 +110,8 @@ export function AddPublicationModal({ open, lab, onClose, onCreated }: Props) {
 
         {/* Authors */}
         <div style={{ marginBottom: 14 }}>
-          <label htmlFor="add-pub-authors" style={labelStyle}>{t('fAuthors')} *</label>
-          <input
+          <label htmlFor="add-pub-authors" className="font-mono" style={labelStyle}>{t('fAuthors')} *</label>
+          <input className="font-mono"
             id="add-pub-authors"
             type="text"
             value={authorsRaw}
@@ -124,8 +124,8 @@ export function AddPublicationModal({ open, lab, onClose, onCreated }: Props) {
         {/* Year + Type row */}
         <div style={{ display: 'flex', gap: 12, marginBottom: 14 }}>
           <div style={{ flex: 1 }}>
-            <label htmlFor="add-pub-year" style={labelStyle}>{t('fYear')} *</label>
-            <input
+            <label htmlFor="add-pub-year" className="font-mono" style={labelStyle}>{t('fYear')} *</label>
+            <input className="font-mono"
               id="add-pub-year"
               type="number"
               value={annee}
@@ -136,8 +136,9 @@ export function AddPublicationModal({ open, lab, onClose, onCreated }: Props) {
             />
           </div>
           <div style={{ flex: 1 }}>
-            <label htmlFor="add-pub-type" style={labelStyle}>{t('type')} *</label>
+            <label htmlFor="add-pub-type" className="font-mono" style={labelStyle}>{t('type')} *</label>
             <select
+              className="font-mono"
               id="add-pub-type"
               value={type}
               onChange={e => setType(e.target.value as PublicationType)}
@@ -152,8 +153,8 @@ export function AddPublicationModal({ open, lab, onClose, onCreated }: Props) {
 
         {/* Journal / Conference */}
         <div style={{ marginBottom: 14 }}>
-          <label htmlFor="add-pub-journal" style={labelStyle}>{t('fJournal')}</label>
-          <input
+          <label htmlFor="add-pub-journal" className="font-mono" style={labelStyle}>{t('fJournal')}</label>
+          <input className="font-mono"
             id="add-pub-journal"
             type="text"
             value={revue}
@@ -165,8 +166,8 @@ export function AddPublicationModal({ open, lab, onClose, onCreated }: Props) {
 
         {/* DOI / URL */}
         <div style={{ marginBottom: 18 }}>
-          <label htmlFor="add-pub-link" style={labelStyle}>{t('fLink')}</label>
-          <input
+          <label htmlFor="add-pub-link" className="font-mono" style={labelStyle}>{t('fLink')}</label>
+          <input className="font-mono"
             id="add-pub-link"
             type="url"
             value={lien}
@@ -189,13 +190,13 @@ export function AddPublicationModal({ open, lab, onClose, onCreated }: Props) {
 
         {/* Actions */}
         <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-          <button type="button" onClick={handleClose} style={FORM_BTN_CANCEL_STYLE}>
+          <button type="button" onClick={handleClose} className="font-mono" style={FORM_BTN_CANCEL_STYLE}>
             {t('cancel')}
           </button>
           <button
             type="submit"
             disabled={submitting}
-            style={{ ...FORM_BTN_SUBMIT_STYLE, cursor: submitting ? 'not-allowed' : 'pointer', opacity: submitting ? 0.7 : 1 }}
+            className="font-mono" style={{ ...FORM_BTN_SUBMIT_STYLE, cursor: submitting ? 'not-allowed' : 'pointer', opacity: submitting ? 0.7 : 1 }}
           >
             {submitting ? '…' : t('add')}
           </button>

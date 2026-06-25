@@ -14,7 +14,6 @@ export const FORM_INPUT_STYLE: React.CSSProperties = {
   borderRadius: 5,
   border: '1px solid #eceadf',
   background: '#fff',
-  fontFamily: 'IBM Plex Mono, monospace',
   fontSize: 12,
   color: '#2a3457',
   outline: 'none',
@@ -22,7 +21,6 @@ export const FORM_INPUT_STYLE: React.CSSProperties = {
 
 export const FORM_LABEL_STYLE: React.CSSProperties = {
   display: 'block',
-  fontFamily: 'IBM Plex Mono, monospace',
   fontSize: 9,
   fontWeight: 600,
   letterSpacing: '0.1em',
@@ -36,7 +34,6 @@ export const FORM_BTN_CANCEL_STYLE: React.CSSProperties = {
   borderRadius: 6,
   border: '1px solid #eceadf',
   background: 'transparent',
-  fontFamily: 'IBM Plex Mono, monospace',
   fontSize: 11,
   color: '#7e95d6',
   cursor: 'pointer',
@@ -48,6 +45,5 @@ export const FORM_BTN_SUBMIT_STYLE: React.CSSProperties = {
   border: 'none',
   background: '#2f4486',
   color: '#fff',
-  fontFamily: 'IBM Plex Mono, monospace',
   fontSize: 11,
 }

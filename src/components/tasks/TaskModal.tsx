@@ -47,7 +47,7 @@ export function TaskModal({ task, subjectTitle, isMember, currentMemberId, onClo
 
       {/* Status */}
       <div style={{ marginBottom: 16 }}>
-        <div style={labelStyle}>{t('section.status')}</div>
+        <div className="font-mono" style={labelStyle}>{t('section.status')}</div>
         {isMember ? (
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
             {STATUS_OPTS.map(s => {
@@ -80,7 +80,7 @@ export function TaskModal({ task, subjectTitle, isMember, currentMemberId, onClo
 
       {/* Difficulty */}
       <div style={{ marginBottom: 16 }}>
-        <div style={labelStyle}>{t('section.difficulty')}</div>
+        <div className="font-mono" style={labelStyle}>{t('section.difficulty')}</div>
         {isMember ? (
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
             {DIFF_OPTS.map(d => {
@@ -113,7 +113,7 @@ export function TaskModal({ task, subjectTitle, isMember, currentMemberId, onClo
 
       {/* Progress (derived, read-only) */}
       <div style={{ marginBottom: 16 }}>
-        <div style={{ ...labelStyle, display: 'flex', justifyContent: 'space-between' }}>
+        <div className="font-mono" style={{ ...labelStyle, display: 'flex', justifyContent: 'space-between' }}>
           <span>{t('progress')}</span>
           <span>{pct}%</span>
         </div>
@@ -123,7 +123,7 @@ export function TaskModal({ task, subjectTitle, isMember, currentMemberId, onClo
       {/* Subtasks */}
       {subs.length > 0 && (
         <div style={{ marginBottom: 16 }}>
-          <div style={labelStyle}>{t('subtasks')}</div>
+          <div className="font-mono" style={labelStyle}>{t('subtasks')}</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
             {subs.map(s => (
               <label key={s.id} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: isMember ? 'pointer' : 'default' }}>
@@ -145,7 +145,7 @@ export function TaskModal({ task, subjectTitle, isMember, currentMemberId, onClo
 
       {/* Positioning */}
       <div style={{ marginBottom: 16 }}>
-        <div style={labelStyle}>{t('positioning')}</div>
+        <div className="font-mono" style={labelStyle}>{t('positioning')}</div>
         {task.assignees.length > 0 ? (
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: isMember ? 8 : 0 }}>
             {task.assignees.map(a => (
@@ -176,7 +176,7 @@ export function TaskModal({ task, subjectTitle, isMember, currentMemberId, onClo
       {/* Description */}
       {task.description && (
         <div>
-          <div style={labelStyle}>{t('section.description')}</div>
+          <div className="font-mono" style={labelStyle}>{t('section.description')}</div>
           <p style={{ fontSize: 13, color: '#2a3457', lineHeight: 1.5, margin: 0 }}>{task.description}</p>
         </div>
       )}

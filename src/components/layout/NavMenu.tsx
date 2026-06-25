@@ -99,7 +99,7 @@ export function NavMenu({ locale, lab, member }: Props) {
                 key={key}
                 href={`${base}${href}`}
                 onClick={() => setOpen(false)}
-                className="hover:bg-[rgba(47,68,134,0.08)] transition-colors"
+                className="font-serif hover:bg-[rgba(47,68,134,0.08)] transition-colors"
                 style={itemStyle}
               >
                 {t(key)}
@@ -113,7 +113,7 @@ export function NavMenu({ locale, lab, member }: Props) {
                     key={key}
                     href={`${base}${href}`}
                     onClick={() => setOpen(false)}
-                    className="hover:bg-[rgba(47,68,134,0.08)] transition-colors"
+                    className="font-serif hover:bg-[rgba(47,68,134,0.08)] transition-colors"
                     style={itemStyle}
                   >
                     {t(key)}
@@ -127,7 +127,7 @@ export function NavMenu({ locale, lab, member }: Props) {
                 <Link
                   href={`/${locale}/admin/proposals`}
                   onClick={() => setOpen(false)}
-                  className="hover:bg-[rgba(232,177,73,0.12)] transition-colors"
+                  className="font-serif hover:bg-[rgba(232,177,73,0.12)] transition-colors"
                   style={{ ...itemStyle, color: '#b88c30', fontWeight: 600 }}
                 >
                   {t('admin')}

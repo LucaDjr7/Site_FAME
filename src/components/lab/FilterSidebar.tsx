@@ -196,7 +196,7 @@ export function FilterSidebar({
               key={s}
               onClick={() => onToggleStatus(s)}
               aria-pressed={active}
-              style={{ ...btnBase, ...(active ? ACTIVE_FILTER_STYLE : INACTIVE_FILTER_STYLE) }}
+              className="font-mono" style={{ ...btnBase, ...(active ? ACTIVE_FILTER_STYLE : INACTIVE_FILTER_STYLE) }}
             >
               <span style={{ width: 7, height: 7, borderRadius: '50%', background: STATUS_DOT[s], flexShrink: 0 }} />
               <span style={{ flex: 1, fontSize: 10 }}>{t(`status.${s}`)}</span>
@@ -223,7 +223,7 @@ export function FilterSidebar({
               key={key}
               onClick={() => onToggleDiff(key)}
               aria-pressed={active}
-              style={{ ...btnBase, ...(active ? ACTIVE_FILTER_STYLE : INACTIVE_FILTER_STYLE) }}
+              className="font-mono" style={{ ...btnBase, ...(active ? ACTIVE_FILTER_STYLE : INACTIVE_FILTER_STYLE) }}
             >
               <DiffDots level={level} />
               <span style={{ flex: 1, fontSize: 10 }}>{t(`difficulty.${key}`)}</span>
@@ -252,7 +252,7 @@ export function FilterSidebar({
                 key={m.id}
                 onClick={() => onTogglePerson(m.id)}
                 aria-pressed={active}
-                style={{ ...btnBase, ...(active ? ACTIVE_FILTER_STYLE : INACTIVE_FILTER_STYLE) }}
+                className="font-mono" style={{ ...btnBase, ...(active ? ACTIVE_FILTER_STYLE : INACTIVE_FILTER_STYLE) }}
               >
                 <Avatar name={name} photoUrl={m.photo_url} size={16} />
                 <span style={{ flex: 1, fontSize: 10, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -282,7 +282,7 @@ export function FilterSidebar({
               key={d}
               onClick={() => onToggleDate(d)}
               aria-pressed={active}
-              style={{ ...btnBase, ...(active ? ACTIVE_FILTER_STYLE : INACTIVE_FILTER_STYLE) }}
+              className="font-mono" style={{ ...btnBase, ...(active ? ACTIVE_FILTER_STYLE : INACTIVE_FILTER_STYLE) }}
             >
               <span style={{ flex: 1, fontSize: 10 }}>{t(`date.${d}`)}</span>
               <span style={{ fontSize: 9, opacity: 0.65 }}>{count}</span>
