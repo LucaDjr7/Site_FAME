@@ -29,6 +29,7 @@ Le site FAME présente deux labos de recherche (Paris, Montréal). On ajoute un 
 - **Conservation C** : journalisation des **questions sans réponse** et des **tentatives signalées** uniquement (pas de transcription intégrale).
 - **Rate-limit persistant** (table Supabase) + **plafond budgétaire dur 50 $/mois** → **mode dégradé**.
 - **Page admin** `/admin/assistant`.
+- **Membres publics** : la page Team et la lecture `/api/members` redeviennent **publiques** (visiteurs inclus), **toujours sans email** — révision de la restriction B4 (voir §17). Changement site-level, pas seulement côté bot.
 - Réponse **dans la langue de la question** ; embeddings multilingues ; UI du chat i18n en/fr ; MAJ `/privacy`.
 
 ### Reporté (v1.1+)
@@ -131,7 +132,7 @@ Route handler  ──► 1. kill-switch + budget (mode dégradé si dépassé)
 - **Embed-on-write** : après succès d'un `POST/PATCH` sur `subjects|publications|prompts`, `index-source(type, id)` (re)chunke + (re)vectorise + upsert ; `DELETE` purge les vecteurs. Exécuté **après la réponse** via `waitUntil` (n'allonge pas l'écriture). En cas d'échec d'embedding → `embedding_stale=true`, balayé par un **cron léger** de rattrapage.
 - **Backfill** : script `npm run index:rag` — vectorise tout l'existant + la KB. Idempotent (upsert). Lancé au premier déploiement et via le bouton admin.
 - **KB** : `docs/kb/*.md` découpés par titres/~512 tokens, `visibility='public'`, indexés au build/déploiement.
-- **Découpage** : sujets = un extrait par champ logique (`context`/`method`/`results`) avec titre + kicker préfixés ; publications = un extrait (ligne bibliographique) ; prompts = un extrait (ou découpé si long) ; membres = un extrait (nom, rôle, labo, domaines — **sans email**).
+- **Découpage** : sujets = un extrait par champ logique (`context`/`method`/`results`) avec titre + kicker préfixés ; publications = un extrait (ligne bibliographique) ; prompts = un extrait (ou découpé si long) ; membres = un extrait (nom, rôle, labo, domaines — **sans email**), `visibility='public'`.
 
 ---
 
@@ -251,7 +252,7 @@ Respecte la règle projet : seuls `NEXT_PUBLIC_{SUPABASE_URL,SUPABASE_ANON_KEY,A
 ## 17. Décisions & exceptions à tracer
 
 - **Exception `CLAUDE.md`** : le projet impose Claude pour l'IA ; la v1 utilise **OpenAI** pour la génération (single-vendor / coût / clé unique), **derrière une interface swappable**. Exception **assumée et documentée** pour qu'elle ne soit pas « corrigée » par erreur.
-- **Assouplissement B4** : `GET /api/members` a été passé en auth-requise (Vague 0) ; le bot **expose des infos membres non-PII (sans email) aux visiteurs**. Assouplissement assumé.
+- **Membres publics (révision B4)** : `GET /api/members` avait été passé en auth-requise (Vague 0). **Décision produit : les membres redeviennent visibles des visiteurs** (nom, rôle, labo, domaines — **jamais l'email**), à la fois sur la **page Team** et via le bot. ⇒ relâcher la garde auth en lecture sur `/api/members` (lecture publique, projetée sans email) **et** rendre la page Team accessible aux visiteurs. Changement **site-level** à intégrer au plan, au-delà du périmètre strict de l'assistant.
 - **Rate-limit** : `rate-limit.ts` (Map mémoire) insuffisant pour cet endpoint → **rate-limit persistant Supabase** dédié.
 - **Cross-lab** : pas de filtre labo sur la visibilité (cohérent avec [[b5-cross-lab-pas-isolation]]).
 
