@@ -3,7 +3,8 @@ import { createServiceClient } from '@/lib/supabase/server'
 
 export async function POST(req: NextRequest) {
   const { token, password } = await req.json()
-  if (!token || !password || password.length < 8) {
+  const strong = typeof password === 'string' && password.length >= 8 && /[A-Z]/.test(password) && /[0-9]/.test(password)
+  if (!token || !strong) {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
   }
 
