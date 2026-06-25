@@ -179,9 +179,8 @@ export function AddPublicationModal({ open, lab, onClose, onCreated }: Props) {
 
         {/* Error */}
         {error && (
-          <div className="font-mono" style={{
+          <div className="font-mono text-fame-red" style={{
             fontSize: 11,
-            color: '#c0473b',
             marginBottom: 12,
           }}>
             {error}
