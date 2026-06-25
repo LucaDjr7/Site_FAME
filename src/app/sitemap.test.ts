@@ -15,6 +15,7 @@ describe('sitemap', () => {
     expect(urls).toContain('https://fame.example/en/paris/publications')
     expect(urls).toContain('https://fame.example/en/paris/team')
     expect(urls).toContain('https://fame.example/en/paris/propose')
+    expect(urls).toContain('https://fame.example/en/paris/tasks')
   })
   it('exclut les routes authentifiées et admin', () => {
     const urls = sitemap().map(e => e.url)
