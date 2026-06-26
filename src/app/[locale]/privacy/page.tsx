@@ -42,6 +42,15 @@ export default async function PrivacyPage({ params }: Props) {
           </p>
         </section>
       ))}
+
+      <section className="mb-8">
+        <h2 className="font-serif text-lg font-bold text-fame-blue mb-2">
+          {t('assistant.heading')}
+        </h2>
+        <p className="text-sm text-gray-700 leading-relaxed">{t('assistant.body')}</p>
+        <p className="text-sm text-gray-700 leading-relaxed mt-3">{t('assistant.provider')}</p>
+        <p className="text-sm text-gray-700 leading-relaxed mt-3">{t('assistant.retention')}</p>
+      </section>
     </div>
   )
 }

@@ -430,6 +430,52 @@
     "promptsTitle": "Prompts — {lab}",
     "paperTitle": "{title} — {lab}"
   },
+  "adminAssistant": {
+    "title": "Assistant",
+    "enabledLabel": "Assistant status",
+    "enable": "Enable",
+    "disable": "Disable",
+    "reindex": "Reindex knowledge base",
+    "reindexStarted": "Reindexing started",
+    "usageTitle": "This month's usage",
+    "monthlyCost": "Estimated cost",
+    "budget": "Budget",
+    "unansweredTitle": "Unanswered questions",
+    "none": "Nothing yet"
+  },
+  "assistant": {
+    "title": "Astra",
+    "subtitle": "FAME assistant",
+    "beta": "Beta",
+    "assistantName": "Astra",
+    "you": "You",
+    "openLabel": "Ask Astra",
+    "closeLabel": "Minimize",
+    "fullscreenLabel": "Open fullscreen",
+    "newChat": "New",
+    "placeholder": "Ask about FAME's research…",
+    "send": "Send",
+    "thinking": "Thinking…",
+    "greetingVisitor": "Hi 👋 I'm Astra, the FAME lab assistant. How can I help?",
+    "greetingMember": "Hi 👋 I'm Astra. Ask me about subjects, tasks, files or anything across the FAME labs.",
+    "welcomeTitle": "Hi, I'm Astra.",
+    "welcomeBody": "The FAME lab assistant. Ask me about research subjects, datasets, publications or how to contribute.",
+    "suggestionsLabel": "Suggestions",
+    "suggestion1": "What subjects are underway at the Paris lab?",
+    "suggestion2": "Explain deep hedging under frictions.",
+    "suggestion3": "How do I propose a new research topic?",
+    "suggestion4": "Where can I find datasets and publications?",
+    "sources": "Sources",
+    "unanswered": "This topic isn't covered in FAME's content yet.",
+    "proposeCta": "Propose this topic",
+    "degraded": "The assistant is temporarily unavailable. Please try again later.",
+    "error": "Connection to the assistant failed. Please try again in a moment.",
+    "rateLimited": "You've reached the request limit. Please wait a moment and try again.",
+    "disclaimer": "Astra can make mistakes — verify critical information with the team.",
+    "globeCta": "Discover FAME with AI",
+    "globeCtaSub": "Chat with our assistant to explore the research",
+    "teaserBadge": "New"
+  },
   "privacy": {
     "link": "Privacy policy",
     "title": "Privacy Policy",
@@ -456,6 +502,12 @@
     "hosting": {
       "h": "Hosting",
       "p": "The site is hosted on Vercel. The database is hosted on Supabase (EU West — Ireland region). Data is not transferred outside the European Union."
+    },
+    "assistant": {
+      "heading": "AI assistant",
+      "body": "Our site offers an AI assistant that answers questions about FAME's research. Your questions are sent to our AI provider to generate a response.",
+      "provider": "Questions are processed by OpenAI (United States) as a data processor, under a Data Processing Agreement and Standard Contractual Clauses. We never send personal data such as member emails to the provider.",
+      "retention": "We log questions (without your identity; your IP is stored only as a salted hash) to improve the assistant. We do not use them to identify you."
     }
   }
 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { requireMember, authErrorResponse } from '@/lib/auth'
+import { scheduleReindex } from '@/lib/rag/schedule'
 
 type Params = { params: Promise<{ id: string }> }
 
@@ -26,6 +27,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   const { data, error } = await service.from('subjects').update(updates).eq('id', id).select().single()
   if (error?.code === 'PGRST116') return NextResponse.json({ error: 'Not found' }, { status: 404 })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  scheduleReindex('subject', id)
   return NextResponse.json(data)
 }
 
@@ -35,5 +37,6 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
   const service = await createServiceClient()
   const { error } = await service.from('subjects').delete().eq('id', id)
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  scheduleReindex('subject', id)
   return NextResponse.json({ ok: true })
 }

@@ -56,6 +56,7 @@ export interface Subject {
   }
   ordre: number
   is_transversal: boolean
+  confidentiel: boolean
   created_at: string
   updated_at: string
 }
@@ -223,4 +224,31 @@ export interface Session {
     email: string
   }
   member: Member | null
+}
+
+// ── Assistant RAG ────────────────────────────────────────────────────────
+export type RagSourceType = 'subject' | 'task' | 'publication' | 'prompt' | 'member' | 'kb'
+export type RagVisibility = 'public' | 'member'
+
+export interface RagChunkRow {
+  id: string
+  source_type: RagSourceType
+  source_id: string
+  labo: 'paris' | 'montreal' | null
+  is_transversal: boolean
+  confidentiel: boolean
+  visibility: RagVisibility
+  lang: string
+  content: string
+  embedding: number[] | null
+  token_count: number
+  embedding_stale: boolean
+  metadata: Record<string, unknown>
+}
+
+export interface ChatUsageRow {
+  month: string
+  tokens_in: number
+  tokens_out: number
+  est_cost_usd: number
 }

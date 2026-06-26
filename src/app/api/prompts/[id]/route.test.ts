@@ -7,6 +7,9 @@ vi.mock('@/lib/auth', async (orig) => {
   return { ...actual, requireMember: () => requireMember() }
 })
 
+// Le hook embed-on-write appelle after() hors scope de requête en test → no-op.
+vi.mock('@/lib/rag/schedule', () => ({ scheduleReindex: () => {} }))
+
 let updateVals: Record<string, unknown> = {}
 vi.mock('@/lib/supabase/server', () => ({
   createServiceClient: async () => ({

@@ -430,6 +430,52 @@
     "promptsTitle": "Prompts — {lab}",
     "paperTitle": "{title} — {lab}"
   },
+  "adminAssistant": {
+    "title": "Assistant",
+    "enabledLabel": "État de l'assistant",
+    "enable": "Activer",
+    "disable": "Désactiver",
+    "reindex": "Réindexer la base de connaissances",
+    "reindexStarted": "Réindexation lancée",
+    "usageTitle": "Usage du mois",
+    "monthlyCost": "Coût estimé",
+    "budget": "Budget",
+    "unansweredTitle": "Questions sans réponse",
+    "none": "Rien pour l'instant"
+  },
+  "assistant": {
+    "title": "Astra",
+    "subtitle": "Assistant FAME",
+    "beta": "Bêta",
+    "assistantName": "Astra",
+    "you": "Vous",
+    "openLabel": "Demander à Astra",
+    "closeLabel": "Réduire",
+    "fullscreenLabel": "Ouvrir en plein écran",
+    "newChat": "Nouvelle",
+    "placeholder": "Posez une question sur les recherches de FAME…",
+    "send": "Envoyer",
+    "thinking": "Réflexion…",
+    "greetingVisitor": "Bonjour 👋 Je suis Astra, l'assistant du laboratoire FAME. Comment puis-je vous aider ?",
+    "greetingMember": "Bonjour 👋 Je suis Astra. Posez-moi vos questions sur les sujets, tâches, fichiers ou tout ce qui concerne les labos FAME.",
+    "welcomeTitle": "Bonjour, je suis Astra.",
+    "welcomeBody": "L'assistant du laboratoire FAME. Posez-moi une question sur les sujets de recherche, les jeux de données, les publications ou la manière de contribuer.",
+    "suggestionsLabel": "Suggestions",
+    "suggestion1": "Quels sujets sont en cours au laboratoire de Paris ?",
+    "suggestion2": "Explique-moi le deep hedging sous frictions.",
+    "suggestion3": "Comment proposer un nouveau sujet de recherche ?",
+    "suggestion4": "Où trouver les jeux de données et les publications ?",
+    "sources": "Sources",
+    "unanswered": "Ce sujet n'est pas encore couvert par le contenu de FAME.",
+    "proposeCta": "Proposer ce sujet",
+    "degraded": "L'assistant est momentanément indisponible. Réessayez plus tard.",
+    "error": "Connexion à l'assistant impossible pour le moment. Réessayez dans quelques instants.",
+    "rateLimited": "Vous avez atteint la limite de requêtes. Patientez un instant puis réessayez.",
+    "disclaimer": "Astra peut se tromper — vérifiez les informations critiques auprès de l'équipe.",
+    "globeCta": "Découvrir FAME avec l'IA",
+    "globeCtaSub": "Discutez avec notre assistant pour explorer les recherches",
+    "teaserBadge": "Nouveau"
+  },
   "privacy": {
     "link": "Politique de confidentialité",
     "title": "Politique de confidentialité",
@@ -456,6 +502,12 @@
     "hosting": {
       "h": "Hébergement",
       "p": "Le site est hébergé sur Vercel. La base de données est hébergée sur Supabase (région EU West — Irlande). Les données ne sont pas transférées hors de l'Union Européenne."
+    },
+    "assistant": {
+      "heading": "Assistant IA",
+      "body": "Notre site propose un assistant IA qui répond aux questions sur les recherches de FAME. Vos questions sont transmises à notre fournisseur d'IA pour générer une réponse.",
+      "provider": "Les questions sont traitées par OpenAI (États-Unis) en qualité de sous-traitant, dans le cadre d'un accord de traitement des données et de clauses contractuelles types. Nous ne transmettons jamais de données personnelles telles que les courriels des membres au fournisseur.",
+      "retention": "Nous journalisons les questions (sans votre identité ; votre IP n'est conservée que sous forme d'empreinte salée) afin d'améliorer l'assistant. Nous ne les utilisons pas pour vous identifier."
     }
   }
 }

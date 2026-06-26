@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { Modal } from '@/components/ui/Modal'
 import type { Member, Role } from '@/types'
@@ -25,7 +25,10 @@ type FormProps = {
 function EditForm({ member, isAdmin, onClose, onSaved }: FormProps) {
   const t = useTranslations('team')
 
-  const [email, setEmail] = useState(member.email)
+  // The public /api/members projection omits email (PII), so member.email may be
+  // undefined here. Track whether the field was populated to avoid blanking the
+  // stored address on save when it was never loaded.
+  const [email, setEmail] = useState(member.email ?? '')
   const [domainesStr, setDomainesStr] = useState(member.domaines.join(', '))
   const [photoUrl, setPhotoUrl] = useState(member.photo_url ?? '')
   // Admin-only
@@ -47,10 +50,12 @@ function EditForm({ member, isAdmin, onClose, onSaved }: FormProps) {
       .filter(Boolean)
 
     const body: Record<string, unknown> = {
-      email,
       domaines,
       photo_url: photoUrl || null,
     }
+    // Only send email when it was actually populated/edited. The public member
+    // list omits email, so an empty field means "not loaded" — never overwrite.
+    if (email.trim()) body.email = email
     if (isAdmin) {
       body.prenom = prenom
       body.nom = nom
@@ -251,16 +256,49 @@ function EditForm({ member, isAdmin, onClose, onSaved }: FormProps) {
 
 export function EditMemberModal({ open, member, isAdmin, onClose, onSaved }: Props) {
   const t = useTranslations('team')
+  // enriched holds the admin-fetched record (includes email).
+  // Only used when enriched.id === member.id (avoids stale data on member switch).
+  const [enriched, setEnriched] = useState<Member | null>(null)
+
+  // Single shared predicate: email is "present" only when truthy. Treats undefined,
+  // null and '' identically (all → fetch). Using one predicate in both the effect
+  // guard and showLoading prevents a mismatch that could spin the modal forever.
+  const needsEmailFetch = !member?.email
+
+  useEffect(() => {
+    // Only fetch when the modal is open, the user is admin, and email is absent.
+    // All setEnriched calls are inside async callbacks — no synchronous setState in effect body.
+    if (!open || !member || !isAdmin || !needsEmailFetch) return
+
+    let cancelled = false
+    fetch(`/api/members/${member.id}`)
+      .then(r => r.ok ? r.json() : null)
+      .then((data: Member | null) => { if (!cancelled) setEnriched(data ?? member) })
+      .catch(() => { if (!cancelled) setEnriched(member) })
+    return () => { cancelled = true }
+  }, [open, member?.id, isAdmin, needsEmailFetch]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Derive at render time — no synchronous setState reset needed.
+  // enrichedIsValid is true only when enriched belongs to the current open member.
+  const enrichedIsValid = open && isAdmin && !!enriched && enriched.id === member?.id
+  const effective = enrichedIsValid ? enriched : member
+  // Show loading when admin + fetch is in-flight (email absent, enriched not yet arrived).
+  const showLoading = open && isAdmin && !!member && needsEmailFetch && !enrichedIsValid
+
   return (
     <Modal open={open} onClose={onClose} title={t('editTitle')}>
-      {member && (
-        <EditForm
-          key={`${member.id}-${open ? 'open' : 'closed'}`}
-          member={member}
-          isAdmin={isAdmin}
-          onClose={onClose}
-          onSaved={onSaved}
-        />
+      {effective && (
+        showLoading
+          ? <p className="font-mono text-fame-text-muted" style={{ fontSize: 12 }}>{t('loading')}</p>
+          : (
+            <EditForm
+              key={`${effective.id}-${open ? 'open' : 'closed'}-${effective.email ?? ''}`}
+              member={effective}
+              isAdmin={isAdmin}
+              onClose={onClose}
+              onSaved={onSaved}
+            />
+          )
       )}
     </Modal>
   )
