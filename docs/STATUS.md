@@ -24,12 +24,12 @@ Dernière mise à jour : 2026-06-26
 | P2 | `…-assistant-p2-retrieval-chat.md` | Retrieve (**filtre permissions en SQL**) + seuil, modération, anti-injection, masquage PII, rate-limit persistant, budget, kill-switch, endpoint SSE | ✅ |
 | P3 | `…-assistant-p3-tools.md` | 3 outils lecture seule (re-check permissions) + boucle d'outils | ✅ |
 | P5 | `…-assistant-p5-admin-rgpd.md` | `/admin/assistant`, toggle/reindex, `/privacy`, `.env.example`, red-team, +régression visibilité email admin | ✅ |
-| P4 | `…-assistant-p4-ui.md` | i18n `assistant`, bulle + panneau, CTA globe, citations, streaming client | ⏸ **bloqué — maquette** |
+| P4 | `…-assistant-p4-ui.md` | UI Astra : bulle + mini-panneau (partout), teaser accueil, page plein écran `/[locale]/assistant`, citations, streaming client | ✅ |
 
-**Ordre d'exécution** : **P1 → P2 → P3 → P5** ✅ faits, puis **pause avant P4** (← on est ici).
-**Exécution** : Subagent-Driven. Branche `feat/assistant-rag`, tip = `e7b3ecd`. **Revue finale whole-branch Opus + re-revue des fixes : verdict « Ready to merge: Yes »** (6 invariants sécu vérifiés end-to-end). Suite 222/222, lint/tsc/build verts. Ledger détaillé : `.superpowers/sdd/progress.md`.
-**Reste avant la PR unique** : décider d'ouvrir la PR backend-only maintenant **ou** d'attendre P4 (UI) — P4 exige d'abord une maquette « FAME Assistant » dans Claude Design.
-**Nouveaux prérequis runtime** (utilisateur, avant prod) : `OPENAI_API_KEY`, `ASSISTANT_IP_SALT` (pepper hash IP), pgvector activé, migrations `006`+`007` appliquées.
+**Ordre d'exécution** : **P1 → P2 → P3 → P5 → P4** ✅ TOUS faits (P4 débloqué par les maquettes « FAME Assistant » + « FAME ChatBubble », branding **Astra**).
+**Exécution** : Subagent-Driven. Branche `feat/assistant-rag`, tip = `1f15dad`. **Revues finales Opus (backend + couche UI) + re-revues des fixes : verdict « Ready to merge: Yes » des deux côtés.** Suite **236/236**, lint 0/tsc/build verts. Ledger détaillé : `.superpowers/sdd/progress.md`.
+**Reste** : `finishing-a-development-branch` → **PR unique backend+UI** `feat/assistant-rag` → main (décision utilisateur). Fast-follows possibles non bloquants notés au ledger.
+**Prérequis runtime** (utilisateur, avant que l'assistant réponde — dev & prod) : `OPENAI_API_KEY` (facturable), `ASSISTANT_IP_SALT` (pepper hash IP), migrations `006`+`007` appliquées (pgvector activé par `006`), puis `npm run index:rag` (backfill embeddings).
 
 **Décisions prises (2026-06-25)** :
 1. **Champ `confidentiel` (P1)** ✅ : booléen sur `subjects`, défaut `false`. `confidentiel=true` → jamais visible au visiteur (ni bot ni outils) ; membres voient tout ; tâches/fichiers héritent. Conforme aux plans tels qu'écrits.
