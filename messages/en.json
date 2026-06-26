@@ -430,6 +430,19 @@
     "promptsTitle": "Prompts — {lab}",
     "paperTitle": "{title} — {lab}"
   },
+  "adminAssistant": {
+    "title": "Assistant",
+    "enabledLabel": "Assistant status",
+    "enable": "Enable",
+    "disable": "Disable",
+    "reindex": "Reindex knowledge base",
+    "reindexStarted": "Reindexing started",
+    "usageTitle": "This month's usage",
+    "monthlyCost": "Estimated cost",
+    "budget": "Budget",
+    "unansweredTitle": "Unanswered questions",
+    "none": "Nothing yet"
+  },
   "privacy": {
     "link": "Privacy policy",
     "title": "Privacy Policy",

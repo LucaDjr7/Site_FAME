@@ -430,6 +430,19 @@
     "promptsTitle": "Prompts — {lab}",
     "paperTitle": "{title} — {lab}"
   },
+  "adminAssistant": {
+    "title": "Assistant",
+    "enabledLabel": "État de l'assistant",
+    "enable": "Activer",
+    "disable": "Désactiver",
+    "reindex": "Réindexer la base de connaissances",
+    "reindexStarted": "Réindexation lancée",
+    "usageTitle": "Usage du mois",
+    "monthlyCost": "Coût estimé",
+    "budget": "Budget",
+    "unansweredTitle": "Questions sans réponse",
+    "none": "Rien pour l'instant"
+  },
   "privacy": {
     "link": "Politique de confidentialité",
     "title": "Politique de confidentialité",
