@@ -60,8 +60,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'rate_limited' }, { status: 429 })
   }
 
-  // 4. Modération + anti-injection → refus poli streamé
-  const injection = detectInjection(question)
+  // 4. Modération + anti-injection → refus poli streamé.
+  // Anti-injection sur TOUS les tours user (un tour antérieur peut injecter ; le client
+  // contrôle l'historique). La modération payante OpenAI reste sur `question` seul (coût).
+  let injection: { flagged: boolean; reason?: string } = { flagged: false }
+  for (const turn of messages) {
+    if (turn.role !== 'user') continue
+    const r = detectInjection((turn.content ?? '').slice(0, MAX_QUESTION_LEN))
+    if (r.flagged) { injection = r; break }
+  }
   const moderation = await moderateInput(question)
   if (moderation.flagged || injection.flagged) {
     await logFlagged(question, injection.reason ?? ((moderation.categories ?? []).join(',') || 'moderation'), ipHash)
@@ -80,12 +87,19 @@ export async function POST(req: NextRequest) {
     }))
   }
 
-  // 7. Génération streamée (N derniers tours seulement)
+  // 7. Génération streamée (N derniers tours seulement).
+  // Sanitisation : ne forwarder QUE les rôles user/assistant venant du client, et
+  // seulement {role, content} — stripper tout tool_calls/name/tool_call_id forgé
+  // côté client (un client pourrait injecter de faux system/tool ou de faux outils).
+  // Les messages assistant+tool LÉGITIMES sont ajoutés plus bas par la boucle d'outils (serveur).
   const trimmed = messages.slice(-MAX_TURNS)
+  const sanitized: ChatMessage[] = trimmed
+    .filter(m => m.role === 'user' || m.role === 'assistant')
+    .map(m => ({ role: m.role, content: m.content ?? '' }))
   const provider = getChatProvider()
   const chatMessages: ChatMessage[] = [
     { role: 'system', content: buildSystemPrompt(tier, chunks) },
-    ...trimmed,
+    ...sanitized,
   ]
   const sources = chunks.map(c => ({ source_type: c.source_type, source_id: c.source_id, labo: c.labo }))
 
