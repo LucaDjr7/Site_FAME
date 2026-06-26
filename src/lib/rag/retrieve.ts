@@ -23,7 +23,10 @@ export interface RetrieveDeps {
   matchCount?: number
 }
 
-const DEFAULT_THRESHOLD = Number(process.env.ASSISTANT_SIMILARITY_THRESHOLD ?? '0.35')
+const RAW_THRESHOLD = Number(process.env.ASSISTANT_SIMILARITY_THRESHOLD ?? '0.35')
+// Durci contre NaN (var non numérique) : sinon `similarity >= NaN` est toujours faux
+// et tous les chunks seraient silencieusement droppés → retrieval vide.
+const DEFAULT_THRESHOLD = Number.isFinite(RAW_THRESHOLD) ? RAW_THRESHOLD : 0.35
 const DEFAULT_MATCH_COUNT = 8
 
 export async function retrieve(query: string, tier: Tier, deps: RetrieveDeps = {}): Promise<RetrievedChunk[]> {
