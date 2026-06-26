@@ -3,8 +3,8 @@ import { TOOLS, toolDefs, runTool } from './index'
 import type { ToolContext } from './types'
 
 describe('registre d\'outils', () => {
-  it('expose les 3 outils', () => {
-    expect(Object.keys(TOOLS).sort()).toEqual(['find_tasks', 'get_subject_files', 'get_subject_progress'])
+  it('expose les 4 outils', () => {
+    expect(Object.keys(TOOLS).sort()).toEqual(['find_tasks', 'get_subject_files', 'get_subject_progress', 'list_entities'])
   })
   it('toolDefs() au format OpenAI', () => {
     const defs = toolDefs()

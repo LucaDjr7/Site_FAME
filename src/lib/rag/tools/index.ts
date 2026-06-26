@@ -2,11 +2,13 @@ import type { RegisteredTool, ToolContext, ToolResult } from './types'
 import { getSubjectProgress } from './get-subject-progress'
 import { findTasks } from './find-tasks'
 import { getSubjectFiles } from './get-subject-files'
+import { listEntities } from './list-entities'
 
 export const TOOLS: Record<string, RegisteredTool> = {
   get_subject_progress: getSubjectProgress,
   find_tasks: findTasks,
   get_subject_files: getSubjectFiles,
+  list_entities: listEntities,
 }
 
 export function toolDefs(): { type: 'function'; function: RegisteredTool['def'] }[] {
