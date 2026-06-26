@@ -89,13 +89,31 @@ export async function POST(req: NextRequest) {
   ]
   const sources = chunks.map(c => ({ source_type: c.source_type, source_id: c.source_id, labo: c.labo }))
 
-  // 7bis. Boucle d'outils (max 3 tours) avant le stream final.
+  // 7bis. Boucle d'outils (max 3 tours), GÉNÉRATION UNIQUE.
+  // La complétion qui ROMPT la boucle (toolCalls vides) porte le content final :
+  // on l'émet directement comme un seul delta, AU LIEU de re-générer via stream().
+  // stream() ne sert plus que de fallback (boucle épuisée ou complétion sans content).
+  // Tradeoff assumé : sur le chemin sans-outil la réponse arrive en un seul delta
+  // (plus de streaming token-par-token) — priorité produit « garde-fous/budget > UX RAG » ;
+  // le streaming-avec-outils est une amélioration P4. Le contrat SSE reste respecté.
+  // Comptabilité (tokens ≈ chars/4) : on compte TOUTES les complétions de la boucle
+  // (in à chaque tour) + la sortie des tours-à-outils, et la réponse finale via outChars.
   const service = await createServiceClient()
   const toolCtx: ToolContext = { tier, service: service as unknown as ToolContext['service'] }
   const defs = toolDefs()
+  let finalContent: string | null = null
+  let loopTokensIn = 0
+  let loopTokensOut = 0
   for (let i = 0; i < 3; i++) {
+    loopTokensIn += Math.ceil(chatMessages.reduce((n, m) => n + (m.content ?? '').length, 0) / 4)
     const completion = await provider.complete(chatMessages, { tools: defs, maxTokens: 600 })
-    if (completion.toolCalls.length === 0) break
+    if (completion.toolCalls.length === 0) {
+      // Réponse finale : son content sera compté via outChars (pas ici → pas de double comptage).
+      finalContent = completion.content
+      break
+    }
+    // Tour produisant des outils : compter content + tool_calls sérialisés en sortie.
+    loopTokensOut += Math.ceil(((completion.content ?? '').length + JSON.stringify(completion.toolCalls).length) / 4)
     chatMessages.push({ role: 'assistant', content: completion.content, tool_calls: completion.toolCalls.map(tc => ({ id: tc.id, type: 'function', function: { name: tc.name, arguments: tc.arguments } })) })
     for (const call of completion.toolCalls) {
       let parsed: Record<string, unknown> = {}
@@ -110,20 +128,27 @@ export async function POST(req: NextRequest) {
       const enc = new TextEncoder()
       controller.enqueue(enc.encode(`event: sources\ndata: ${JSON.stringify(sources)}\n\n`))
       let outChars = 0
-      try {
-        for await (const delta of provider.stream(chatMessages, { maxTokens: 600 })) {
-          const safe = maskPII(delta)
-          outChars += safe.length
-          controller.enqueue(enc.encode(`data: ${JSON.stringify({ delta: safe })}\n\n`))
+      if (finalContent && finalContent.trim()) {
+        // Chemin résolu : émettre la réponse finale en un seul delta masqué.
+        const safe = maskPII(finalContent)
+        outChars = safe.length
+        controller.enqueue(enc.encode(`data: ${JSON.stringify({ delta: safe })}\n\n`))
+      } else {
+        // Fallback : la boucle a épuisé ses tours sans réponse, ou content vide.
+        try {
+          for await (const delta of provider.stream(chatMessages, { maxTokens: 600 })) {
+            const safe = maskPII(delta)
+            outChars += safe.length
+            controller.enqueue(enc.encode(`data: ${JSON.stringify({ delta: safe })}\n\n`))
+          }
+        } catch {
+          controller.enqueue(enc.encode(`event: error\ndata: ${JSON.stringify({ text: 'generation failed' })}\n\n`))
         }
-      } catch {
-        controller.enqueue(enc.encode(`event: error\ndata: ${JSON.stringify({ text: 'generation failed' })}\n\n`))
       }
       controller.enqueue(enc.encode('event: done\ndata: {}\n\n'))
       controller.close()
-      // Comptabilité approximative (tokens ≈ chars/4) hors flux pour ne pas bloquer.
-      const tokensIn = Math.ceil(chatMessages.reduce((n, m) => n + (m.content ?? '').length, 0) / 4)
-      void recordUsage(tokensIn, Math.ceil(outChars / 4))
+      // Comptabilité hors flux : in = toutes les complétions ; out = tours-à-outils + réponse émise.
+      void recordUsage(loopTokensIn, loopTokensOut + Math.ceil(outChars / 4))
     },
   })
   return sse(stream)

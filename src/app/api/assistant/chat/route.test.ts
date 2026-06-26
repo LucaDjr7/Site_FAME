@@ -5,6 +5,7 @@ import { NextRequest } from 'next/server'
 // (vi.mock calls are hoisted to the top of the file by Vitest's transformer,
 //  so any variable they close over must be hoisted too).
 const streamSpy = vi.hoisted(() => vi.fn())
+const completeSpy = vi.hoisted(() => vi.fn())
 
 const mocks = {
   enabled: true, overBudget: false, rateOk: true, flagged: false, chunks: [] as unknown[],
@@ -24,9 +25,9 @@ vi.mock('@/lib/supabase/server', () => ({ createServiceClient: async () => ({ fr
 vi.mock('@/lib/rag/tools', () => ({ toolDefs: () => [], runTool: async () => ({}) }))
 vi.mock('@/lib/llm', () => ({
   getChatProvider: () => ({
-    // complete: no tool calls → the tool loop breaks immediately, leaving stream() the single model call.
-    complete: async () => ({ content: null, toolCalls: [] }),
-    stream: streamSpy.mockImplementation(async function* () { yield 'hello' }),
+    // complete: default returns no content → routes to the stream() fallback path.
+    complete: completeSpy,
+    stream: streamSpy,
   }),
 }))
 
@@ -35,9 +36,13 @@ const post = (b: unknown) => new NextRequest('http://localhost/api/assistant/cha
 
 beforeEach(() => {
   Object.assign(mocks, { enabled: true, overBudget: false, rateOk: true, flagged: false, chunks: [] })
-  streamSpy.mockClear()
-  // Re-apply default implementation after clear so nominal tests still get a working generator
+  streamSpy.mockReset()
+  completeSpy.mockReset()
+  // Re-apply default implementations after reset so nominal tests still work.
+  // Default complete() returns no content → the tool loop breaks and the route
+  // falls back to stream() (preserves the legacy stream-based assertions).
   streamSpy.mockImplementation(async function* () { yield 'hello' })
+  completeSpy.mockResolvedValue({ content: null, toolCalls: [] })
 })
 
 describe('POST /api/assistant/chat — gardes', () => {
@@ -64,6 +69,7 @@ describe('POST /api/assistant/chat — invariant pas-d\'appel-modèle sur chemin
     const res = await POST(post({ messages: [{ role: 'user', content: 'bad content' }] }))
     expect(res.status).toBe(200)
     expect(streamSpy).not.toHaveBeenCalled()
+    expect(completeSpy).not.toHaveBeenCalled()
     const body = await res.text()
     expect(body).toContain('event: refusal')
   })
@@ -74,6 +80,7 @@ describe('POST /api/assistant/chat — invariant pas-d\'appel-modèle sur chemin
     const res = await POST(post({ messages: [{ role: 'user', content: userQuestion }] }))
     expect(res.status).toBe(200)
     expect(streamSpy).not.toHaveBeenCalled()
+    expect(completeSpy).not.toHaveBeenCalled()
     const body = await res.text()
     expect(body).toContain('event: unanswered')
     expect(body).toContain('proposeQuestion')
@@ -85,6 +92,7 @@ describe('POST /api/assistant/chat — invariant pas-d\'appel-modèle sur chemin
     const res = await POST(post({ messages: [{ role: 'user', content: 'hi' }] }))
     expect(res.status).toBe(429)
     expect(streamSpy).not.toHaveBeenCalled()
+    expect(completeSpy).not.toHaveBeenCalled()
   })
 
   it('kill-switch désactivé : aucun appel au modèle, statut 503', async () => {
@@ -92,14 +100,28 @@ describe('POST /api/assistant/chat — invariant pas-d\'appel-modèle sur chemin
     const res = await POST(post({ messages: [{ role: 'user', content: 'hi' }] }))
     expect(res.status).toBe(503)
     expect(streamSpy).not.toHaveBeenCalled()
+    expect(completeSpy).not.toHaveBeenCalled()
   })
 
-  it('contrôle positif — chemin nominal : le modèle est appelé exactement une fois', async () => {
+  it('contrôle positif — chemin nominal (fallback) : le modèle est appelé (complete + stream)', async () => {
     mocks.chunks = [{ id: '1', source_type: 'kb', source_id: 'kb:x', content: 'relevant content', labo: null, lang: 'en', similarity: 0.9 }]
     const res = await POST(post({ messages: [{ role: 'user', content: 'Tell me about FAME research' }] }))
     // Drain the stream so the async generator inside ReadableStream has time to execute
     await res.text()
     expect(res.status).toBe(200)
+    // Default complete() yields no content → fallback to stream() exactly once.
+    expect(completeSpy).toHaveBeenCalled()
     expect(streamSpy).toHaveBeenCalledTimes(1)
+  })
+
+  it('chemin primaire — complete() fournit le content : un seul delta émis, stream() NON appelé', async () => {
+    mocks.chunks = [{ id: '1', source_type: 'kb', source_id: 'kb:x', content: 'relevant content', labo: null, lang: 'en', similarity: 0.9 }]
+    completeSpy.mockResolvedValueOnce({ content: 'answer text', toolCalls: [] })
+    const res = await POST(post({ messages: [{ role: 'user', content: 'Tell me about FAME research' }] }))
+    const body = await res.text()
+    expect(res.status).toBe(200)
+    expect(body).toContain('answer text')
+    expect(completeSpy).toHaveBeenCalled()
+    expect(streamSpy).not.toHaveBeenCalled()
   })
 })
