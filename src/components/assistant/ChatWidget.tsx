@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ChatBubble } from './ChatBubble'
 import { ChatPanel } from './ChatPanel'
 
@@ -13,6 +13,12 @@ export function ChatWidget({
   isMember: boolean
 }) {
   const [open, setOpen] = useState(false)
+
+  useEffect(() => {
+    const onOpen = () => setOpen(true)
+    window.addEventListener('fame:open-assistant', onOpen)
+    return () => window.removeEventListener('fame:open-assistant', onOpen)
+  }, [])
 
   return (
     <div

@@ -472,7 +472,8 @@
     "error": "Connection to the assistant failed. Please try again in a moment.",
     "disclaimer": "Astra can make mistakes — verify critical information with the team.",
     "globeCta": "Discover FAME with AI",
-    "globeCtaSub": "Chat with our assistant to explore the research"
+    "globeCtaSub": "Chat with our assistant to explore the research",
+    "teaserBadge": "New"
   },
   "privacy": {
     "link": "Privacy policy",

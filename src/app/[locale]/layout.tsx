@@ -4,6 +4,8 @@ import { getMessages, getTranslations } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { routing } from '@/i18n/routing'
 import { ToastProvider } from '@/components/ui/Toast'
+import { getSession } from '@/lib/auth'
+import { ChatWidget } from '@/components/assistant/ChatWidget'
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params
@@ -31,6 +33,8 @@ export default async function LocaleLayout({ children, params }: Props) {
   }
 
   const messages = await getMessages()
+  const session = await getSession()
+  const isMember = !!session?.member
 
   return (
     <html lang={locale}>
@@ -43,6 +47,7 @@ export default async function LocaleLayout({ children, params }: Props) {
         <NextIntlClientProvider messages={messages}>
           <ToastProvider>
             {children}
+            <ChatWidget locale={locale} isMember={isMember} />
           </ToastProvider>
         </NextIntlClientProvider>
       </body>

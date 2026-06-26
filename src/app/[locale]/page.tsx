@@ -3,6 +3,7 @@ import { getTranslations } from 'next-intl/server'
 import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher'
 import { StarField } from '@/components/globe/StarField'
 import { Globe } from '@/components/globe/Globe'
+import { AssistantGlobeCTA } from '@/components/assistant/AssistantGlobeCTA'
 
 type Props = {
   params: Promise<{ locale: string }>
@@ -147,6 +148,9 @@ export default async function HomePage({ params }: Props) {
           {t('cta')}
         </p>
       </footer>
+
+      {/* Astra teaser — fixed, above the chat bubble */}
+      <AssistantGlobeCTA />
     </div>
   )
 }

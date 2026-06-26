@@ -472,7 +472,8 @@
     "error": "Connexion à l'assistant impossible pour le moment. Réessayez dans quelques instants.",
     "disclaimer": "Astra peut se tromper — vérifiez les informations critiques auprès de l'équipe.",
     "globeCta": "Découvrir FAME avec l'IA",
-    "globeCtaSub": "Discutez avec notre assistant pour explorer les recherches"
+    "globeCtaSub": "Discutez avec notre assistant pour explorer les recherches",
+    "teaserBadge": "Nouveau"
   },
   "privacy": {
     "link": "Politique de confidentialité",

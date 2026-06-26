@@ -7,6 +7,7 @@ const KEYS = [
   'placeholder','send','thinking','greetingVisitor','greetingMember','welcomeTitle','welcomeBody',
   'suggestionsLabel','suggestion1','suggestion2','suggestion3','suggestion4',
   'sources','unanswered','proposeCta','degraded','error','disclaimer','globeCta','globeCtaSub',
+  'teaserBadge',
 ]
 
 type Messages = { assistant: Record<string, string> }
