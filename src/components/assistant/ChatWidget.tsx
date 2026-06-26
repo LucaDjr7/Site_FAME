@@ -1,17 +1,21 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import { ChatBubble } from './ChatBubble'
 import { ChatPanel } from './ChatPanel'
 
 export function ChatWidget({
   locale,
-  lab,
   isMember,
 }: {
   locale: string
-  lab?: string
   isMember: boolean
 }) {
+  const pathname = usePathname()
+  const seg = pathname?.split('/').filter(Boolean)
+  const maybeLab = seg?.[1]
+  const lab = maybeLab === 'paris' || maybeLab === 'montreal' ? maybeLab : undefined
+
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
