@@ -1,10 +1,10 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { logFlagged, logUnanswered } from './flagged-log'
 
 function makeService() {
   const inserted: Record<string, unknown>[] = []
   const service = {
-    from: (_t: string) => ({ insert: async (row: Record<string, unknown>) => { inserted.push(row); return {} } }),
+    from: () => ({ insert: async (row: Record<string, unknown>) => { inserted.push(row); return {} } }),
   }
   return { service, inserted }
 }
