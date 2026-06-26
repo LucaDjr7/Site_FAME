@@ -12,11 +12,12 @@ const BLINK_STYLE = `
 }
 `
 
-function TypingIndicator() {
+function TypingIndicator({ label }: { label: string }) {
   return (
     <>
       <style>{BLINK_STYLE}</style>
       <div
+        aria-label={label}
         style={{
           display: 'flex',
           gap: '5px',
@@ -24,6 +25,7 @@ function TypingIndicator() {
           padding: '6px 0 2px 38px',
         }}
       >
+        <span className="sr-only">{label}</span>
         {([0, 0.2, 0.4] as const).map((delay, i) => (
           <span
             key={i}
@@ -105,7 +107,7 @@ export function ChatMessageList({
               }}
               className="font-mono"
             >
-              {isUser ? 'Vo' : '✦'}
+              {isUser ? t('you').slice(0, 2) : '✦'}
             </div>
 
             {/* Bubble + meta */}
@@ -171,12 +173,15 @@ export function ChatMessageList({
       })}
 
       {/* Status indicators */}
-      {status === 'streaming' && <TypingIndicator />}
+      {status === 'streaming' && <TypingIndicator label={t('thinking')} />}
       {status === 'degraded' && (
         <p className="text-xs font-mono text-fame-red">{t('degraded')}</p>
       )}
       {status === 'error' && (
         <p className="text-xs font-mono text-fame-red">{t('error')}</p>
+      )}
+      {status === 'rate_limited' && (
+        <p className="text-xs font-mono text-fame-text-muted">{t('rateLimited')}</p>
       )}
     </div>
   )

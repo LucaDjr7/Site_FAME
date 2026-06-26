@@ -6,4 +6,4 @@ export interface ChatUiMessage {
   unanswered?: boolean
   proposeQuestion?: string
 }
-export type AssistantStatus = 'idle' | 'streaming' | 'degraded' | 'error'
+export type AssistantStatus = 'idle' | 'streaming' | 'degraded' | 'error' | 'rate_limited'

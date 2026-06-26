@@ -470,6 +470,7 @@
     "proposeCta": "Propose this topic",
     "degraded": "The assistant is temporarily unavailable. Please try again later.",
     "error": "Connection to the assistant failed. Please try again in a moment.",
+    "rateLimited": "You've reached the request limit. Please wait a moment and try again.",
     "disclaimer": "Astra can make mistakes — verify critical information with the team.",
     "globeCta": "Discover FAME with AI",
     "globeCtaSub": "Chat with our assistant to explore the research",

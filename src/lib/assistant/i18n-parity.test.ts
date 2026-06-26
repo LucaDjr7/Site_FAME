@@ -6,7 +6,7 @@ const KEYS = [
   'title','subtitle','beta','assistantName','you','openLabel','closeLabel','fullscreenLabel','newChat',
   'placeholder','send','thinking','greetingVisitor','greetingMember','welcomeTitle','welcomeBody',
   'suggestionsLabel','suggestion1','suggestion2','suggestion3','suggestion4',
-  'sources','unanswered','proposeCta','degraded','error','disclaimer','globeCta','globeCtaSub',
+  'sources','unanswered','proposeCta','degraded','error','rateLimited','disclaimer','globeCta','globeCtaSub',
   'teaserBadge',
 ]
 

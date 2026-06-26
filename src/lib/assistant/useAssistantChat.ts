@@ -33,6 +33,11 @@ export function useAssistantChat(opts: { endpoint?: string; fetchImpl?: typeof f
     setMessages([...history, { role: 'assistant', content: '' }])
     setStatus('streaming')
 
+    const removeEmptyPlaceholder = () =>
+      setMessages(prev =>
+        prev.filter((m, i) => !(i === prev.length - 1 && m.role === 'assistant' && m.content === '')),
+      )
+
     let res: Response
     try {
       res = await doFetch(endpoint, {
@@ -40,10 +45,11 @@ export function useAssistantChat(opts: { endpoint?: string; fetchImpl?: typeof f
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: history.map(m => ({ role: m.role, content: m.content })) }),
       })
-    } catch { setStatus('error'); return }
+    } catch { removeEmptyPlaceholder(); setStatus('error'); return }
 
-    if (res.status === 503) { setStatus('degraded'); return }
-    if (!res.ok || !res.body) { setStatus('error'); return }
+    if (res.status === 503) { removeEmptyPlaceholder(); setStatus('degraded'); return }
+    if (res.status === 429) { removeEmptyPlaceholder(); setStatus('rate_limited'); return }
+    if (!res.ok || !res.body) { removeEmptyPlaceholder(); setStatus('error'); return }
 
     const reader = res.body.getReader()
     const decoder = new TextDecoder()

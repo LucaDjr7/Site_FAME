@@ -470,6 +470,7 @@
     "proposeCta": "Proposer ce sujet",
     "degraded": "L'assistant est momentanément indisponible. Réessayez plus tard.",
     "error": "Connexion à l'assistant impossible pour le moment. Réessayez dans quelques instants.",
+    "rateLimited": "Vous avez atteint la limite de requêtes. Patientez un instant puis réessayez.",
     "disclaimer": "Astra peut se tromper — vérifiez les informations critiques auprès de l'équipe.",
     "globeCta": "Découvrir FAME avec l'IA",
     "globeCtaSub": "Discutez avec notre assistant pour explorer les recherches",
