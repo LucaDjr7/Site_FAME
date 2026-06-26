@@ -48,8 +48,8 @@ export default async function PrivacyPage({ params }: Props) {
           {t('assistant.heading')}
         </h2>
         <p className="text-sm text-gray-700 leading-relaxed">{t('assistant.body')}</p>
-        <p className="text-sm text-gray-700 leading-relaxed">{t('assistant.provider')}</p>
-        <p className="text-sm text-gray-700 leading-relaxed">{t('assistant.retention')}</p>
+        <p className="text-sm text-gray-700 leading-relaxed mt-3">{t('assistant.provider')}</p>
+        <p className="text-sm text-gray-700 leading-relaxed mt-3">{t('assistant.retention')}</p>
       </section>
     </div>
   )
