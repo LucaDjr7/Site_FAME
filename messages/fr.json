@@ -469,6 +469,12 @@
     "hosting": {
       "h": "Hébergement",
       "p": "Le site est hébergé sur Vercel. La base de données est hébergée sur Supabase (région EU West — Irlande). Les données ne sont pas transférées hors de l'Union Européenne."
+    },
+    "assistant": {
+      "heading": "Assistant IA",
+      "body": "Notre site propose un assistant IA qui répond aux questions sur les recherches de FAME. Vos questions sont transmises à notre fournisseur d'IA pour générer une réponse.",
+      "provider": "Les questions sont traitées par OpenAI (États-Unis) en qualité de sous-traitant, dans le cadre d'un accord de traitement des données et de clauses contractuelles types. Nous ne transmettons jamais de données personnelles telles que les courriels des membres au fournisseur.",
+      "retention": "Nous journalisons les questions (sans votre identité ; votre IP n'est conservée que sous forme d'empreinte salée) afin d'améliorer l'assistant. Nous ne les utilisons pas pour vous identifier."
     }
   }
 }

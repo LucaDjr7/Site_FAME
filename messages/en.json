@@ -469,6 +469,12 @@
     "hosting": {
       "h": "Hosting",
       "p": "The site is hosted on Vercel. The database is hosted on Supabase (EU West — Ireland region). Data is not transferred outside the European Union."
+    },
+    "assistant": {
+      "heading": "AI assistant",
+      "body": "Our site offers an AI assistant that answers questions about FAME's research. Your questions are sent to our AI provider to generate a response.",
+      "provider": "Questions are processed by OpenAI (United States) as a data processor, under a Data Processing Agreement and Standard Contractual Clauses. We never send personal data such as member emails to the provider.",
+      "retention": "We log questions (without your identity; your IP is stored only as a salted hash) to improve the assistant. We do not use them to identify you."
     }
   }
 }
