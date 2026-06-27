@@ -4,7 +4,6 @@ import type { ChatProvider } from '@/lib/llm'
 
 function fakeProvider(content: string): ChatProvider {
   return {
-    // eslint-disable-next-line require-yield
     async *stream() { return },
     async complete() { return { content, toolCalls: [] } },
   }
