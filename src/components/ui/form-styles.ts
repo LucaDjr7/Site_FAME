@@ -1,7 +1,7 @@
 /**
  * Shared inline style constants for "light" modal forms.
  *
- * Used by: AddTaskModal, AddSubjectModal, AddPublicationModal.
+ * Used by: AddTaskModal, VitrineEditor, AddPublicationModal.
  *
  * NOT used by InviteModal / EditMemberModal — those use a distinct "team modal"
  * skin (borderRadius 7, rgba border, translucent background, fontSize 10 label,

@@ -379,11 +379,12 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
         }}>
           {/* Grid area */}
           <div style={{ flex: 1, overflowY: 'auto', padding: '10px 24px 0' }}>
-            {displaySubjects.length === 0 && !canEdit ? (
+            {displaySubjects.length === 0 && (
               <div className="font-mono text-fame-text-muted" style={{ fontSize: 13, textAlign: 'center', paddingTop: 60 }}>
                 {t('empty')}
               </div>
-            ) : (
+            )}
+            {(displaySubjects.length > 0 || canEdit) && (
               <div
                 className={editMode ? 'editing' : ''}
                 style={{
@@ -435,6 +436,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
               </div>
             )}
           </div>
+
 
           {/* Filter sidebar */}
           <FilterSidebar

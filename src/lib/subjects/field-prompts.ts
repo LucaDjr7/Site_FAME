@@ -80,9 +80,9 @@ function draftContext(draft: FieldDraft, locale: Locale): string {
     [fr ? 'Titre académique' : 'Academic title', draft.titre],
     [fr ? 'Question' : 'Question', draft.question],
     [fr ? 'Accroche' : 'Hook', draft.accroche],
-    ['Context', draft.context],
-    ['Method', draft.method],
-    ['Results', draft.results],
+    [fr ? 'Contexte' : 'Context', draft.context],
+    [fr ? 'Méthode' : 'Method', draft.method],
+    [fr ? 'Résultats' : 'Results', draft.results],
     [fr ? 'Mots-clés' : 'Keywords', draft.keywords?.length ? draft.keywords.join(', ') : undefined],
   ]
   const lines = rows.filter(([, v]) => v && v.trim()).map(([k, v]) => `${k}: ${v!.trim()}`)

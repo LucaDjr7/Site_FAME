@@ -3,8 +3,8 @@ const DIFF_FAINT = 'rgba(120,140,190,0.28)'
 
 /**
  * DiffDots — three square dots indicating difficulty level (1–3 filled).
- * Shared across kanban-shared, FilterSidebar, and SubjectCard.
- * SubjectCard should convert its Difficulty enum locally:
+ * Shared across kanban-shared, FilterSidebar, and SubjectVitrine.
+ * SubjectVitrine should convert its Difficulty enum locally:
  *   const level = d === 'easy' ? 1 : d === 'intermediate' ? 2 : 3
  */
 export function DiffDots({ level }: { level: number }) {
