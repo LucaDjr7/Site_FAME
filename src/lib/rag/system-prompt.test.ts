@@ -13,12 +13,26 @@ describe('buildSystemPrompt', () => {
 
   it('contient les règles clés de bridage', () => {
     const p = buildSystemPrompt('visitor', chunks)
-    // Rule 1 — grounding (tightened to actual emitted string)
-    expect(p).toContain('Answer ONLY using the provided sources below.')
+    // Rule 1 — grounding (reformulé : faits FAME ancrés uniquement)
+    expect(p).toContain('answer ONLY using the SOURCES provided below')
+    expect(p).toMatch(/[Nn]ever invent facts/)
     // voix FAME
     expect(p).toMatch(/FAME/)
     // Rule 3 — anti-extraction / anti-prompt-injection
     expect(p).toMatch(/never reveal|do not reveal/i)
+  })
+
+  // --- liberté contrôlée : identité / capacités / périmètre ---
+
+  it('présente Astra et le périmètre Euronext', () => {
+    const p = buildSystemPrompt('visitor', chunks)
+    expect(p).toContain('You are Astra')
+    expect(p).toMatch(/Euronext/)
+  })
+
+  it('autorise les questions méta (qui es-tu / capacités) sans sources', () => {
+    const p = buildSystemPrompt('visitor', chunks)
+    expect(p).toMatch(/who you are and what you can do/)
   })
 
   it('signale le tier membre', () => {

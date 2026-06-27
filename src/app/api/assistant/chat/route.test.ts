@@ -78,17 +78,18 @@ describe('POST /api/assistant/chat — invariant pas-d\'appel-modèle sur chemin
     expect(body).toContain('event: refusal')
   })
 
-  it('retrieval vide (unanswered) : aucun appel au modèle, SSE event:unanswered avec proposeQuestion', async () => {
-    // mocks.chunks = [] is the default reset in beforeEach
-    const userQuestion = 'What is the dark matter budget?'
+  it('retrieval vide : le modèle EST appelé (génération) et PAS de court-circuit unanswered', async () => {
+    // mocks.chunks = [] is the default reset in beforeEach.
+    // Nouveau comportement « liberté contrôlée » : sur retrieval vide, on génère
+    // quand même (Astra répond identité/usage, décline honnêtement les faits non ancrés).
+    const userQuestion = 'Who are you?'
     const res = await POST(post({ messages: [{ role: 'user', content: userQuestion }] }))
-    expect(res.status).toBe(200)
-    expect(streamSpy).not.toHaveBeenCalled()
-    expect(completeSpy).not.toHaveBeenCalled()
     const body = await res.text()
-    expect(body).toContain('event: unanswered')
-    expect(body).toContain('proposeQuestion')
-    expect(body).toContain(userQuestion)
+    expect(res.status).toBe(200)
+    // La boucle d'outils tourne au moins une fois (i=0) → complete() est appelé.
+    expect(completeSpy).toHaveBeenCalled()
+    // Plus de court-circuit : aucun event unanswered structuré n'est émis.
+    expect(body).not.toContain('event: unanswered')
   })
 
   it('rate-limit dépassé : aucun appel au modèle, statut 429', async () => {

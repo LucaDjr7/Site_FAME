@@ -78,13 +78,11 @@ export async function POST(req: NextRequest) {
   // 5. Retrieve (filtre permissions en SQL)
   const chunks = await retrieve(question, tier)
 
-  // 6. Court-circuit : rien d'ancré → non traité + CTA propose
+  // 6. Retrieval vide n'est plus un refus dur : on génère quand même pour qu'Astra
+  // réponde aux questions d'identité/capacités/usage et décline honnêtement les
+  // questions factuelles non ancrées (cf. system prompt). On journalise pour l'analytics.
   if (chunks.length === 0) {
     await logUnanswered(question, (lastUser.content ?? '').match(/[à-ÿ]/i) ? 'fr' : 'en', ipHash)
-    return sse(singleMessageStream('unanswered', {
-      text: "This topic isn't covered in FAME's content yet. You can propose it to the team.",
-      proposeQuestion: question,
-    }))
   }
 
   // 7. Génération streamée (N derniers tours seulement).
