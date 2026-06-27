@@ -11,14 +11,14 @@ vi.mock('@/lib/supabase/server', () => ({
 }))
 import { GET } from './route'
 
-describe('GET /api/members — public sans PII', () => {
+describe('GET /api/members — public (email désormais public)', () => {
   it('répond 200 sans authentification', async () => {
     const res = await GET(new NextRequest('http://localhost/api/members?lab=paris'))
     expect(res.status).toBe(200)
   })
-  it('le select ne contient jamais email', async () => {
+  it('le select inclut email (projection publique) mais jamais "*"', async () => {
     await GET(new NextRequest('http://localhost/api/members?lab=paris'))
-    expect(lastSelect).not.toContain('email')
+    expect(lastSelect).toContain('email')
     expect(lastSelect).not.toBe('*')
   })
   it('refuse un lab invalide (400)', async () => {

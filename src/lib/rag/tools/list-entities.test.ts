@@ -18,20 +18,19 @@ function ctx(tier: 'visitor' | 'member', data: unknown, captured?: { select?: st
 }
 
 describe('list_entities', () => {
-  it('members — ne fuite jamais l\'email (PII)', async () => {
+  it('members — l\'email est public et communiqué (annuaire d\'équipe)', async () => {
     const captured: { select?: string } = {}
     const memberRows = [
       { prenom: 'Ada', nom: 'Lovelace', role: 'researcher', labo: 'paris', email: 'ada@fame.org' },
     ]
     const r = await listEntities.handler({ entity: 'members' }, ctx('member', memberRows, captured))
-    const members = r.members as { prenom: string; nom: string; role: string; labo: string }[]
-    expect(members).toEqual([{ prenom: 'Ada', nom: 'Lovelace', role: 'researcher', labo: 'paris' }])
-    // La sortie ne doit contenir ni l'email ni la clé email.
-    expect(JSON.stringify(r)).not.toContain('ada@fame.org')
-    expect(JSON.stringify(r)).not.toContain('email')
-    // Le select ne doit pas demander l'email.
+    const members = r.members as { prenom: string; nom: string; email: string; role: string; labo: string }[]
+    expect(members).toEqual([{ prenom: 'Ada', nom: 'Lovelace', email: 'ada@fame.org', role: 'researcher', labo: 'paris' }])
+    // La sortie DOIT contenir l'email (donnée publique).
+    expect(JSON.stringify(r)).toContain('ada@fame.org')
+    // Le select DOIT demander l'email.
     expect(captured.select).toBeDefined()
-    expect(captured.select).not.toContain('email')
+    expect(captured.select).toContain('email')
   })
 
   it('subjects — un visiteur ne voit jamais un sujet confidentiel', async () => {

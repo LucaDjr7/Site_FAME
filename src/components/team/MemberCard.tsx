@@ -170,6 +170,23 @@ export function MemberCard({ member, isSelf, isAdmin, editMode, onEdit, onDelete
           ))}
         </div>
       )}
+
+      {/* Email (public — discreet mailto link) */}
+      {member.email && (
+        <a
+          className="font-mono text-fame-text-muted hover:text-fame-blue"
+          href={`mailto:${member.email}`}
+          style={{
+            fontSize: 10.5,
+            letterSpacing: '0.02em',
+            textDecoration: 'none',
+            wordBreak: 'break-all',
+            transition: 'color 0.12s',
+          }}
+        >
+          {member.email}
+        </a>
+      )}
     </div>
   )
 }

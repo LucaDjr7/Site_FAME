@@ -15,12 +15,12 @@ async function handler(args: Record<string, unknown>, ctx: ToolContext): Promise
   }
 
   if (args.entity === 'members') {
-    // PII : ne JAMAIS sélectionner ni renvoyer l'email. Équipe publique (sans email).
-    let query = ctx.service.from('members').select('prenom, nom, role, labo').limit(100)
+    // Email désormais public (annuaire d'équipe) : sélectionné et communicable par l'assistant.
+    let query = ctx.service.from('members').select('prenom, nom, email, role, labo').limit(100)
     if (labo) query = query.eq('labo', labo)
     const { data } = await query
     const rows: any[] = data ?? [] // eslint-disable-line @typescript-eslint/no-explicit-any
-    const members = rows.map(r => ({ prenom: r.prenom, nom: r.nom, role: r.role, labo: r.labo }))
+    const members = rows.map(r => ({ prenom: r.prenom, nom: r.nom, email: r.email, role: r.role, labo: r.labo }))
     return { members }
   }
 

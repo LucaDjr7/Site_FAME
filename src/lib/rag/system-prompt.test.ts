@@ -51,9 +51,12 @@ describe('buildSystemPrompt', () => {
     expect(p).toMatch(/public visitor|only public information/i)
   })
 
-  it('Rule 4 — PII : interdit les informations de contact personnelles', () => {
+  it('Rule 4 — PII : emails membres publics, autres contacts interdits', () => {
     const p = buildSystemPrompt('visitor', chunks)
-    expect(p).toMatch(/personal contact information|emails, phone numbers/i)
+    // Conserve l'interdiction des autres informations de contact personnelles.
+    expect(p).toMatch(/personal contact information|phone numbers/i)
+    // Nouvelle règle : les emails des membres sont publics et partageables.
+    expect(p).toMatch(/email addresses are public|may be shared/i)
   })
 
   it('Rule 5 — langue : répond dans la langue de l\'utilisateur', () => {
