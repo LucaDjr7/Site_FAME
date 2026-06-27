@@ -37,9 +37,10 @@ export function ChatWidget({
         // right rail publishes --fame-rail-w, so the bubble rests just left of it
         // and glides when the filter expands/collapses. Elsewhere the var is 0.
         right: isHome ? '26px' : 'calc(var(--fame-rail-w, 0px) + 26px)',
-        // Lab pages stack a ~38px bottom toolbar (count / sort / Tasks link)
-        // above the 48px (h-12) footer; lift the bubble just above both.
-        bottom: lab ? '100px' : '26px',
+        // Lab pages clear the 48px (h-12) footer (default 58px); pages with an
+        // extra bottom toolbar (subjects/tasks) publish --fame-bubble-bottom to
+        // lift the bubble above it too.
+        bottom: lab ? 'var(--fame-bubble-bottom, 58px)' : '26px',
         zIndex: 1200,
         display: 'flex',
         flexDirection: 'column',
