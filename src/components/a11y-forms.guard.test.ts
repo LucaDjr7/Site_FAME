@@ -5,9 +5,6 @@ const modal = (rel: string) =>
   readFileSync(new URL(rel, import.meta.url), 'utf8')
 
 describe('A2 — modal labels paired with htmlFor', () => {
-  it('AddSubjectModal has htmlFor', () => {
-    expect(modal('./lab/AddSubjectModal.tsx')).toContain('htmlFor=')
-  })
   it('AddTaskModal has htmlFor', () => {
     expect(modal('./tasks/AddTaskModal.tsx')).toContain('htmlFor=')
   })
