@@ -82,6 +82,8 @@ Champs profonds (`context`, `method`, `results`, `dimensions`) + `difficulte` + 
 
 Deux variantes :
 - `variant="card"` : mini-vitrine pour la grille, non éditable, conserve le ratio, clic → page Paper. Réutilise les props actuelles de `SubjectCard` (members, editMode pour delete, badges transversal/done).
+
+**Fallback d'affichage du titre-question** : si `question` est vide (sujets existants non encore enrichis), la vitrine affiche **`titre`** dans le gros titre-question. Quand `question` est rempli, c'est lui qui prime ; `titre` reste affiché comme sous-titre italique. S'applique aux deux variantes (`card` et `full`, en mode lecture). En édition, le champ `question` reste éditable séparément (vide tant que non rempli).
 - `variant="full"` : A4 pleine taille, utilisée par la modale en lecture seule sous le rendu éditable (ou directement éditable, cf. C).
 
 > Note : la grille reste responsive ; la carte vitrine garde un `min-width` raisonnable et le ratio A4. Le mode édition de la grille (drag-reorder, delete) est préservé.
