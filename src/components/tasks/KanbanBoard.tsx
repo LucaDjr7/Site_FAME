@@ -1,5 +1,5 @@
 'use client'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import type { Subject, TaskWithRelations, MemberRef, Lab, TaskStatus, Difficulty, DateBucket } from '@/types'
@@ -26,6 +26,14 @@ type Props = {
 export function KanbanBoard({ lab, locale, subjects, initialTasks, members, isMember, currentMemberId }: Props) {
   const t = useTranslations('tasks')
   const { addToast } = useToast()
+
+  // This page has a bottom toolbar above the footer; lift the global assistant
+  // bubble above it (matches the subjects page).
+  useEffect(() => {
+    const root = document.documentElement
+    root.style.setProperty('--fame-bubble-bottom', '100px')
+    return () => { root.style.removeProperty('--fame-bubble-bottom') }
+  }, [])
 
   const [tasks, setTasks] = useState<TaskWithRelations[]>(initialTasks)
   const [q, setQ] = useState('')

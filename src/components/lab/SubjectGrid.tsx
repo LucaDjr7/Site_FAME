@@ -62,6 +62,14 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
   const [addOpen, setAddOpen] = useState(false)
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null)
 
+  // This page has a bottom toolbar (count / sort / Tasks link) above the footer;
+  // lift the global assistant bubble above it.
+  useEffect(() => {
+    const root = document.documentElement
+    root.style.setProperty('--fame-bubble-bottom', '100px')
+    return () => { root.style.removeProperty('--fame-bubble-bottom') }
+  }, [])
+
   // Drag state — managed via refs to avoid re-renders during drag
   const dragIdRef = useRef<string | null>(null)
   const dragStartPosRef = useRef<{ x: number; y: number } | null>(null)

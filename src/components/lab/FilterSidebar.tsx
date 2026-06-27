@@ -1,4 +1,5 @@
 'use client'
+import { useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import type { Subject, SubjectStatus, Difficulty, MemberRef, DateBucket } from '@/types'
 import { Avatar } from '@/components/ui/Avatar'
@@ -71,6 +72,14 @@ export function FilterSidebar({
   open, onToggle, onToggleStatus, onToggleDiff, onTogglePerson, onToggleDate, onReset,
 }: Props) {
   const t = useTranslations('lab')
+
+  // Publish the right rail's current width so the global assistant bubble can
+  // sit just left of it (and glide when the filter expands/collapses).
+  useEffect(() => {
+    const root = document.documentElement
+    root.style.setProperty('--fame-rail-w', `${open ? 230 : 46}px`)
+    return () => { root.style.setProperty('--fame-rail-w', '0px') }
+  }, [open])
 
   const hasActiveFilters = fStatus.size > 0 || fDiff.size > 0 || fPerson.size > 0 || fDate.size > 0
 

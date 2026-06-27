@@ -33,14 +33,20 @@ export function ChatWidget({
     <div
       style={{
         position: 'fixed',
-        ...(isHome ? { right: '26px' } : { left: '26px' }),
-        // Lab pages have a fixed 48px (h-12) footer bar; lift the bubble above it.
-        bottom: lab ? '64px' : '26px',
+        // Sit at the content's bottom-right. On filter pages (subjects/tasks) the
+        // right rail publishes --fame-rail-w, so the bubble rests just left of it
+        // and glides when the filter expands/collapses. Elsewhere the var is 0.
+        right: isHome ? '26px' : 'calc(var(--fame-rail-w, 0px) + 26px)',
+        // Lab pages clear the 48px (h-12) footer (default 58px); pages with an
+        // extra bottom toolbar (subjects/tasks) publish --fame-bubble-bottom to
+        // lift the bubble above it too.
+        bottom: lab ? 'var(--fame-bubble-bottom, 58px)' : '26px',
         zIndex: 1200,
         display: 'flex',
         flexDirection: 'column',
-        alignItems: isHome ? 'flex-end' : 'flex-start',
+        alignItems: 'flex-end',
         gap: '14px',
+        transition: 'right 0.12s ease',
       }}
     >
       {open && (
