@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
 import { TopBar } from '@/components/layout/TopBar'
+import { ReportProblemButton } from '@/components/report/ReportProblemButton'
 import { VALID_LABS } from '@/lib/constants'
 import type { Lab } from '@/types'
 
@@ -22,13 +23,15 @@ export default async function LabLayout({ children, params }: Props) {
       <main className="pt-12 bg-fame-sand-bg">
         {children}
       </main>
-      <footer className="h-12 flex items-center justify-center border-t border-fame-ecru bg-fame-sand-bg">
+      <footer className="h-12 flex items-center justify-center gap-3 border-t border-fame-ecru bg-fame-sand-bg">
         <Link
           href={`/${locale}/privacy`}
           className="text-[10px] font-mono text-fame-text-muted hover:text-fame-blue"
         >
           {t('link')}
         </Link>
+        <span className="text-[10px] text-fame-text-muted">·</span>
+        <ReportProblemButton />
       </footer>
     </>
   )

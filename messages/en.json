@@ -476,6 +476,19 @@
     "globeCtaSub": "Chat with our assistant to explore the research",
     "teaserBadge": "New"
   },
+  "report": {
+    "button": "Report a problem",
+    "title": "Report a problem",
+    "intro": "Spotted a bug or an error on the site? Let us know.",
+    "messageLabel": "Description",
+    "messagePlaceholder": "Describe the problem…",
+    "emailLabel": "Your email (optional)",
+    "emailPlaceholder": "you@example.com",
+    "submit": "Send",
+    "sending": "Sending…",
+    "success": "Thanks! Your report has been sent.",
+    "error": "Could not send your report. Please try again."
+  },
   "privacy": {
     "link": "Privacy policy",
     "title": "Privacy Policy",

@@ -476,6 +476,19 @@
     "globeCtaSub": "Discutez avec notre assistant pour explorer les recherches",
     "teaserBadge": "Nouveau"
   },
+  "report": {
+    "button": "Signaler un problème",
+    "title": "Signaler un problème",
+    "intro": "Vous avez repéré un bug ou une erreur sur le site ? Dites-le-nous.",
+    "messageLabel": "Description",
+    "messagePlaceholder": "Décrivez le problème…",
+    "emailLabel": "Votre email (facultatif)",
+    "emailPlaceholder": "vous@exemple.com",
+    "submit": "Envoyer",
+    "sending": "Envoi…",
+    "success": "Merci ! Votre signalement a été envoyé.",
+    "error": "Impossible d'envoyer votre signalement. Réessayez."
+  },
   "privacy": {
     "link": "Politique de confidentialité",
     "title": "Politique de confidentialité",
