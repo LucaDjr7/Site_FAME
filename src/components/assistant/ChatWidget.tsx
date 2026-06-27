@@ -34,7 +34,8 @@ export function ChatWidget({
       style={{
         position: 'fixed',
         ...(isHome ? { right: '26px' } : { left: '26px' }),
-        bottom: '26px',
+        // Lab pages have a fixed 48px (h-12) footer bar; lift the bubble above it.
+        bottom: lab ? '64px' : '26px',
         zIndex: 1200,
         display: 'flex',
         flexDirection: 'column',
