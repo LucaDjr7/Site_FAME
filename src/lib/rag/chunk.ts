@@ -4,10 +4,13 @@ export interface RawChunk {
   content: string
 }
 
-/** Un chunk par champ logique du sujet (context/method/results), préfixé du titre + kicker pour l'ancrage. */
+/** Un chunk par champ logique du sujet (question/accroche/context/method/results), préfixé du titre + kicker pour l'ancrage. */
 export function chunkSubject(s: Subject): RawChunk[] {
-  const head = s.kicker ? `${s.titre} — ${s.kicker}` : s.titre
+  const base = s.kicker ? `${s.titre} — ${s.kicker}` : s.titre
+  const head = s.periode ? `${base} (${s.periode})` : base
   const fields: [string, string][] = [
+    ['Question', s.question],
+    ['Accroche', s.accroche],
     ['Context', s.context],
     ['Method', s.method],
     ['Results', s.results],

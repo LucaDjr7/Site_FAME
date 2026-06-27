@@ -41,6 +41,9 @@ export interface Subject {
   labo: Lab
   titre: string
   kicker: string
+  question: string   // titre-question accrocheur (gros titre de la vitrine)
+  accroche: string   // phrase d'accroche (bloc navy)
+  periode: string    // ex. "2025–2027"
   statut: SubjectStatus
   context: string
   method: string
