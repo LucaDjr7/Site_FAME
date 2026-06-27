@@ -18,7 +18,7 @@ Oui. Utilisez la page « Proposer » pour soumettre un sujet. L'équipe examine 
 
 ## Comment contacter un chercheur ?
 
-Les coordonnées individuelles ne sont pas publiées sur le site. Utilisez la page « Proposer » pour joindre l'équipe.
+Vous pouvez écrire directement à un chercheur : l'adresse e-mail de chaque membre figure sur la page « Équipe ». Pour une demande générale, utilisez la page « Proposer ».
 
 ## Quelle différence entre un visiteur et un membre ?
 

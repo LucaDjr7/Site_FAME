@@ -22,7 +22,7 @@ La page Publications liste les articles et productions du labo.
 
 ## Équipe
 
-La page Équipe est un annuaire des membres du labo. Les adresses e-mail et coordonnées personnelles ne sont pas affichées publiquement.
+La page Équipe est un annuaire des membres du labo, avec l'adresse e-mail de chacun, pour contacter directement un chercheur.
 
 ## Données et Prompts
 

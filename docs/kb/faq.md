@@ -18,7 +18,7 @@ Yes. Use the "Propose" page to submit a subject. The team reviews proposals befo
 
 ## How do I contact a researcher?
 
-Individual contact details are not published on the site. Use the Propose page to reach the team.
+You can email a researcher directly: each member's email address is shown on the Team page. For a general request, use the Propose page.
 
 ## What is the difference between a visitor and a member?
 

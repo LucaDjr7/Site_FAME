@@ -22,7 +22,7 @@ The Publications page lists the lab's papers and outputs.
 
 ## Team
 
-The Team page is a directory of the lab's members. Email addresses and personal contact details are not shown publicly.
+The Team page is a directory of the lab's members, including each member's email address, so you can contact a researcher directly.
 
 ## Data and Prompts
 
