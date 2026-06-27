@@ -2,40 +2,36 @@
 
 _Mettre à jour après chaque tâche. Garder ce fichier **maigre** : l'historique terminé vit dans [`STATUS-archive.md`](./STATUS-archive.md), le détail ligne-à-ligne dans `git log`, les décisions durables dans les fichiers mémoire._
 
-Dernière mise à jour : 2026-06-26
+Dernière mise à jour : 2026-06-27
 
 ---
 
 ## Où on en est
 
-- **`main` est saine et complète** : site v1 (Phases 1–3) + audit soldé (Vagues 0→4 : a11y/SEO, durcissement sécu/CI, dette/i18n). Tests verts, `tsc`/`lint`/`build` à 0. Détail → [`STATUS-archive.md`](./STATUS-archive.md).
-- **Phase active : Assistant RAG** (chatbot LLM, cible **primaire = visiteur public**). Brainstorming fait, **spec validée**, **5 plans rédigés**. Branche unique `feat/assistant-rag`, **une seule PR finale** (pas de stacking).
+- **`main` est saine et complète.** Site v1 (Phases 1–3) + audit soldé (Vagues 0→4) + **Assistant RAG « Astra » livré et mergé** (PRs #11–16). Tests verts (**247/247**), `tsc`/`lint`/`build` à 0.
+- **Pas de phase active.** Prochain sujet à définir (hors chatbot).
 
 ---
 
-## Phase 2 — Assistant RAG
+## Assistant RAG « Astra » — LIVRÉ (mergé sur `main`)
 
-**Spec** : `docs/superpowers/specs/2026-06-25-assistant-rag-design.md`
-**Roadmap** : `docs/superpowers/plans/2026-06-25-assistant-rag-roadmap.md`
+Chatbot RAG, **cible primaire = visiteur public**. Spec : `docs/superpowers/specs/2026-06-25-assistant-rag-design.md`. Ledger détaillé : `.superpowers/sdd/progress.md`.
 
-| Plan | Fichier | Livre | Statut |
-|---|---|---|---|
-| P1 | `…-assistant-p1-data-indexing.md` | Migration `006` (pgvector), embeddings, chunking, KB, indexeur, embed-on-write, backfill, **membres publics** | ✅ |
-| P2 | `…-assistant-p2-retrieval-chat.md` | Retrieve (**filtre permissions en SQL**) + seuil, modération, anti-injection, masquage PII, rate-limit persistant, budget, kill-switch, endpoint SSE | ✅ |
-| P3 | `…-assistant-p3-tools.md` | 3 outils lecture seule (re-check permissions) + boucle d'outils | ✅ |
-| P5 | `…-assistant-p5-admin-rgpd.md` | `/admin/assistant`, toggle/reindex, `/privacy`, `.env.example`, red-team, +régression visibilité email admin | ✅ |
-| P4 | `…-assistant-p4-ui.md` | UI Astra : bulle + mini-panneau (partout), teaser accueil, page plein écran `/[locale]/assistant`, citations, streaming client | ✅ |
+**Ce qui est en prod (par PR) :**
+- **#11** — Backend complet (P1 données/indexation pgvector, P2 retrieval + garde-fous + endpoint SSE, P3 outils lecture seule, P5 admin/RGPD) + UI P4 (bulle + mini-panneau partout, teaser accueil, page plein écran `/[locale]/assistant`). Revues finales Opus « Ready to merge: Yes ».
+- **#12** — KB FAME complète (about/faq/using-the-platform) + fix `index:rag` (polyfill WebSocket Node < 22).
+- **#13** — **Liberté contrôlée** : retrieval vide ne court-circuite plus (répond identité/usage/salutations sans sources, garde l'anti-hallucination) + system prompt réécrit (identité Astra, domaine Euronext) + seuil 0.30 + **outil `list_entities`** (lister sujets/membres/publications).
+- **#14** — **Emails membres publics** (page Équipe + l'assistant peut les donner) + **bouton « Signaler un problème »** (modale → `POST /api/report` → Resend) + bulle bas-gauche/retour page précédente.
+- **#15/#16** — Position de la bulle **adaptée par page** : suit le rail de filtres (Sujets/Tâches) via `--fame-rail-w`, au-dessus de la barre du bas via `--fame-bubble-bottom`, juste au-dessus du footer ailleurs. Accueil inchangé.
 
-**Ordre d'exécution** : **P1 → P2 → P3 → P5 → P4** ✅ TOUS faits (P4 débloqué par les maquettes « FAME Assistant » + « FAME ChatBubble », branding **Astra**).
-**Exécution** : Subagent-Driven. Branche `feat/assistant-rag`, tip = `1f15dad`. **Revues finales Opus (backend + couche UI) + re-revues des fixes : verdict « Ready to merge: Yes » des deux côtés.** Suite **236/236**, lint 0/tsc/build verts. Ledger détaillé : `.superpowers/sdd/progress.md`.
-**Reste** : `finishing-a-development-branch` → **PR unique backend+UI** `feat/assistant-rag` → main (décision utilisateur). Fast-follows possibles non bloquants notés au ledger.
-**Prérequis runtime** (utilisateur, avant que l'assistant réponde — dev & prod) : `OPENAI_API_KEY` (facturable), `ASSISTANT_IP_SALT` (pepper hash IP), migrations `006`+`007` appliquées (pgvector activé par `006`), puis `npm run index:rag` (backfill embeddings).
+**Décisions produit durables :**
+1. **Astra** = nom de l'assistant (badge Bêta). Domaine FAME = signaux IA du sentiment de l'actualité financière, périmètre **Euronext** (univers Oslo/Lisbonne actuellement).
+2. **`confidentiel` (subjects)** : `true` → jamais visible au visiteur (ni bot, ni outils, ni navigation). Membres voient tout. Tâches/fichiers héritent.
+3. ⚠️ **Emails membres = PUBLICS** (décision 2026-06-27) : affichés sur la page Équipe pour tous + communicables par l'assistant. **Renverse** l'omission B4. `password_hash` jamais exposé. Le texte RGPD `privacy.assistant.provider` a été ajusté en conséquence. → **ne pas “re-masquer” les emails en croyant à une fuite.**
 
-**Décisions prises (2026-06-25)** :
-1. **Champ `confidentiel` (P1)** ✅ : booléen sur `subjects`, défaut `false`. `confidentiel=true` → jamais visible au visiteur (ni bot ni outils) ; membres voient tout ; tâches/fichiers héritent. Conforme aux plans tels qu'écrits.
-2. **Maquette assistant (P4)** ⏸ : **créer une maquette dédiée « FAME Assistant »** dans le projet Claude Design **avant** d'exécuter P4. P4 reste bloqué jusque-là. Auteur de la maquette à décider au moment venu (utilisateur, ou Opus via MCP `DesignSync` si scope write).
+**État runtime (vérifié 2026-06-27) :** `OPENAI_API_KEY` ✅, `ASSISTANT_IP_SALT` ✅ (en `.env.local`), migrations `006`+`007` appliquées ✅, RAG indexé ✅ (**140 chunks**, dont KB=136). ⏳ **`REPORT_EMAIL` à poser (dev + prod)** pour activer le formulaire de signalement — sinon le form affiche « envoyé » mais aucun mail ne part (mode dégradé loggé).
 
-**Prérequis runtime (utilisateur, le moment venu)** : `OPENAI_API_KEY` (compte facturable) ; extension `pgvector` activée sur Supabase ; migration `006` appliquée.
+**KB** : `docs/kb/*.md` (en + fr, frontmatter `lang:`/`labo:`, sections `## `). Modifier → `npm run index:rag`. Le contenu BDD (sujets/publications/membres) est **auto-indexé** à l'écriture via l'app (embed-on-write). NB : la BDD ne contient encore que des **sujets de test** (`Test`/`deff`) → peupler de vrais sujets pour que l'assistant soit utile sur la recherche. Brouillons KB non encore promus : `docs/kb-drafts/_COMMENT-REMPLIR.md` (guide, non indexé).
 
 ---
 
@@ -43,20 +39,22 @@ Dernière mise à jour : 2026-06-26
 
 - ⚠️ **Ne jamais retirer `@config "../../tailwind.config.ts"`** de `globals.css` (sinon tous les `fame-*` redeviennent morts). Mémoire `tailwind-fame-tokens-dead`.
 - ⚠️ **`createServiceClient()` sans cookies** (sinon RLS s'applique aux users connectés). Mémoire `service-role-no-cookies`.
-- Secrets server-only (`SUPABASE_SERVICE_ROLE_KEY`, `DROPBOX_ACCESS_TOKEN`, `RESEND_API_KEY`, `OPENAI_API_KEY`) — jamais `NEXT_PUBLIC_`.
+- ⚠️ **Emails membres publics** : c'est voulu (page Équipe + assistant). Ne pas les remasquer. Seul `confidentiel`/réservé-membres reste protégé du visiteur.
+- Secrets server-only (`SUPABASE_SERVICE_ROLE_KEY`, `DROPBOX_ACCESS_TOKEN`, `RESEND_API_KEY`, `OPENAI_API_KEY`, `ASSISTANT_IP_SALT`, `REPORT_EMAIL`) — jamais `NEXT_PUBLIC_`.
 - i18n en/fr à parité stricte (test `src/messages-parity.test.ts`), zéro chaîne UI hardcodée.
 
 ---
 
-## Déploiement (Task 20 — non démarré)
+## Déploiement (non démarré)
 
-- ✅ Migrations appliquées en BDD : `001`–`005`. (`006` assistant à appliquer lors de la Phase 2.)
-- ⏳ **Env vars prod (Vercel)** : `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_APP_URL`, `DROPBOX_ACCESS_TOKEN`, `RESEND_API_KEY` + `EMAIL_FROM` (+ clés assistant en Phase 2). Domaine expéditeur à vérifier dans Resend.
+- ✅ Migrations appliquées en BDD : `001`–`007`.
+- ⏳ **Env vars prod (Vercel)** : `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_APP_URL`, `DROPBOX_ACCESS_TOKEN`, `RESEND_API_KEY` + `EMAIL_FROM`, `OPENAI_API_KEY`, `ASSISTANT_IP_SALT`, `REPORT_EMAIL`. Domaine expéditeur à vérifier dans Resend.
 - ⏳ `npm run seed:admin` une fois sur la prod.
+- ⏳ `npm run index:rag` sur la prod (après migrations + `OPENAI_API_KEY`).
 - ⏳ Plan superpowers déploiement dédié à rédiger.
 
 ---
 
-## Plans des phases terminées (référence)
+## Plans / référence
 
-`docs/superpowers/plans/2026-06-22-fame-website-p{1,2,3}-*.md` (Foundation / Features / Secondary) · audit `docs/AUDIT_2026-06-24.md` · vagues `…-vague{2,3,4}-*.md`.
+`docs/superpowers/plans/2026-06-22-fame-website-p{1,2,3}-*.md` (Foundation / Features / Secondary) · assistant `…/2026-06-25-assistant-p{1,2,3,4,5}-*.md` · audit `docs/AUDIT_2026-06-24.md` · vagues `…-vague{2,3,4}-*.md` · archive `docs/STATUS-archive.md`.
