@@ -1,5 +1,5 @@
 'use client'
-import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { useAssistantChat } from '@/lib/assistant/useAssistantChat'
 import { ChatMessageList } from './ChatMessageList'
@@ -27,7 +27,13 @@ export function AssistantFullPage({
   locale: string
 }) {
   const t = useTranslations('assistant')
+  const router = useRouter()
   const { messages, status, send, reset } = useAssistantChat()
+
+  const goBack = () => {
+    if (typeof window !== 'undefined' && window.history.length > 1) router.back()
+    else router.push(`/${locale}`)
+  }
 
   const suggestionKeys = [
     'suggestion1',
@@ -160,9 +166,9 @@ export function AssistantFullPage({
               </button>
             )}
 
-            {/* Back link */}
-            <Link
-              href={`/${locale}`}
+            {/* Back button */}
+            <button
+              onClick={goBack}
               aria-label={t('closeLabel')}
               style={{
                 display: 'flex',
@@ -174,7 +180,7 @@ export function AssistantFullPage({
                 background: 'rgba(120,150,255,0.14)',
                 border: '1px solid rgba(120,150,255,0.28)',
                 color: '#eef3ff',
-                textDecoration: 'none',
+                cursor: 'pointer',
                 fontSize: '17px',
               }}
             >
@@ -190,7 +196,7 @@ export function AssistantFullPage({
               >
                 <path d="M10 12L6 8l4-4" />
               </svg>
-            </Link>
+            </button>
           </div>
         </div>
 

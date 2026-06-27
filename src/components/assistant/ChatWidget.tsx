@@ -16,6 +16,9 @@ export function ChatWidget({
   const maybeLab = seg?.[1]
   const lab = maybeLab === 'paris' || maybeLab === 'montreal' ? maybeLab : undefined
 
+  const isHome = (seg?.length ?? 0) <= 1
+  const isAssistantPage = seg?.[1] === 'assistant'
+
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
@@ -24,16 +27,18 @@ export function ChatWidget({
     return () => window.removeEventListener('fame:open-assistant', onOpen)
   }, [])
 
+  if (isAssistantPage) return null
+
   return (
     <div
       style={{
         position: 'fixed',
-        right: '26px',
+        ...(isHome ? { right: '26px' } : { left: '26px' }),
         bottom: '26px',
         zIndex: 1200,
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'flex-end',
+        alignItems: isHome ? 'flex-end' : 'flex-start',
         gap: '14px',
       }}
     >
