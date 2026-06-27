@@ -476,6 +476,19 @@
     "globeCtaSub": "Discutez avec notre assistant pour explorer les recherches",
     "teaserBadge": "Nouveau"
   },
+  "report": {
+    "button": "Signaler un problème",
+    "title": "Signaler un problème",
+    "intro": "Vous avez repéré un bug ou une erreur sur le site ? Dites-le-nous.",
+    "messageLabel": "Description",
+    "messagePlaceholder": "Décrivez le problème…",
+    "emailLabel": "Votre email (facultatif)",
+    "emailPlaceholder": "vous@exemple.com",
+    "submit": "Envoyer",
+    "sending": "Envoi…",
+    "success": "Merci ! Votre signalement a été envoyé.",
+    "error": "Impossible d'envoyer votre signalement. Réessayez."
+  },
   "privacy": {
     "link": "Politique de confidentialité",
     "title": "Politique de confidentialité",
@@ -506,7 +519,7 @@
     "assistant": {
       "heading": "Assistant IA",
       "body": "Notre site propose un assistant IA qui répond aux questions sur les recherches de FAME. Vos questions sont transmises à notre fournisseur d'IA pour générer une réponse.",
-      "provider": "Les questions sont traitées par OpenAI (États-Unis) en qualité de sous-traitant, dans le cadre d'un accord de traitement des données et de clauses contractuelles types. Nous ne transmettons jamais de données personnelles telles que les courriels des membres au fournisseur.",
+      "provider": "Les questions sont traitées par OpenAI (États-Unis) en qualité de sous-traitant, dans le cadre d'un accord de traitement des données et de clauses contractuelles types. Nous ne transmettons pas de contenu confidentiel ou réservé aux membres au fournisseur ; des informations publiques du site (comme l'annuaire de l'équipe, y compris les adresses e-mail publiées des membres) peuvent être incluses pour répondre à votre question.",
       "retention": "Nous journalisons les questions (sans votre identité ; votre IP n'est conservée que sous forme d'empreinte salée) afin d'améliorer l'assistant. Nous ne les utilisons pas pour vous identifier."
     }
   }

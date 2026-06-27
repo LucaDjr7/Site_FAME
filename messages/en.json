@@ -476,6 +476,19 @@
     "globeCtaSub": "Chat with our assistant to explore the research",
     "teaserBadge": "New"
   },
+  "report": {
+    "button": "Report a problem",
+    "title": "Report a problem",
+    "intro": "Spotted a bug or an error on the site? Let us know.",
+    "messageLabel": "Description",
+    "messagePlaceholder": "Describe the problem…",
+    "emailLabel": "Your email (optional)",
+    "emailPlaceholder": "you@example.com",
+    "submit": "Send",
+    "sending": "Sending…",
+    "success": "Thanks! Your report has been sent.",
+    "error": "Could not send your report. Please try again."
+  },
   "privacy": {
     "link": "Privacy policy",
     "title": "Privacy Policy",
@@ -506,7 +519,7 @@
     "assistant": {
       "heading": "AI assistant",
       "body": "Our site offers an AI assistant that answers questions about FAME's research. Your questions are sent to our AI provider to generate a response.",
-      "provider": "Questions are processed by OpenAI (United States) as a data processor, under a Data Processing Agreement and Standard Contractual Clauses. We never send personal data such as member emails to the provider.",
+      "provider": "Questions are processed by OpenAI (United States) as a data processor, under a Data Processing Agreement and Standard Contractual Clauses. We do not send confidential or member-only content to the provider; publicly available information from the site (such as the team directory, including members' published email addresses) may be included to answer your question.",
       "retention": "We log questions (without your identity; your IP is stored only as a salted hash) to improve the assistant. We do not use them to identify you."
     }
   }

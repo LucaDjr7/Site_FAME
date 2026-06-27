@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
   const service = await createServiceClient()
   const { data, error } = await service
     .from('members')
-    .select('id,prenom,nom,role,labo,domaines,photo_url,is_admin,activated_at,created_at')
+    .select('id,prenom,nom,email,role,labo,domaines,photo_url,is_admin,activated_at,created_at')
     .eq('labo', validLab).order('created_at', { ascending: true })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json(data)

@@ -6,7 +6,7 @@ import { isOverBudget, recordUsage } from '@/lib/rag/usage'
 import { checkRateLimitDb } from '@/lib/rag/rate-limit-db'
 import { hashIp } from '@/lib/rag/ip-hash'
 import { moderateInput } from '@/lib/rag/moderation'
-import { detectInjection, maskPII } from '@/lib/rag/guardrails'
+import { detectInjection } from '@/lib/rag/guardrails'
 import { retrieve, type Tier } from '@/lib/rag/retrieve'
 import { buildSystemPrompt } from '@/lib/rag/system-prompt'
 import { logFlagged, logUnanswered } from '@/lib/rag/flagged-log'
@@ -141,17 +141,16 @@ export async function POST(req: NextRequest) {
       controller.enqueue(enc.encode(`event: sources\ndata: ${JSON.stringify(sources)}\n\n`))
       let outChars = 0
       if (finalContent && finalContent.trim()) {
-        // Chemin résolu : émettre la réponse finale en un seul delta masqué.
-        const safe = maskPII(finalContent)
-        outChars = safe.length
-        controller.enqueue(enc.encode(`data: ${JSON.stringify({ delta: safe })}\n\n`))
+        // Chemin résolu : émettre la réponse finale en un seul delta.
+        // Les emails de membres sont publics → plus de masquage en sortie.
+        outChars = finalContent.length
+        controller.enqueue(enc.encode(`data: ${JSON.stringify({ delta: finalContent })}\n\n`))
       } else {
         // Fallback : la boucle a épuisé ses tours sans réponse, ou content vide.
         try {
           for await (const delta of provider.stream(chatMessages, { maxTokens: 600 })) {
-            const safe = maskPII(delta)
-            outChars += safe.length
-            controller.enqueue(enc.encode(`data: ${JSON.stringify({ delta: safe })}\n\n`))
+            outChars += delta.length
+            controller.enqueue(enc.encode(`data: ${JSON.stringify({ delta })}\n\n`))
           }
         } catch {
           controller.enqueue(enc.encode(`event: error\ndata: ${JSON.stringify({ text: 'generation failed' })}\n\n`))
