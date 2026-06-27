@@ -9,7 +9,7 @@ Dernière mise à jour : 2026-06-27
 ## Où on en est
 
 - **`main` est saine et complète.** Site v1 (Phases 1–3) + audit soldé (Vagues 0→4) + **Assistant RAG « Astra » livré et mergé** (PRs #11–16). Tests verts (**247/247**), `tsc`/`lint`/`build` à 0.
-- **Pas de phase active.** Prochain sujet à définir (hors chatbot).
+- **Branche active : `feat/vitrine-subject-editor`** — Fiche Vitrine éditable + génération assistée par champ (258/258 tests OK, build OK, prête à merger).
 
 ---
 
@@ -35,6 +35,20 @@ Chatbot RAG, **cible primaire = visiteur public**. Spec : `docs/superpowers/spec
 
 ---
 
+## Fiche Vitrine éditable + génération assistée — LIVRÉ (branche `feat/vitrine-subject-editor`)
+
+Composant `SubjectVitrine` (remplace `SubjectCard`) : format universel des cartes de la grille Lab, calqué sur la maquette Claude Design. Modale plein écran `VitrineEditor` (poster A4 éditable inline) remplace `AddSubjectModal`. Carte pointillée d'ajout en fin de grille pour les membres.
+
+**Génération par champ :** bouton ✨ sur chaque champ rédactionnel → `POST /api/subjects/assist` (OpenAI via `getChatProvider`, budget + kill-switch `ASSISTANT_DISABLED`). Prompts centralisés dans `src/lib/subjects/field-prompts.ts`, lien « voir le prompt » par champ.
+
+**DB :** migration `008_subject_vitrine.sql` — ajout de `question`, `accroche`, `periode` (text NOT NULL DEFAULT ''). Type `Subject`, API POST/PATCH et `chunkSubject` RAG mis à jour. Fallback : si `question` vide, la vitrine affiche `titre`.
+
+**État :** implémenté et revu (SDD, 8 tâches + revue whole-branch « Ready to merge »). Suite **258/258** tests OK, build OK.
+
+⏳ **Avant mise en prod :** appliquer `supabase/migrations/008_subject_vitrine.sql` sur Supabase ; vérification manuelle navigateur (membre/visiteur, génération, édition, filtres, drag). La génération consomme le budget OpenAI de l'assistant.
+
+---
+
 ## Garde-fous permanents (ne pas casser)
 
 - ⚠️ **Ne jamais retirer `@config "../../tailwind.config.ts"`** de `globals.css` (sinon tous les `fame-*` redeviennent morts). Mémoire `tailwind-fame-tokens-dead`.
@@ -47,7 +61,7 @@ Chatbot RAG, **cible primaire = visiteur public**. Spec : `docs/superpowers/spec
 
 ## Déploiement (non démarré)
 
-- ✅ Migrations appliquées en BDD : `001`–`007`.
+- ✅ Migrations appliquées en BDD : `001`–`007`. ⏳ `008_subject_vitrine.sql` à appliquer (branche `feat/vitrine-subject-editor`).
 - ⏳ **Env vars prod (Vercel)** : `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_APP_URL`, `DROPBOX_ACCESS_TOKEN`, `RESEND_API_KEY` + `EMAIL_FROM`, `OPENAI_API_KEY`, `ASSISTANT_IP_SALT`, `REPORT_EMAIL`. Domaine expéditeur à vérifier dans Resend.
 - ⏳ `npm run seed:admin` une fois sur la prod.
 - ⏳ `npm run index:rag` sur la prod (après migrations + `OPENAI_API_KEY`).
