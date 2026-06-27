@@ -274,8 +274,9 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
           {/* ── Editable poster: light top ── */}
           <div style={{ background: '#faf9f5', borderRadius: 8, padding: 18, boxShadow: '0 4px 18px rgba(20,38,63,.1)' }}>
             <div>
-              <label className="font-mono" style={labelStyle}>{t('editor.fKicker')}</label>
+              <label htmlFor="ve-kicker" className="font-mono" style={labelStyle}>{t('editor.fKicker')}</label>
               <input
+                id="ve-kicker"
                 className="font-mono"
                 value={f.kicker}
                 onChange={e => set('kicker', e.target.value)}
@@ -287,8 +288,9 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
 
             <div style={{ display: 'flex', gap: 14, marginTop: 14 }}>
               <div style={{ flex: 1 }}>
-                <label className="font-mono" style={labelStyle}>{t('editor.fPeriode')}</label>
+                <label htmlFor="ve-periode" className="font-mono" style={labelStyle}>{t('editor.fPeriode')}</label>
                 <input
+                  id="ve-periode"
                   className="font-mono"
                   value={f.periode}
                   onChange={e => set('periode', e.target.value)}
@@ -297,8 +299,9 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
                 />
               </div>
               <div style={{ flex: 1 }}>
-                <label className="font-mono" style={labelStyle}>{t('editor.fStatus')}</label>
+                <label htmlFor="ve-statut" className="font-mono" style={labelStyle}>{t('editor.fStatus')}</label>
                 <select
+                  id="ve-statut"
                   className="font-mono"
                   value={f.statut}
                   onChange={e => set('statut', e.target.value as SubjectStatus)}
@@ -310,8 +313,9 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
             </div>
 
             <div style={{ marginTop: 14 }}>
-              <label className="font-mono" style={labelStyle}>{t('editor.fQuestion')}</label>
+              <label htmlFor="ve-question" className="font-mono" style={labelStyle}>{t('editor.fQuestion')}</label>
               <textarea
+                id="ve-question"
                 className="font-serif"
                 value={f.question}
                 onChange={e => set('question', e.target.value)}
@@ -323,8 +327,9 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
             </div>
 
             <div style={{ marginTop: 14 }}>
-              <label className="font-mono" style={labelStyle}>{t('editor.fTitre')} *</label>
+              <label htmlFor="ve-titre" className="font-mono" style={labelStyle}>{t('editor.fTitre')} *</label>
               <input
+                id="ve-titre"
                 className="font-serif"
                 value={f.titre}
                 onChange={e => set('titre', e.target.value)}
@@ -338,8 +343,9 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
           {/* ── Editable poster: navy bottom ── */}
           <div style={{ background: '#15203f', borderRadius: 8, padding: 18, marginTop: 12 }}>
             <div>
-              <label className="font-mono" style={{ ...labelStyle, color: '#7fa3d4' }}>{t('editor.fAccroche')}</label>
+              <label htmlFor="ve-accroche" className="font-mono" style={{ ...labelStyle, color: '#7fa3d4' }}>{t('editor.fAccroche')}</label>
               <textarea
+                id="ve-accroche"
                 className="font-serif"
                 value={f.accroche}
                 onChange={e => set('accroche', e.target.value)}
@@ -353,8 +359,9 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
               <AssistButton field="accroche" promptField={promptField} genField={genField} draft={draft} locale={locale} onGenerate={generate} onTogglePrompt={togglePrompt} labels={assistLabels} />
             </div>
             <div style={{ marginTop: 14 }}>
-              <label className="font-mono" style={{ ...labelStyle, color: '#7fa3d4' }}>{t('editor.fKeywords')}</label>
+              <label htmlFor="ve-keywords" className="font-mono" style={{ ...labelStyle, color: '#7fa3d4' }}>{t('editor.fKeywords')}</label>
               <input
+                id="ve-keywords"
                 className="font-mono"
                 value={f.keywords}
                 onChange={e => set('keywords', e.target.value)}
@@ -367,8 +374,9 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
               />
             </div>
             <div style={{ marginTop: 14 }}>
-              <label className="font-mono" style={{ ...labelStyle, color: '#7fa3d4' }}>{t('editor.fResponsable')}</label>
+              <label htmlFor="ve-responsable" className="font-mono" style={{ ...labelStyle, color: '#7fa3d4' }}>{t('editor.fResponsable')}</label>
               <select
+                id="ve-responsable"
                 className="font-mono"
                 value={f.responsable}
                 onChange={e => set('responsable', e.target.value)}
@@ -405,8 +413,9 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
           {detailsOpen && (
             <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 14 }}>
               <div>
-                <label className="font-mono" style={labelStyle}>{t('editor.fDifficulty')}</label>
+                <label htmlFor="ve-difficulte" className="font-mono" style={labelStyle}>{t('editor.fDifficulty')}</label>
                 <select
+                  id="ve-difficulte"
                   className="font-mono"
                   value={f.difficulte}
                   onChange={e => set('difficulte', e.target.value as Difficulty)}
@@ -418,8 +427,9 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
 
               {(['context', 'method', 'results'] as const).map(key => (
                 <div key={key}>
-                  <label className="font-mono" style={labelStyle}>{fContextLabel[key]}</label>
+                  <label htmlFor={`ve-${key}`} className="font-mono" style={labelStyle}>{fContextLabel[key]}</label>
                   <textarea
+                    id={`ve-${key}`}
                     className="font-mono"
                     value={f[key]}
                     onChange={e => set(key, e.target.value)}
@@ -437,8 +447,9 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
                 ['dimWriting', 'dimensions.writing'],
               ] as const).map(([stateKey, field]) => (
                 <div key={stateKey}>
-                  <label className="font-mono" style={labelStyle}>{dimLabelMap[stateKey]}</label>
+                  <label htmlFor={`ve-${stateKey}`} className="font-mono" style={labelStyle}>{dimLabelMap[stateKey]}</label>
                   <input
+                    id={`ve-${stateKey}`}
                     className="font-mono"
                     value={f[stateKey]}
                     onChange={e => set(stateKey, e.target.value)}

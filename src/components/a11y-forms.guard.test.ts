@@ -17,6 +17,9 @@ describe('A2 — modal labels paired with htmlFor', () => {
   it('AddPublicationModal has htmlFor', () => {
     expect(modal('./publications/AddPublicationModal.tsx')).toContain('htmlFor=')
   })
+  it('VitrineEditor has htmlFor', () => {
+    expect(modal('./lab/VitrineEditor.tsx')).toContain('htmlFor=')
+  })
 })
 
 describe('U8 — sidebar filter buttons have aria-pressed', () => {
