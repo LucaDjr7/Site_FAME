@@ -162,7 +162,16 @@
     "tasksLink": "Tâches →",
     "prev": "Sujet précédent",
     "next": "Sujet suivant",
-    "commentPosted": "Commentaire publié"
+    "commentPosted": "Commentaire publié",
+    "filesUploaded": "Fichiers déposés",
+    "uploadButton": "Déposer un fichier",
+    "uploading": "Envoi en cours…",
+    "uploadFailed": "Échec de l'envoi",
+    "deleteFailed": "Échec de la suppression",
+    "fileTooLarge": "Fichier trop volumineux (max 50 Mo)",
+    "fileTypeNotAllowed": "Type de fichier non autorisé",
+    "deleteFile": "Supprimer le fichier",
+    "confirmDeleteFile": "Supprimer ce fichier ? Action irréversible."
   },
   "tasks": {
     "claimTask": "Se positionner",
