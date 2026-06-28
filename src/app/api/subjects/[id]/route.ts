@@ -30,6 +30,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   // L'éditeur envoie le payload complet (avec `titre`) ; on (re)génère i18n depuis
   // la langue source = locale de l'éditeur. Les màj partielles sans `titre` ne touchent pas i18n.
   if ('titre' in body) {
+    // body.locale is routing metadata (source language), never written to a column — not in `allowed`.
     const sourceLocale = body.locale === 'fr' ? 'fr' : 'en'
     const srcFields: SubjectI18nFields = {
       titre: body.titre ?? '', question: body.question ?? '', accroche: body.accroche ?? '',

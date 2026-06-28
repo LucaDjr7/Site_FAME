@@ -10,8 +10,8 @@ export function chunkSubject(s: Subject): RawChunk[] {
   const base = s.kicker ? `${s.titre} — ${s.kicker}` : s.titre
   const head = s.periode ? `${base} (${s.periode})` : base
 
-  type Set = { question: string; accroche: string; context: string; method: string; results: string }
-  const sets: Set[] = []
+  type FieldSet = { question: string; accroche: string; context: string; method: string; results: string }
+  const sets: FieldSet[] = []
   const en = s.i18n?.en
   const fr = s.i18n?.fr
   if (en) sets.push({ question: en.question ?? '', accroche: en.accroche ?? '', context: en.context ?? '', method: en.method ?? '', results: en.results ?? '' })

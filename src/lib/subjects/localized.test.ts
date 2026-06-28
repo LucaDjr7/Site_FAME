@@ -29,6 +29,9 @@ describe('localizedSubject', () => {
   it('keeps a custom kicker unchanged', () => {
     expect(localizedSubject(mk({ kicker: 'Custom' }), 'en').kicker).toBe('Custom')
   })
+  it('maps the kicker EN→FR', () => {
+    expect(localizedSubject(mk({ kicker: 'Research · AI' }), 'fr').kicker).toBe('Recherche · IA')
+  })
 })
 
 describe('subjectSearchText', () => {

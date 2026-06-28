@@ -3,7 +3,7 @@ import { getChatProvider, type ChatProvider } from '@/lib/llm'
 import { recordUsage } from '@/lib/rag/usage'
 
 const LANG_NAME: Record<Locale2, string> = { en: 'English', fr: 'French' }
-const MAX_OUT = 900
+const MAX_OUT = 2000
 
 export interface TranslateDeps {
   provider?: ChatProvider
@@ -52,7 +52,8 @@ export async function translateSubjectFields(
     const tokensOut = Math.ceil(out.length / 4)
     await (deps.record ?? recordUsage)(tokensIn, tokensOut)
     return mergeFields(src, parsed)
-  } catch {
+  } catch (e) {
+    console.error('translateSubjectFields: falling back to source', e instanceof Error ? e.message : e)
     return src
   }
 }
