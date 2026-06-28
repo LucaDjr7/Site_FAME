@@ -57,19 +57,28 @@ export function useAssistantChat(opts: { endpoint?: string; fetchImpl?: typeof f
     const apply = (updater: (m: ChatUiMessage) => ChatUiMessage) =>
       setMessages(prev => prev.map((m, i) => (i === prev.length - 1 ? updater(m) : m)))
 
-    for (;;) {
-      const { done, value } = await reader.read()
-      if (done) break
-      buffer += decoder.decode(value, { stream: true })
-      const { events, rest } = parseSseChunk(buffer)
-      buffer = rest
-      for (const { event, data } of events) {
-        if (event === 'sources') apply(m => ({ ...m, sources: data as SourceRef[] }))
-        else if (event === 'unanswered') { const d = data as { text: string; proposeQuestion: string }; apply(m => ({ ...m, content: d.text, unanswered: true, proposeQuestion: d.proposeQuestion })) }
-        else if (event === 'refusal') { const d = data as { text: string }; apply(m => ({ ...m, content: d.text })) }
-        else if (event === 'error') setStatus('error')
-        else if (event === 'message') { const d = data as { delta?: string }; if (d.delta) apply(m => ({ ...m, content: m.content + d.delta })) }
+    try {
+      for (;;) {
+        const { done, value } = await reader.read()
+        if (done) break
+        buffer += decoder.decode(value, { stream: true })
+        const { events, rest } = parseSseChunk(buffer)
+        buffer = rest
+        for (const { event, data } of events) {
+          if (event === 'sources') apply(m => ({ ...m, sources: data as SourceRef[] }))
+          else if (event === 'unanswered') { const d = data as { text: string; proposeQuestion: string }; apply(m => ({ ...m, content: d.text, unanswered: true, proposeQuestion: d.proposeQuestion })) }
+          else if (event === 'refusal') { const d = data as { text: string }; apply(m => ({ ...m, content: d.text })) }
+          // Erreur côté serveur : retirer le placeholder vide (sinon bulle fantôme persistante).
+          else if (event === 'error') { removeEmptyPlaceholder(); setStatus('error') }
+          else if (event === 'message') { const d = data as { delta?: string }; if (d.delta) apply(m => ({ ...m, content: m.content + d.delta })) }
+        }
       }
+    } catch {
+      // Coupure réseau / flux avorté en cours de stream : ne pas laisser le chat
+      // gelé en 'streaming' (composer désactivé indéfiniment).
+      removeEmptyPlaceholder()
+      setStatus('error')
+      return
     }
     setStatus(s => (s === 'streaming' ? 'idle' : s))
   }, [messages, endpoint, doFetch])
