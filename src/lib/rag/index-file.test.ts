@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 
 let fileRow: unknown = { id: 'f1', subject_id: 's1', storage_path: 's1/u', file_name: 'doc.pdf', mime_type: 'application/pdf' }
 let subjectRow: unknown = { confidentiel: false, labo: 'paris', is_transversal: false }
@@ -49,5 +49,12 @@ describe('indexSubjectFile', () => {
   it('n\'insère rien si l\'extraction est vide', async () => {
     await indexSubjectFile('f1', { service: service as never, provider: provider as never, extract: async () => '' })
     expect(inserted).toEqual([])
+    expect(deletedBy).toContainEqual(['source_id', 'f1'])
+  })
+  it('traite un sujet introuvable comme confidentiel (fail-closed)', async () => {
+    subjectRow = null
+    await indexSubjectFile('f1', { service: service as never, provider: provider as never, extract: async () => 'contenu' })
+    expect(inserted[0]!.visibility).toBe('member')
+    expect(inserted[0]!.confidentiel).toBe(true)
   })
 })

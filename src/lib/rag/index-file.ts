@@ -14,7 +14,7 @@ export interface IndexFileDeps {
 
 export async function deleteFileChunks(fileId: string, deps: IndexFileDeps = {}): Promise<void> {
   const service = deps.service ?? (await createServiceClient())
-  await service.from('rag_chunks').delete().eq('source_id', fileId)
+  await service.from('rag_chunks').delete().eq('source_id', fileId).eq('source_type', 'subject_file')
 }
 
 export async function deleteSubjectFileChunks(subjectId: string, deps: IndexFileDeps = {}): Promise<void> {
