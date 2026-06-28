@@ -12,6 +12,7 @@ export interface RetrievedChunk {
   labo: string | null
   lang: string
   similarity: number
+  metadata?: Record<string, unknown>
 }
 
 type SupabaseLike = { rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown; error: unknown }> }
@@ -48,5 +49,33 @@ export async function retrieve(query: string, tier: Tier, deps: RetrieveDeps = {
 
   return (data as RetrievedChunk[])
     .filter(c => c.similarity >= threshold)
+    .sort((a, b) => b.similarity - a.similarity)
+}
+
+const DEFAULT_FILE_MATCH_COUNT = 4
+
+export async function retrieveSubjectFiles(
+  query: string,
+  subjectId: string,
+  deps: RetrieveDeps = {},
+): Promise<RetrievedChunk[]> {
+  const provider = deps.provider ?? getEmbeddingProvider()
+  const service = deps.service ?? ((await createServiceClient()) as unknown as SupabaseLike)
+  const threshold = deps.threshold ?? DEFAULT_THRESHOLD
+  const matchCount = deps.matchCount ?? DEFAULT_FILE_MATCH_COUNT
+
+  const embeddings = await provider.embed([query])
+  const queryEmbedding = embeddings[0]
+  if (!queryEmbedding) return []
+
+  const { data, error } = await service.rpc('match_subject_files', {
+    query_embedding: queryEmbedding,
+    p_subject_id: subjectId,
+    match_count: matchCount,
+  })
+  if (error || !data) return []
+
+  return (data as RetrievedChunk[])
+    .filter((c) => c.similarity >= threshold)
     .sort((a, b) => b.similarity - a.similarity)
 }
