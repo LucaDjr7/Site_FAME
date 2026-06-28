@@ -10,6 +10,7 @@ import { VitrineEditor } from './VitrineEditor'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { useToast } from '@/components/ui/Toast'
 import { dateBucket } from '@/lib/utils'
+import { subjectSearchText, toLocale2 } from '@/lib/subjects/localized'
 
 function passesFilters(
   s: Subject,
@@ -19,10 +20,7 @@ function passesFilters(
   fPerson: Set<string>,
   fDate: Set<DateBucket>,
 ): boolean {
-  if (q) {
-    const ql = q.toLowerCase()
-    if (!s.titre.toLowerCase().includes(ql) && !s.question.toLowerCase().includes(ql)) return false
-  }
+  if (q && !subjectSearchText(s).includes(q.toLowerCase())) return false
   if (fStatus.size > 0 && !fStatus.has(s.statut)) return false
   if (fDiff.size > 0 && !fDiff.has(s.difficulte)) return false
   if (fPerson.size > 0 && !s.auteurs.some(id => fPerson.has(id))) return false
@@ -403,6 +401,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
                   >
                     <SubjectVitrine
                       subject={s}
+                      locale={toLocale2(locale)}
                       members={members}
                       editMode={editMode}
                       isDragging={draggingId === s.id}

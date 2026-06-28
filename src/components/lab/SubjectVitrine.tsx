@@ -1,9 +1,12 @@
 import type { Subject, MemberRef } from '@/types'
 import { Avatar } from '@/components/ui/Avatar'
 import { vitrineHeadline, vitrineSubtitle, vitrineNumber } from '@/lib/subjects/vitrine'
+import { localizedSubject } from '@/lib/subjects/localized'
+import type { Locale2 } from '@/types'
 
 type Props = {
   subject: Subject
+  locale: Locale2
   members: MemberRef[]
   editMode: boolean
   isDragging?: boolean
@@ -21,14 +24,15 @@ type Props = {
 }
 
 export function SubjectVitrine({
-  subject, members, editMode, isDragging = false,
+  subject, locale, members, editMode, isDragging = false,
   statusLabel, doneLabel, ficheLabel, questionLabel, readLabel,
   transversalLabel, deleteTitle, editTitle, onDelete, onEdit, onCardClick,
 }: Props) {
+  const L = localizedSubject(subject, locale)
   const author = subject.auteurs[0] ? members.find(m => m.id === subject.auteurs[0]) : null
   const authorName = author ? `${author.prenom} ${author.nom}` : null
-  const headline = vitrineHeadline(subject)
-  const subtitle = vitrineSubtitle(subject)
+  const headline = vitrineHeadline({ question: L.question, titre: L.titre })
+  const subtitle = vitrineSubtitle({ question: L.question, titre: L.titre })
   const number = vitrineNumber(subject.ordre)
 
   return (
@@ -48,7 +52,7 @@ export function SubjectVitrine({
           {/* Light top */}
           <div style={{ flex: '1.85 1 0', padding: '14px 15px 11px', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-              <span className="font-mono" style={{ fontSize: 9.5, letterSpacing: '0.12em', color: '#3a5a8a', textTransform: 'uppercase', fontWeight: 500, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{subject.kicker || statusLabel}</span>
+              <span className="font-mono" style={{ fontSize: 9.5, letterSpacing: '0.12em', color: '#3a5a8a', textTransform: 'uppercase', fontWeight: 500, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{L.kicker || statusLabel}</span>
               <span className="font-mono" style={{ fontSize: 8.5, letterSpacing: '0.08em', color: '#b3ada0', textTransform: 'uppercase', flexShrink: 0, marginLeft: 6 }}>{ficheLabel}</span>
             </div>
             <div style={{ height: 1, background: '#16263f', margin: '7px 0 0' }} />
@@ -65,11 +69,11 @@ export function SubjectVitrine({
           </div>
           {/* Navy bottom */}
           <div style={{ flex: '1 1 0', background: '#15203f', padding: '12px 15px 11px', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
-            {subject.accroche && <span className="font-serif" style={{ fontStyle: 'italic', fontSize: 12, lineHeight: 1.4, color: '#cdd8ea', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{subject.accroche}</span>}
+            {L.accroche && <span className="font-serif" style={{ fontStyle: 'italic', fontSize: 12, lineHeight: 1.4, color: '#cdd8ea', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{L.accroche}</span>}
             <div style={{ flex: 1 }} />
-            {subject.keywords.length > 0 && (
+            {L.keywords.length > 0 && (
               <div className="font-mono" style={{ display: 'flex', gap: 7, flexWrap: 'wrap', fontSize: 8.5, color: '#7fa3d4', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: 7, maxHeight: 24, overflow: 'hidden' }}>
-                {subject.keywords.slice(0, 3).map((k, i) => <span key={i}>{k}</span>)}
+                {L.keywords.slice(0, 3).map((k, i) => <span key={i}>{k}</span>)}
               </div>
             )}
             <div style={{ height: 1, background: '#23344f', marginBottom: 7 }} />
