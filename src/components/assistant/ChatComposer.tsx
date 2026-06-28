@@ -56,7 +56,7 @@ export function ChatComposer({
       <div
         style={{
           display: 'flex',
-          alignItems: 'flex-end',
+          alignItems: 'center',
           gap: '9px',
           background: '#fff',
           border: `1px solid ${borderColor}`,
