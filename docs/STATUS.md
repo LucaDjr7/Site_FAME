@@ -65,7 +65,7 @@ Nouvelle colonne `i18n jsonb` sur `subjects` (`{en:{…},fr:{…}}`). Les colonn
 
 ---
 
-## Refonte visuelle page sujet & harmonisation des bleus — LIVRÉ (mergé, PRs #20–32)
+## Refonte visuelle page sujet, bleus & bulle assistant — LIVRÉ (mergé, PRs #20–36)
 
 Polish UI mergé sur `main` (CSS/présentation uniquement, aucune migration) :
 
@@ -73,8 +73,9 @@ Polish UI mergé sur `main` (CSS/présentation uniquement, aucune migration) :
 - **Équilibrage des dimensions** (PRs #21–22) — fiche centrale élargie puis rééquilibrée : `width: clamp(420px, calc(100vw − 700px), 740px)` ; panneaux latéraux `240 → 300px`.
 - **Harmonisation des bleus** (PRs #23–25) — duo cohérent : **barres = navy `#15203f`** (`fame-navy` : TopBar universelle, nav du bas, barre de progression, bouton Tasks) ; **panneaux + boutons = bleu marque `#2f4486`** (`fame-blue`, plein).
 - **Position de la bulle assistant** (PRs #26–32) — sur la page sujet, la bulle est remontée au-dessus de la barre de nav du bas. Dérivée de la hauteur de la barre : constante **`PAPER_NAV_HEIGHT`** exportée par `PaperNav` (= 102px), bulle = `PAPER_NAV_HEIGHT + 54` via `--fame-bubble-bottom` (même mécanisme que Sujets/Tâches).
+- **Zone de saisie de l'assistant** (PRs #34–36) — `ChatComposer` resserré (bouton d'envoi 36→28px, paddings réduits → boîte ~34px au lieu de ~48px) et texte **centré verticalement** (`alignItems: center`). Le textarea s'agrandit toujours jusqu'à 110px en multi-lignes.
 
-Fichiers touchés : `src/components/paper/{PaperSheet,PaperView,PaperNav,TasksPanel,FilesPanel,CommentsPanel}.tsx`, `src/components/layout/TopBar.tsx`.
+Fichiers touchés : `src/components/paper/{PaperSheet,PaperView,PaperNav,TasksPanel,FilesPanel,CommentsPanel}.tsx`, `src/components/layout/TopBar.tsx`, `src/components/assistant/ChatComposer.tsx`.
 
 ---
 
