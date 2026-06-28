@@ -9,7 +9,7 @@ vi.mock('@/lib/auth', async (orig) => {
 })
 
 // Le hook embed-on-write appelle after() hors scope de requête en test → no-op.
-vi.mock('@/lib/rag/schedule', () => ({ scheduleReindex: () => {} }))
+vi.mock('@/lib/rag/schedule', () => ({ scheduleReindex: () => {}, scheduleDeleteSubjectFiles: () => {} }))
 
 let updateVals: Record<string, unknown> = {}
 let singleResult: { data: unknown; error: unknown } = { data: null, error: null }

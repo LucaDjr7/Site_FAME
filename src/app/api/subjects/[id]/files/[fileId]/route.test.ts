@@ -12,6 +12,8 @@ let subject: unknown = { confidentiel: false }
 let file: unknown = { id: 'f1', subject_id: 's1', storage_path: 's1/uuid', file_name: 'a.pdf' }
 const removed: string[][] = []
 const createSignedUrl = vi.fn()
+vi.mock('@/lib/rag/schedule', () => ({ scheduleDeleteFileChunks: () => {}, scheduleReindex: () => {} }))
+
 vi.mock('@/lib/supabase/server', () => ({
   createServiceClient: async () => ({
     from: (table: string) => ({

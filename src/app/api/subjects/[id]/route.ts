@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { requireMember, getSession, authErrorResponse } from '@/lib/auth'
-import { scheduleReindex } from '@/lib/rag/schedule'
+import { scheduleReindex, scheduleDeleteSubjectFiles } from '@/lib/rag/schedule'
 import { buildSubjectI18n } from '@/lib/subjects/translate'
 import { isOverBudget } from '@/lib/rag/usage'
 import type { SubjectI18nFields } from '@/types'
@@ -61,5 +61,6 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
   const { error } = await service.from('subjects').delete().eq('id', id)
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   scheduleReindex('subject', id)
+  scheduleDeleteSubjectFiles(id)
   return NextResponse.json({ ok: true })
 }

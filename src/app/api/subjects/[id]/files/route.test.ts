@@ -10,6 +10,8 @@ vi.mock('@/lib/auth', async (orig) => {
 let subject: unknown = { id: 's1', labo: 'paris' }
 let insertResult: { data: unknown; error: unknown } = { data: { id: 'f1' }, error: null }
 const removed: string[][] = []
+vi.mock('@/lib/rag/schedule', () => ({ scheduleIndexFile: () => {}, scheduleReindex: () => {} }))
+
 vi.mock('@/lib/supabase/server', () => ({
   createServiceClient: async () => ({
     from: () => ({

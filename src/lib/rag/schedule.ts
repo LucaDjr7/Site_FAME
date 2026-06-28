@@ -16,3 +16,15 @@ export function scheduleReindex(type: RagSourceType, id: string): void {
     }
   })
 }
+
+import { indexSubjectFile, deleteFileChunks, deleteSubjectFileChunks } from './index-file'
+
+export function scheduleIndexFile(fileId: string): void {
+  after(async () => { try { await indexSubjectFile(fileId) } catch { /* avale */ } })
+}
+export function scheduleDeleteFileChunks(fileId: string): void {
+  after(async () => { try { await deleteFileChunks(fileId) } catch { /* avale */ } })
+}
+export function scheduleDeleteSubjectFiles(subjectId: string): void {
+  after(async () => { try { await deleteSubjectFileChunks(subjectId) } catch { /* avale */ } })
+}

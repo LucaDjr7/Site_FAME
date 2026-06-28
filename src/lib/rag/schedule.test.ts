@@ -29,3 +29,33 @@ describe('scheduleReindex', () => {
     expect(markStaleMock).toHaveBeenCalledWith('subject', 's2')
   })
 })
+
+vi.mock('./index-file', () => ({
+  indexSubjectFile: vi.fn(),
+  deleteFileChunks: vi.fn(),
+  deleteSubjectFileChunks: vi.fn(),
+}))
+
+import { scheduleIndexFile, scheduleDeleteFileChunks, scheduleDeleteSubjectFiles } from './schedule'
+import * as indexFile from './index-file'
+
+describe('schedule file helpers', () => {
+  it('scheduleIndexFile appelle indexSubjectFile', async () => {
+    const spy = vi.spyOn(indexFile, 'indexSubjectFile').mockResolvedValue()
+    scheduleIndexFile('f1')
+    await new Promise((r) => setTimeout(r, 0))
+    expect(spy).toHaveBeenCalledWith('f1')
+  })
+  it('scheduleDeleteFileChunks appelle deleteFileChunks', async () => {
+    const spy = vi.spyOn(indexFile, 'deleteFileChunks').mockResolvedValue()
+    scheduleDeleteFileChunks('f1')
+    await new Promise((r) => setTimeout(r, 0))
+    expect(spy).toHaveBeenCalledWith('f1')
+  })
+  it('scheduleDeleteSubjectFiles appelle deleteSubjectFileChunks', async () => {
+    const spy = vi.spyOn(indexFile, 'deleteSubjectFileChunks').mockResolvedValue()
+    scheduleDeleteSubjectFiles('s1')
+    await new Promise((r) => setTimeout(r, 0))
+    expect(spy).toHaveBeenCalledWith('s1')
+  })
+})
