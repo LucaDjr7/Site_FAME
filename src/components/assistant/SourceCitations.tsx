@@ -16,7 +16,7 @@ export function SourceCitations({ sources, locale, lab }: { sources: SourceRef[]
         if ((s.source_type === 'subject' || isFile) && labo && target) {
           return (
             <Link key={i} href={`/${locale}/${labo}/paper/${target}`} className="underline hover:text-fame-blue mr-2">
-              {isFile ? (s.file_name ?? 'document') : `${s.source_type}:${s.source_id.slice(0, 8)}`}
+              {isFile ? (s.file_name ?? t('unknownDocument')) : `${s.source_type}:${s.source_id.slice(0, 8)}`}
             </Link>
           )
         }
