@@ -40,6 +40,9 @@ describe('POST /api/subjects/[id]/files (register)', () => {
   it('400 si storage_path hors du dossier du sujet', async () => {
     expect((await POST(req({ ...valid, storage_path: 'other/uuid' }), params)).status).toBe(400)
   })
+  it('400 si storage_path contient .. (path traversal)', async () => {
+    expect((await POST(req({ ...valid, storage_path: 's1/../evil' }), params)).status).toBe(400)
+  })
   it('404 si sujet inexistant', async () => {
     subject = null
     expect((await POST(req(valid), params)).status).toBe(404)

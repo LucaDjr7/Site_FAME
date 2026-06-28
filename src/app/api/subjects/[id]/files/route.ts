@@ -13,7 +13,7 @@ export async function POST(req: NextRequest, { params }: Params) {
   const v = validateUpload({ mimeType: body.mime_type, sizeBytes: body.size_bytes, fileName: body.file_name })
   if (!v.ok) return NextResponse.json({ error: v.error }, { status: 400 })
   // Le chemin doit appartenir au dossier du sujet (anti-forgerie).
-  if (typeof body.storage_path !== 'string' || !body.storage_path.startsWith(`${id}/`)) {
+  if (typeof body.storage_path !== 'string' || !body.storage_path.startsWith(`${id}/`) || body.storage_path.includes('..')) {
     return NextResponse.json({ error: 'invalid storage_path' }, { status: 400 })
   }
 

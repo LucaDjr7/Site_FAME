@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl'
 import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/components/ui/Toast'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
-import { validateUpload, SUBJECT_FILES_BUCKET, MAX_FILE_BYTES } from '@/lib/subjects/file-upload'
+import { validateUpload, SUBJECT_FILES_BUCKET } from '@/lib/subjects/file-upload'
 import type { DropboxLink, SubjectFile } from '@/types'
 
 type Props = {
@@ -36,7 +36,7 @@ export function FilesPanel({ links, files, subjectId, isMember, open, onToggleOp
     e.target.value = '' // permet de re-sélectionner le même fichier
     if (!file) return
     const v = validateUpload({ mimeType: file.type, sizeBytes: file.size, fileName: file.name })
-    if (!v.ok) { addToast(file.size > MAX_FILE_BYTES ? t('fileTooLarge') : t('fileTypeNotAllowed'), 'error'); return }
+    if (!v.ok) { addToast(v.error === 'file too large' ? t('fileTooLarge') : t('fileTypeNotAllowed'), 'error'); return }
     setBusy(true)
     try {
       const signRes = await fetch(`/api/subjects/${subjectId}/files/sign`, {
@@ -67,7 +67,7 @@ export function FilesPanel({ links, files, subjectId, isMember, open, onToggleOp
     if (!f) return
     const res = await fetch(`/api/subjects/${subjectId}/files/${f.id}`, { method: 'DELETE' })
     if (res.ok) router.refresh()
-    else addToast(t('uploadFailed'), 'error')
+    else addToast(t('deleteFailed'), 'error')
   }
 
   return (

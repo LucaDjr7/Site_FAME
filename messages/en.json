@@ -167,6 +167,7 @@
     "uploadButton": "Upload a file",
     "uploading": "Uploading…",
     "uploadFailed": "Upload failed",
+    "deleteFailed": "Delete failed",
     "fileTooLarge": "File too large (max 50 MB)",
     "fileTypeNotAllowed": "File type not allowed",
     "deleteFile": "Delete file",
