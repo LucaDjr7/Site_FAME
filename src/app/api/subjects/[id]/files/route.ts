@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { requireMember, authErrorResponse } from '@/lib/auth'
 import { validateUpload, SUBJECT_FILES_BUCKET } from '@/lib/subjects/file-upload'
+import { scheduleIndexFile } from '@/lib/rag/schedule'
 
 type Params = { params: Promise<{ id: string }> }
 
@@ -32,5 +33,6 @@ export async function POST(req: NextRequest, { params }: Params) {
     await service.storage.from(SUBJECT_FILES_BUCKET).remove([body.storage_path])
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
+  scheduleIndexFile(data.id)
   return NextResponse.json(data, { status: 201 })
 }

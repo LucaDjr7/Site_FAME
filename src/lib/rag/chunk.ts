@@ -51,3 +51,25 @@ export function chunkTask(t: Task): RawChunk[] {
   const desc = t.description && t.description.trim().length > 0 ? `\n${t.description.trim()}` : ''
   return [{ content: `${t.titre} [${t.statut}]${desc}`.trim() }]
 }
+
+/** Découpe un texte libre en segments ~`size` caractères avec `overlap` de chevauchement,
+ *  en cherchant une frontière (saut de ligne / phrase / espace) près de la fin de chaque segment. */
+export function chunkText(text: string, size = 1500, overlap = 150): RawChunk[] {
+  const t = text.trim()
+  if (!t) return []
+  const chunks: RawChunk[] = []
+  let i = 0
+  while (i < t.length) {
+    let end = Math.min(i + size, t.length)
+    if (end < t.length) {
+      const slice = t.slice(i, end)
+      const br = Math.max(slice.lastIndexOf('\n'), slice.lastIndexOf('. '), slice.lastIndexOf(' '))
+      if (br > size - 200) end = i + br + 1
+    }
+    const content = t.slice(i, end).trim()
+    if (content) chunks.push({ content })
+    if (end >= t.length) break
+    i = Math.max(end - overlap, i + 1)
+  }
+  return chunks
+}

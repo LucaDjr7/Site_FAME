@@ -164,7 +164,7 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
     try {
       const res = await fetch('/api/subjects/assist', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ field, draft: currentDraft(), locale }),
+        body: JSON.stringify({ field, draft: currentDraft(), locale, subjectId: subject?.id }),
       })
       if (!res.ok) throw new Error()
       const data = (await res.json()) as { text?: string }

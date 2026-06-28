@@ -23,4 +23,13 @@ describe('field-prompts', () => {
       expect(() => buildFieldPrompt(f, {}, 'en')).not.toThrow()
     }
   })
+  it('injecte les extraits de documents quand context est fourni', () => {
+    const p = buildFieldPrompt('context', { titre: 'T' }, 'fr', 'EXTRAIT DOC ABC')
+    expect(p.user).toContain('EXTRAIT DOC ABC')
+    expect(p.displayPrompt).toContain('EXTRAIT DOC ABC')
+  })
+  it('ne change pas le prompt sans context', () => {
+    const p = buildFieldPrompt('context', { titre: 'T' }, 'fr')
+    expect(p.user).not.toContain('Extraits des documents')
+  })
 })

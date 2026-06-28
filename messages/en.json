@@ -525,6 +525,7 @@
     "suggestion3": "How do I propose a new research topic?",
     "suggestion4": "Where can I find datasets and publications?",
     "sources": "Sources",
+    "unknownDocument": "document",
     "unanswered": "This topic isn't covered in FAME's content yet.",
     "proposeCta": "Propose this topic",
     "degraded": "The assistant is temporarily unavailable. Please try again later.",

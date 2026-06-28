@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { getSession, requireMember, authErrorResponse } from '@/lib/auth'
 import { SUBJECT_FILES_BUCKET } from '@/lib/subjects/file-upload'
+import { scheduleDeleteFileChunks } from '@/lib/rag/schedule'
 
 type Params = { params: Promise<{ id: string; fileId: string }> }
 
@@ -32,5 +33,6 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
   if (!file || file.subject_id !== id) return NextResponse.json({ ok: true }) // idempotent
   await service.storage.from(SUBJECT_FILES_BUCKET).remove([file.storage_path])
   await service.from('subject_files').delete().eq('id', fileId)
+  scheduleDeleteFileChunks(fileId)
   return NextResponse.json({ ok: true })
 }

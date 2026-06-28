@@ -18,6 +18,8 @@ function makeService(rows: Record<string, SingleResult>) {
       }),
       delete: () => ({ eq: (_c: string, v: string) => { deleted.push(v); return Promise.resolve({ error: null }) } }),
       insert: (rows2: unknown[]) => { inserted.push(...rows2); return Promise.resolve({ error: null }) },
+      // syncSubjectFileVisibility (branche subject) : update().eq().eq()
+      update: () => { const u = { eq: () => u, then: (r: (v: { error: null }) => unknown) => Promise.resolve({ error: null }).then(r) }; return u },
       _table: table,
     }),
   }

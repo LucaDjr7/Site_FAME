@@ -131,6 +131,27 @@ describe('POST /api/assistant/chat — invariant pas-d\'appel-modèle sur chemin
   })
 })
 
+describe('POST /api/assistant/chat — subject_file source mapping', () => {
+  it('chunk subject_file → SSE sources contient subject_id et file_name', async () => {
+    mocks.chunks = [{
+      id: '1',
+      source_type: 'subject_file',
+      source_id: 'fdoc',
+      content: 'contenu du fichier',
+      labo: 'paris',
+      lang: 'en',
+      similarity: 0.9,
+      metadata: { subject_id: 's1', file_name: 'rapport.pdf' },
+    }]
+    completeSpy.mockResolvedValueOnce({ content: 'réponse', toolCalls: [] })
+    const res = await POST(post({ messages: [{ role: 'user', content: 'Parle-moi de ce sujet' }] }))
+    const body = await res.text()
+    expect(res.status).toBe(200)
+    expect(body).toContain('"subject_id":"s1"')
+    expect(body).toContain('"file_name":"rapport.pdf"')
+  })
+})
+
 describe('POST /api/assistant/chat — sanitisation des messages client (#3)', () => {
   it('strippe les rôles forgés (system/tool) et le tool_calls client avant forward au modèle', async () => {
     mocks.chunks = [{ id: '1', source_type: 'kb', source_id: 'kb:x', content: 'relevant', labo: null, lang: 'en', similarity: 0.9 }]

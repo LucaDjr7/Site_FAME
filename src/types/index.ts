@@ -258,7 +258,7 @@ export interface Session {
 }
 
 // ── Assistant RAG ────────────────────────────────────────────────────────
-export type RagSourceType = 'subject' | 'task' | 'publication' | 'prompt' | 'member' | 'kb'
+export type RagSourceType = 'subject' | 'task' | 'publication' | 'prompt' | 'member' | 'kb' | 'subject_file'
 export type RagVisibility = 'public' | 'member'
 
 export interface RagChunkRow {

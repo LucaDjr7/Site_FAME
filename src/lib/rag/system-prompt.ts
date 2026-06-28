@@ -1,7 +1,12 @@
 import type { RetrievedChunk, Tier } from './retrieve'
 
 export function buildSystemPrompt(tier: Tier, chunks: RetrievedChunk[]): string {
-  const context = chunks.map((c, i) => `[Source ${i + 1} | ${c.source_type}:${c.source_id}]\n${c.content}`).join('\n\n')
+  const context = chunks.map((c, i) => {
+    const label = c.source_type === 'subject_file'
+      ? `subject_file:${(c.metadata as { file_name?: string } | undefined)?.file_name ?? c.source_id}`
+      : `${c.source_type}:${c.source_id}`
+    return `[Source ${i + 1} | ${label}]\n${c.content}`
+  }).join('\n\n')
   return [
     `You are Astra, the assistant for FAME — a research initiative run by two independent labs in Paris and Montreal. FAME's research focuses on AI-driven sentiment signals extracted from financial news, with an empirical scope centered on Euronext markets.`,
     ``,

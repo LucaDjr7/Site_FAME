@@ -10,11 +10,14 @@ import {
 } from './chunk'
 import { loadKbDir } from './kb'
 import type { RagSourceType } from '@/types'
+import { syncSubjectFileVisibility } from './index-file'
 
 // Forme minimale du client service-role utilisée ici (assez pour typer/mock).
 type SupabaseLike = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   from: (table: string) => any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  storage: { from: (b: string) => any }
 }
 
 export interface IndexDeps {
@@ -153,6 +156,12 @@ export async function indexSource(
     return
   }
   await replaceChunks(service, provider, type, id, batch)
+  if (type === 'subject') {
+    await syncSubjectFileVisibility(id, {
+      labo: batch.labo, confidentiel: batch.confidentiel,
+      is_transversal: batch.is_transversal, visibility: batch.visibility,
+    }, { service })
+  }
 }
 
 export async function deleteSourceChunks(
