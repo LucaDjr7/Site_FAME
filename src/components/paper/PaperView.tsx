@@ -1,5 +1,5 @@
 'use client'
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { PaperSheet } from './PaperSheet'
@@ -38,6 +38,14 @@ export function PaperView({
   const [tasks, setTasks] = useState<TaskWithRelations[]>(initialTasks)
   const [panels, setPanels] = useState({ tasks: true, files: true, comments: true })
   const toggle = (k: 'tasks' | 'files' | 'comments') => setPanels(p => ({ ...p, [k]: !p[k] }))
+
+  // The bottom thumbnail nav (PaperNav, 108px tall) would otherwise be covered by
+  // the assistant bubble — lift it above the nav while on this page.
+  useEffect(() => {
+    const root = document.documentElement
+    root.style.setProperty('--fame-bubble-bottom', '120px')
+    return () => { root.style.removeProperty('--fame-bubble-bottom') }
+  }, [])
 
   const tasksTotal = tasks.length
   const tasksDone = tasks.filter(tk => tk.statut === 'done').length
