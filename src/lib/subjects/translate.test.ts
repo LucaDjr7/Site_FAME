@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { translateSubjectFields, buildSubjectI18n } from './translate'
 import type { ChatProvider } from '@/lib/llm'
 import type { SubjectI18nFields } from '@/types'
@@ -26,9 +26,11 @@ describe('translateSubjectFields', () => {
     expect(out.titre).toBe('X')
     expect(out.method).toBe('Méthode')
   })
-  it('falls back to source on invalid JSON', async () => {
-    const out = await translateSubjectFields(SRC, 'en', { provider: provider('not json'), record: async () => {} })
+  it('falls back to source on invalid JSON and does not record usage', async () => {
+    const record = vi.fn(async () => {})
+    const out = await translateSubjectFields(SRC, 'en', { provider: provider('not json'), record })
     expect(out).toEqual(SRC)
+    expect(record).not.toHaveBeenCalled()
   })
 })
 
@@ -41,6 +43,11 @@ describe('buildSubjectI18n', () => {
   })
   it('copies source to both languages when disabled', async () => {
     const i18n = await buildSubjectI18n(SRC, 'fr', { disabled: true })
+    expect(i18n.fr?.titre).toBe('Titre')
+    expect(i18n.en?.titre).toBe('Titre')
+  })
+  it('copies source to both languages when overBudget', async () => {
+    const i18n = await buildSubjectI18n(SRC, 'fr', { overBudget: true })
     expect(i18n.fr?.titre).toBe('Titre')
     expect(i18n.en?.titre).toBe('Titre')
   })

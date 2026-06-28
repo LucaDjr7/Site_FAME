@@ -47,10 +47,10 @@ export async function translateSubjectFields(
       { maxTokens: MAX_OUT },
     )
     const out = (completion.content ?? '').trim()
+    const parsed = JSON.parse(stripFences(out)) as Partial<SubjectI18nFields>
     const tokensIn = Math.ceil((system.length + user.length) / 4)
     const tokensOut = Math.ceil(out.length / 4)
     await (deps.record ?? recordUsage)(tokensIn, tokensOut)
-    const parsed = JSON.parse(stripFences(out)) as Partial<SubjectI18nFields>
     return mergeFields(src, parsed)
   } catch {
     return src
