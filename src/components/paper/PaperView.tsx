@@ -112,7 +112,7 @@ export function PaperView({
       {/* TOP-LEFT: link to tasks board */}
       <Link href={`/${locale}/${lab}/tasks`} style={{
         position: 'absolute', left: 24, top: 18, zIndex: 20, display: 'flex', alignItems: 'center', gap: 9,
-        textDecoration: 'none', background: 'rgba(31,46,92,0.78)', backdropFilter: 'blur(8px)',
+        textDecoration: 'none', background: 'rgba(21,32,63,0.82)', backdropFilter: 'blur(8px)',
         border: '1px solid rgba(150,180,255,0.28)', borderRadius: 9, padding: '9px 15px', color: '#eef3ff',
         fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, letterSpacing: '0.1em',
         boxShadow: '0 14px 34px -16px rgba(0,5,30,0.7)',
@@ -129,7 +129,7 @@ export function PaperView({
           position: 'absolute', left: '50%', top: 46, transform: 'translateX(-50%)',
           width: 'min(520px,46vw)', pointerEvents: 'auto', backdropFilter: 'blur(10px)',
           border: '1px solid rgba(150,180,255,0.18)', borderRadius: 12, padding: '12px 16px',
-          boxShadow: '0 18px 50px -16px rgba(0,5,30,0.7)', background: 'rgba(47,68,134,0.82)',
+          boxShadow: '0 18px 50px -16px rgba(0,5,30,0.7)', background: 'rgba(21,32,63,0.82)',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
             <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#fff' }}>{t('progress')}</span>

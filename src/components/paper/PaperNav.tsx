@@ -21,7 +21,7 @@ export function PaperNav({ subjects, currentId, lab, locale }: Props) {
   const href = (id: string) => `/${locale}/${lab}/paper/${id}`
 
   return (
-    <div className="bg-fame-blue" style={{
+    <div className="bg-fame-navy" style={{
       position: 'absolute', left: 0, right: 0, bottom: 0, height: 108, pointerEvents: 'auto',
       display: 'flex', alignItems: 'center', gap: 16, padding: '0 26px',
       borderTop: '1px solid rgba(20,40,90,0.4)',
