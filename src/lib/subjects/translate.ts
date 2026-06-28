@@ -39,7 +39,17 @@ export async function translateSubjectFields(
   deps: TranslateDeps = {},
 ): Promise<SubjectI18nFields> {
   const provider = deps.provider ?? getChatProvider()
-  const system = `You are a professional translator for an academic research lab website. Translate every value of the given JSON object into ${LANG_NAME[to]}. Preserve meaning and technical terminology. If a value is already in ${LANG_NAME[to]}, return it unchanged. Keep "keywords" an array of strings and "dimensions" an object with the same keys. Reply with ONLY a JSON object with exactly the same keys — no markdown, no commentary.`
+  const system = `You are a professional translator for an academic research lab (finance, economics, and AI). Translate every value of the given JSON object into ${LANG_NAME[to]}.
+
+Translate idiomatically, NOT word-for-word: the result must read as if originally written by a researcher in ${LANG_NAME[to]}.
+
+Keep VERBATIM (do not translate) any term that researchers in ${LANG_NAME[to]} conventionally leave in its original form:
+- acronyms and initialisms — e.g. LLM, LLMs, NLP, GPT, RAG, API, ML, GDP, VAR (keep exactly as written, including plural "s");
+- established English technical terms commonly used as-is in the field — e.g. machine learning, deep learning, embedding, transformer, benchmark, dataset, prompt;
+- proper nouns, brand / product / model / library / dataset names, code, tickers, math symbols, numbers and units.
+Do not expand or "explain" these terms — leave them as they are.
+
+For "keywords", translate only those that have a natural, commonly-used equivalent in ${LANG_NAME[to]}; leave technical terms and acronyms unchanged. If a whole value is already in ${LANG_NAME[to]}, return it unchanged. Keep "keywords" an array of strings and "dimensions" an object with the same keys. Reply with ONLY a JSON object with exactly the same keys — no markdown, no commentary.`
   const user = JSON.stringify(src)
   try {
     const completion = await provider.complete(
