@@ -43,7 +43,7 @@ export function PaperView({
   // the assistant bubble — lift it above the nav while on this page.
   useEffect(() => {
     const root = document.documentElement
-    root.style.setProperty('--fame-bubble-bottom', '120px')
+    root.style.setProperty('--fame-bubble-bottom', '150px')
     return () => { root.style.removeProperty('--fame-bubble-bottom') }
   }, [])
 
