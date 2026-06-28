@@ -1,5 +1,7 @@
 import type { Subject, MemberRef } from '@/types'
 import { Avatar } from '@/components/ui/Avatar'
+import { FitText } from './FitText'
+import { CornerRibbon } from './CornerRibbon'
 import { vitrineHeadline, vitrineSubtitle, vitrineNumber } from '@/lib/subjects/vitrine'
 import { localizedSubject } from '@/lib/subjects/localized'
 import type { Locale2 } from '@/types'
@@ -53,7 +55,7 @@ export function SubjectVitrine({
           <div style={{ flex: '1.85 1 0', padding: '14px 15px 11px', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
               <span className="font-mono" style={{ fontSize: 9.5, letterSpacing: '0.12em', color: '#3a5a8a', textTransform: 'uppercase', fontWeight: 500, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', paddingLeft: subject.is_transversal ? 30 : 0 }}>{L.kicker || statusLabel}</span>
-              <span className="font-mono" style={{ fontSize: 8.5, letterSpacing: '0.08em', color: '#b3ada0', textTransform: 'uppercase', flexShrink: 0, marginLeft: 6 }}>{ficheLabel}</span>
+              <span className="font-mono" style={{ fontSize: 8.5, letterSpacing: '0.08em', color: '#b3ada0', textTransform: 'uppercase', flexShrink: 0, marginLeft: 6, paddingRight: subject.statut === 'done' ? 30 : 0 }}>{ficheLabel}</span>
             </div>
             <div style={{ height: 1, background: '#16263f', margin: '7px 0 0' }} />
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -62,15 +64,23 @@ export function SubjectVitrine({
                 {subject.periode}{subject.periode ? <br /> : null}{statusLabel}
               </span>
             </div>
-            <div style={{ flex: 1 }} />
-            <span className="font-mono" style={{ fontSize: 8.5, letterSpacing: '0.1em', color: '#9a9485', textTransform: 'uppercase', marginBottom: 5 }}>{questionLabel}</span>
-            <span className="font-serif" style={{ fontWeight: 700, fontSize: 21, lineHeight: 1.05, color: '#16263f', letterSpacing: '-0.02em', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{headline}</span>
-            {subtitle && <span className="font-serif" style={{ fontStyle: 'italic', fontSize: 11.5, color: '#6a7589', marginTop: 5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{subtitle}</span>}
+            {/* Bloc question (bas de section) : police auto-réduite (FitText borné par
+                l'espace dispo) → label + titre + sous-titre visibles sans troncature.
+                Le label garde une taille fixe (px) ; seuls titre/sous-titre scalent (em). */}
+            <FitText maxPx={21} minPx={11} style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+              <span className="font-mono" style={{ fontSize: '8.5px', letterSpacing: '0.1em', color: '#9a9485', textTransform: 'uppercase', marginBottom: 5 }}>{questionLabel}</span>
+              <span className="font-serif" style={{ fontWeight: 700, fontSize: '1em', lineHeight: 1.05, color: '#16263f', letterSpacing: '-0.02em', display: 'block' }}>{headline}</span>
+              {subtitle && <span className="font-serif" style={{ fontStyle: 'italic', fontSize: '0.55em', color: '#6a7589', marginTop: '0.3em', lineHeight: 1.2, display: 'block' }}>{subtitle}</span>}
+            </FitText>
           </div>
           {/* Navy bottom */}
           <div style={{ flex: '1 1 0', background: '#15203f', padding: '12px 15px 11px', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
-            {L.accroche && <span className="font-serif" style={{ fontStyle: 'italic', fontSize: 12, lineHeight: 1.4, color: '#cdd8ea', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{L.accroche}</span>}
-            <div style={{ flex: 1 }} />
+            {/* Accroche : police auto-réduite pour tenir sans troncature dans l'espace dispo. */}
+            {L.accroche
+              ? <FitText maxPx={12} minPx={8} style={{ flex: 1, minHeight: 0 }}>
+                  <span className="font-serif" style={{ fontStyle: 'italic', fontSize: '1em', lineHeight: 1.4, color: '#cdd8ea', display: 'block' }}>{L.accroche}</span>
+                </FitText>
+              : <div style={{ flex: 1 }} />}
             {L.keywords.length > 0 && (
               <div className="font-mono" style={{ display: 'flex', gap: 7, flexWrap: 'wrap', fontSize: 8.5, color: '#7fa3d4', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: 7, maxHeight: 24, overflow: 'hidden' }}>
                 {L.keywords.slice(0, 3).map((k, i) => <span key={i}>{k}</span>)}
@@ -86,14 +96,13 @@ export function SubjectVitrine({
             </div>
           </div>
 
+          {/* Rubans d'angle (label auto-fit) : transversal haut-gauche (teal),
+              done haut-droite (coral) — coins opposés. */}
           {subject.is_transversal && transversalLabel && (
-            // Ruban d'angle (clippé par overflow:hidden du poster-inner) — coin haut-gauche.
-            <span className="font-mono" style={{ position: 'absolute', top: 17, left: -32, transform: 'rotate(-45deg)', transformOrigin: 'center', background: '#1e9b7e', color: '#fff', fontSize: 7.5, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '3px 32px', boxShadow: '0 2px 6px rgba(0,5,30,0.3)', pointerEvents: 'none', whiteSpace: 'nowrap', zIndex: 4 }}>{transversalLabel}</span>
+            <CornerRibbon side="left" color="#1e9b7e" label={transversalLabel} />
           )}
           {subject.statut === 'done' && (
-            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
-              <div className="font-mono text-fame-coral" style={{ transform: 'rotate(-15deg)', border: '4px solid', borderRadius: 7, padding: '8px 26px', fontSize: 40, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', opacity: 0.72, whiteSpace: 'nowrap' }}>{doneLabel}</div>
-            </div>
+            <CornerRibbon side="right" color="#ff6f61" label={doneLabel} />
           )}
         </div>
       </button>
