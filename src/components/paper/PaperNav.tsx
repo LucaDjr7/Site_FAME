@@ -6,7 +6,7 @@ import type { Subject, SubjectStatus, Lab } from '@/types'
 const STATUS_COLOR: Record<SubjectStatus, string> = { active: '#1e9b7e', 'on-hold': '#e8b149', done: '#2f4486' }
 
 /** Height of the bottom thumbnail nav strip (px). Shared so the assistant bubble can sit just above it. */
-export const PAPER_NAV_HEIGHT = 108
+export const PAPER_NAV_HEIGHT = 102
 
 type Props = {
   subjects: Pick<Subject, 'id' | 'titre' | 'statut' | 'ordre'>[]
