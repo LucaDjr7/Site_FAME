@@ -14,8 +14,9 @@ export async function generateField(
   draft: FieldDraft,
   locale: Locale,
   deps: GenerateDeps = {},
+  context?: string,
 ): Promise<string> {
-  const { system, user } = buildFieldPrompt(field, draft, locale)
+  const { system, user } = buildFieldPrompt(field, draft, locale, context)
   const provider = deps.provider ?? getChatProvider()
   const completion = await provider.complete(
     [
