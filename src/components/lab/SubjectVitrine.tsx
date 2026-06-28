@@ -52,7 +52,7 @@ export function SubjectVitrine({
           {/* Light top */}
           <div style={{ flex: '1.85 1 0', padding: '14px 15px 11px', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-              <span className="font-mono" style={{ fontSize: 9.5, letterSpacing: '0.12em', color: '#3a5a8a', textTransform: 'uppercase', fontWeight: 500, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{L.kicker || statusLabel}</span>
+              <span className="font-mono" style={{ fontSize: 9.5, letterSpacing: '0.12em', color: '#3a5a8a', textTransform: 'uppercase', fontWeight: 500, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', paddingLeft: subject.is_transversal ? 30 : 0 }}>{L.kicker || statusLabel}</span>
               <span className="font-mono" style={{ fontSize: 8.5, letterSpacing: '0.08em', color: '#b3ada0', textTransform: 'uppercase', flexShrink: 0, marginLeft: 6 }}>{ficheLabel}</span>
             </div>
             <div style={{ height: 1, background: '#16263f', margin: '7px 0 0' }} />
@@ -87,11 +87,12 @@ export function SubjectVitrine({
           </div>
 
           {subject.is_transversal && transversalLabel && (
-            <span className="font-mono text-fame-teal" style={{ position: 'absolute', top: 6, right: 6, fontSize: 8.5, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', background: 'rgba(30,155,126,0.14)', border: '1px solid rgba(30,155,126,0.35)', borderRadius: 8, padding: '1px 5px' }}>{transversalLabel}</span>
+            // Ruban d'angle (clippé par overflow:hidden du poster-inner) — coin haut-gauche.
+            <span className="font-mono" style={{ position: 'absolute', top: 17, left: -32, transform: 'rotate(-45deg)', transformOrigin: 'center', background: '#1e9b7e', color: '#fff', fontSize: 7.5, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '3px 32px', boxShadow: '0 2px 6px rgba(0,5,30,0.3)', pointerEvents: 'none', whiteSpace: 'nowrap', zIndex: 4 }}>{transversalLabel}</span>
           )}
           {subject.statut === 'done' && (
             <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
-              <div className="font-mono text-fame-coral" style={{ transform: 'rotate(-15deg)', border: '2.5px solid', borderRadius: 4, padding: '4px 10px', fontSize: 18, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.7 }}>{doneLabel}</div>
+              <div className="font-mono text-fame-coral" style={{ transform: 'rotate(-15deg)', border: '4px solid', borderRadius: 7, padding: '8px 26px', fontSize: 40, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', opacity: 0.72, whiteSpace: 'nowrap' }}>{doneLabel}</div>
             </div>
           )}
         </div>
