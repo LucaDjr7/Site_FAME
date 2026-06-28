@@ -10,34 +10,31 @@ vi.mock('./index-source', () => ({
   indexSource: (type: unknown, id: unknown) => indexSourceMock(type, id),
   markSourceStale: (type: unknown, id: unknown) => markStaleMock(type, id),
 }))
-
-import { scheduleReindex } from './schedule'
-
-beforeEach(() => { afterMock.mockClear(); indexSourceMock.mockClear(); markStaleMock.mockClear() })
-
-describe('scheduleReindex', () => {
-  it('planifie l’indexation via after()', async () => {
-    scheduleReindex('subject', 's1')
-    expect(afterMock).toHaveBeenCalledTimes(1)
-    await Promise.resolve()
-    expect(indexSourceMock).toHaveBeenCalledWith('subject', 's1')
-  })
-  it('si indexSource lève, marque la source stale (n’explose pas)', async () => {
-    indexSourceMock.mockRejectedValueOnce(new Error('embed down'))
-    scheduleReindex('subject', 's2')
-    await new Promise(r => setTimeout(r, 0))
-    expect(markStaleMock).toHaveBeenCalledWith('subject', 's2')
-  })
-})
-
 vi.mock('./index-file', () => ({
   indexSubjectFile: vi.fn(),
   deleteFileChunks: vi.fn(),
   deleteSubjectFileChunks: vi.fn(),
 }))
 
-import { scheduleIndexFile, scheduleDeleteFileChunks, scheduleDeleteSubjectFiles } from './schedule'
+import { scheduleReindex, scheduleIndexFile, scheduleDeleteFileChunks, scheduleDeleteSubjectFiles } from './schedule'
 import * as indexFile from './index-file'
+
+beforeEach(() => { afterMock.mockClear(); indexSourceMock.mockClear(); markStaleMock.mockClear() })
+
+describe('scheduleReindex', () => {
+  it("planifie l'indexation via after()", async () => {
+    scheduleReindex('subject', 's1')
+    expect(afterMock).toHaveBeenCalledTimes(1)
+    await Promise.resolve()
+    expect(indexSourceMock).toHaveBeenCalledWith('subject', 's1')
+  })
+  it("si indexSource leve, marque la source stale (n'explose pas)", async () => {
+    indexSourceMock.mockRejectedValueOnce(new Error('embed down'))
+    scheduleReindex('subject', 's2')
+    await new Promise(r => setTimeout(r, 0))
+    expect(markStaleMock).toHaveBeenCalledWith('subject', 's2')
+  })
+})
 
 describe('schedule file helpers', () => {
   it('scheduleIndexFile appelle indexSubjectFile', async () => {
