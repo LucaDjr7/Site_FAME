@@ -220,15 +220,18 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
       setDraggingId(null)
 
       if (moved && finalOrder.length > 0) {
-        // Persist reorder
+        // Persist reorder — on échec, prévenir et resynchroniser depuis le serveur
+        // (sinon l'ordre local non sauvegardé « saute » au prochain chargement).
         try {
-          await fetch(`/api/subjects/${draggedId}/order`, {
+          const res = await fetch(`/api/subjects/${draggedId}/order`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ orderedIds: finalOrder }),
           })
+          if (!res.ok) throw new Error('persist failed')
         } catch {
-          // Silently fail — local state is already updated
+          addToast(t('error.reorderFailed'), 'error')
+          router.refresh()
         }
       }
     }
@@ -239,6 +242,8 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
       window.removeEventListener('pointermove', onPointerMove)
       window.removeEventListener('pointerup', onPointerUp)
     }
+    // Listeners globaux montés une seule fois ; addToast/router/t sont stables.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Subject to delete title for confirm dialog

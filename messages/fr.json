@@ -89,7 +89,8 @@
     "error": {
       "network": "Erreur réseau",
       "server": "Erreur",
-      "deleteFailed": "Échec de la suppression"
+      "deleteFailed": "Échec de la suppression",
+      "reorderFailed": "Impossible d'enregistrer le nouvel ordre"
     },
     "transversalLabel": "Transversal — visible dans les deux labos",
     "transversalBadge": "Transversal",
@@ -247,6 +248,7 @@
     "confirmPasswordPlaceholder": "Confirmez le mot de passe",
     "passwordMismatch": "Les mots de passe ne correspondent pas",
     "passwordTooShort": "Le mot de passe doit comporter au moins 8 caractères",
+    "passwordTooWeak": "Le mot de passe doit comporter au moins 8 caractères, une majuscule et un chiffre",
     "activateButton": "Activer le compte",
     "activatedSuccess": "Compte activé ! Redirection vers la connexion…",
     "activationFailed": "Échec de l'activation."
@@ -484,6 +486,7 @@
     "disable": "Désactiver",
     "reindex": "Réindexer la base de connaissances",
     "reindexStarted": "Réindexation lancée",
+    "actionFailed": "Échec de l'action",
     "usageTitle": "Usage du mois",
     "monthlyCost": "Coût estimé",
     "budget": "Budget",

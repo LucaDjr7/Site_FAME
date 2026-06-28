@@ -89,7 +89,8 @@
     "error": {
       "network": "Network error",
       "server": "Error",
-      "deleteFailed": "Delete failed"
+      "deleteFailed": "Delete failed",
+      "reorderFailed": "Could not save the new order"
     },
     "transversalLabel": "Transversal — visible in both labs",
     "transversalBadge": "Transversal",
@@ -247,6 +248,7 @@
     "confirmPasswordPlaceholder": "Confirm password",
     "passwordMismatch": "Passwords do not match",
     "passwordTooShort": "Password must be at least 8 characters",
+    "passwordTooWeak": "Password must be at least 8 characters, with an uppercase letter and a number",
     "activateButton": "Activate account",
     "activatedSuccess": "Account activated! Redirecting to login…",
     "activationFailed": "Activation failed."
@@ -484,6 +486,7 @@
     "disable": "Disable",
     "reindex": "Reindex knowledge base",
     "reindexStarted": "Reindexing started",
+    "actionFailed": "Action failed",
     "usageTitle": "This month's usage",
     "monthlyCost": "Estimated cost",
     "budget": "Budget",

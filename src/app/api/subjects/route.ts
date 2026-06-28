@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
     .eq('labo', labo)
     .order('ordre', { ascending: false })
     .limit(1)
-    .single()
+    .maybeSingle()
 
   const ordre = (last?.ordre ?? -1) + 1
 

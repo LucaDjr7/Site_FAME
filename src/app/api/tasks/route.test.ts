@@ -2,9 +2,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { NextRequest } from 'next/server'
 
 const getSession = vi.fn()
+const requireMember = vi.fn()
 vi.mock('@/lib/auth', async (orig) => {
   const actual = await orig<typeof import('@/lib/auth')>()
-  return { ...actual, getSession: () => getSession() }
+  return { ...actual, getSession: () => getSession(), requireMember: () => requireMember() }
 })
 
 let confIds: string[] = []
@@ -27,10 +28,13 @@ vi.mock('@/lib/supabase/server', () => ({
   }),
 }))
 
-import { GET } from './route'
+import { GET, POST } from './route'
 
 function req(qs = 'lab=paris') {
   return new NextRequest(`http://localhost/api/tasks?${qs}`)
+}
+function postReq(body: unknown) {
+  return new NextRequest('http://localhost/api/tasks', { method: 'POST', body: JSON.stringify(body) })
 }
 
 beforeEach(() => {
@@ -39,6 +43,15 @@ beforeEach(() => {
   taskData = []
   getSession.mockReset()
   getSession.mockResolvedValue(null)
+  requireMember.mockReset()
+  requireMember.mockResolvedValue({ session: {}, member: { id: 'm', labo: 'paris' } })
+})
+
+describe('POST /api/tasks — validation du slug labo', () => {
+  it('refuse un labo invalide (400)', async () => {
+    const res = await POST(postReq({ labo: 'berlin', titre: 'T', sujet_id: 's1' }))
+    expect(res.status).toBe(400)
+  })
 })
 
 describe('GET /api/tasks — confidentiel gating', () => {

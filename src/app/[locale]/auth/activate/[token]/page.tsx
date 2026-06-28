@@ -15,7 +15,10 @@ export default function ActivatePage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (password !== confirm) { setError(t('passwordMismatch')); return }
-    if (password.length < 8) { setError(t('passwordTooShort')); return }
+    // Refléter la règle serveur : ≥8 caractères, une majuscule, un chiffre.
+    if (password.length < 8 || !/[A-Z]/.test(password) || !/[0-9]/.test(password)) {
+      setError(t('passwordTooWeak')); return
+    }
     const res = await fetch('/api/auth/activate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

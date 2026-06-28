@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
   const { labo, titre, sujet_id, description = '', statut = 'to-do',
     difficulte = 'easy', assignee_ids = [], subtask_labels = [] } = body
 
-  if (!labo || !titre?.trim() || !sujet_id) {
+  if (!VALID_LABS.includes(labo as Lab) || !titre?.trim() || !sujet_id) {
     return NextResponse.json({ error: 'labo, titre, sujet_id required' }, { status: 400 })
   }
 
