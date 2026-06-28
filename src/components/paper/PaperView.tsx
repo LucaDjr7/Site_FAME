@@ -152,7 +152,7 @@ export function PaperView({
 
         {/* RIGHT COLUMN: files + comments (stacked, scrollable) */}
         <div className="fame-scroll" style={{
-          position: 'absolute', right: 14, top: 118, bottom: 124, width: 240,
+          position: 'absolute', right: 14, top: 118, bottom: 124, width: 300,
           display: 'flex', flexDirection: 'column', gap: 12, pointerEvents: 'auto',
           overflowY: 'auto', overflowX: 'hidden',
         }}>
