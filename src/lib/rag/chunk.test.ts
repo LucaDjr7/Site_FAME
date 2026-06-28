@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { chunkSubject, chunkPublication, chunkPrompt, chunkMember, chunkTask } from './chunk'
+import { chunkSubject, chunkPublication, chunkPrompt, chunkMember, chunkTask, chunkText } from './chunk'
 import type { Subject, Member } from '@/types'
 
 function makeSubject(over: Partial<Subject> = {}): Subject {
@@ -97,5 +97,22 @@ describe('chunkTask', () => {
     expect(c.length).toBe(1)
     expect(c[0]!.content).toContain('Collecter données')
     expect(c[0]!.content).toContain('INSEE')
+  })
+})
+
+describe('chunkText', () => {
+  it('renvoie [] pour vide', () => {
+    expect(chunkText('   ')).toEqual([])
+  })
+  it('un seul chunk si court', () => {
+    const c = chunkText('court texte')
+    expect(c).toHaveLength(1)
+    expect(c[0]!.content).toBe('court texte')
+  })
+  it('découpe un texte long en plusieurs chunks qui se chevauchent', () => {
+    const text = 'a'.repeat(4000)
+    const c = chunkText(text, 1500, 150)
+    expect(c.length).toBeGreaterThan(1)
+    expect(c.every((x) => x.content.length <= 1500)).toBe(true)
   })
 })
