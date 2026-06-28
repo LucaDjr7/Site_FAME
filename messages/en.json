@@ -80,7 +80,8 @@
     },
     "toast": {
       "added": "Subject added",
-      "deleted": "Subject deleted"
+      "deleted": "Subject deleted",
+      "updated": "Subject updated"
     },
     "editModeActive": "Editing",
     "tasks": "tasks",
@@ -91,7 +92,53 @@
       "deleteFailed": "Delete failed"
     },
     "transversalLabel": "Transversal — visible in both labs",
-    "transversalBadge": "Transversal"
+    "transversalBadge": "Transversal",
+    "vitrine": {
+      "ficheLabel": "Subject sheet",
+      "theQuestion": "The question",
+      "readSubject": "Read the subject →",
+      "addCard": "Add a subject"
+    },
+    "editor": {
+      "createTitle": "New subject sheet",
+      "editTitle": "Edit subject sheet",
+      "details": "Full details",
+      "fQuestion": "Question (headline)",
+      "fTitre": "Academic title",
+      "fKicker": "Domain",
+      "fAccroche": "Hook",
+      "fPeriode": "Period",
+      "fStatus": "Status",
+      "fDifficulty": "Difficulty",
+      "fKeywords": "Keywords (comma-separated)",
+      "fResponsable": "Author",
+      "fContext": "Context",
+      "fMethod": "Method",
+      "fResults": "Results",
+      "dimMethod": "Method dimension",
+      "dimData": "Data dimension",
+      "dimTheory": "Theory dimension",
+      "dimWriting": "Writing dimension",
+      "generate": "Generate",
+      "generating": "Generating…",
+      "viewPrompt": "view prompt",
+      "hidePrompt": "hide prompt",
+      "copyPrompt": "Copy",
+      "transversal": "Transversal — visible in both labs",
+      "confidentiel": "Confidential — hidden from visitors",
+      "save": "Save",
+      "saving": "Saving…",
+      "cancel": "Cancel",
+      "errorRequired": "An academic title is required.",
+      "genError": "Generation unavailable",
+      "none": "None",
+      "autoTranslateNote": "Content is auto-translated into the other language on save.",
+      "domainPlaceholder": "Select a domain…",
+      "phQuestion": "Refused. But why?",
+      "phTitre": "Explainable AI for Credit Risk",
+      "phPeriode": "2025–2027",
+      "phKeywords": "Explainable AI, Scoring, Regulation"
+    }
   },
   "paper": {
     "back": "Click around the paper to go back",

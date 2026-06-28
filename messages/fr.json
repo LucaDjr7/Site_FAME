@@ -80,7 +80,8 @@
     },
     "toast": {
       "added": "Sujet ajouté",
-      "deleted": "Sujet supprimé"
+      "deleted": "Sujet supprimé",
+      "updated": "Sujet mis à jour"
     },
     "editModeActive": "Édition activée",
     "tasks": "tâches",
@@ -91,7 +92,53 @@
       "deleteFailed": "Échec de la suppression"
     },
     "transversalLabel": "Transversal — visible dans les deux labos",
-    "transversalBadge": "Transversal"
+    "transversalBadge": "Transversal",
+    "vitrine": {
+      "ficheLabel": "Fiche sujet",
+      "theQuestion": "La question",
+      "readSubject": "Lire le sujet →",
+      "addCard": "Ajouter un sujet"
+    },
+    "editor": {
+      "createTitle": "Nouvelle fiche sujet",
+      "editTitle": "Modifier la fiche sujet",
+      "details": "Détails complets",
+      "fQuestion": "Question (gros titre)",
+      "fTitre": "Titre académique",
+      "fKicker": "Domaine",
+      "fAccroche": "Accroche",
+      "fPeriode": "Période",
+      "fStatus": "Statut",
+      "fDifficulty": "Difficulté",
+      "fKeywords": "Mots-clés (séparés par des virgules)",
+      "fResponsable": "Auteur",
+      "fContext": "Contexte",
+      "fMethod": "Méthode",
+      "fResults": "Résultats",
+      "dimMethod": "Dimension méthode",
+      "dimData": "Dimension données",
+      "dimTheory": "Dimension théorie",
+      "dimWriting": "Dimension rédaction",
+      "generate": "Générer",
+      "generating": "Génération…",
+      "viewPrompt": "voir le prompt",
+      "hidePrompt": "masquer le prompt",
+      "copyPrompt": "Copier",
+      "transversal": "Transversal — visible dans les deux labos",
+      "confidentiel": "Confidentiel — masqué aux visiteurs",
+      "save": "Enregistrer",
+      "saving": "Enregistrement…",
+      "cancel": "Annuler",
+      "errorRequired": "Un titre académique est requis.",
+      "genError": "Génération indisponible",
+      "none": "Aucun",
+      "autoTranslateNote": "Le contenu est traduit automatiquement dans l'autre langue à l'enregistrement.",
+      "domainPlaceholder": "Choisir un domaine…",
+      "phQuestion": "Refusé. Mais pourquoi ?",
+      "phTitre": "IA explicable pour le risque de crédit",
+      "phPeriode": "2025–2027",
+      "phKeywords": "IA explicable, Scoring, Régulation"
+    }
   },
   "paper": {
     "back": "Cliquez autour du papier pour revenir aux sujets",

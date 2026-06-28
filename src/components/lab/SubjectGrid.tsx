@@ -4,12 +4,13 @@ import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { useRouter, useParams } from 'next/navigation'
 import type { Subject, MemberRef, Lab, SubjectStatus, Difficulty, DateBucket } from '@/types'
-import { SubjectCard } from './SubjectCard'
+import { SubjectVitrine } from './SubjectVitrine'
 import { FilterSidebar } from './FilterSidebar'
-import { AddSubjectModal } from './AddSubjectModal'
+import { VitrineEditor } from './VitrineEditor'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { useToast } from '@/components/ui/Toast'
 import { dateBucket } from '@/lib/utils'
+import { subjectSearchText, toLocale2 } from '@/lib/subjects/localized'
 
 function passesFilters(
   s: Subject,
@@ -19,7 +20,7 @@ function passesFilters(
   fPerson: Set<string>,
   fDate: Set<DateBucket>,
 ): boolean {
-  if (q && !s.titre.toLowerCase().includes(q.toLowerCase())) return false
+  if (q && !subjectSearchText(s).includes(q.toLowerCase())) return false
   if (fStatus.size > 0 && !fStatus.has(s.statut)) return false
   if (fDiff.size > 0 && !fDiff.has(s.difficulte)) return false
   if (fPerson.size > 0 && !s.auteurs.some(id => fPerson.has(id))) return false
@@ -59,7 +60,8 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
   const [sort, setSort] = useState<SortMode>('ordre')
   const [filtersOpen, setFiltersOpen] = useState(true)
   const [editMode, setEditMode] = useState(false)
-  const [addOpen, setAddOpen] = useState(false)
+  const [editorOpen, setEditorOpen] = useState(false)
+  const [editing, setEditing] = useState<Subject | null>(null)
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null)
 
   // This page has a bottom toolbar (count / sort / Tasks link) above the footer;
@@ -122,11 +124,14 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
     setFDate(new Set())
   }
 
-  // Add subject
-  function handleAdded(subject: unknown) {
-    setSubjects(prev => [...prev, subject as Subject])
-    setAddOpen(false)
-    addToast(t('toast.added'), 'success')
+  // Add / edit subject
+  function openCreate() { setEditing(null); setEditorOpen(true) }
+  function openEdit(s: Subject) { setEditing(s); setEditorOpen(true) }
+
+  function handleSaved(saved: Subject, isNew: boolean) {
+    setSubjects(prev => isNew ? [...prev, saved] : prev.map(s => s.id === saved.id ? saved : s))
+    setEditorOpen(false)
+    addToast(isNew ? t('toast.added') : t('toast.updated'), 'success')
   }
 
   // Delete subject
@@ -332,7 +337,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
             {/* Add subject — member only */}
             {canEdit && (
               <button className="font-mono bg-fame-blue text-fame-text-light"
-                onClick={() => setAddOpen(true)}
+                onClick={openCreate}
                 style={{
                   padding: '6px 14px',
                   borderRadius: 6,
@@ -372,21 +377,18 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
         }}>
           {/* Grid area */}
           <div style={{ flex: 1, overflowY: 'auto', padding: '10px 24px 0' }}>
-            {displaySubjects.length === 0 ? (
-              <div className="font-mono text-fame-text-muted" style={{
-                fontSize: 13,
-                textAlign: 'center',
-                paddingTop: 60,
-              }}>
+            {displaySubjects.length === 0 && (
+              <div className="font-mono text-fame-text-muted" style={{ fontSize: 13, textAlign: 'center', paddingTop: 60 }}>
                 {t('empty')}
               </div>
-            ) : (
+            )}
+            {(displaySubjects.length > 0 || canEdit) && (
               <div
                 className={editMode ? 'editing' : ''}
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
-                  gap: '26px 22px',
+                  gridTemplateColumns: 'repeat(5, minmax(0, 1fr))',
+                  gap: '30px 26px',
                   paddingBottom: 16,
                 }}
               >
@@ -397,23 +399,43 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
                     style={{ position: 'relative' }}
                     onPointerDown={canDrag ? (e) => handlePointerDown(e, s.id) : undefined}
                   >
-                    <SubjectCard
+                    <SubjectVitrine
                       subject={s}
+                      locale={toLocale2(locale)}
                       members={members}
                       editMode={editMode}
                       isDragging={draggingId === s.id}
                       statusLabel={t(`status.${s.statut}`)}
                       doneLabel={t('done')}
+                      ficheLabel={t('vitrine.ficheLabel')}
+                      questionLabel={t('vitrine.theQuestion')}
+                      readLabel={t('vitrine.readSubject')}
                       transversalLabel={t('transversalBadge')}
                       deleteTitle={t('delete.confirm')}
+                      editTitle={t('editor.editTitle')}
                       onDelete={canEdit && editMode ? () => setPendingDeleteId(s.id) : undefined}
+                      onEdit={canEdit && editMode ? () => openEdit(s) : undefined}
                       onCardClick={!editMode ? () => openPaper(s.id) : undefined}
                     />
                   </div>
                 ))}
+
+                {canEdit && (
+                  <button className="font-mono" onClick={openCreate}
+                    style={{
+                      aspectRatio: '1 / 1.414', width: '100%', borderRadius: 6,
+                      border: '2px dashed rgba(47,68,134,0.35)', background: 'rgba(47,68,134,0.03)',
+                      color: '#2f4486', cursor: 'pointer', display: 'flex', flexDirection: 'column',
+                      alignItems: 'center', justifyContent: 'center', gap: 8, animation: 'fameFade 0.3s ease',
+                    }}>
+                    <span style={{ fontSize: 36, lineHeight: 1 }}>＋</span>
+                    <span style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase' }}>{t('vitrine.addCard')}</span>
+                  </button>
+                )}
               </div>
             )}
           </div>
+
 
           {/* Filter sidebar */}
           <FilterSidebar
@@ -478,14 +500,19 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
         </div>
       </div>
 
-      {/* Add subject modal */}
-      <AddSubjectModal
-        open={addOpen}
-        lab={lab}
-        members={members}
-        onClose={() => setAddOpen(false)}
-        onAdded={handleAdded}
-      />
+      {/* Subject editor (create + edit) */}
+      {editorOpen && (
+        <VitrineEditor
+          key={editing?.id ?? 'new'}
+          open
+          lab={lab}
+          members={members}
+          subject={editing}
+          locale={locale === 'fr' ? 'fr' : 'en'}
+          onClose={() => setEditorOpen(false)}
+          onSaved={handleSaved}
+        />
+      )}
 
       {/* Delete confirm */}
       <ConfirmDialog

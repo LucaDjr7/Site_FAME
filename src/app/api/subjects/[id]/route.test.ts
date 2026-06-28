@@ -21,6 +21,9 @@ vi.mock('@/lib/supabase/server', () => ({
   }),
 }))
 
+vi.mock('@/lib/rag/usage', () => ({ isOverBudget: async () => false }))
+vi.mock('@/lib/subjects/translate', () => ({ buildSubjectI18n: async () => ({ en: {}, fr: {} }) }))
+
 import { PATCH } from './route'
 
 function req(body: unknown) {

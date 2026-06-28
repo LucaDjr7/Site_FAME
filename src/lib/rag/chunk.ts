@@ -4,17 +4,31 @@ export interface RawChunk {
   content: string
 }
 
-/** Un chunk par champ logique du sujet (context/method/results), préfixé du titre + kicker pour l'ancrage. */
+/** Un chunk par champ logique du sujet (question/accroche/context/method/results), préfixé du titre + kicker pour l'ancrage.
+ *  Si `i18n.en` ou `i18n.fr` sont présents, on émet un jeu de chunks par langue (fallback sur les colonnes plates sinon). */
 export function chunkSubject(s: Subject): RawChunk[] {
-  const head = s.kicker ? `${s.titre} — ${s.kicker}` : s.titre
-  const fields: [string, string][] = [
-    ['Context', s.context],
-    ['Method', s.method],
-    ['Results', s.results],
-  ]
-  return fields
-    .filter(([, v]) => v && v.trim().length > 0)
-    .map(([label, v]) => ({ content: `${head}\n${label}: ${v.trim()}` }))
+  const base = s.kicker ? `${s.titre} — ${s.kicker}` : s.titre
+  const head = s.periode ? `${base} (${s.periode})` : base
+
+  type FieldSet = { question: string; accroche: string; context: string; method: string; results: string }
+  const sets: FieldSet[] = []
+  const en = s.i18n?.en
+  const fr = s.i18n?.fr
+  if (en) sets.push({ question: en.question ?? '', accroche: en.accroche ?? '', context: en.context ?? '', method: en.method ?? '', results: en.results ?? '' })
+  if (fr) sets.push({ question: fr.question ?? '', accroche: fr.accroche ?? '', context: fr.context ?? '', method: fr.method ?? '', results: fr.results ?? '' })
+  if (sets.length === 0) sets.push({ question: s.question, accroche: s.accroche, context: s.context, method: s.method, results: s.results })
+
+  const chunks: RawChunk[] = []
+  for (const set of sets) {
+    const fields: [string, string][] = [
+      ['Question', set.question], ['Accroche', set.accroche],
+      ['Context', set.context], ['Method', set.method], ['Results', set.results],
+    ]
+    for (const [label, v] of fields) {
+      if (v && v.trim().length > 0) chunks.push({ content: `${head}\n${label}: ${v.trim()}` })
+    }
+  }
+  return chunks
 }
 
 export function chunkPublication(p: Publication): RawChunk[] {

@@ -2,13 +2,29 @@ import { describe, it, expect } from 'vitest'
 import { chunkSubject, chunkPublication, chunkPrompt, chunkMember, chunkTask } from './chunk'
 import type { Subject, Member } from '@/types'
 
+function makeSubject(over: Partial<Subject> = {}): Subject {
+  return {
+    id: '1', labo: 'paris', titre: 'T', kicker: 'K',
+    question: '', accroche: '', periode: '',
+    statut: 'active', context: '', method: '', results: '',
+    keywords: [], auteurs: [], difficulte: 'intermediate',
+    dimensions: { method: '', data: '', theory: '', writing: '' },
+    ordre: 0, is_transversal: false, confidentiel: false,
+    i18n: {},
+    created_at: '2026-01-01', updated_at: '2026-01-01',
+    ...over,
+  }
+}
+
 describe('chunkSubject', () => {
   const base: Subject = {
     id: 's1', labo: 'paris', titre: 'Inflation dynamics', kicker: 'Macro',
+    question: '', accroche: '', periode: '',
     statut: 'active', context: 'Ctx text', method: 'Method text', results: '',
     keywords: ['inflation'], auteurs: [], difficulte: 'intermediate',
     dimensions: { method: '', data: '', theory: '', writing: '' }, ordre: 0,
     is_transversal: false, confidentiel: false,
+    i18n: {},
     created_at: '', updated_at: '',
   }
   it('crée un chunk par champ non vide, préfixé du titre', () => {
@@ -19,6 +35,27 @@ describe('chunkSubject', () => {
   })
   it('ignore les champs vides', () => {
     expect(chunkSubject({ ...base, context: '', method: '', results: '' }).length).toBe(0)
+  })
+  it('includes question and accroche when present', () => {
+    const joined = chunkSubject(makeSubject({ question: 'Why?', accroche: 'A hook.' }))
+      .map(c => c.content).join('\n')
+    expect(joined).toContain('Question: Why?')
+    expect(joined).toContain('Accroche: A hook.')
+  })
+  it('omits empty fields', () => {
+    expect(chunkSubject(makeSubject())).toHaveLength(0)
+  })
+  it('indexes both languages when i18n is present', () => {
+    const joined = chunkSubject(makeSubject({
+      question: 'Q fr', context: 'Ctx fr',
+      i18n: {
+        fr: { question: 'Q fr', accroche: '', context: 'Ctx fr', method: '', results: '', titre: '', keywords: [], dimensions: { method: '', data: '', theory: '', writing: '' } },
+        en: { question: 'Q en', accroche: '', context: 'Ctx en', method: '', results: '', titre: '', keywords: [], dimensions: { method: '', data: '', theory: '', writing: '' } },
+      },
+    })).map(c => c.content).join('\n')
+    expect(joined).toContain('Question: Q fr')
+    expect(joined).toContain('Question: Q en')
+    expect(joined).toContain('Context: Ctx en')
   })
 })
 
