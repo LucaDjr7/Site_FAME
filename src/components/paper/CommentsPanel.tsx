@@ -62,7 +62,7 @@ export function CommentsPanel({ subjectId, isMember, initialComments, open, onTo
 
   return (
     <section style={{
-      flex: 'none', pointerEvents: 'auto', background: 'rgba(47,68,134,0.82)', backdropFilter: 'blur(12px)',
+      flex: 'none', pointerEvents: 'auto', background: '#2f4486', backdropFilter: 'blur(12px)',
       border: '1px solid rgba(150,180,255,0.18)', borderRadius: 14, boxShadow: '0 22px 60px -18px rgba(0,5,30,0.75)', overflow: 'hidden',
     }}>
       <button onClick={onToggleOpen} className="text-fame-text-light" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', background: 'none', border: 'none', cursor: 'pointer' }}>
