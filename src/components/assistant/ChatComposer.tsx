@@ -50,7 +50,7 @@ export function ChatComposer({
       style={{
         borderTop: '1px solid rgba(20,40,90,0.10)',
         background: 'rgba(251,249,243,0.9)',
-        padding: '8px 12px',
+        padding: '6px 12px',
       }}
     >
       <div
@@ -60,8 +60,8 @@ export function ChatComposer({
           gap: '9px',
           background: '#fff',
           border: `1px solid ${borderColor}`,
-          borderRadius: '12px',
-          padding: '4px 4px 4px 12px',
+          borderRadius: '11px',
+          padding: '3px 3px 3px 11px',
           transition: 'border-color 0.15s',
         }}
       >
@@ -94,10 +94,10 @@ export function ChatComposer({
           aria-label={t('send')}
           title={t('send')}
           style={{
-            width: '30px',
-            height: '30px',
-            minWidth: '30px',
-            borderRadius: '9px',
+            width: '28px',
+            height: '28px',
+            minWidth: '28px',
+            borderRadius: '8px',
             border: 'none',
             background: isDisabled ? 'rgba(47,68,134,0.35)' : '#2f4486',
             cursor: isDisabled ? 'not-allowed' : 'pointer',
@@ -109,8 +109,8 @@ export function ChatComposer({
         >
           <svg
             viewBox="0 0 24 24"
-            width={16}
-            height={16}
+            width={15}
+            height={15}
             fill="none"
             stroke="#eef3ff"
             strokeWidth="2"
