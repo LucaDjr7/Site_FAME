@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
-import { requireMember, authErrorResponse } from '@/lib/auth'
+import { requireMember, getSession, authErrorResponse } from '@/lib/auth'
 import type { Lab } from '@/types'
 import { VALID_LABS } from '@/lib/constants'
 
@@ -13,6 +13,7 @@ export async function GET(req: NextRequest) {
   }
   const validLab = lab as Lab | null
 
+  const isMember = !!(await getSession())?.member
   const service = await createServiceClient()
 
   let query = service
@@ -22,6 +23,13 @@ export async function GET(req: NextRequest) {
 
   if (validLab) query = query.eq('labo', validLab)
   if (subjectId) query = query.eq('sujet_id', subjectId)
+
+  // Visiteur : exclure les tâches rattachées à un sujet confidentiel.
+  if (!isMember) {
+    const { data: confRows } = await service.from('subjects').select('id').eq('confidentiel', true)
+    const confIds = (confRows ?? []).map((r: { id: string }) => r.id)
+    if (confIds.length) query = query.not('sujet_id', 'in', `(${confIds.join(',')})`)
+  }
 
   const { data, error } = await query
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })

@@ -20,13 +20,19 @@ export default async function LabPage({ params }: Props) {
   const { lab } = await params
   if (!VALID_LABS.includes(lab as Lab)) notFound()
 
+  const session = await getSession()
+  const isMember = !!session?.member
   const service = await createServiceClient()
-  const [{ data: subjects }, { data: members }, session] = await Promise.all([
-    service.from('subjects').select('*').or(`labo.eq.${lab},is_transversal.eq.true`).order('ordre', { ascending: true }),
+
+  // Visiteur : ne jamais charger les sujets confidentiels (grille, recherche, filtres).
+  let subjectsQuery = service.from('subjects').select('*').or(`labo.eq.${lab},is_transversal.eq.true`)
+  if (!isMember) subjectsQuery = subjectsQuery.eq('confidentiel', false)
+
+  const [{ data: subjects }, { data: members }] = await Promise.all([
+    subjectsQuery.order('ordre', { ascending: true }),
     service.from('members').select('id,prenom,nom,photo_url').eq('labo', lab),
-    getSession(),
   ])
-  const canEdit = !!session?.member
+  const canEdit = isMember
 
   return (
     <SubjectGrid

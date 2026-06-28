@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
-import { requireMember, authErrorResponse } from '@/lib/auth'
+import { requireMember, getSession, authErrorResponse } from '@/lib/auth'
 import { scheduleReindex } from '@/lib/rag/schedule'
 import { buildSubjectI18n } from '@/lib/subjects/translate'
 import { isOverBudget } from '@/lib/rag/usage'
@@ -10,9 +10,12 @@ type Params = { params: Promise<{ id: string }> }
 
 export async function GET(_req: NextRequest, { params }: Params) {
   const { id } = await params
+  const isMember = !!(await getSession())?.member
   const service = await createServiceClient()
   const { data, error } = await service.from('subjects').select('*').eq('id', id).single()
   if (error || !data) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  // Visiteur : un sujet confidentiel n'existe pas (404, pas 403 → on ne révèle rien).
+  if (data.confidentiel && !isMember) return NextResponse.json({ error: 'Not found' }, { status: 404 })
   return NextResponse.json(data)
 }
 

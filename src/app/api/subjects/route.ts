@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
-import { requireMember, authErrorResponse } from '@/lib/auth'
+import { requireMember, getSession, authErrorResponse } from '@/lib/auth'
 import { scheduleReindex } from '@/lib/rag/schedule'
 import type { Lab } from '@/types'
 import { VALID_LABS } from '@/lib/constants'
@@ -13,12 +13,15 @@ export async function GET(req: NextRequest) {
   if (!VALID_LABS.includes(lab)) {
     return NextResponse.json({ error: 'Invalid lab' }, { status: 400 })
   }
+  // Visiteurs (non-membres) : ne jamais exposer les sujets confidentiels.
+  const isMember = !!(await getSession())?.member
   const service = await createServiceClient()
-  const { data, error } = await service
+  let query = service
     .from('subjects')
     .select('*')
     .eq('labo', lab)
-    .order('ordre', { ascending: true })
+  if (!isMember) query = query.eq('confidentiel', false)
+  const { data, error } = await query.order('ordre', { ascending: true })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json(data)
 }
