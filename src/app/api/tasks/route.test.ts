@@ -10,6 +10,7 @@ vi.mock('@/lib/auth', async (orig) => {
 
 let confIds: string[] = []
 let notCalls: Array<[string, string, string]> = []
+let inCalls: Array<[string, unknown]> = []
 let taskData: unknown[] = []
 vi.mock('@/lib/supabase/server', () => ({
   createServiceClient: async () => ({
@@ -21,6 +22,7 @@ vi.mock('@/lib/supabase/server', () => ({
       b.select = () => b
       b.order = () => b
       b.eq = () => b
+      b.in = (col: string, val: unknown) => { inCalls.push([col, val]); return b }
       b.not = (col: string, op: string, val: string) => { notCalls.push([col, op, val]); return b }
       b.then = (resolve: (v: unknown) => unknown) => Promise.resolve({ data: taskData, error: null }).then(resolve)
       return b
@@ -40,11 +42,20 @@ function postReq(body: unknown) {
 beforeEach(() => {
   confIds = []
   notCalls = []
+  inCalls = []
   taskData = []
   getSession.mockReset()
   getSession.mockResolvedValue(null)
   requireMember.mockReset()
   requireMember.mockResolvedValue({ session: {}, member: { id: 'm', labo: 'paris' } })
+})
+
+describe('GET /api/tasks?subject_ids — cascade des sujets visibles (I2)', () => {
+  it('filtre par .in(sujet_id, [...]) quand subject_ids est fourni', async () => {
+    getSession.mockResolvedValue({ user: { id: 'u' }, member: { id: 'u' } })
+    await GET(req('subject_ids=s1,s2,s3'))
+    expect(inCalls).toContainEqual(['sujet_id', ['s1', 's2', 's3']])
+  })
 })
 
 describe('POST /api/tasks — validation du slug labo', () => {

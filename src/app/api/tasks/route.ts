@@ -7,6 +7,10 @@ import { VALID_LABS } from '@/lib/constants'
 export async function GET(req: NextRequest) {
   const lab = req.nextUrl.searchParams.get('lab')
   const subjectId = req.nextUrl.searchParams.get('subject_id')
+  // Cascade des sujets visibles (labo + transversaux) : le kanban rafraîchit via
+  // subject_ids pour ne pas perdre les tâches des sujets transversaux de l'autre labo.
+  const subjectIds = req.nextUrl.searchParams.get('subject_ids')
+    ?.split(',').map((s) => s.trim()).filter(Boolean).slice(0, 500)
 
   if (lab !== null && !VALID_LABS.includes(lab as Lab)) {
     return NextResponse.json({ error: 'Invalid lab' }, { status: 400 })
@@ -23,6 +27,7 @@ export async function GET(req: NextRequest) {
 
   if (validLab) query = query.eq('labo', validLab)
   if (subjectId) query = query.eq('sujet_id', subjectId)
+  if (subjectIds && subjectIds.length) query = query.in('sujet_id', subjectIds)
 
   // Visiteur : exclure les tâches rattachées à un sujet confidentiel.
   if (!isMember) {
