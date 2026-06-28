@@ -17,7 +17,7 @@ export async function TopBar({ locale, lab }: Props) {
   const resolvedLab = lab ?? member?.labo ?? 'paris'
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-20 h-12 flex items-center justify-between px-6 bg-fame-blue"
+    <header className="fixed top-0 left-0 right-0 z-20 h-12 flex items-center justify-between px-6 bg-fame-navy"
       style={{ borderBottom: '1px solid rgba(20,40,90,0.4)' }}>
       <Link href={`/${locale}`} className="group font-serif font-bold text-white text-lg tracking-wide transition-colors">
         FAME
