@@ -2,6 +2,7 @@
 import { useTranslations } from 'next-intl'
 import { Avatar } from '@/components/ui/Avatar'
 import type { Subject, MemberRef, SubjectStatus } from '@/types'
+import { localizedSubject, toLocale2 } from '@/lib/subjects/localized'
 
 const STATUS_COLOR: Record<SubjectStatus, string> = { active: '#1e9b7e', 'on-hold': '#e8b149', done: '#2f4486' }
 
@@ -11,6 +12,7 @@ export function PaperSheet({ subject, members, labName, locale }: Props) {
   const t = useTranslations('paper')
   const ts = useTranslations('lab')
   const statusColor = STATUS_COLOR[subject.statut] ?? '#5768ac'
+  const L = localizedSubject(subject, toLocale2(locale))
   const dateLabel = new Date(subject.created_at).toLocaleDateString(locale, { month: 'long', year: 'numeric' })
   const authors = subject.auteurs
     .map(id => members.find(m => m.id === id))
@@ -26,7 +28,7 @@ export function PaperSheet({ subject, members, labName, locale }: Props) {
         {/* Kicker + status pill */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
           <span className="font-mono" style={{  fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#6b7596' }}>
-            {subject.kicker ? `${subject.kicker} · ${labName}` : labName}
+            {L.kicker ? `${L.kicker} · ${labName}` : labName}
           </span>
           <span className="font-mono bg-fame-ecru" style={{ display: 'flex', alignItems: 'center', gap: 7,  fontSize: 10, letterSpacing: '0.06em', color: '#43507a', padding: '5px 10px', borderRadius: 20 }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: statusColor }} />
@@ -35,7 +37,7 @@ export function PaperSheet({ subject, members, labName, locale }: Props) {
         </div>
 
         {/* Title */}
-        <h1 style={{ margin: '0 0 14px', fontSize: 27, fontWeight: 700, lineHeight: 1.12, letterSpacing: '-0.01em' }}>{subject.titre}</h1>
+        <h1 style={{ margin: '0 0 14px', fontSize: 27, fontWeight: 700, lineHeight: 1.12, letterSpacing: '-0.01em' }}>{L.titre}</h1>
 
         {/* Authors + date */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', paddingBottom: 18, marginBottom: 18, borderBottom: '1px solid rgba(0,0,0,0.08)' }}>
@@ -50,19 +52,19 @@ export function PaperSheet({ subject, members, labName, locale }: Props) {
           <span className="font-mono" style={{ marginLeft: 'auto',  fontSize: 11, color: '#6b7596' }}>{dateLabel}</span>
         </div>
 
-        <Section heading={t('context')} body={subject.context} />
+        <Section heading={t('context')} body={L.context} />
 
         {/* Figure placeholder */}
         <div style={{ borderRadius: 6, background: 'repeating-linear-gradient(135deg,#e4e2d6 0 9px,#eceadf 9px 18px)', height: 150, position: 'relative', marginBottom: 8 }} />
         <p className="font-mono" style={{ margin: '0 0 20px',  fontSize: 9.5, color: '#9a9684' }}>{t('figurePlaceholder')}</p>
 
-        <Section heading={t('method')} body={subject.method} />
-        <Section heading={t('results')} body={subject.results} />
+        <Section heading={t('method')} body={L.method} />
+        <Section heading={t('results')} body={L.results} />
 
         {/* Keywords */}
-        {subject.keywords.length > 0 && (
+        {L.keywords.length > 0 && (
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
-            {subject.keywords.map((k, i) => (
+            {L.keywords.map((k, i) => (
               <span className="font-mono bg-fame-ecru" key={i} style={{  fontSize: 10, letterSpacing: '0.04em', color: '#43507a', border: '1px solid rgba(0,0,0,0.05)', padding: '5px 10px', borderRadius: 6 }}>{k}</span>
             ))}
           </div>
