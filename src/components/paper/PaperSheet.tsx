@@ -26,7 +26,7 @@ export function PaperSheet({ subject, members, labName, locale }: Props) {
   return (
     <article className="paper-scroll" style={{
       position: 'absolute', left: '50%', top: 118, bottom: 124, transform: 'translateX(-50%)',
-      width: 'min(540px,42vw)', pointerEvents: 'auto', overflowY: 'auto',
+      width: 'clamp(440px, calc(100vw - 560px), 900px)', pointerEvents: 'auto', overflowY: 'auto',
       background: '#faf9f5', color: '#16263f', borderRadius: 8,
       boxShadow: '0 40px 90px -24px rgba(0,5,30,0.85), inset 0 0 0 1px rgba(0,0,0,0.05)',
     }}>
