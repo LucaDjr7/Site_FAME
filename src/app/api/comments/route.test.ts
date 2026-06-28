@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { NextRequest } from 'next/server'
 
 vi.mock('@/lib/auth', () => ({ getSession: () => Promise.resolve(null) }))
+vi.mock('@/lib/rate-limit', () => ({ checkIpRateLimit: () => Promise.resolve(true) }))
 vi.mock('@/lib/supabase/server', () => ({
   createServiceClient: async () => ({
     from: () => ({ insert: () => ({ select: () => ({ single: () => Promise.resolve({ data: { id: '1' }, error: null }) }) }) }),
