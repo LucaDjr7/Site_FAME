@@ -99,7 +99,9 @@ export async function POST(req: NextRequest) {
     { role: 'system', content: buildSystemPrompt(tier, chunks) },
     ...sanitized,
   ]
-  const sources = chunks.map(c => ({ source_type: c.source_type, source_id: c.source_id, labo: c.labo }))
+  const sources = chunks.map(c => c.source_type === 'subject_file'
+    ? { source_type: c.source_type, source_id: c.source_id, labo: c.labo, subject_id: (c.metadata as { subject_id?: string } | undefined)?.subject_id, file_name: (c.metadata as { file_name?: string } | undefined)?.file_name }
+    : { source_type: c.source_type, source_id: c.source_id, labo: c.labo })
 
   // 7bis. Boucle d'outils (max 3 tours), GÉNÉRATION UNIQUE.
   // La complétion qui ROMPT la boucle (toolCalls vides) porte le content final :

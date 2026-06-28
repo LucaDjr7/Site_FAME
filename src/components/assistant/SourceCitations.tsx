@@ -11,10 +11,12 @@ export function SourceCitations({ sources, locale, lab }: { sources: SourceRef[]
       <span className="uppercase tracking-wide">{t('sources')}: </span>
       {sources.map((s, i) => {
         const labo = s.labo ?? lab
-        if (s.source_type === 'subject' && labo) {
+        const isFile = s.source_type === 'subject_file'
+        const target = isFile ? s.subject_id : s.source_id
+        if ((s.source_type === 'subject' || isFile) && labo && target) {
           return (
-            <Link key={i} href={`/${locale}/${labo}/paper/${s.source_id}`} className="underline hover:text-fame-blue mr-2">
-              {s.source_type}:{s.source_id.slice(0, 8)}
+            <Link key={i} href={`/${locale}/${labo}/paper/${target}`} className="underline hover:text-fame-blue mr-2">
+              {isFile ? (s.file_name ?? 'document') : `${s.source_type}:${s.source_id.slice(0, 8)}`}
             </Link>
           )
         }

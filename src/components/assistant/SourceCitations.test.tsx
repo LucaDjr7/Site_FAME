@@ -21,4 +21,9 @@ describe('SourceCitations', () => {
     const { container } = wrap(<SourceCitations locale="en" sources={[]} />)
     expect(container.textContent).toBe('')
   })
+  it('lie un document au sujet parent avec le nom de fichier', () => {
+    wrap(<SourceCitations sources={[{ source_type: 'subject_file', source_id: 'f1', labo: 'paris', subject_id: 's1', file_name: 'rapport.pdf' }]} locale="fr" lab="paris" />)
+    const link = screen.getByText('rapport.pdf').closest('a')
+    expect(link?.getAttribute('href')).toBe('/fr/paris/paper/s1')
+  })
 })

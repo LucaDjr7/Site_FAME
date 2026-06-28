@@ -73,4 +73,10 @@ describe('buildSystemPrompt', () => {
     const p = buildSystemPrompt('visitor', chunks)
     expect(p).toMatch(/\[Source 1 \| subject:s1\]/)
   })
+
+  it('étiquette un chunk subject_file avec le nom de fichier', () => {
+    const fileChunks = [{ id: '1', source_type: 'subject_file' as const, source_id: 'f1', content: 'C', labo: 'paris', lang: 'en', similarity: 0.9, metadata: { file_name: 'rapport.pdf' } }]
+    const prompt = buildSystemPrompt('member', fileChunks)
+    expect(prompt).toContain('rapport.pdf')
+  })
 })
