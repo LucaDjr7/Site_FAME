@@ -217,6 +217,18 @@ export interface DropboxLink {
   created_at: string
 }
 
+export interface SubjectFile {
+  id: string
+  subject_id: string
+  labo: Lab
+  storage_path: string
+  file_name: string
+  mime_type: string
+  size_bytes: number
+  uploaded_by: string | null
+  created_at: string
+}
+
 export interface DropboxNode {
   id: string
   name: string

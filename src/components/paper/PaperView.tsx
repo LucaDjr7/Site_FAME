@@ -7,7 +7,7 @@ import { TasksPanel } from './TasksPanel'
 import { FilesPanel } from './FilesPanel'
 import { CommentsPanel } from './CommentsPanel'
 import { PaperNav, PAPER_NAV_HEIGHT } from './PaperNav'
-import type { Lab, Subject, MemberRef, TaskWithRelations, Comment, DropboxLink } from '@/types'
+import type { Lab, Subject, MemberRef, TaskWithRelations, Comment, DropboxLink, SubjectFile } from '@/types'
 import { LAB_LABELS } from '@/lib/constants'
 
 type Props = {
@@ -19,6 +19,7 @@ type Props = {
   tasks: TaskWithRelations[]
   initialComments: Comment[]
   links: DropboxLink[]
+  files: SubjectFile[]
   isMember: boolean
 }
 
@@ -32,7 +33,7 @@ const GHOSTS = [
 ]
 
 export function PaperView({
-  locale, lab, subject, navSubjects, members, tasks: initialTasks, initialComments, links, isMember,
+  locale, lab, subject, navSubjects, members, tasks: initialTasks, initialComments, links, files, isMember,
 }: Props) {
   const t = useTranslations('paper')
   const [tasks, setTasks] = useState<TaskWithRelations[]>(initialTasks)
@@ -164,7 +165,10 @@ export function PaperView({
           display: 'flex', flexDirection: 'column', gap: 12, pointerEvents: 'auto',
           overflowY: 'auto', overflowX: 'hidden',
         }}>
-          <FilesPanel links={links} open={panels.files} onToggleOpen={() => toggle('files')} />
+          <FilesPanel
+            links={links} files={files} subjectId={subject.id} isMember={isMember}
+            open={panels.files} onToggleOpen={() => toggle('files')}
+          />
           <CommentsPanel
             subjectId={subject.id} isMember={isMember} initialComments={initialComments}
             open={panels.comments} onToggleOpen={() => toggle('comments')}

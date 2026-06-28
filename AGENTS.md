@@ -50,6 +50,7 @@ Version : **16.2.9** avec React 19. Les APIs ont changé depuis Next.js 14/15 :
 - Les pages read-heavy utilisent des React Server Components avec le client serveur standard
 - RLS activée sur toutes les tables — le service role la contourne côté API, c'est intentionnel
 - Jamais d'appel Supabase direct depuis un composant client pour les mutations
+- **Fichiers de sujet** (`subject_files` + bucket privé Storage `subject-files`) : upload en **3 temps signés** — `POST …/files/sign` (membre, valide type/taille via `validateUpload`) → le navigateur uploade **directement** à Storage via URL signée (contourne la limite ~4,5 Mo de Vercel) → `POST …/files` enregistre la métadonnée. Download via `GET …/files/[fileId]` (URL signée 60 s, **revérifie le gate `confidentiel`** → 404 visiteur). Helper + liste blanche MIME dans `src/lib/subjects/file-upload.ts`. Complète les liens Dropbox, ne les remplace pas.
 
 ### Auth
 
@@ -179,7 +180,7 @@ src/
       admin/proposals/page.tsx
     api/
       auth/{sign-in,sign-out,activate}/route.ts
-      subjects/route.ts + [id]/route.ts
+      subjects/route.ts + [id]/{route,order,assist}.ts + [id]/files/{route,sign,[fileId]}.ts
       tasks/route.ts + [id]/{route,subtasks,claim}.ts
       comments/route.ts + [id]/route.ts
       publications/route.ts + [id]/route.ts

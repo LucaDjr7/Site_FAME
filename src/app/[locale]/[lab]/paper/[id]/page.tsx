@@ -5,7 +5,7 @@ import { createServiceClient } from '@/lib/supabase/server'
 import { getSession } from '@/lib/auth'
 import { PaperView } from '@/components/paper/PaperView'
 import { flattenTasks } from '@/components/tasks/kanban-shared'
-import type { Lab, Subject, MemberRef, Comment, DropboxLink } from '@/types'
+import type { Lab, Subject, MemberRef, Comment, DropboxLink, SubjectFile } from '@/types'
 import { VALID_LABS, LAB_LABELS } from '@/lib/constants'
 
 type Props = { params: Promise<{ locale: string; lab: string; id: string }> }
@@ -36,7 +36,7 @@ export default async function PaperPage({ params }: Props) {
   if (!isMember) navQuery = navQuery.eq('confidentiel', false)
 
   const [{ data: subject }, { data: navRows }, { data: members }, { data: tasksRaw },
-    { data: comments }, { data: links }] = await Promise.all([
+    { data: comments }, { data: links }, { data: files }] = await Promise.all([
     service.from('subjects').select('*').eq('id', id).single(),
     navQuery.order('ordre', { ascending: true }),
     service.from('members').select('id,prenom,nom,photo_url').eq('labo', lab),
@@ -45,6 +45,7 @@ export default async function PaperPage({ params }: Props) {
       .eq('sujet_id', id).order('date_creation', { ascending: true }),
     service.from('comments').select('*').eq('sujet_id', id).order('created_at', { ascending: true }),
     service.from('dropbox_links').select('*').eq('subject_id', id),
+    service.from('subject_files').select('*').eq('subject_id', id).order('created_at', { ascending: true }),
   ])
 
   // Introuvable, ou rattaché à un autre lab sans être transversal → 404 (intégrité d'URL).
@@ -65,6 +66,7 @@ export default async function PaperPage({ params }: Props) {
       tasks={tasks}
       initialComments={(comments ?? []) as Comment[]}
       links={(links ?? []) as DropboxLink[]}
+      files={(files ?? []) as SubjectFile[]}
       isMember={isMember}
     />
   )
