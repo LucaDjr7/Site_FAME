@@ -9,14 +9,19 @@ vi.mock('@/lib/auth', async (orig) => {
 
 let proposal: Record<string, unknown> | null
 let updateError: unknown = null
+let updatedRows: unknown[] = [{ id: 'p1' }]
+let winnerSubjectId: string | null = 'winner-subj'
 const deletedSubjectIds: string[] = []
 vi.mock('@/lib/supabase/server', () => ({
   createServiceClient: async () => ({
     from: (table: string) => {
       if (table === 'proposals') {
         return {
-          select: () => ({ eq: () => ({ single: () => Promise.resolve({ data: proposal, error: proposal ? null : { message: 'nf' } }) }) }),
-          update: () => ({ eq: () => Promise.resolve({ error: updateError }) }),
+          select: () => ({ eq: () => ({
+            single: () => Promise.resolve({ data: proposal, error: proposal ? null : { message: 'nf' } }),
+            maybeSingle: () => Promise.resolve({ data: { subject_id: winnerSubjectId }, error: null }),
+          }) }),
+          update: () => ({ eq: () => ({ is: () => ({ select: () => Promise.resolve({ data: updatedRows, error: updateError }) }) }) }),
         }
       }
       // subjects
@@ -36,6 +41,7 @@ const params = { params: Promise.resolve({ id: 'p1' }) }
 
 beforeEach(() => {
   requireAdmin.mockReset(); updateError = null; deletedSubjectIds.length = 0
+  updatedRows = [{ id: 'p1' }]; winnerSubjectId = 'winner-subj'
   requireAdmin.mockResolvedValue({ member: { id: 'admin1' } })
   proposal = { id: 'p1', labo: 'paris', statut: 'pending', titre: 'T', description: 'D', domaine: 'finance', difficulte: 'easy', subject_id: null }
 })
@@ -58,5 +64,13 @@ describe('POST /api/proposals/[id]/convert', () => {
     const res = await POST(req(), params)
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual({ subject_id: 'existing' })
+  })
+  it('résout la course : update guardé sans ligne → rollback du sujet orphelin + renvoie le gagnant', async () => {
+    updatedRows = [] // une requête concurrente a déjà lié la proposition (subject_id n'est plus null)
+    winnerSubjectId = 'winner-subj'
+    const res = await POST(req(), params)
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ subject_id: 'winner-subj' })
+    expect(deletedSubjectIds).toEqual(['subj-new']) // notre sujet, supprimé
   })
 })
