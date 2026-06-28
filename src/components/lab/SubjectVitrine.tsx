@@ -1,5 +1,6 @@
 import type { Subject, MemberRef } from '@/types'
 import { Avatar } from '@/components/ui/Avatar'
+import { FitText } from './FitText'
 import { vitrineHeadline, vitrineSubtitle, vitrineNumber } from '@/lib/subjects/vitrine'
 import { localizedSubject } from '@/lib/subjects/localized'
 import type { Locale2 } from '@/types'
@@ -62,15 +63,23 @@ export function SubjectVitrine({
                 {subject.periode}{subject.periode ? <br /> : null}{statusLabel}
               </span>
             </div>
-            <div style={{ flex: 1 }} />
-            <span className="font-mono" style={{ fontSize: 8.5, letterSpacing: '0.1em', color: '#9a9485', textTransform: 'uppercase', marginBottom: 5 }}>{questionLabel}</span>
-            <span className="font-serif" style={{ fontWeight: 700, fontSize: 21, lineHeight: 1.05, color: '#16263f', letterSpacing: '-0.02em', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{headline}</span>
-            {subtitle && <span className="font-serif" style={{ fontStyle: 'italic', fontSize: 11.5, color: '#6a7589', marginTop: 5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{subtitle}</span>}
+            {/* Bloc question bas de section : police auto-réduite (FitText borné par
+                l'espace dispo) pour que label + titre + sous-titre tiennent sans troncature.
+                Le label garde une taille fixe (px), seuls titre/sous-titre scalent (em). */}
+            <FitText maxPx={21} minPx={11} style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+              <span className="font-mono" style={{ fontSize: '8.5px', letterSpacing: '0.1em', color: '#9a9485', textTransform: 'uppercase', marginBottom: 5 }}>{questionLabel}</span>
+              <span className="font-serif" style={{ fontWeight: 700, fontSize: '1em', lineHeight: 1.05, color: '#16263f', letterSpacing: '-0.02em', display: 'block' }}>{headline}</span>
+              {subtitle && <span className="font-serif" style={{ fontStyle: 'italic', fontSize: '0.55em', color: '#6a7589', marginTop: '0.3em', lineHeight: 1.2, display: 'block' }}>{subtitle}</span>}
+            </FitText>
           </div>
           {/* Navy bottom */}
           <div style={{ flex: '1 1 0', background: '#15203f', padding: '12px 15px 11px', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
-            {L.accroche && <span className="font-serif" style={{ fontStyle: 'italic', fontSize: 12, lineHeight: 1.4, color: '#cdd8ea', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{L.accroche}</span>}
-            <div style={{ flex: 1 }} />
+            {/* Accroche : police auto-réduite pour tenir sans troncature dans l'espace dispo. */}
+            {L.accroche
+              ? <FitText maxPx={12} minPx={8} style={{ flex: 1, minHeight: 0 }}>
+                  <span className="font-serif" style={{ fontStyle: 'italic', fontSize: '1em', lineHeight: 1.4, color: '#cdd8ea', display: 'block' }}>{L.accroche}</span>
+                </FitText>
+              : <div style={{ flex: 1 }} />}
             {L.keywords.length > 0 && (
               <div className="font-mono" style={{ display: 'flex', gap: 7, flexWrap: 'wrap', fontSize: 8.5, color: '#7fa3d4', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: 7, maxHeight: 24, overflow: 'hidden' }}>
                 {L.keywords.slice(0, 3).map((k, i) => <span key={i}>{k}</span>)}
