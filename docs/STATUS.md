@@ -8,8 +8,8 @@ Dernière mise à jour : 2026-06-28
 
 ## Où on en est
 
-- **`main` est saine et complète.** Site v1 (Phases 1–3) + audit soldé (Vagues 0→4) + **Assistant RAG « Astra »** (PRs #11–16) + **Fiche Vitrine éditable + génération assistée + contenu des fiches bilingue** (PR #18, mergé le 2026-06-28). Tests verts (**272/272**), `tsc`/`lint`/`build` à 0.
-- **Pas de branche feature en cours.** Migrations `008`/`009` appliquées en BDD (2026-06-28). Prochaine étape : améliorations de la feature vitrine/bilingue (à définir).
+- **`main` est saine et complète.** Site v1 (Phases 1–3) + audit soldé (Vagues 0→4) + **Assistant RAG « Astra »** (PRs #11–16) + **Fiche Vitrine éditable + génération assistée + contenu des fiches bilingue** (PR #18) + **refonte visuelle page sujet & harmonisation des bleus** (PRs #20–32). Tests verts (**272/272**), `tsc`/`lint`/`build` à 0.
+- **Pas de branche feature en cours.** Migrations `008`/`009` appliquées en BDD (2026-06-28). Branches mergées nettoyées (local + remote) ; restent `feat/p2-features` et `feat/p4-pre-prod` (commits non mergés, conservés). Prochaine étape : à définir.
 
 ---
 
@@ -62,6 +62,19 @@ Nouvelle colonne `i18n jsonb` sur `subjects` (`{en:{…},fr:{…}}`). Les colonn
 **État :** implémenté et revu (SDD, 8 tâches + revue finale whole-branch « Ready to merge »). Suite de tests verte, build OK. Complète la feature « fiche vitrine » (même branche/PR).
 
 ✅ **Migration `009` appliquée** (2026-06-28). La traduction consomme le budget OpenAI à chaque création/màj de fiche. Reste : vérification manuelle navigateur (FR→EN / EN→FR, fallback fiches existantes, recherche bi-langue).
+
+---
+
+## Refonte visuelle page sujet & harmonisation des bleus — LIVRÉ (mergé, PRs #20–32)
+
+Polish UI mergé sur `main` (CSS/présentation uniquement, aucune migration) :
+
+- **Page sujet au visuel vitrine** (PR #20) — la fiche centrale `PaperSheet` adopte le look de la carte `SubjectVitrine` : héros clair (domaine, numéro, période + statut, « La question », titre-question serif, sous-titre italique) → bande navy (accroche) → corps clair (auteurs, Context/Method/Results, figure, mots-clés). Contenu localisé (`localizedSubject`), helpers `vitrine*` réutilisés. **Panneaux Tasks/Files/Comments + nav + barre de progression conservés.**
+- **Équilibrage des dimensions** (PRs #21–22) — fiche centrale élargie puis rééquilibrée : `width: clamp(420px, calc(100vw − 700px), 740px)` ; panneaux latéraux `240 → 300px`.
+- **Harmonisation des bleus** (PRs #23–25) — duo cohérent : **barres = navy `#15203f`** (`fame-navy` : TopBar universelle, nav du bas, barre de progression, bouton Tasks) ; **panneaux + boutons = bleu marque `#2f4486`** (`fame-blue`, plein).
+- **Position de la bulle assistant** (PRs #26–32) — sur la page sujet, la bulle est remontée au-dessus de la barre de nav du bas. Dérivée de la hauteur de la barre : constante **`PAPER_NAV_HEIGHT`** exportée par `PaperNav` (= 102px), bulle = `PAPER_NAV_HEIGHT + 54` via `--fame-bubble-bottom` (même mécanisme que Sujets/Tâches).
+
+Fichiers touchés : `src/components/paper/{PaperSheet,PaperView,PaperNav,TasksPanel,FilesPanel,CommentsPanel}.tsx`, `src/components/layout/TopBar.tsx`.
 
 ---
 
