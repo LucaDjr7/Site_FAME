@@ -45,6 +45,18 @@ describe('chunkSubject', () => {
   it('omits empty fields', () => {
     expect(chunkSubject(makeSubject())).toHaveLength(0)
   })
+  it('indexes both languages when i18n is present', () => {
+    const joined = chunkSubject(makeSubject({
+      question: 'Q fr', context: 'Ctx fr',
+      i18n: {
+        fr: { question: 'Q fr', accroche: '', context: 'Ctx fr', method: '', results: '', titre: '', keywords: [], dimensions: { method: '', data: '', theory: '', writing: '' } },
+        en: { question: 'Q en', accroche: '', context: 'Ctx en', method: '', results: '', titre: '', keywords: [], dimensions: { method: '', data: '', theory: '', writing: '' } },
+      },
+    })).map(c => c.content).join('\n')
+    expect(joined).toContain('Question: Q fr')
+    expect(joined).toContain('Question: Q en')
+    expect(joined).toContain('Context: Ctx en')
+  })
 })
 
 describe('chunkMember', () => {
