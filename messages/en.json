@@ -162,7 +162,15 @@
     "tasksLink": "Tasks →",
     "prev": "Previous subject",
     "next": "Next subject",
-    "commentPosted": "Comment posted"
+    "commentPosted": "Comment posted",
+    "filesUploaded": "Uploaded files",
+    "uploadButton": "Upload a file",
+    "uploading": "Uploading…",
+    "uploadFailed": "Upload failed",
+    "fileTooLarge": "File too large (max 50 MB)",
+    "fileTypeNotAllowed": "File type not allowed",
+    "deleteFile": "Delete file",
+    "confirmDeleteFile": "Delete this file? This cannot be undone."
   },
   "tasks": {
     "claimTask": "Claim task",
