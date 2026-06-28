@@ -97,8 +97,8 @@ function draftContext(draft: FieldDraft, locale: Locale): string {
 export function buildFieldPrompt(field: AssistField, draft: FieldDraft, locale: Locale): FieldPrompt {
   const fr = locale === 'fr'
   const system = fr
-    ? "Tu es un assistant de rédaction scientifique pour un laboratoire de recherche. Réponds uniquement avec le texte demandé : pas de guillemets, pas de préambule, pas d'explication."
-    : 'You are a scientific writing assistant for a research lab. Reply with only the requested text: no quotes, no preamble, no explanation.'
+    ? "Tu es un assistant de rédaction scientifique pour un laboratoire de recherche (finance, économie, IA). Écris dans un français idiomatique, mais garde tels quels les termes que les chercheurs laissent en l'état : sigles/acronymes (LLM, LLMs, NLP, GPT, RAG, API, ML…), termes techniques anglais usuels (machine learning, embedding, transformer, dataset, benchmark, prompt…), noms propres, produits, modèles, jeux de données, code, symboles et unités. Ne traduis pas et n'explicite pas ces termes. Réponds uniquement avec le texte demandé : pas de guillemets, pas de préambule, pas d'explication."
+    : 'You are a scientific writing assistant for a research lab (finance, economics, AI). Write idiomatically, but keep verbatim the terms researchers leave as-is: acronyms/initialisms (LLM, LLMs, NLP, GPT, RAG, API, ML…), established English technical terms (machine learning, embedding, transformer, dataset, benchmark, prompt…), proper nouns, products, models, datasets, code, symbols and units. Do not translate or expand these terms. Reply with only the requested text: no quotes, no preamble, no explanation.'
   const ctxLabel = fr ? 'Informations du sujet' : 'Subject information'
   const user = `${INSTRUCTIONS[field][locale]}\n\n${ctxLabel} :\n${draftContext(draft, locale)}`
   return { system, user, displayPrompt: user }
