@@ -6,7 +6,7 @@ import { PaperSheet } from './PaperSheet'
 import { TasksPanel } from './TasksPanel'
 import { FilesPanel } from './FilesPanel'
 import { CommentsPanel } from './CommentsPanel'
-import { PaperNav } from './PaperNav'
+import { PaperNav, PAPER_NAV_HEIGHT } from './PaperNav'
 import type { Lab, Subject, MemberRef, TaskWithRelations, Comment, DropboxLink } from '@/types'
 import { LAB_LABELS } from '@/lib/constants'
 
@@ -39,11 +39,11 @@ export function PaperView({
   const [panels, setPanels] = useState({ tasks: true, files: true, comments: true })
   const toggle = (k: 'tasks' | 'files' | 'comments') => setPanels(p => ({ ...p, [k]: !p[k] }))
 
-  // The bottom thumbnail nav (PaperNav, 108px tall) would otherwise be covered by
-  // the assistant bubble — lift it above the nav while on this page.
+  // The bottom thumbnail nav would otherwise be covered by the assistant bubble —
+  // lift it to just above the nav (derived from PAPER_NAV_HEIGHT + a small gap).
   useEffect(() => {
     const root = document.documentElement
-    root.style.setProperty('--fame-bubble-bottom', '150px')
+    root.style.setProperty('--fame-bubble-bottom', `${PAPER_NAV_HEIGHT + 16}px`)
     return () => { root.style.removeProperty('--fame-bubble-bottom') }
   }, [])
 

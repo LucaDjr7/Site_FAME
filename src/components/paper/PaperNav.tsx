@@ -5,6 +5,9 @@ import type { Subject, SubjectStatus, Lab } from '@/types'
 
 const STATUS_COLOR: Record<SubjectStatus, string> = { active: '#1e9b7e', 'on-hold': '#e8b149', done: '#2f4486' }
 
+/** Height of the bottom thumbnail nav strip (px). Shared so the assistant bubble can sit just above it. */
+export const PAPER_NAV_HEIGHT = 108
+
 type Props = {
   subjects: Pick<Subject, 'id' | 'titre' | 'statut' | 'ordre'>[]
   currentId: string
@@ -22,7 +25,7 @@ export function PaperNav({ subjects, currentId, lab, locale }: Props) {
 
   return (
     <div className="bg-fame-navy" style={{
-      position: 'absolute', left: 0, right: 0, bottom: 0, height: 108, pointerEvents: 'auto',
+      position: 'absolute', left: 0, right: 0, bottom: 0, height: PAPER_NAV_HEIGHT, pointerEvents: 'auto',
       display: 'flex', alignItems: 'center', gap: 16, padding: '0 26px',
       borderTop: '1px solid rgba(20,40,90,0.4)',
     }}>
