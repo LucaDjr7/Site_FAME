@@ -4,7 +4,8 @@ alter table rag_chunks add constraint rag_chunks_source_type_check
   check (source_type in ('subject','task','publication','prompt','member','kb','subject_file'));
 
 -- match_rag_chunks renvoie désormais metadata (pour les citations de documents).
-create or replace function match_rag_chunks(
+drop function if exists match_rag_chunks(vector(1536), int, boolean);
+create function match_rag_chunks(
   query_embedding vector(1536),
   match_count int,
   include_member boolean
@@ -25,7 +26,8 @@ language sql stable as $$
 $$;
 
 -- Recherche vectorielle scopée aux documents d'UN sujet (génération assistée).
-create or replace function match_subject_files(
+drop function if exists match_subject_files(vector(1536), text, int);
+create function match_subject_files(
   query_embedding vector(1536),
   p_subject_id text,
   match_count int
