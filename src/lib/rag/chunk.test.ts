@@ -10,6 +10,7 @@ function makeSubject(over: Partial<Subject> = {}): Subject {
     keywords: [], auteurs: [], difficulte: 'intermediate',
     dimensions: { method: '', data: '', theory: '', writing: '' },
     ordre: 0, is_transversal: false, confidentiel: false,
+    i18n: {},
     created_at: '2026-01-01', updated_at: '2026-01-01',
     ...over,
   }
@@ -23,6 +24,7 @@ describe('chunkSubject', () => {
     keywords: ['inflation'], auteurs: [], difficulte: 'intermediate',
     dimensions: { method: '', data: '', theory: '', writing: '' }, ordre: 0,
     is_transversal: false, confidentiel: false,
+    i18n: {},
     created_at: '', updated_at: '',
   }
   it('crée un chunk par champ non vide, préfixé du titre', () => {

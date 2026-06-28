@@ -36,6 +36,21 @@ export type MemberRef = Pick<Member, 'id' | 'prenom' | 'nom' | 'photo_url'>
 
 // ─── Subjects ────────────────────────────────────────────────────────────────
 
+export type Locale2 = 'en' | 'fr'
+
+export interface SubjectI18nFields {
+  titre: string
+  question: string
+  accroche: string
+  context: string
+  method: string
+  results: string
+  keywords: string[]
+  dimensions: { method: string; data: string; theory: string; writing: string }
+}
+
+export type SubjectI18n = Partial<Record<Locale2, Partial<SubjectI18nFields>>>
+
 export interface Subject {
   id: string
   labo: Lab
@@ -60,6 +75,7 @@ export interface Subject {
   ordre: number
   is_transversal: boolean
   confidentiel: boolean
+  i18n: SubjectI18n
   created_at: string
   updated_at: string
 }
