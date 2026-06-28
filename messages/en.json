@@ -132,6 +132,7 @@
       "errorRequired": "An academic title is required.",
       "genError": "Generation unavailable",
       "none": "None",
+      "autoTranslateNote": "Content is auto-translated into the other language on save.",
       "domainPlaceholder": "Select a domain…",
       "phQuestion": "Refused. But why?",
       "phTitre": "Explainable AI for Credit Risk",

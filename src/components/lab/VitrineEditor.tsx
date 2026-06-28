@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl'
 import type { Subject, MemberRef, Lab, SubjectStatus, Difficulty } from '@/types'
 import { buildFieldPrompt, type AssistField, type FieldDraft } from '@/lib/subjects/field-prompts'
 import { DOMAIN_OPTIONS } from '@/lib/subjects/domains'
+import { localizedSubject } from '@/lib/subjects/localized'
 import { useToast } from '@/components/ui/Toast'
 
 // ─── AssistButton ──────────────────────────────────────────────────────────────
@@ -106,26 +107,29 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
   const { addToast } = useToast()
   const isNew = !subject
 
-  const [f, setF] = useState(() => ({
-    question: subject?.question ?? '',
-    titre: subject?.titre ?? '',
-    kicker: subject?.kicker ?? '',
-    accroche: subject?.accroche ?? '',
-    periode: subject?.periode ?? '',
-    statut: (subject?.statut ?? 'active') as SubjectStatus,
-    difficulte: (subject?.difficulte ?? 'intermediate') as Difficulty,
-    responsable: subject?.auteurs[0] ?? '',
-    keywords: subject?.keywords.join(', ') ?? '',
-    context: subject?.context ?? '',
-    method: subject?.method ?? '',
-    results: subject?.results ?? '',
-    dimMethod: subject?.dimensions.method ?? '',
-    dimData: subject?.dimensions.data ?? '',
-    dimTheory: subject?.dimensions.theory ?? '',
-    dimWriting: subject?.dimensions.writing ?? '',
-    isTransversal: subject?.is_transversal ?? false,
-    confidentiel: subject?.confidentiel ?? false,
-  }))
+  const [f, setF] = useState(() => {
+    const L = subject ? localizedSubject(subject, locale) : null
+    return {
+      question: L?.question ?? '',
+      titre: L?.titre ?? '',
+      kicker: L?.kicker ?? '',
+      accroche: L?.accroche ?? '',
+      periode: subject?.periode ?? '',
+      statut: (subject?.statut ?? 'active') as SubjectStatus,
+      difficulte: (subject?.difficulte ?? 'intermediate') as Difficulty,
+      responsable: subject?.auteurs[0] ?? '',
+      keywords: (L?.keywords ?? []).join(', '),
+      context: L?.context ?? '',
+      method: L?.method ?? '',
+      results: L?.results ?? '',
+      dimMethod: L?.dimensions.method ?? '',
+      dimData: L?.dimensions.data ?? '',
+      dimTheory: L?.dimensions.theory ?? '',
+      dimWriting: L?.dimensions.writing ?? '',
+      isTransversal: subject?.is_transversal ?? false,
+      confidentiel: subject?.confidentiel ?? false,
+    }
+  })
   type Form = typeof f
   function set<K extends keyof Form>(k: K, v: Form[K]) { setF(prev => ({ ...prev, [k]: v })) }
 
@@ -181,6 +185,7 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
     setError(''); setSaving(true)
     const payload = {
       labo: lab,
+      locale,
       question: f.question.trim(), titre: f.titre.trim(), kicker: f.kicker.trim(),
       accroche: f.accroche.trim(), periode: f.periode.trim(),
       statut: f.statut, difficulte: f.difficulte,
@@ -275,6 +280,10 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
             ×
           </button>
         </div>
+
+        <p className="font-mono" style={{ margin: 0, padding: '8px 24px 0', fontSize: 10, color: '#6b7596' }}>
+          {t('editor.autoTranslateNote')}
+        </p>
 
         <div className="p-6">
           {/* ── Editable poster: light top ── */}

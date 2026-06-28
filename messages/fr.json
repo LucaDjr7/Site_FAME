@@ -132,6 +132,7 @@
       "errorRequired": "Un titre académique est requis.",
       "genError": "Génération indisponible",
       "none": "Aucun",
+      "autoTranslateNote": "Le contenu est traduit automatiquement dans l'autre langue à l'enregistrement.",
       "domainPlaceholder": "Choisir un domaine…",
       "phQuestion": "Refusé. Mais pourquoi ?",
       "phTitre": "IA explicable pour le risque de crédit",
