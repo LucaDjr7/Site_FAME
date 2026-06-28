@@ -131,7 +131,12 @@
       "cancel": "Annuler",
       "errorRequired": "Un titre académique est requis.",
       "genError": "Génération indisponible",
-      "none": "Aucun"
+      "none": "Aucun",
+      "domainPlaceholder": "Choisir un domaine…",
+      "phQuestion": "Refusé. Mais pourquoi ?",
+      "phTitre": "IA explicable pour le risque de crédit",
+      "phPeriode": "2025–2027",
+      "phKeywords": "IA explicable, Scoring, Régulation"
     }
   },
   "paper": {

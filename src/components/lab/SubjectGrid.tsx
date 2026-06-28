@@ -389,8 +389,8 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
                 className={editMode ? 'editing' : ''}
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
-                  gap: '26px 22px',
+                  gridTemplateColumns: 'repeat(5, minmax(0, 1fr))',
+                  gap: '30px 26px',
                   paddingBottom: 16,
                 }}
               >
@@ -429,8 +429,8 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
                       color: '#2f4486', cursor: 'pointer', display: 'flex', flexDirection: 'column',
                       alignItems: 'center', justifyContent: 'center', gap: 8, animation: 'fameFade 0.3s ease',
                     }}>
-                    <span style={{ fontSize: 28, lineHeight: 1 }}>＋</span>
-                    <span style={{ fontSize: 9, letterSpacing: '0.08em', textTransform: 'uppercase' }}>{t('vitrine.addCard')}</span>
+                    <span style={{ fontSize: 36, lineHeight: 1 }}>＋</span>
+                    <span style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase' }}>{t('vitrine.addCard')}</span>
                   </button>
                 )}
               </div>

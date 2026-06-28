@@ -1,12 +1,12 @@
 import type { Subject, Lab } from '@/types'
 
 export type AssistField =
-  | 'question' | 'titre' | 'accroche' | 'kicker'
+  | 'question' | 'titre' | 'accroche' | 'kicker' | 'keywords'
   | 'context' | 'method' | 'results'
   | 'dimensions.method' | 'dimensions.data' | 'dimensions.theory' | 'dimensions.writing'
 
 export const ASSIST_FIELDS: AssistField[] = [
-  'question', 'titre', 'accroche', 'kicker', 'context', 'method', 'results',
+  'question', 'titre', 'accroche', 'kicker', 'keywords', 'context', 'method', 'results',
   'dimensions.method', 'dimensions.data', 'dimensions.theory', 'dimensions.writing',
 ]
 
@@ -42,6 +42,10 @@ const INSTRUCTIONS: Record<AssistField, { en: string; fr: string }> = {
   kicker: {
     en: 'Write a short domain label of the form "Research · Field A & Field B" (max ~5 words).',
     fr: 'Écris un court intitulé de domaine de la forme « Recherche · Domaine A & Domaine B » (max ~5 mots).',
+  },
+  keywords: {
+    en: 'Write 3 to 5 short keyword tags describing this subject, separated by commas. No numbering, no sentences — just the tags.',
+    fr: 'Écris 3 à 5 mots-clés courts décrivant ce sujet, séparés par des virgules. Pas de numérotation, pas de phrases — juste les tags.',
   },
   context: {
     en: 'Write a concise context paragraph (3-5 sentences) framing the problem and motivation.',

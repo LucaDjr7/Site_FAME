@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import type { Subject, MemberRef, Lab, SubjectStatus, Difficulty } from '@/types'
 import { buildFieldPrompt, type AssistField, type FieldDraft } from '@/lib/subjects/field-prompts'
+import { DOMAIN_OPTIONS } from '@/lib/subjects/domains'
 import { useToast } from '@/components/ui/Toast'
 
 // ─── AssistButton ──────────────────────────────────────────────────────────────
@@ -146,6 +147,7 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
   function applyField(field: AssistField, text: string) {
     const map: Record<AssistField, keyof Form> = {
       question: 'question', titre: 'titre', accroche: 'accroche', kicker: 'kicker',
+      keywords: 'keywords',
       context: 'context', method: 'method', results: 'results',
       'dimensions.method': 'dimMethod', 'dimensions.data': 'dimData',
       'dimensions.theory': 'dimTheory', 'dimensions.writing': 'dimWriting',
@@ -247,6 +249,10 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
   }
 
   const draft = currentDraft()
+  const domainOptions = DOMAIN_OPTIONS[locale]
+  const kickerOptions = f.kicker && !domainOptions.includes(f.kicker)
+    ? [f.kicker, ...domainOptions]
+    : domainOptions
 
   return (
     <div
@@ -275,15 +281,16 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
           <div style={{ background: '#faf9f5', borderRadius: 8, padding: 18, boxShadow: '0 4px 18px rgba(20,38,63,.1)' }}>
             <div>
               <label htmlFor="ve-kicker" className="font-mono" style={labelStyle}>{t('editor.fKicker')}</label>
-              <input
+              <select
                 id="ve-kicker"
                 className="font-mono"
                 value={f.kicker}
                 onChange={e => set('kicker', e.target.value)}
-                placeholder="Recherche · …"
                 style={{ ...inputBase, fontSize: 12, letterSpacing: '0.12em', color: '#3a5a8a', textTransform: 'uppercase' }}
-              />
-              <AssistButton field="kicker" promptField={promptField} genField={genField} draft={draft} locale={locale} onGenerate={generate} onTogglePrompt={togglePrompt} labels={assistLabels} />
+              >
+                <option value="">{t('editor.domainPlaceholder')}</option>
+                {kickerOptions.map(d => <option key={d} value={d}>{d}</option>)}
+              </select>
             </div>
 
             <div style={{ display: 'flex', gap: 14, marginTop: 14 }}>
@@ -294,7 +301,7 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
                   className="font-mono"
                   value={f.periode}
                   onChange={e => set('periode', e.target.value)}
-                  placeholder="2025–2027"
+                  placeholder={t('editor.phPeriode')}
                   style={{ ...inputBase, fontSize: 11 }}
                 />
               </div>
@@ -320,7 +327,7 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
                 value={f.question}
                 onChange={e => set('question', e.target.value)}
                 rows={2}
-                placeholder="Refusé. Mais pourquoi ?"
+                placeholder={t('editor.phQuestion')}
                 style={{ ...inputBase, fontWeight: 700, fontSize: 26, lineHeight: 1.05, letterSpacing: '-0.02em', resize: 'vertical' }}
               />
               <AssistButton field="question" promptField={promptField} genField={genField} draft={draft} locale={locale} onGenerate={generate} onTogglePrompt={togglePrompt} labels={assistLabels} />
@@ -333,7 +340,7 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
                 className="font-serif"
                 value={f.titre}
                 onChange={e => set('titre', e.target.value)}
-                placeholder="Explainable AI for Credit Risk"
+                placeholder={t('editor.phTitre')}
                 style={{ ...inputBase, fontStyle: 'italic', fontSize: 16, color: '#6a7589' }}
               />
               <AssistButton field="titre" promptField={promptField} genField={genField} draft={draft} locale={locale} onGenerate={generate} onTogglePrompt={togglePrompt} labels={assistLabels} />
@@ -365,13 +372,14 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
                 className="font-mono"
                 value={f.keywords}
                 onChange={e => set('keywords', e.target.value)}
-                placeholder="IA explicable, Scoring, Régulation"
+                placeholder={t('editor.phKeywords')}
                 style={{
                   width: '100%', background: 'transparent', border: 'none',
                   borderBottom: '1px dashed rgba(127,163,212,0.4)', outline: 'none',
                   fontSize: 12, color: '#7fa3d4', letterSpacing: '0.04em',
                 }}
               />
+              <AssistButton field="keywords" promptField={promptField} genField={genField} draft={draft} locale={locale} onGenerate={generate} onTogglePrompt={togglePrompt} labels={assistLabels} />
             </div>
             <div style={{ marginTop: 14 }}>
               <label htmlFor="ve-responsable" className="font-mono" style={{ ...labelStyle, color: '#7fa3d4' }}>{t('editor.fResponsable')}</label>
@@ -396,6 +404,30 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
             </div>
           </div>
 
+          {/* ── Always-visible metadata: difficulty + flags ── */}
+          <div style={{ marginTop: 14, display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div>
+              <label htmlFor="ve-difficulte" className="font-mono" style={labelStyle}>{t('editor.fDifficulty')}</label>
+              <select
+                id="ve-difficulte"
+                className="font-mono"
+                value={f.difficulte}
+                onChange={e => set('difficulte', e.target.value as Difficulty)}
+                style={detailInput}
+              >
+                {DIFFS.map(d => <option key={d} value={d}>{tDiff(d)}</option>)}
+              </select>
+            </div>
+            <label className="font-mono" style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, color: '#2a3457', cursor: 'pointer' }}>
+              <input type="checkbox" checked={f.isTransversal} onChange={e => set('isTransversal', e.target.checked)} />
+              {t('editor.transversal')}
+            </label>
+            <label className="font-mono" style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, color: '#2a3457', cursor: 'pointer' }}>
+              <input type="checkbox" checked={f.confidentiel} onChange={e => set('confidentiel', e.target.checked)} />
+              {t('editor.confidentiel')}
+            </label>
+          </div>
+
           {/* ── Full details (collapsible) ── */}
           <button
             type="button"
@@ -412,19 +444,6 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
 
           {detailsOpen && (
             <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <div>
-                <label htmlFor="ve-difficulte" className="font-mono" style={labelStyle}>{t('editor.fDifficulty')}</label>
-                <select
-                  id="ve-difficulte"
-                  className="font-mono"
-                  value={f.difficulte}
-                  onChange={e => set('difficulte', e.target.value as Difficulty)}
-                  style={detailInput}
-                >
-                  {DIFFS.map(d => <option key={d} value={d}>{tDiff(d)}</option>)}
-                </select>
-              </div>
-
               {(['context', 'method', 'results'] as const).map(key => (
                 <div key={key}>
                   <label htmlFor={`ve-${key}`} className="font-mono" style={labelStyle}>{fContextLabel[key]}</label>
@@ -458,21 +477,6 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
                   <AssistButton field={field} promptField={promptField} genField={genField} draft={draft} locale={locale} onGenerate={generate} onTogglePrompt={togglePrompt} labels={assistLabels} />
                 </div>
               ))}
-
-              <label
-                className="font-mono"
-                style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, color: '#2a3457', cursor: 'pointer' }}
-              >
-                <input type="checkbox" checked={f.isTransversal} onChange={e => set('isTransversal', e.target.checked)} />
-                {t('editor.transversal')}
-              </label>
-              <label
-                className="font-mono"
-                style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, color: '#2a3457', cursor: 'pointer' }}
-              >
-                <input type="checkbox" checked={f.confidentiel} onChange={e => set('confidentiel', e.target.checked)} />
-                {t('editor.confidentiel')}
-              </label>
             </div>
           )}
 
