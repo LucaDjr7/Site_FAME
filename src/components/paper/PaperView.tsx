@@ -43,7 +43,7 @@ export function PaperView({
   // lift it to just above the nav (derived from PAPER_NAV_HEIGHT + a small gap).
   useEffect(() => {
     const root = document.documentElement
-    root.style.setProperty('--fame-bubble-bottom', `${PAPER_NAV_HEIGHT + 44}px`)
+    root.style.setProperty('--fame-bubble-bottom', `${PAPER_NAV_HEIGHT + 56}px`)
     return () => { root.style.removeProperty('--fame-bubble-bottom') }
   }, [])
 
