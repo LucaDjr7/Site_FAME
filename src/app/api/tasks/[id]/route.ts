@@ -1,17 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
-import { requireMember, authErrorResponse } from '@/lib/auth'
+import { requireMember, getSession, authErrorResponse } from '@/lib/auth'
 
 type Params = { params: Promise<{ id: string }> }
 
 export async function GET(_req: NextRequest, { params }: Params) {
   const { id } = await params
+  const isMember = !!(await getSession())?.member
   const service = await createServiceClient()
   const { data, error } = await service
     .from('tasks')
     .select(`*, task_assignees(member_id, members(id,prenom,nom,photo_url)), subtasks(*, subtask_assignees(member_id, members(id,prenom,nom,photo_url)))`)
     .eq('id', id).single()
   if (error || !data) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  // Visiteur : ne pas exposer une tâche rattachée à un sujet confidentiel.
+  if (!isMember) {
+    const { data: subj } = await service.from('subjects').select('confidentiel').eq('id', data.sujet_id).single()
+    if (subj?.confidentiel) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  }
   return NextResponse.json(data)
 }
 

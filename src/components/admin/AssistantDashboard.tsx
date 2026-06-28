@@ -15,12 +15,15 @@ export function AssistantDashboard({ enabled, usage, unanswered }: Props) {
 
   const toggle = async () => {
     const next = !isEnabled
-    await fetch('/api/assistant/toggle', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ enabled: next }) })
+    const res = await fetch('/api/assistant/toggle', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ enabled: next }) })
+    // Ne basculer l'UI que si le write a réussi (sinon affichage désynchronisé).
+    if (!res.ok) { setMsg(t('actionFailed')); return }
     setIsEnabled(next)
+    setMsg('')
   }
   const reindex = async () => {
-    await fetch('/api/assistant/reindex', { method: 'POST' })
-    setMsg(t('reindexStarted'))
+    const res = await fetch('/api/assistant/reindex', { method: 'POST' })
+    setMsg(res.ok ? t('reindexStarted') : t('actionFailed'))
   }
 
   return (

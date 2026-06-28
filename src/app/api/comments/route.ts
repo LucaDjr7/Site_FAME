@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { getSession } from '@/lib/auth'
-import { rateLimit, clientIp } from '@/lib/rate-limit'
+import { checkIpRateLimit } from '@/lib/rate-limit'
 
 export async function POST(req: NextRequest) {
-  if (!rateLimit('comment:' + clientIp(req), 20, 60_000)) {
+  if (!await checkIpRateLimit(req, 'comment', 20, 60_000)) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
   const { sujet_id, texte, visitor_prenom, visitor_nom } = await req.json()

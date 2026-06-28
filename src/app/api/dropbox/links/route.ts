@@ -34,9 +34,9 @@ export async function POST(req: NextRequest) {
   const body = await req.json()
   const { node_id, node_path, node_name, labo, subject_id, task_id } = body
 
-  if (!node_id || !VALID_LABS.includes(labo) || (!subject_id && !task_id)) {
+  if (!node_id || !node_path || !node_name || !VALID_LABS.includes(labo) || (!subject_id && !task_id)) {
     return NextResponse.json(
-      { error: 'node_id, labo, and (subject_id or task_id) are required' },
+      { error: 'node_id, node_path, node_name, labo, and (subject_id or task_id) are required' },
       { status: 400 }
     )
   }

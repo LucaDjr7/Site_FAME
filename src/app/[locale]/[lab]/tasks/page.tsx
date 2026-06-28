@@ -21,11 +21,17 @@ export default async function TasksPage({ params }: Props) {
   const { locale, lab } = await params
   if (!VALID_LABS.includes(lab as Lab)) notFound()
 
+  const session = await getSession()
+  const isMember = !!session?.member
   const service = await createServiceClient()
-  const [{ data: subjects }, { data: members }, session] = await Promise.all([
-    service.from('subjects').select('*').or(`labo.eq.${lab},is_transversal.eq.true`).order('ordre', { ascending: true }),
+
+  // Visiteur : ne pas exposer les sujets confidentiels (ni leurs cartes/tâches).
+  let subjectsQuery = service.from('subjects').select('*').or(`labo.eq.${lab},is_transversal.eq.true`)
+  if (!isMember) subjectsQuery = subjectsQuery.eq('confidentiel', false)
+
+  const [{ data: subjects }, { data: members }] = await Promise.all([
+    subjectsQuery.order('ordre', { ascending: true }),
     service.from('members').select('id,prenom,nom,photo_url').eq('labo', lab),
-    getSession(),
   ])
 
   // Cascade : les tâches visibles sont celles rattachées aux sujets visibles
@@ -45,7 +51,7 @@ export default async function TasksPage({ params }: Props) {
       subjects={(subjects ?? []) as Subject[]}
       initialTasks={flattenTasks(tasksRaw ?? [])}
       members={(members ?? []) as MemberRef[]}
-      isMember={!!session?.member}
+      isMember={isMember}
       currentMemberId={session?.member?.id ?? null}
     />
   )

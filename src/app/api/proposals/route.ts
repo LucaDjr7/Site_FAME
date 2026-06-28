@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { requireMember, authErrorResponse } from '@/lib/auth'
 import { PROPOSAL_DOMAINS, VALID_LABS } from '@/lib/constants'
-import { rateLimit, clientIp } from '@/lib/rate-limit'
+import { checkIpRateLimit } from '@/lib/rate-limit'
 import type { Lab, Difficulty } from '@/types'
 const VALID_DIFF: Difficulty[] = ['easy', 'intermediate', 'advanced']
 
@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
 
 // POST → public submission
 export async function POST(req: NextRequest) {
-  if (!rateLimit('proposal:' + clientIp(req), 10, 60_000)) {
+  if (!await checkIpRateLimit(req, 'proposal', 10, 60_000)) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
   const body = await req.json()

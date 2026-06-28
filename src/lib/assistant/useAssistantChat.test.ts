@@ -41,4 +41,27 @@ describe('useAssistantChat hook', () => {
     )
     expect(emptyAssistantMsgs).toHaveLength(0)
   })
+
+  it('SSE event:error → status error sans bulle assistant vide résiduelle (M1)', async () => {
+    const stream = new ReadableStream({
+      start(c) {
+        c.enqueue(new TextEncoder().encode('event: error\ndata: {}\n\n'))
+        c.close()
+      },
+    })
+    const mockFetch = vi.fn().mockResolvedValue(new Response(stream, { status: 200 }))
+    const { result } = renderHook(() => useAssistantChat({ fetchImpl: mockFetch as typeof fetch }))
+    await act(async () => { await result.current.send('hello') })
+    expect(result.current.status).toBe('error')
+    expect(result.current.messages.filter(m => m.role === 'assistant' && m.content === '')).toHaveLength(0)
+  })
+
+  it('coupure réseau en cours de stream → status error, pas bloqué en streaming (I6)', async () => {
+    const stream = new ReadableStream({ start(c) { c.error(new Error('network drop')) } })
+    const mockFetch = vi.fn().mockResolvedValue(new Response(stream, { status: 200 }))
+    const { result } = renderHook(() => useAssistantChat({ fetchImpl: mockFetch as typeof fetch }))
+    await act(async () => { await result.current.send('hello') })
+    expect(result.current.status).toBe('error')
+    expect(result.current.messages.filter(m => m.role === 'assistant' && m.content === '')).toHaveLength(0)
+  })
 })

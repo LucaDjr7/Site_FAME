@@ -3,6 +3,7 @@ import { NextRequest } from 'next/server'
 
 let lastSelect = ''
 vi.mock('@/lib/auth', () => ({ requireMember: () => Promise.resolve({}), authErrorResponse: () => new Response(null, { status: 401 }) }))
+vi.mock('@/lib/rate-limit', () => ({ checkIpRateLimit: () => Promise.resolve(true) }))
 vi.mock('@/lib/supabase/server', () => ({
   createServiceClient: async () => ({
     from: () => ({

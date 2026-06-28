@@ -50,7 +50,11 @@ export function KanbanBoard({ lab, locale, subjects, initialTasks, members, isMe
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null)
 
   async function refresh() {
-    const res = await fetch(`/api/tasks?lab=${lab}`)
+    // Rafraîchir par les ids des sujets visibles (labo + transversaux), pas par
+    // ?lab — sinon les tâches des sujets transversaux de l'autre labo disparaissent.
+    const ids = subjects.map(s => s.id)
+    if (ids.length === 0) { setTasks([]); return }
+    const res = await fetch(`/api/tasks?subject_ids=${ids.join(',')}`)
     if (!res.ok) return
     const raw = await res.json()
     setTasks(flattenTasks(raw))

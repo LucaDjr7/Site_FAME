@@ -1,18 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
-import { requireMember, authErrorResponse } from '@/lib/auth'
+import { requireMember, getSession, authErrorResponse } from '@/lib/auth'
 import type { Lab } from '@/types'
 import { VALID_LABS } from '@/lib/constants'
 
 export async function GET(req: NextRequest) {
   const lab = req.nextUrl.searchParams.get('lab')
   const subjectId = req.nextUrl.searchParams.get('subject_id')
+  // Cascade des sujets visibles (labo + transversaux) : le kanban rafraîchit via
+  // subject_ids pour ne pas perdre les tâches des sujets transversaux de l'autre labo.
+  const subjectIds = req.nextUrl.searchParams.get('subject_ids')
+    ?.split(',').map((s) => s.trim()).filter(Boolean).slice(0, 500)
 
   if (lab !== null && !VALID_LABS.includes(lab as Lab)) {
     return NextResponse.json({ error: 'Invalid lab' }, { status: 400 })
   }
   const validLab = lab as Lab | null
 
+  const isMember = !!(await getSession())?.member
   const service = await createServiceClient()
 
   let query = service
@@ -22,6 +27,14 @@ export async function GET(req: NextRequest) {
 
   if (validLab) query = query.eq('labo', validLab)
   if (subjectId) query = query.eq('sujet_id', subjectId)
+  if (subjectIds && subjectIds.length) query = query.in('sujet_id', subjectIds)
+
+  // Visiteur : exclure les tâches rattachées à un sujet confidentiel.
+  if (!isMember) {
+    const { data: confRows } = await service.from('subjects').select('id').eq('confidentiel', true)
+    const confIds = (confRows ?? []).map((r: { id: string }) => r.id)
+    if (confIds.length) query = query.not('sujet_id', 'in', `(${confIds.join(',')})`)
+  }
 
   const { data, error } = await query
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
@@ -34,7 +47,7 @@ export async function POST(req: NextRequest) {
   const { labo, titre, sujet_id, description = '', statut = 'to-do',
     difficulte = 'easy', assignee_ids = [], subtask_labels = [] } = body
 
-  if (!labo || !titre?.trim() || !sujet_id) {
+  if (!VALID_LABS.includes(labo as Lab) || !titre?.trim() || !sujet_id) {
     return NextResponse.json({ error: 'labo, titre, sujet_id required' }, { status: 400 })
   }
 

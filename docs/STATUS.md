@@ -8,8 +8,9 @@ Dernière mise à jour : 2026-06-28
 
 ## Où on en est
 
-- **`main` est saine et complète.** Site v1 (Phases 1–3) + audit soldé (Vagues 0→4) + **Assistant RAG « Astra »** (PRs #11–16) + **Fiche Vitrine éditable + génération assistée + contenu des fiches bilingue** (PR #18) + **refonte visuelle page sujet & harmonisation des bleus** (PRs #20–32). Tests verts (**272/272**), `tsc`/`lint`/`build` à 0.
-- **Pas de branche feature en cours.** Migrations `008`/`009` appliquées en BDD (2026-06-28). Branches mergées nettoyées (local + remote) ; restent `feat/p2-features` et `feat/p4-pre-prod` (commits non mergés, conservés). Prochaine étape : à définir.
+- **`main` est saine et complète.** Site v1 (Phases 1–3) + audit soldé (Vagues 0→4) + **Assistant RAG « Astra »** (PRs #11–16) + **Fiche Vitrine éditable + génération assistée + contenu des fiches bilingue** (PR #18) + **refonte visuelle page sujet & harmonisation des bleus** (PRs #20–32) + **audit complet pré-remplissage soldé** (branche `fix/audit-2026-06-28`). Tests verts (**295/295**), `tsc`/`lint`/`build` à 0.
+- **Audit complet 2026-06-28** : rapport `docs/AUDIT_2026-06-28.md`. Corrigés (tests) : fuite des sujets `confidentiel` au visiteur (B1, n'était filtré que dans le RAG), sujets transversaux en 404 (B2), tâches transversales perdues au refresh kanban (I2), rate-limit DB-backed sur routes publiques + /report (I3/I4), course proposal→convert (I5), gestion d'erreur SSE assistant (I6/M1), + minors (M4/M5/M6/M9/M12/M13/M14/HSTS). **Différés documentés** : config Vercel (B3/M18), compteurs atomiques (M2/M3, migration `010` à écrire), I1 = faux positif (publications partagées volontairement), décisions produit/cosmétique (M7/M10/M11/M15/M17/M19).
+- **Pas de branche feature en cours** (hors `fix/audit-2026-06-28` à merger). Migrations `008`/`009` appliquées en BDD (2026-06-28). Branches mergées nettoyées (local + remote) ; restent `feat/p2-features` et `feat/p4-pre-prod` (commits non mergés, conservés). Prochaine étape : remplir le site de vrai contenu.
 
 ---
 

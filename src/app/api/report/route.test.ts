@@ -4,6 +4,9 @@ import { NextRequest } from 'next/server'
 const { sendReportEmail } = vi.hoisted(() => ({ sendReportEmail: vi.fn() }))
 vi.mock('@/lib/resend/send-report', () => ({ sendReportEmail }))
 
+const { checkIpRateLimit } = vi.hoisted(() => ({ checkIpRateLimit: vi.fn() }))
+vi.mock('@/lib/rate-limit', () => ({ checkIpRateLimit }))
+
 import { POST } from './route'
 
 const req = (body: unknown) =>
@@ -13,9 +16,20 @@ const req = (body: unknown) =>
     headers: { 'Content-Type': 'application/json' },
   })
 
-beforeEach(() => sendReportEmail.mockReset())
+beforeEach(() => {
+  sendReportEmail.mockReset()
+  checkIpRateLimit.mockReset()
+  checkIpRateLimit.mockResolvedValue(true)
+})
 
 describe('POST /api/report', () => {
+  it('returns 429 and does NOT call sendReportEmail when rate-limited', async () => {
+    checkIpRateLimit.mockResolvedValue(false)
+    const res = await POST(req({ message: 'spam' }))
+    expect(res.status).toBe(429)
+    expect(sendReportEmail).not.toHaveBeenCalled()
+  })
+
   it('returns 200 and calls sendReportEmail with message when valid', async () => {
     sendReportEmail.mockResolvedValue(undefined)
     const res = await POST(req({ message: 'There is a bug on the home page.' }))

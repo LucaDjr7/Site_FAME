@@ -47,12 +47,16 @@ export async function POST(_req: NextRequest, { params }: Params) {
   }).select().single()
   if (sErr) return NextResponse.json({ error: sErr.message }, { status: 500 })
 
-  const { error: updErr } = await service.from('proposals').update({
+  // Update GARDÉ : ne lie la proposition que si `subject_id` est encore null.
+  // Ferme la course (double-clic / requêtes admin concurrentes) sans migration :
+  // une seule requête « gagne » le passage null→subject ; les autres ne touchent
+  // aucune ligne et nettoient leur sujet orphelin.
+  const { data: updatedRows, error: updErr } = await service.from('proposals').update({
     statut: 'accepted',
     traitee_at: new Date().toISOString(),
     traitee_par: member.id,
     subject_id: subject.id,
-  }).eq('id', id)
+  }).eq('id', id).is('subject_id', null).select('id')
 
   if (updErr) {
     // Compensation : la proposition n'a pas pu être liée au sujet → on supprime
@@ -60,6 +64,14 @@ export async function POST(_req: NextRequest, { params }: Params) {
     await service.from('subjects').delete().eq('id', subject.id)
     console.error('proposal convert: rolled back orphan subject after proposal update failure', { id, subjectId: subject.id, error: updErr.message })
     return NextResponse.json({ error: 'Conversion failed; rolled back' }, { status: 500 })
+  }
+
+  if (!updatedRows || updatedRows.length === 0) {
+    // Course perdue : une autre requête a déjà converti. On supprime notre sujet
+    // orphelin et on renvoie le gagnant (idempotence).
+    await service.from('subjects').delete().eq('id', subject.id)
+    const { data: winner } = await service.from('proposals').select('subject_id').eq('id', id).maybeSingle()
+    return NextResponse.json({ subject_id: winner?.subject_id ?? null }, { status: 200 })
   }
 
   return NextResponse.json({ subject_id: subject.id }, { status: 201 })
