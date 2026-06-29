@@ -243,6 +243,14 @@
       "claimed": "You're now positioned on this task",
       "unclaimed": "You stepped off this task",
       "error": "Something went wrong"
+    },
+    "editor": {
+      "generate": "Generate",
+      "generating": "Generating…",
+      "viewPrompt": "view prompt",
+      "hidePrompt": "hide prompt",
+      "copyPrompt": "Copy",
+      "genError": "Generation failed. Try again."
     }
   },
   "auth": {
