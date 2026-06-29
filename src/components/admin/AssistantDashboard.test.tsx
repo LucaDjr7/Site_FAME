@@ -14,11 +14,11 @@ function wrap(ui: React.ReactNode) {
 }
 
 describe('AssistantDashboard', () => {
-  const props = { enabled: true, usage: { month: '2026-06', estCost: 12.5, budget: 50 }, unanswered: [{ question: 'q?', lang: 'en' }] }
-  it('affiche le coût et les questions', () => {
+  const props = { enabled: true, usage: { month: '2026-06', estCost: 12.5, budget: 50 }, logsHref: '/en/admin/logs' }
+  it('affiche le coût et le lien vers les logs', () => {
     wrap(<AssistantDashboard {...props} />)
     expect(screen.getByText(/12.5/)).toBeTruthy()
-    expect(screen.getByText('q?')).toBeTruthy()
+    expect(screen.getByText('View assistant logs →')).toBeTruthy()
   })
   it('le toggle POST vers /api/assistant/toggle', async () => {
     wrap(<AssistantDashboard {...props} />)

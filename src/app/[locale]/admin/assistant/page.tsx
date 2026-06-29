@@ -17,7 +17,6 @@ export default async function AssistantAdminPage({ params }: { params: Promise<{
   const month = new Date().toISOString().slice(0, 7)
   const budget = Number(process.env.ASSISTANT_MONTHLY_BUDGET_USD ?? '50')
   const { data: usageRow } = await service.from('chat_usage').select('est_cost_usd').eq('month', month).maybeSingle()
-  const { data: unansweredRows } = await service.from('chat_unanswered').select('question, lang').order('created_at', { ascending: false }).limit(50)
   const enabled = await isAssistantEnabled({ service })
 
   return (
@@ -25,7 +24,7 @@ export default async function AssistantAdminPage({ params }: { params: Promise<{
       <AssistantDashboard
         enabled={enabled}
         usage={{ month, estCost: Number(usageRow?.est_cost_usd ?? 0), budget }}
-        unanswered={(unansweredRows ?? []) as { question: string; lang: string }[]}
+        logsHref={`/${locale}/admin/logs`}
       />
     </main>
   )
