@@ -6,6 +6,8 @@ vi.mock('@/lib/auth', async (orig) => {
   const actual = await orig<typeof import('@/lib/auth')>()
   return { ...actual, requireMember: () => requireMember() }
 })
+vi.mock('@/lib/rag/usage', () => ({ isOverBudget: vi.fn().mockResolvedValue(false) }))
+vi.mock('@/lib/tasks/translate', () => ({ buildTaskI18n: vi.fn().mockResolvedValue({ en: { subtasks: [] }, fr: { subtasks: [] } }) }))
 
 vi.mock('@/lib/supabase/server', () => ({
   createServiceClient: async () => ({

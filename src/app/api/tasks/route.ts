@@ -3,6 +3,8 @@ import { createServiceClient } from '@/lib/supabase/server'
 import { requireMember, getSession, authErrorResponse } from '@/lib/auth'
 import type { Lab } from '@/types'
 import { VALID_LABS } from '@/lib/constants'
+import { buildTaskI18n } from '@/lib/tasks/translate'
+import { isOverBudget } from '@/lib/rag/usage'
 
 export async function GET(req: NextRequest) {
   const lab = req.nextUrl.searchParams.get('lab')
@@ -45,16 +47,24 @@ export async function POST(req: NextRequest) {
   try { await requireMember() } catch (e) { return authErrorResponse(e) }
   const body = await req.json()
   const { labo, titre, sujet_id, description = '', statut = 'to-do',
-    difficulte = 'easy', assignee_ids = [], subtask_labels = [] } = body
+    difficulte = 'easy', assignee_ids = [], subtask_labels = [], locale = 'en' } = body
 
   if (!VALID_LABS.includes(labo as Lab) || !titre?.trim() || !sujet_id) {
     return NextResponse.json({ error: 'labo, titre, sujet_id required' }, { status: 400 })
   }
 
   const service = await createServiceClient()
+
+  const sourceLocale = locale === 'fr' ? 'fr' : 'en'
+  const i18n = await buildTaskI18n(
+    { titre, description, subtasks: subtask_labels as string[] },
+    sourceLocale,
+    { disabled: process.env.ASSISTANT_DISABLED === '1', overBudget: await isOverBudget() },
+  )
+
   const { data: task, error } = await service
     .from('tasks')
-    .insert({ labo, titre, sujet_id, description, statut, difficulte })
+    .insert({ labo, titre, sujet_id, description, statut, difficulte, i18n })
     .select().single()
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
@@ -64,10 +74,17 @@ export async function POST(req: NextRequest) {
     if (assigneeError) return NextResponse.json({ error: assigneeError.message }, { status: 500 })
   }
 
-  // Insert subtasks (inherit assignees)
+  // Insert subtasks (inherit assignees) with per-label i18n
+  const otherLocale = sourceLocale === 'en' ? 'fr' : 'en'
   if (subtask_labels.length > 0) {
     const { data: subs, error: subtaskError } = await service.from('subtasks')
-      .insert(subtask_labels.map((label: string, i: number) => ({ task_id: task.id, label, ordre: i })))
+      .insert(subtask_labels.map((label: string, idx: number) => ({
+        task_id: task.id, label, ordre: idx,
+        i18n: {
+          [sourceLocale]: { label },
+          [otherLocale]: { label: (i18n[otherLocale]?.subtasks ?? [])[idx] ?? label },
+        },
+      })))
       .select()
     if (subtaskError) return NextResponse.json({ error: subtaskError.message }, { status: 500 })
     if (subs && assignee_ids.length > 0) {

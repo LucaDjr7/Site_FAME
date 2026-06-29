@@ -7,6 +7,8 @@ vi.mock('@/lib/auth', async (orig) => {
   const actual = await orig<typeof import('@/lib/auth')>()
   return { ...actual, requireMember: () => requireMember(), getSession: () => getSession() }
 })
+vi.mock('@/lib/rag/usage', () => ({ isOverBudget: vi.fn().mockResolvedValue(false) }))
+vi.mock('@/lib/tasks/translate', () => ({ buildTaskI18n: vi.fn().mockResolvedValue({ en: {}, fr: {} }) }))
 
 let singleResult: { data: unknown; error: unknown } = { data: null, error: null }
 let subjResult: { data: unknown; error: unknown } = { data: null, error: null }
