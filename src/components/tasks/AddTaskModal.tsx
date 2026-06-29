@@ -1,8 +1,12 @@
 'use client'
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
+import { useLocale } from 'next-intl'
 import { Modal } from '@/components/ui/Modal'
 import { FORM_INPUT_STYLE, FORM_LABEL_STYLE, FORM_BTN_CANCEL_STYLE, FORM_BTN_SUBMIT_STYLE } from '@/components/ui/form-styles'
+import { AssistButton } from '@/components/ui/AssistButton'
+import { buildTaskFieldPrompt, type TaskAssistField } from '@/lib/tasks/field-prompts'
+import { useToast } from '@/components/ui/Toast'
 import type { MemberRef, TaskStatus, Difficulty, Lab } from '@/types'
 
 type PillProps<T extends string> = { value: T; current: T; label: string; onChange: (v: T) => void }
@@ -39,6 +43,8 @@ const labelStyle = FORM_LABEL_STYLE
 
 export function AddTaskModal({ open, lab, subjectId, members, onClose, onAdded }: Props) {
   const t = useTranslations('tasks')
+  const locale = useLocale() === 'fr' ? 'fr' : ('en' as const)
+  const { addToast } = useToast()
   const [titre, setTitre] = useState('')
   const [statut, setStatut] = useState<TaskStatus>('to-do')
   const [difficulte, setDifficulte] = useState<Difficulty>('easy')
@@ -48,6 +54,20 @@ export function AddTaskModal({ open, lab, subjectId, members, onClose, onAdded }
   const [subtaskDraft, setSubtaskDraft] = useState('')
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [genField, setGenField] = useState<TaskAssistField | 'subtaskDraft' | null>(null)
+  const [promptField, setPromptField] = useState<string | null>(null)
+
+  function draft() { return { titre, description, subtask: subtaskDraft, labo: lab } }
+  async function generate(field: TaskAssistField, apply: (text: string) => void) {
+    setGenField(field === 'subtask' ? 'subtaskDraft' : field)
+    try {
+      const res = await fetch('/api/tasks/assist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ field, draft: draft(), locale }) })
+      if (!res.ok) throw new Error()
+      const data = (await res.json()) as { text?: string }
+      if (data.text) apply(data.text)
+    } catch { addToast(t('editor.genError'), 'error') }
+    finally { setGenField(null) }
+  }
 
   function reset() {
     setTitre(''); setStatut('to-do'); setDifficulte('easy'); setAssignee('')
@@ -81,6 +101,7 @@ export function AddTaskModal({ open, lab, subjectId, members, onClose, onAdded }
           description: description.trim(),
           assignee_ids: assignee ? [assignee] : [],
           subtask_labels: subtasks,
+          locale,
         }),
       })
       if (!res.ok) {
@@ -108,6 +129,12 @@ export function AddTaskModal({ open, lab, subjectId, members, onClose, onAdded }
         <div style={{ marginBottom: 14 }}>
           <label htmlFor="add-task-title" className="font-mono" style={labelStyle}>{t('modal.fTitle')} *</label>
           <input className="font-mono" id="add-task-title" type="text" value={titre} onChange={e => setTitre(e.target.value)} placeholder={t('modal.fTitle')} style={inputStyle} autoFocus />
+          <AssistButton generating={genField === 'titre'} busy={genField !== null}
+            displayPrompt={buildTaskFieldPrompt('titre', draft(), locale).displayPrompt}
+            showingPrompt={promptField === 'titre'}
+            labels={{ generate: t('editor.generate'), generating: t('editor.generating'), viewPrompt: t('editor.viewPrompt'), hidePrompt: t('editor.hidePrompt'), copyPrompt: t('editor.copyPrompt') }}
+            onGenerate={() => generate('titre', setTitre)}
+            onTogglePrompt={() => setPromptField(p => p === 'titre' ? null : 'titre')} />
         </div>
 
         {/* Statut */}
@@ -144,6 +171,12 @@ export function AddTaskModal({ open, lab, subjectId, members, onClose, onAdded }
           <label htmlFor="add-task-description" className="font-mono" style={labelStyle}>{t('modal.fDescription')}</label>
           <textarea className="font-mono" id="add-task-description" value={description} onChange={e => setDescription(e.target.value)} placeholder={t('modal.fDescription')} rows={3}
             style={{ ...inputStyle, resize: 'vertical' }} />
+          <AssistButton generating={genField === 'description'} busy={genField !== null}
+            displayPrompt={buildTaskFieldPrompt('description', draft(), locale).displayPrompt}
+            showingPrompt={promptField === 'description'}
+            labels={{ generate: t('editor.generate'), generating: t('editor.generating'), viewPrompt: t('editor.viewPrompt'), hidePrompt: t('editor.hidePrompt'), copyPrompt: t('editor.copyPrompt') }}
+            onGenerate={() => generate('description', setDescription)}
+            onTogglePrompt={() => setPromptField(p => p === 'description' ? null : 'description')} />
         </div>
 
         {/* Sous-tâches */}
@@ -174,6 +207,12 @@ export function AddTaskModal({ open, lab, subjectId, members, onClose, onAdded }
               {t('modal.addSubtask')}
             </button>
           </div>
+          <AssistButton generating={genField === 'subtaskDraft'} busy={genField !== null}
+            displayPrompt={buildTaskFieldPrompt('subtask', draft(), locale).displayPrompt}
+            showingPrompt={promptField === 'subtask'}
+            labels={{ generate: t('editor.generate'), generating: t('editor.generating'), viewPrompt: t('editor.viewPrompt'), hidePrompt: t('editor.hidePrompt'), copyPrompt: t('editor.copyPrompt') }}
+            onGenerate={() => generate('subtask', setSubtaskDraft)}
+            onTogglePrompt={() => setPromptField(p => p === 'subtask' ? null : 'subtask')} />
         </div>
 
         {error && (

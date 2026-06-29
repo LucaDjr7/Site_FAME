@@ -2,11 +2,13 @@
 
 _Mettre à jour après chaque tâche. Garder ce fichier **maigre** : l'historique terminé vit dans [`STATUS-archive.md`](./STATUS-archive.md), le détail ligne-à-ligne dans `git log`, les décisions durables dans les fichiers mémoire._
 
-Dernière mise à jour : 2026-06-28
+Dernière mise à jour : 2026-06-29
 
 ---
 
 ## Où on en est
+
+- **Lot de modifs P1 — backend/LLM** (branche `feat/lot-modifs-backend-llm`, plan `docs/superpowers/plans/2026-06-29-fame-modifs-p1-backend-llm.md`) : (1) **génération ✨ + traduction bilingue des tâches** — modules `src/lib/tasks/{field-prompts,generate-field,translate,localized}.ts`, route `POST /api/tasks/assist`, auto-traduction câblée dans `POST /api/tasks` + `PATCH /api/tasks/[id]` + `POST …/subtasks`, **migration `012_task_i18n.sql` à appliquer** (`i18n jsonb` sur `tasks`+`subtasks`), ✨ dans `AddTaskModal` + édition inline dans `TaskModal`, `chunkTask` bilingue ; (2) **assistant répond dans la langue de la question** — `detect-lang.ts`, directive forte dans `buildSystemPrompt(tier,chunks,lang)`, **fix du tag de langue par chunk** (`chunkSubject`/`chunkTask` + `index-source`) → **réindexation `npm run index:rag` requise au déploiement** (non rétroactif) ; (3) **section admin `/admin/logs`** (questions sans réponse avec « marquer résolu » + questions modérées) ; (4) **rendu Markdown des réponses de l'assistant** (gras/listes/liens, streaming-safe, sans dépendance). Suite **377/377**, `tsc`/`lint`/`build` à 0. Revue finale = self-review (les agents de revue dispatchés ne retournaient pas dans cet environnement) : Ready to merge YES, 1 Minor documenté (PATCH tâche mono-champ rebâtit l'i18n avec '' pour l'autre champ → repli colonne plate ; l'UI envoie toujours les deux). Vérif navigateur = humain. Reste à faire : **Plan 2 — UI** (`…-p2-ui.md`).
 
 - **Documents de fiche dans le RAG** (branche `feat/subject-files-rag`) : à l'upload, le texte d'un document (pdf/txt/csv/docx/xlsx/pptx, via `unpdf`+`fflate`) est extrait, chunké et indexé dans `rag_chunks` (`source_type='subject_file'`, visibilité **héritée du sujet** et resynchronisée à sa réindexation, `metadata={subject_id,file_name}`), en arrière-plan (`after()`). Génération assistée : RPC `match_subject_files` scopée au sujet (k=4, en plus des champs saisis). Assistant **Astra** : sert ces docs selon confi/public (filtre `match_rag_chunks`), citations liées au sujet parent + nom de fichier. **Migration `011` à appliquer en BDD** ; non rétroactif (réindexé au prochain upload). Spec/plan : `docs/superpowers/{specs,plans}/2026-06-28-subject-files-rag*.md`.
 

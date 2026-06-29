@@ -88,6 +88,14 @@ export interface SubjectWithProgress extends Subject {
 
 // ─── Tasks ───────────────────────────────────────────────────────────────────
 
+export interface TaskI18nFields {
+  titre: string
+  description: string
+  subtasks: string[]
+}
+
+export type TaskI18n = Partial<Record<Locale2, Partial<TaskI18nFields>>>
+
 export interface Task {
   id: string
   labo: Lab
@@ -98,6 +106,7 @@ export interface Task {
   sujet_id: string
   date_creation: string
   date_echeance: string | null
+  i18n: TaskI18n
 }
 
 export interface TaskWithRelations extends Task {
@@ -112,6 +121,7 @@ export interface Subtask {
   label: string
   done: boolean
   ordre: number
+  i18n: Partial<Record<Locale2, { label: string }>>
   assignees: MemberRef[]
 }
 

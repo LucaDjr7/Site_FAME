@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import type { ChatUiMessage, AssistantStatus } from '@/lib/assistant/types'
 import { SourceCitations } from './SourceCitations'
+import { Markdown } from './Markdown'
 
 // Local blink animation injected once via a style tag
 const BLINK_STYLE = `
@@ -148,7 +149,7 @@ export function ChatMessageList({
                       }),
                 }}
               >
-                {m.content}
+                {isUser ? m.content : <Markdown text={m.content} />}
               </div>
 
               {/* Sources (assistant only) */}

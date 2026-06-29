@@ -133,7 +133,7 @@ async function replaceChunks(
     is_transversal: batch.is_transversal,
     confidentiel: batch.confidentiel,
     visibility: batch.visibility,
-    lang: batch.lang,
+    lang: c.lang ?? batch.lang,
     content: c.content,
     embedding: embeddings[i] ?? null,
     token_count: Math.ceil(c.content.length / 4),

@@ -59,9 +59,9 @@ describe('buildSystemPrompt', () => {
     expect(p).toMatch(/email addresses are public|may be shared/i)
   })
 
-  it('Rule 5 — langue : répond dans la langue de l\'utilisateur', () => {
+  it('Rule 5 — langue : directive LANGUAGE forte présente par défaut (EN)', () => {
     const p = buildSystemPrompt('visitor', chunks)
-    expect(p).toMatch(/same language as the user/i)
+    expect(p).toMatch(/respond ENTIRELY in English/i)
   })
 
   it('Rule 6 — citation : demande de référencer la source pour que l\'UI la cite', () => {
@@ -78,5 +78,15 @@ describe('buildSystemPrompt', () => {
     const fileChunks = [{ id: '1', source_type: 'subject_file' as const, source_id: 'f1', content: 'C', labo: 'paris', lang: 'en', similarity: 0.9, metadata: { file_name: 'rapport.pdf' } }]
     const prompt = buildSystemPrompt('member', fileChunks)
     expect(prompt).toContain('rapport.pdf')
+  })
+})
+
+describe('buildSystemPrompt language directive', () => {
+  it('impose le français quand lang=fr', () => {
+    const p = buildSystemPrompt('visitor', [], 'fr')
+    expect(p).toMatch(/respond ENTIRELY in French/i)
+  })
+  it('impose l’anglais quand lang=en', () => {
+    expect(buildSystemPrompt('visitor', [], 'en')).toMatch(/respond ENTIRELY in English/i)
   })
 })

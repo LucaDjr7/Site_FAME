@@ -243,6 +243,17 @@
       "claimed": "You're now positioned on this task",
       "unclaimed": "You stepped off this task",
       "error": "Something went wrong"
+    },
+    "editTitle": "Edit",
+    "editor": {
+      "generate": "Generate",
+      "generating": "Generating…",
+      "viewPrompt": "view prompt",
+      "hidePrompt": "hide prompt",
+      "copyPrompt": "Copy",
+      "genError": "Generation failed. Try again.",
+      "save": "Save",
+      "cancel": "Cancel"
     }
   },
   "auth": {
@@ -500,7 +511,23 @@
     "monthlyCost": "Estimated cost",
     "budget": "Budget",
     "unansweredTitle": "Unanswered questions",
-    "none": "Nothing yet"
+    "none": "Nothing yet",
+    "viewLogs": "View assistant logs →"
+  },
+  "adminLogs": {
+    "title": "Assistant logs",
+    "unansweredTitle": "Unanswered questions",
+    "flaggedTitle": "Flagged questions",
+    "colDate": "Date",
+    "colLang": "Lang",
+    "colQuestion": "Question",
+    "colReason": "Reason",
+    "colStatus": "Status",
+    "markResolved": "Mark resolved",
+    "resolved": "Resolved",
+    "open": "Open",
+    "none": "Nothing logged yet",
+    "backToAssistant": "← Assistant settings"
   },
   "assistant": {
     "title": "Astra",

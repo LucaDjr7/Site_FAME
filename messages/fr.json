@@ -243,6 +243,17 @@
       "claimed": "Vous êtes positionné·e sur cette tâche",
       "unclaimed": "Vous vous êtes retiré·e de cette tâche",
       "error": "Une erreur est survenue"
+    },
+    "editTitle": "Modifier",
+    "editor": {
+      "generate": "Générer",
+      "generating": "Génération…",
+      "viewPrompt": "voir le prompt",
+      "hidePrompt": "masquer le prompt",
+      "copyPrompt": "Copier",
+      "genError": "Échec de la génération. Réessayez.",
+      "save": "Enregistrer",
+      "cancel": "Annuler"
     }
   },
   "auth": {
@@ -500,7 +511,23 @@
     "monthlyCost": "Coût estimé",
     "budget": "Budget",
     "unansweredTitle": "Questions sans réponse",
-    "none": "Rien pour l'instant"
+    "none": "Rien pour l'instant",
+    "viewLogs": "Voir les logs de l'assistant →"
+  },
+  "adminLogs": {
+    "title": "Logs de l'assistant",
+    "unansweredTitle": "Questions sans réponse",
+    "flaggedTitle": "Questions signalées",
+    "colDate": "Date",
+    "colLang": "Langue",
+    "colQuestion": "Question",
+    "colReason": "Raison",
+    "colStatus": "Statut",
+    "markResolved": "Marquer résolu",
+    "resolved": "Résolu",
+    "open": "À traiter",
+    "none": "Aucun log pour le moment",
+    "backToAssistant": "← Réglages de l'assistant"
   },
   "assistant": {
     "title": "Astra",

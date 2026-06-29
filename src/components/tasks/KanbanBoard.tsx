@@ -68,7 +68,7 @@ export function KanbanBoard({ lab, locale, subjects, initialTasks, members, isMe
     addToast((body as { claimed?: boolean }).claimed ? t('toast.claimed') : t('toast.unclaimed'), 'info')
   }
 
-  async function handlePatch(taskId: string, fields: { statut?: TaskStatus; difficulte?: Difficulty }) {
+  async function handlePatch(taskId: string, fields: { statut?: TaskStatus; difficulte?: Difficulty; titre?: string; description?: string }) {
     const result = await apiFetch<unknown>(`/api/tasks/${taskId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },

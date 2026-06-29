@@ -1,7 +1,12 @@
 'use client'
-import { useTranslations } from 'next-intl'
+import { useState } from 'react'
+import { useTranslations, useLocale } from 'next-intl'
 import { Modal } from '@/components/ui/Modal'
 import { Avatar } from '@/components/ui/Avatar'
+import { AssistButton } from '@/components/ui/AssistButton'
+import { FORM_INPUT_STYLE, FORM_BTN_CANCEL_STYLE, FORM_BTN_SUBMIT_STYLE } from '@/components/ui/form-styles'
+import { buildTaskFieldPrompt, type TaskAssistField } from '@/lib/tasks/field-prompts'
+import { localizedTask } from '@/lib/tasks/localized'
 import { DiffDots, DIFF_LEVEL, TASK_STATUS_COLOR, STATUS_KEY, ProgressBar, taskProgress } from './kanban-shared'
 import type { TaskWithRelations, TaskStatus, Difficulty } from '@/types'
 
@@ -14,7 +19,7 @@ type Props = {
   isMember: boolean
   currentMemberId: string | null
   onClose: () => void
-  onPatch: (taskId: string, fields: { statut?: TaskStatus; difficulte?: Difficulty }) => void
+  onPatch: (taskId: string, fields: { statut?: TaskStatus; difficulte?: Difficulty; titre?: string; description?: string }) => void
   onToggleSubtask: (taskId: string, subtaskId: string, done: boolean) => void
   onClaim: (taskId: string) => void
 }
@@ -26,11 +31,39 @@ const labelStyle: React.CSSProperties = {
 
 export function TaskModal({ task, subjectTitle, isMember, currentMemberId, onClose, onPatch, onToggleSubtask, onClaim }: Props) {
   const t = useTranslations('tasks')
+  const locale = useLocale() === 'fr' ? 'fr' : 'en'
+  const L = task ? localizedTask(task, locale) : { titre: '', description: '' }
+  const [editing, setEditing] = useState(false)
+  const [titre, setTitre] = useState(L.titre)
+  const [description, setDescription] = useState(L.description)
+  const [genField, setGenField] = useState<TaskAssistField | null>(null)
+  const [promptField, setPromptField] = useState<string | null>(null)
+
   if (!task) return null
 
   const pct = taskProgress(task)
   const claimedByMe = !!currentMemberId && task.assignees.some(a => a.id === currentMemberId)
   const subs = task.subtasks ?? []
+
+  const draft = () => ({ titre, description, labo: task.labo })
+  async function generate(field: TaskAssistField, apply: (v: string) => void) {
+    setGenField(field)
+    try {
+      const res = await fetch('/api/tasks/assist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ field, draft: draft(), locale }),
+      })
+      if (res.ok) {
+        const d = await res.json() as { text?: string }
+        if (d.text) apply(d.text)
+      }
+    } finally { setGenField(null) }
+  }
+  function saveEdits() {
+    onPatch(task!.id, { titre: titre.trim(), description: description.trim() })
+    setEditing(false)
+  }
 
   return (
     <Modal open={!!task} onClose={onClose}>
@@ -41,9 +74,45 @@ export function TaskModal({ task, subjectTitle, isMember, currentMemberId, onClo
       }}>
         {subjectTitle}
       </div>
-      <div className="font-serif text-fame-text-dark" style={{  fontSize: 18, fontWeight: 600, marginBottom: 18 }}>
-        {task.titre}
-      </div>
+
+      {/* Title — read or edit */}
+      {isMember && editing ? (
+        <div style={{ marginBottom: 18 }}>
+          <input
+            className="font-serif text-fame-text-dark"
+            type="text"
+            value={titre}
+            onChange={e => setTitre(e.target.value)}
+            style={{ ...FORM_INPUT_STYLE, fontSize: 18, fontWeight: 600 }}
+          />
+          <AssistButton
+            generating={genField === 'titre'}
+            busy={genField !== null}
+            displayPrompt={buildTaskFieldPrompt('titre', draft(), locale).displayPrompt}
+            showingPrompt={promptField === 'titre'}
+            labels={{ generate: t('editor.generate'), generating: t('editor.generating'), viewPrompt: t('editor.viewPrompt'), hidePrompt: t('editor.hidePrompt'), copyPrompt: t('editor.copyPrompt') }}
+            onGenerate={() => generate('titre', setTitre)}
+            onTogglePrompt={() => setPromptField(p => p === 'titre' ? null : 'titre')}
+          />
+        </div>
+      ) : (
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 18 }}>
+          <div className="font-serif text-fame-text-dark" style={{ fontSize: 18, fontWeight: 600 }}>
+            {L.titre}
+          </div>
+          {isMember && (
+            <button
+              type="button"
+              aria-label={t('editTitle')}
+              onClick={() => { setTitre(L.titre); setDescription(L.description); setEditing(true) }}
+              className="font-mono text-fame-text-muted"
+              style={{ fontSize: 9, background: 'none', border: '1px solid rgba(87,104,172,0.3)', borderRadius: 5, padding: '2px 7px', cursor: 'pointer', whiteSpace: 'nowrap' }}
+            >
+              {t('editTitle')}
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Status */}
       <div style={{ marginBottom: 16 }}>
@@ -173,12 +242,42 @@ export function TaskModal({ task, subjectTitle, isMember, currentMemberId, onClo
         )}
       </div>
 
-      {/* Description */}
-      {task.description && (
+      {/* Description — read or edit */}
+      {isMember && editing ? (
         <div>
           <div className="font-mono text-fame-slate" style={labelStyle}>{t('section.description')}</div>
-          <p className="text-fame-text-body" style={{ fontSize: 13, lineHeight: 1.5, margin: 0 }}>{task.description}</p>
+          <textarea
+            className="font-mono"
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+            rows={3}
+            style={{ ...FORM_INPUT_STYLE, resize: 'vertical' }}
+          />
+          <AssistButton
+            generating={genField === 'description'}
+            busy={genField !== null}
+            displayPrompt={buildTaskFieldPrompt('description', draft(), locale).displayPrompt}
+            showingPrompt={promptField === 'description'}
+            labels={{ generate: t('editor.generate'), generating: t('editor.generating'), viewPrompt: t('editor.viewPrompt'), hidePrompt: t('editor.hidePrompt'), copyPrompt: t('editor.copyPrompt') }}
+            onGenerate={() => generate('description', setDescription)}
+            onTogglePrompt={() => setPromptField(p => p === 'description' ? null : 'description')}
+          />
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 12 }}>
+            <button type="button" onClick={() => setEditing(false)} className="font-mono" style={FORM_BTN_CANCEL_STYLE}>
+              {t('editor.cancel')}
+            </button>
+            <button type="button" onClick={saveEdits} className="font-mono" style={{ ...FORM_BTN_SUBMIT_STYLE, cursor: 'pointer' }}>
+              {t('editor.save')}
+            </button>
+          </div>
         </div>
+      ) : (
+        L.description ? (
+          <div>
+            <div className="font-mono text-fame-slate" style={labelStyle}>{t('section.description')}</div>
+            <p className="text-fame-text-body" style={{ fontSize: 13, lineHeight: 1.5, margin: 0 }}>{L.description}</p>
+          </div>
+        ) : null
       )}
     </Modal>
   )

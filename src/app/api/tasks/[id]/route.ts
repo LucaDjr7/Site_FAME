@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { requireMember, getSession, authErrorResponse } from '@/lib/auth'
+import { buildTaskI18n } from '@/lib/tasks/translate'
+import { isOverBudget } from '@/lib/rag/usage'
 
 type Params = { params: Promise<{ id: string }> }
 
@@ -32,6 +34,15 @@ export async function PATCH(req: NextRequest, { params }: Params) {
 
   if (Object.keys(updates).length === 0) {
     return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 })
+  }
+
+  if ('titre' in body || 'description' in body) {
+    const sourceLocale = body.locale === 'fr' ? 'fr' : 'en'
+    updates.i18n = await buildTaskI18n(
+      { titre: body.titre ?? '', description: body.description ?? '', subtasks: [] },
+      sourceLocale,
+      { disabled: process.env.ASSISTANT_DISABLED === '1', overBudget: await isOverBudget() },
+    )
   }
 
   const service = await createServiceClient()

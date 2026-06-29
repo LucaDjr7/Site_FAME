@@ -5,10 +5,10 @@ import { useTranslations } from 'next-intl'
 interface Props {
   enabled: boolean
   usage: { month: string; estCost: number; budget: number }
-  unanswered: { question: string; lang: string }[]
+  logsHref: string
 }
 
-export function AssistantDashboard({ enabled, usage, unanswered }: Props) {
+export function AssistantDashboard({ enabled, usage, logsHref }: Props) {
   const t = useTranslations('adminAssistant')
   const [isEnabled, setIsEnabled] = useState(enabled)
   const [msg, setMsg] = useState('')
@@ -47,10 +47,7 @@ export function AssistantDashboard({ enabled, usage, unanswered }: Props) {
       </div>
 
       <div className="rounded-lg border border-fame-ecru p-4">
-        <h3 className="font-mono text-sm uppercase text-fame-text-muted">{t('unansweredTitle')}</h3>
-        {unanswered.length === 0
-          ? <p className="text-fame-text-muted">{t('none')}</p>
-          : <ul className="list-disc pl-5 text-sm text-fame-text-body">{unanswered.map((u, i) => <li key={i}>{u.question}</li>)}</ul>}
+        <a href={logsHref} className="font-mono text-sm text-fame-blue underline">{t('viewLogs')}</a>
       </div>
     </section>
   )
