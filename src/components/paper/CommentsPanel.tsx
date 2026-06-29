@@ -74,7 +74,7 @@ export function CommentsPanel({ subjectId, isMember, initialComments, open, onTo
 
       {open && (
         <div>
-          <div className="fame-scroll" style={{ maxHeight: 210, overflowY: 'auto', padding: '2px 14px 8px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div className="fame-scroll" style={{ maxHeight: 'min(48vh, 420px)', overflowY: 'auto', padding: '2px 14px 8px', display: 'flex', flexDirection: 'column', gap: 12 }}>
             {comments.map(c => (
               <div key={c.id} style={{ display: 'flex', gap: 9 }}>
                 <Avatar name={c.auteur_nom} size={24} />
