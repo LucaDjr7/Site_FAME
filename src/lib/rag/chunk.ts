@@ -48,8 +48,17 @@ export function chunkMember(m: Member): RawChunk[] {
 }
 
 export function chunkTask(t: Task): RawChunk[] {
-  const desc = t.description && t.description.trim().length > 0 ? `\n${t.description.trim()}` : ''
-  return [{ content: `${t.titre} [${t.statut}]${desc}`.trim() }]
+  const sets: { titre: string; description: string }[] = []
+  const en = t.i18n?.en
+  const fr = t.i18n?.fr
+  if (en) sets.push({ titre: en.titre ?? t.titre, description: en.description ?? '' })
+  if (fr) sets.push({ titre: fr.titre ?? t.titre, description: fr.description ?? '' })
+  if (sets.length === 0) sets.push({ titre: t.titre, description: t.description })
+
+  return sets.map(set => {
+    const desc = set.description && set.description.trim().length > 0 ? `\n${set.description.trim()}` : ''
+    return { content: `${set.titre} [${t.statut}]${desc}`.trim() }
+  })
 }
 
 /** Découpe un texte libre en segments ~`size` caractères avec `overlap` de chevauchement,
