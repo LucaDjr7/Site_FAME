@@ -2,6 +2,7 @@ import type { Subject, Publication, Prompt, Member, Task } from '@/types'
 
 export interface RawChunk {
   content: string
+  lang?: string
 }
 
 /** Un chunk par champ logique du sujet (question/accroche/context/method/results), préfixé du titre + kicker pour l'ancrage.
@@ -10,12 +11,12 @@ export function chunkSubject(s: Subject): RawChunk[] {
   const base = s.kicker ? `${s.titre} — ${s.kicker}` : s.titre
   const head = s.periode ? `${base} (${s.periode})` : base
 
-  type FieldSet = { question: string; accroche: string; context: string; method: string; results: string }
+  type FieldSet = { lang?: string; question: string; accroche: string; context: string; method: string; results: string }
   const sets: FieldSet[] = []
   const en = s.i18n?.en
   const fr = s.i18n?.fr
-  if (en) sets.push({ question: en.question ?? '', accroche: en.accroche ?? '', context: en.context ?? '', method: en.method ?? '', results: en.results ?? '' })
-  if (fr) sets.push({ question: fr.question ?? '', accroche: fr.accroche ?? '', context: fr.context ?? '', method: fr.method ?? '', results: fr.results ?? '' })
+  if (en) sets.push({ lang: 'en', question: en.question ?? '', accroche: en.accroche ?? '', context: en.context ?? '', method: en.method ?? '', results: en.results ?? '' })
+  if (fr) sets.push({ lang: 'fr', question: fr.question ?? '', accroche: fr.accroche ?? '', context: fr.context ?? '', method: fr.method ?? '', results: fr.results ?? '' })
   if (sets.length === 0) sets.push({ question: s.question, accroche: s.accroche, context: s.context, method: s.method, results: s.results })
 
   const chunks: RawChunk[] = []
@@ -25,7 +26,7 @@ export function chunkSubject(s: Subject): RawChunk[] {
       ['Context', set.context], ['Method', set.method], ['Results', set.results],
     ]
     for (const [label, v] of fields) {
-      if (v && v.trim().length > 0) chunks.push({ content: `${head}\n${label}: ${v.trim()}` })
+      if (v && v.trim().length > 0) chunks.push({ content: `${head}\n${label}: ${v.trim()}`, lang: set.lang })
     }
   }
   return chunks
@@ -48,16 +49,16 @@ export function chunkMember(m: Member): RawChunk[] {
 }
 
 export function chunkTask(t: Task): RawChunk[] {
-  const sets: { titre: string; description: string }[] = []
+  const sets: { lang?: string; titre: string; description: string }[] = []
   const en = t.i18n?.en
   const fr = t.i18n?.fr
-  if (en) sets.push({ titre: en.titre ?? t.titre, description: en.description ?? '' })
-  if (fr) sets.push({ titre: fr.titre ?? t.titre, description: fr.description ?? '' })
+  if (en) sets.push({ lang: 'en', titre: en.titre ?? t.titre, description: en.description ?? '' })
+  if (fr) sets.push({ lang: 'fr', titre: fr.titre ?? t.titre, description: fr.description ?? '' })
   if (sets.length === 0) sets.push({ titre: t.titre, description: t.description })
 
   return sets.map(set => {
     const desc = set.description && set.description.trim().length > 0 ? `\n${set.description.trim()}` : ''
-    return { content: `${set.titre} [${t.statut}]${desc}`.trim() }
+    return { content: `${set.titre} [${t.statut}]${desc}`.trim(), lang: set.lang }
   })
 }
 

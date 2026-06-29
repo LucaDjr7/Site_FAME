@@ -9,6 +9,7 @@ import { moderateInput } from '@/lib/rag/moderation'
 import { detectInjection } from '@/lib/rag/guardrails'
 import { retrieve, type Tier } from '@/lib/rag/retrieve'
 import { buildSystemPrompt } from '@/lib/rag/system-prompt'
+import { detectLang } from '@/lib/rag/detect-lang'
 import { logFlagged, logUnanswered } from '@/lib/rag/flagged-log'
 import { getChatProvider, type ChatMessage } from '@/lib/llm'
 import { createServiceClient } from '@/lib/supabase/server'
@@ -48,6 +49,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'messages required' }, { status: 400 })
   }
   const question = (lastUser.content ?? '').slice(0, MAX_QUESTION_LEN)
+  const lang = detectLang(question)
 
   // 3. Tier + rate-limit persistant
   const session = await getSession()
@@ -82,7 +84,7 @@ export async function POST(req: NextRequest) {
   // réponde aux questions d'identité/capacités/usage et décline honnêtement les
   // questions factuelles non ancrées (cf. system prompt). On journalise pour l'analytics.
   if (chunks.length === 0) {
-    await logUnanswered(question, (lastUser.content ?? '').match(/[à-ÿ]/i) ? 'fr' : 'en', ipHash)
+    await logUnanswered(question, lang, ipHash)
   }
 
   // 7. Génération streamée (N derniers tours seulement).
@@ -96,7 +98,7 @@ export async function POST(req: NextRequest) {
     .map(m => ({ role: m.role, content: m.content ?? '' }))
   const provider = getChatProvider()
   const chatMessages: ChatMessage[] = [
-    { role: 'system', content: buildSystemPrompt(tier, chunks) },
+    { role: 'system', content: buildSystemPrompt(tier, chunks, lang) },
     ...sanitized,
   ]
   const sources = chunks.map(c => c.source_type === 'subject_file'
