@@ -75,18 +75,14 @@ export function SubjectVitrine({
           </div>
           {/* Navy bottom */}
           <div style={{ flex: '1 1 0', background: '#15203f', padding: '12px 15px 11px', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
-            {/* Accroche : police auto-réduite pour tenir sans troncature dans l'espace dispo. */}
+            {/* Accroche : occupe tout l'espace de la bande navy (mots-clés retirés de la carte),
+                police auto-réduite (FitText) pour rester visible EN ENTIER sans troncature. */}
             {L.accroche
-              ? <FitText maxPx={12} minPx={8} style={{ flex: 1, minHeight: 0 }}>
+              ? <FitText maxPx={15} minPx={7} style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                   <span className="font-serif" style={{ fontStyle: 'italic', fontSize: '1em', lineHeight: 1.4, color: '#cdd8ea', display: 'block' }}>{L.accroche}</span>
                 </FitText>
               : <div style={{ flex: 1 }} />}
-            {L.keywords.length > 0 && (
-              <div className="font-mono" style={{ display: 'flex', gap: 6, flexWrap: 'wrap', fontSize: 8.5, color: '#7fa3d4', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: 7, rowGap: 4 }}>
-                {L.keywords.slice(0, 4).map((k, i) => <span key={i}>{k}</span>)}
-              </div>
-            )}
-            <div style={{ height: 1, background: '#23344f', marginBottom: 7 }} />
+            <div style={{ height: 1, background: '#23344f', margin: '11px 0 7px' }} />
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 6 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, minWidth: 0 }}>
                 {authorName ? <Avatar name={authorName} photoUrl={author?.photo_url} size={20} /> : null}
