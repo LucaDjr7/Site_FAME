@@ -2,11 +2,13 @@
 
 _Mettre à jour après chaque tâche. Garder ce fichier **maigre** : l'historique terminé vit dans [`STATUS-archive.md`](./STATUS-archive.md), le détail ligne-à-ligne dans `git log`, les décisions durables dans les fichiers mémoire._
 
-Dernière mise à jour : 2026-06-28
+Dernière mise à jour : 2026-06-29
 
 ---
 
 ## Où on en est
+
+- **Lot de modifs P2 — UI** (branche `feat/lot-modifs-ui`, plan `docs/superpowers/plans/2026-06-29-fame-modifs-p2-ui.md`) : (1) **bouton retour** localisé sur la page RGPD (`privacy.back`) ; (2) **grille des cartes vitrine adaptative** — `SubjectGrid` passe à `repeat(auto-fill, minmax(190px, 1fr))` (s'adapte à la largeur de l'écran : règle la troncature sur petit écran d'un collègue) ; (3) **mots-clés non tronqués** sur la carte (`SubjectVitrine` : retrait `maxHeight:24`/`overflow:hidden`, wrap multi-lignes, jusqu'à 4) ; (4) **page sujet — vide comblé** : fiche centrale élargie (`clamp … 740 → 880px`), **placeholder figure strié retiré**, panneaux Tasks/Comments assouplis (`maxHeight: min(60vh,520px)` / `min(48vh,420px)`). Présentation seule (aucune migration). Suite **351/351**, `tsc`/`lint`/`build` à 0. Revue finale = self-review (Ready to merge YES). NB interne : un sous-agent avait basculé l'env vitest global en `jsdom` → corrigé (retour `node` + directive per-file, conforme à la convention repo). Vérif navigateur = humain. ⚠️ STATUS.md diverge de la branche P1 (mêmes lignes éditées) → conflit probable au merge des deux branches, à résoudre en gardant les deux entrées.
 
 - **Documents de fiche dans le RAG** (branche `feat/subject-files-rag`) : à l'upload, le texte d'un document (pdf/txt/csv/docx/xlsx/pptx, via `unpdf`+`fflate`) est extrait, chunké et indexé dans `rag_chunks` (`source_type='subject_file'`, visibilité **héritée du sujet** et resynchronisée à sa réindexation, `metadata={subject_id,file_name}`), en arrière-plan (`after()`). Génération assistée : RPC `match_subject_files` scopée au sujet (k=4, en plus des champs saisis). Assistant **Astra** : sert ces docs selon confi/public (filtre `match_rag_chunks`), citations liées au sujet parent + nom de fichier. **Migration `011` à appliquer en BDD** ; non rétroactif (réindexé au prochain upload). Spec/plan : `docs/superpowers/{specs,plans}/2026-06-28-subject-files-rag*.md`.
 
