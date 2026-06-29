@@ -392,7 +392,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
                 className={editMode ? 'editing' : ''}
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(5, minmax(0, 1fr))',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(190px, 1fr))',
                   gap: '30px 26px',
                   paddingBottom: 16,
                 }}

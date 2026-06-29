@@ -577,6 +577,7 @@
     "error": "Impossible d'envoyer votre signalement. Réessayez."
   },
   "privacy": {
+    "back": "← Retour au site",
     "link": "Politique de confidentialité",
     "title": "Politique de confidentialité",
     "dataCollected": {

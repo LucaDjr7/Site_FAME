@@ -26,7 +26,7 @@ export function PaperSheet({ subject, members, labName, locale }: Props) {
   return (
     <article className="paper-scroll" style={{
       position: 'absolute', left: '50%', top: 118, bottom: 124, transform: 'translateX(-50%)',
-      width: 'clamp(420px, calc(100vw - 700px), 740px)', pointerEvents: 'auto', overflowY: 'auto',
+      width: 'clamp(420px, calc(100vw - 700px), 880px)', pointerEvents: 'auto', overflowY: 'auto',
       background: '#faf9f5', color: '#16263f', borderRadius: 8,
       boxShadow: '0 40px 90px -24px rgba(0,5,30,0.85), inset 0 0 0 1px rgba(0,0,0,0.05)',
     }}>
@@ -96,10 +96,6 @@ export function PaperSheet({ subject, members, labName, locale }: Props) {
         </div>
 
         <Section heading={t('context')} body={L.context} />
-
-        {/* Figure placeholder */}
-        <div style={{ borderRadius: 6, background: 'repeating-linear-gradient(135deg,#e4e2d6 0 9px,#eceadf 9px 18px)', height: 150, position: 'relative', marginBottom: 8 }} />
-        <p className="font-mono" style={{ margin: '0 0 22px', fontSize: 9.5, color: '#9a9684' }}>{t('figurePlaceholder')}</p>
 
         <Section heading={t('method')} body={L.method} />
         <Section heading={t('results')} body={L.results} />

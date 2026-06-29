@@ -82,8 +82,8 @@ export function SubjectVitrine({
                 </FitText>
               : <div style={{ flex: 1 }} />}
             {L.keywords.length > 0 && (
-              <div className="font-mono" style={{ display: 'flex', gap: 7, flexWrap: 'wrap', fontSize: 8.5, color: '#7fa3d4', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: 7, maxHeight: 24, overflow: 'hidden' }}>
-                {L.keywords.slice(0, 3).map((k, i) => <span key={i}>{k}</span>)}
+              <div className="font-mono" style={{ display: 'flex', gap: 6, flexWrap: 'wrap', fontSize: 8.5, color: '#7fa3d4', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: 7, rowGap: 4 }}>
+                {L.keywords.slice(0, 4).map((k, i) => <span key={i}>{k}</span>)}
               </div>
             )}
             <div style={{ height: 1, background: '#23344f', marginBottom: 7 }} />

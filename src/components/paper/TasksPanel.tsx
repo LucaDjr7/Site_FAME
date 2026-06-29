@@ -36,7 +36,7 @@ export function TasksPanel({ tasks, isMember, open, onToggleOpen, doneCount, tot
       </button>
 
       {open && (
-        <div className="fame-scroll" style={{ maxHeight: 300, overflowY: 'auto', padding: '2px 12px 14px', display: 'flex', flexDirection: 'column', gap: 7 }}>
+        <div className="fame-scroll" style={{ maxHeight: 'min(60vh, 520px)', overflowY: 'auto', padding: '2px 12px 14px', display: 'flex', flexDirection: 'column', gap: 7 }}>
           {tasks.map(task => {
             const done = task.statut === 'done'
             const assignee = task.assignees[0]
