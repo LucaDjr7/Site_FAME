@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
 
 type Props = { params: Promise<{ locale: string }> }
@@ -19,6 +20,13 @@ export default async function PrivacyPage({ params }: Props) {
 
   return (
     <div className="max-w-2xl mx-auto py-16 px-6">
+      <Link
+        href={`/${locale}`}
+        className="font-mono inline-block mb-6 text-sm text-fame-blue hover:underline"
+      >
+        {t('back')}
+      </Link>
+
       <h1 className="font-serif text-2xl font-bold text-fame-blue-dark mb-8">
         {t('title')}
       </h1>
