@@ -92,7 +92,7 @@ describe('chunkTask', () => {
     const c = chunkTask({
       id: 't1', labo: 'paris', titre: 'Collecter données', description: 'INSEE',
       statut: 'in-progress', difficulte: 'easy', sujet_id: 's1',
-      date_creation: '', date_echeance: null,
+      date_creation: '', date_echeance: null, i18n: {},
     })
     expect(c.length).toBe(1)
     expect(c[0]!.content).toContain('Collecter données')
