@@ -392,7 +392,11 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
                 className={editMode ? 'editing' : ''}
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(190px, 1fr))',
+                  // Max 5 colonnes par ligne (largeur normale), puis descente automatique
+                  // (4/3/2/1) sur écran plus étroit. La borne min = max(190px, 1/5 de la
+                  // largeur dispo moins les 4 gaps) garantit « jamais plus de 5 » sans casser
+                  // sur petit écran (gap colonne = 26px → 4×26 = 104px).
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(max(190px, calc((100% - 104px) / 5)), 1fr))',
                   gap: '30px 26px',
                   paddingBottom: 16,
                 }}
