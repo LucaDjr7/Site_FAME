@@ -244,13 +244,16 @@
       "unclaimed": "You stepped off this task",
       "error": "Something went wrong"
     },
+    "editTitle": "Edit",
     "editor": {
       "generate": "Generate",
       "generating": "Generating…",
       "viewPrompt": "view prompt",
       "hidePrompt": "hide prompt",
       "copyPrompt": "Copy",
-      "genError": "Generation failed. Try again."
+      "genError": "Generation failed. Try again.",
+      "save": "Save",
+      "cancel": "Cancel"
     }
   },
   "auth": {

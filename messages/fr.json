@@ -244,13 +244,16 @@
       "unclaimed": "Vous vous êtes retiré·e de cette tâche",
       "error": "Une erreur est survenue"
     },
+    "editTitle": "Modifier",
     "editor": {
       "generate": "Générer",
       "generating": "Génération…",
       "viewPrompt": "voir le prompt",
       "hidePrompt": "masquer le prompt",
       "copyPrompt": "Copier",
-      "genError": "Échec de la génération. Réessayez."
+      "genError": "Échec de la génération. Réessayez.",
+      "save": "Enregistrer",
+      "cancel": "Annuler"
     }
   },
   "auth": {
