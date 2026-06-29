@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { SubjectVitrine } from './SubjectVitrine'
@@ -13,7 +14,7 @@ const subject = {
 
 describe('SubjectVitrine keywords', () => {
   it('affiche plusieurs mots-clés sans conteneur tronqué (pas de maxHeight 24)', () => {
-    const { container } = render(
+    render(
       <SubjectVitrine subject={subject} locale="en" members={[]} editMode={false}
         statusLabel="Active" doneLabel="Done" ficheLabel="Sheet" questionLabel="Question" readLabel="Read" />)
     expect(screen.getByText('alpha')).toBeTruthy()

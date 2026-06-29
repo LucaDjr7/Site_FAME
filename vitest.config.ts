@@ -3,9 +3,8 @@ import { fileURLToPath } from 'node:url'
 
 export default defineConfig({
   test: {
-    environment: 'jsdom',
+    environment: 'node',
     include: ['src/**/*.test.ts', 'src/**/*.test.tsx', 'next.config.test.ts'],
-    setupFiles: ['./vitest.setup.ts'],
   },
   resolve: {
     alias: {

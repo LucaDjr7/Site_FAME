@@ -97,7 +97,7 @@ export function PaperSheet({ subject, members, labName, locale }: Props) {
 
         <Section heading={t('context')} body={L.context} />
 
-<Section heading={t('method')} body={L.method} />
+        <Section heading={t('method')} body={L.method} />
         <Section heading={t('results')} body={L.results} />
 
         {/* Mots-clés */}
