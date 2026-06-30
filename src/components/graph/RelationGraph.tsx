@@ -3,8 +3,13 @@ import { useEffect, useRef, useState, useMemo } from 'react'
 import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import * as d3 from 'd3'
-import type { RelationGraphNode, RelationGraphEdge, Lab, SubjectStatus, RelationKind } from '@/types'
-import { NODE_STATUS_COLOR, LAB_STROKE } from './graph-shared'
+import type {
+  Subject, SubjectRelation, MemberRef,
+  Lab, SubjectStatus, RelationKind,
+} from '@/types'
+import { buildGraphData } from '@/lib/subjects/graph-data'
+import { toLocale2 } from '@/lib/subjects/localized'
+import { SubjectVitrine } from '@/components/lab/SubjectVitrine'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { useToast } from '@/components/ui/Toast'
 
@@ -12,11 +17,8 @@ import { useToast } from '@/components/ui/Toast'
 
 interface SimNode extends d3.SimulationNodeDatum {
   id: string
-  titre: string
-  kicker: string
   labo: Lab
   statut: SubjectStatus
-  is_transversal: boolean
 }
 
 interface SimEdge extends d3.SimulationLinkDatum<SimNode> {
@@ -25,20 +27,21 @@ interface SimEdge extends d3.SimulationLinkDatum<SimNode> {
   label: string
 }
 
-// ─── component ───────────────────────────────────────────────────────────────
+// ─── card footprint (deterministic) ─────────────────────────────────────────
+// Le nœud EST la vraie fiche vitrine (SubjectVitrine, aspect-ratio 1 / 1.414).
+const CARD_W = 200
+const CARD_H = Math.round(CARD_W * 1.414) // 283
+const HW = CARD_W / 2 // 100
+const HH = CARD_H / 2 // 141.5
+const COLLIDE = Math.hypot(HW, HH) + 16 // ≈ 189
+const LINK_DIST = 360
+const CHARGE = -3500
 
-interface Props {
-  nodes: RelationGraphNode[]
-  edges: RelationGraphEdge[]
-  isMember: boolean
-  locale: string
-}
+// SVG canvas (couche d'arêtes derrière les fiches). overflow visible → les lignes
+// hors de ce rectangle restent dessinées.
+const SVG_W = 4000
+const SVG_H = 3000
 
-// Nœud = mini-carte (façon vitrine), pas un point.
-const CARD_W = 172
-const CARD_H = 58
-const HW = CARD_W / 2
-const HH = CARD_H / 2
 // Couleurs d'arêtes adaptées au fond clair.
 const EDGE_PARENT = 'rgba(20,40,90,0.42)'
 const EDGE_ASSOC = 'rgba(20,40,90,0.22)'
@@ -55,12 +58,35 @@ function rectBorderPoint(cx: number, cy: number, fromX: number, fromY: number): 
   return { x: cx + dx * s, y: cy + dy * s }
 }
 
-export function RelationGraph({ nodes, edges, isMember, locale }: Props) {
+// ─── component ───────────────────────────────────────────────────────────────
+
+interface Props {
+  subjects: Subject[]
+  relations: SubjectRelation[]
+  members: MemberRef[]
+  isMember: boolean
+  locale: string
+}
+
+export function RelationGraph({ subjects, relations, members, isMember, locale }: Props) {
   const t = useTranslations('graph')
   const tNav = useTranslations('nav')
   const tLab = useTranslations('lab')
   const router = useRouter()
+  const loc2 = toLocale2(locale)
+
+  const containerRef = useRef<HTMLDivElement>(null)
+  const worldRef = useRef<HTMLDivElement>(null)
   const svgRef = useRef<SVGSVGElement>(null)
+  // map id → wrapper DOM node (positions written here on each tick)
+  const nodeElsRef = useRef<Map<string, HTMLDivElement>>(new Map())
+
+  // ─── graph data (lightweight, drives the simulation) ───────────────────────
+  const { nodes, edges } = useMemo(
+    () => buildGraphData(subjects, relations, loc2),
+    [subjects, relations, loc2],
+  )
+  const subjectById = useMemo(() => new Map(subjects.map(s => [s.id, s])), [subjects])
 
   // ─── filter state ─────────────────────────────────────────────────────────
   const [filterLabo, setFilterLabo] = useState<Lab | 'all'>('all')
@@ -99,27 +125,31 @@ export function RelationGraph({ nodes, edges, isMember, locale }: Props) {
   const setFirstNodeRef = useRef(setFirstNode)
   const setLinkChooserRef = useRef(setLinkChooser)
   const setConfirmEdgeRef = useRef(setConfirmEdge)
-  // `router` n'est pas garanti stable : on le lit via une ref pour ne pas l'inclure
-  // dans les deps de l'effet d3 (sinon rebuild complet de la simulation au re-render).
   const routerRef = useRef(router)
+  const localeRef = useRef(locale)
 
   useEffect(() => { routerRef.current = router }, [router])
+  useEffect(() => { localeRef.current = locale }, [locale])
   useEffect(() => { editModeRef.current = editMode }, [editMode])
   useEffect(() => { firstNodeRef.current = firstNode }, [firstNode])
 
-  // ─── main d3 effect ───────────────────────────────────────────────────────
+  // ─── main d3 effect (sim + edges + drag + zoom + hover + click) ────────────
   useEffect(() => {
+    const containerEl = containerRef.current
+    const worldEl = worldRef.current
     const svgEl = svgRef.current
-    if (!svgEl) return
+    if (!containerEl || !worldEl || !svgEl) return
+    if (filteredNodes.length === 0) return
+
+    const nodeEls = nodeElsRef.current
+
+    const CW = containerEl.clientWidth || 900
+    const CH = containerEl.clientHeight || 600
 
     const svg = d3.select(svgEl)
     svg.selectAll('*').remove()
-    svg.on('.zoom', null)
 
-    const width = svgEl.clientWidth || 900
-    const height = svgEl.clientHeight || 600
-
-    // defs: arrowhead for parent edges (tip lands exactly on the card border)
+    // defs: arrowhead for parent edges (tip lands on the card border)
     const defs = svg.append('defs')
     defs.append('marker')
       .attr('id', 'rg-arrow')
@@ -133,15 +163,8 @@ export function RelationGraph({ nodes, edges, isMember, locale }: Props) {
       .attr('d', 'M0,-5L10,0L0,5')
       .attr('fill', EDGE_PARENT)
 
-    // Soft drop shadow for the card nodes.
-    const shadow = defs.append('filter').attr('id', 'rg-shadow').attr('x', '-30%').attr('y', '-30%').attr('width', '160%').attr('height', '160%')
-    shadow.append('feDropShadow').attr('dx', 0).attr('dy', 6).attr('stdDeviation', 7).attr('flood-color', 'rgba(20,40,90,0.28)')
-
-    // root <g> for zoom/pan
-    const root = svg.append('g').attr('class', 'rg-root')
-
     // mutable copies for d3 simulation
-    const simNodes: SimNode[] = filteredNodes.map(n => ({ ...n }))
+    const simNodes: SimNode[] = filteredNodes.map(n => ({ id: n.id, labo: n.labo, statut: n.statut }))
     const nodeMap = new Map<string, SimNode>(simNodes.map(n => [n.id, n]))
 
     const simEdges: SimEdge[] = filteredEdges.map(e => ({
@@ -152,226 +175,181 @@ export function RelationGraph({ nodes, edges, isMember, locale }: Props) {
       label: e.label,
     }))
 
+    // adjacency for hover dimming
+    const neighbors = new Map<string, Set<string>>()
+    simNodes.forEach(n => neighbors.set(n.id, new Set([n.id])))
+    filteredEdges.forEach(e => {
+      neighbors.get(e.source)?.add(e.target)
+      neighbors.get(e.target)?.add(e.source)
+    })
+
     // force simulation — distances/forces scaled to the card footprint
     const simulation = d3.forceSimulation<SimNode>(simNodes)
-      .force('link', d3.forceLink<SimNode, SimEdge>(simEdges).id(d => d.id).distance(230).strength(0.55))
-      .force('charge', d3.forceManyBody<SimNode>().strength(-1100))
-      .force('center', d3.forceCenter<SimNode>(width / 2, height / 2))
-      .force('collide', d3.forceCollide<SimNode>(Math.hypot(HW, HH) + 8))
+      .force('link', d3.forceLink<SimNode, SimEdge>(simEdges).id(d => d.id).distance(LINK_DIST).strength(0.5))
+      .force('charge', d3.forceManyBody<SimNode>().strength(CHARGE))
+      .force('center', d3.forceCenter<SimNode>(CW / 2, CH / 2))
+      .force('collide', d3.forceCollide<SimNode>(COLLIDE))
 
-    // ─── edges — invisible wide hit line + visible thin line ────────────────
-    // Hit lines go in first (underneath nodes) so node clicks take priority
-    const edgeHitSel = root
+    // ─── edges — wide transparent hit line + visible thin line ──────────────
+    const edgeHitSel = svg
       .selectAll<SVGLineElement, SimEdge>('line.rg-edge-hit')
       .data(simEdges)
       .enter()
       .append('line')
       .attr('class', 'rg-edge-hit')
       .attr('stroke', 'transparent')
-      .attr('stroke-width', 12)
+      .attr('stroke-width', 14)
+      .style('pointer-events', 'stroke')
       .style('cursor', 'pointer')
 
     edgeHitSel.on('click', (_event, d) => {
       if (!editModeRef.current) return
-      setConfirmEdgeRef.current({
-        edgeId: d.id,
-        sourceId: (d.source as SimNode).id,
-      })
+      setConfirmEdgeRef.current({ edgeId: d.id, sourceId: (d.source as SimNode).id })
     })
 
-    const edgeSel = root
+    const edgeSel = svg
       .selectAll<SVGLineElement, SimEdge>('line.rg-edge')
       .data(simEdges)
       .enter()
       .append('line')
       .attr('class', 'rg-edge')
       .attr('stroke', d => d.kind === 'parent' ? EDGE_PARENT : EDGE_ASSOC)
-      .attr('stroke-width', d => d.kind === 'parent' ? 1.6 : 1.2)
-      .attr('stroke-dasharray', d => d.kind === 'assoc' ? '5,4' : null)
+      .attr('stroke-width', d => d.kind === 'parent' ? 2 : 1.5)
+      .attr('stroke-dasharray', d => d.kind === 'assoc' ? '6,5' : null)
       .attr('marker-end', d => d.kind === 'parent' ? 'url(#rg-arrow)' : null)
       .attr('pointer-events', 'none')
 
-    // ─── node groups ──────────────────────────────────────────────────────────
-    const nodeSel = root
-      .selectAll<SVGGElement, SimNode>('g.rg-node')
-      .data(simNodes)
-      .enter()
-      .append('g')
-      .attr('class', 'rg-node')
-      .style('cursor', 'pointer')
+    // ─── transform helpers (HTML zoom: invert to world coords) ──────────────
+    let transform = d3.zoomIdentity
 
-    const trunc = (s: string, n: number) => s.length > n ? s.slice(0, n - 1) + '…' : s
-
-    // Transversal: gold dashed rounded-rect halo behind the card
-    nodeSel.filter(d => d.is_transversal)
-      .append('rect')
-      .attr('x', -HW - 4).attr('y', -HH - 4)
-      .attr('width', CARD_W + 8).attr('height', CARD_H + 8)
-      .attr('rx', 14)
-      .attr('fill', 'none')
-      .attr('stroke', '#e8b149')
-      .attr('stroke-width', 1.5)
-      .attr('stroke-dasharray', '3,3')
-      .attr('opacity', 0.7)
-
-    // Selection ring (edit-mode first-pick indicator)
-    nodeSel.append('rect')
-      .attr('class', 'rg-sel-ring')
-      .attr('x', -HW - 3).attr('y', -HH - 3)
-      .attr('width', CARD_W + 6).attr('height', CARD_H + 6)
-      .attr('rx', 13)
-      .attr('fill', 'none')
-      .attr('stroke', '#e8b149')
-      .attr('stroke-width', 2.5)
-      .attr('opacity', 0) // updated by visual effect
-
-    // Card body
-    nodeSel.append('rect')
-      .attr('x', -HW).attr('y', -HH)
-      .attr('width', CARD_W).attr('height', CARD_H)
-      .attr('rx', 11)
-      .attr('fill', '#fbf9f3')
-      .attr('stroke', 'rgba(20,40,90,0.14)')
-      .attr('stroke-width', 1)
-      .attr('filter', 'url(#rg-shadow)')
-
-    // Lab accent stripe (left edge)
-    nodeSel.append('rect')
-      .attr('x', -HW + 5).attr('y', -HH + 9)
-      .attr('width', 4).attr('height', CARD_H - 18)
-      .attr('rx', 2)
-      .attr('fill', d => LAB_STROKE[d.labo])
-
-    // Status dot
-    nodeSel.append('circle')
-      .attr('cx', -HW + 22).attr('cy', -HH + 18)
-      .attr('r', 5)
-      .attr('fill', d => NODE_STATUS_COLOR[d.statut])
-
-    // Title (serif, dark) — truncated
-    nodeSel.append('text')
-      .text(d => trunc(d.titre, 22))
-      .attr('x', -HW + 34).attr('y', -HH + 22)
-      .attr('font-size', '12px')
-      .attr('font-weight', 600)
-      .attr('font-family', '"Roboto Slab", Georgia, serif')
-      .attr('fill', '#15203f')
-      .attr('pointer-events', 'none')
-
-    // Kicker (mono, muted, uppercase) — truncated
-    nodeSel.append('text')
-      .text(d => trunc(d.kicker || '', 30).toUpperCase())
-      .attr('x', -HW + 16).attr('y', HH - 13)
-      .attr('font-size', '8px')
-      .attr('letter-spacing', '0.08em')
-      .attr('font-family', '"IBM Plex Mono", monospace')
-      .attr('fill', '#7e8aa8')
-      .attr('pointer-events', 'none')
-
-    // ─── simulation tick ──────────────────────────────────────────────────────
+    // ─── simulation tick — write positions DIRECTLY to the DOM ──────────────
+    function positionLines(sel: d3.Selection<SVGLineElement, SimEdge, SVGSVGElement, unknown>) {
+      sel
+        .attr('x1', d => { const s = d.source as SimNode, tg = d.target as SimNode; return rectBorderPoint(s.x ?? 0, s.y ?? 0, tg.x ?? 0, tg.y ?? 0).x })
+        .attr('y1', d => { const s = d.source as SimNode, tg = d.target as SimNode; return rectBorderPoint(s.x ?? 0, s.y ?? 0, tg.x ?? 0, tg.y ?? 0).y })
+        .attr('x2', d => { const s = d.source as SimNode, tg = d.target as SimNode; return rectBorderPoint(tg.x ?? 0, tg.y ?? 0, s.x ?? 0, s.y ?? 0).x })
+        .attr('y2', d => { const s = d.source as SimNode, tg = d.target as SimNode; return rectBorderPoint(tg.x ?? 0, tg.y ?? 0, s.x ?? 0, s.y ?? 0).y })
+    }
     function ticked() {
-      const posLine = (sel: d3.Selection<SVGLineElement, SimEdge, SVGGElement, unknown>) => {
-        sel
-          .attr('x1', d => { const s = d.source as SimNode, tg = d.target as SimNode; return rectBorderPoint(s.x ?? 0, s.y ?? 0, tg.x ?? 0, tg.y ?? 0).x })
-          .attr('y1', d => { const s = d.source as SimNode, tg = d.target as SimNode; return rectBorderPoint(s.x ?? 0, s.y ?? 0, tg.x ?? 0, tg.y ?? 0).y })
-          .attr('x2', d => { const s = d.source as SimNode, tg = d.target as SimNode; return rectBorderPoint(tg.x ?? 0, tg.y ?? 0, s.x ?? 0, s.y ?? 0).x })
-          .attr('y2', d => { const s = d.source as SimNode, tg = d.target as SimNode; return rectBorderPoint(tg.x ?? 0, tg.y ?? 0, s.x ?? 0, s.y ?? 0).y })
+      for (const n of simNodes) {
+        const el = nodeEls.get(n.id)
+        if (el) el.style.transform = `translate(${(n.x ?? 0) - HW}px, ${(n.y ?? 0) - HH}px)`
       }
-      posLine(edgeHitSel)
-      posLine(edgeSel)
-      nodeSel.attr('transform', d => `translate(${d.x ?? 0},${d.y ?? 0})`)
+      positionLines(edgeHitSel)
+      positionLines(edgeSel)
     }
     simulation.on('tick', ticked)
+    ticked() // initial paint (phyllotaxis positions)
 
-    // ─── drag ─────────────────────────────────────────────────────────────────
-    let isDragging = false
-    const drag = d3.drag<SVGGElement, SimNode>()
+    // ─── drag (per node wrapper) ────────────────────────────────────────────
+    let moved = false
+    const drag = d3.drag<HTMLDivElement, SimNode>()
+      .clickDistance(6)
       .on('start', (event, d) => {
-        isDragging = false
+        moved = false
         if (!event.active) simulation.alphaTarget(0.3).restart()
         d.fx = d.x
         d.fy = d.y
       })
       .on('drag', (event, d) => {
-        isDragging = true
-        d.fx = event.x
-        d.fy = event.y
+        moved = true
+        const [px, py] = d3.pointer(event.sourceEvent, containerEl)
+        d.fx = (px - transform.x) / transform.k
+        d.fy = (py - transform.y) / transform.k
       })
       .on('end', (event, d) => {
         if (!event.active) simulation.alphaTarget(0)
         d.fx = null
         d.fy = null
       })
-    nodeSel.call(drag)
 
-    // ─── node click: navigate (read-only) or select for linking (edit mode) ──
-    nodeSel.on('click', (_event, d) => {
-      if (isDragging) { isDragging = false; return }
-      if (editModeRef.current) {
-        const prev = firstNodeRef.current
-        if (prev === null) {
-          setFirstNodeRef.current(d.id)
-        } else if (prev === d.id) {
-          setFirstNodeRef.current(null) // deselect
+    // ─── per-wrapper wiring: bind datum, drag, click, hover ─────────────────
+    simNodes.forEach(d => {
+      const el = nodeEls.get(d.id)
+      if (!el) return
+      const sel = d3.select<HTMLDivElement, SimNode>(el).datum(d)
+      sel.call(drag)
+      sel.on('click', () => {
+        if (moved) { moved = false; return }
+        if (editModeRef.current) {
+          const prev = firstNodeRef.current
+          if (prev === null) {
+            setFirstNodeRef.current(d.id)
+          } else if (prev === d.id) {
+            setFirstNodeRef.current(null)
+          } else {
+            setLinkChooserRef.current({ firstId: prev, secondId: d.id })
+            setFirstNodeRef.current(null)
+          }
         } else {
-          setLinkChooserRef.current({ firstId: prev, secondId: d.id })
-          setFirstNodeRef.current(null)
+          routerRef.current.push(`/${localeRef.current}/${d.labo}/paper/${d.id}`)
         }
-      } else {
-        routerRef.current.push(`/${locale}/${d.labo}/paper/${d.id}`)
-      }
+      })
+      sel.on('mouseenter', () => {
+        const nbrs = neighbors.get(d.id) ?? new Set([d.id])
+        simNodes.forEach(n => {
+          const e = nodeEls.get(n.id)
+          if (e) e.style.opacity = nbrs.has(n.id) ? '1' : '0.2'
+        })
+        edgeSel.attr('opacity', e => {
+          const s = (e.source as SimNode).id, tg = (e.target as SimNode).id
+          return s === d.id || tg === d.id ? 1 : 0.08
+        })
+      })
+      sel.on('mouseleave', () => {
+        simNodes.forEach(n => {
+          const e = nodeEls.get(n.id)
+          if (e) e.style.opacity = '1'
+        })
+        edgeSel.attr('opacity', 1)
+      })
     })
 
-    // ─── hover highlight ──────────────────────────────────────────────────────
-    nodeSel
-      .on('mouseenter', (_event, d) => {
-        const nbrs = new Set<string>([d.id])
-        simEdges.forEach(e => {
-          const s = (e.source as SimNode).id
-          const tg = (e.target as SimNode).id
-          if (s === d.id) nbrs.add(tg)
-          if (tg === d.id) nbrs.add(s)
-        })
-        nodeSel.attr('opacity', n => nbrs.has(n.id) ? 1 : 0.15)
-        edgeSel.attr('opacity', e => {
-          const s = (e.source as SimNode).id
-          const tg = (e.target as SimNode).id
-          return s === d.id || tg === d.id ? 1 : 0.06
-        })
-        edgeHitSel.attr('opacity', e => {
-          const s = (e.source as SimNode).id
-          const tg = (e.target as SimNode).id
-          return s === d.id || tg === d.id ? 1 : 0.06
-        })
+    // ─── zoom / pan (capture layer = container; transform applied to world) ──
+    const baseFilter = (event: Event & { ctrlKey?: boolean; button?: number }) =>
+      (!event.ctrlKey || event.type === 'wheel') && !event.button
+    const zoom = d3.zoom<HTMLDivElement, unknown>()
+      .scaleExtent([0.15, 2])
+      .filter((event: Event) => {
+        if (!baseFilter(event as Event & { ctrlKey?: boolean; button?: number })) return false
+        if (event.type === 'wheel') return true
+        const tgt = event.target as Element | null
+        if (tgt?.closest('[data-graph-node]')) return false
+        if (tgt?.closest('[data-graph-ui]')) return false
+        return true
       })
-      .on('mouseleave', () => {
-        nodeSel.attr('opacity', 1)
-        edgeSel.attr('opacity', 1)
-        edgeHitSel.attr('opacity', 1)
+      .on('zoom', event => {
+        transform = event.transform
+        worldEl.style.transform = `translate(${transform.x}px, ${transform.y}px) scale(${transform.k})`
       })
 
-    // ─── zoom / pan ───────────────────────────────────────────────────────────
-    const zoom = d3.zoom<SVGSVGElement, unknown>()
-      .scaleExtent([0.1, 5])
-      .on('zoom', event => {
-        root.attr('transform', event.transform)
-      })
-    svg.call(zoom)
+    const containerSel = d3.select<HTMLDivElement, unknown>(containerEl)
+    containerSel.call(zoom)
+    // start zoomed-out, graph centred in the viewport
+    const K0 = 0.5
+    const initial = d3.zoomIdentity
+      .translate(CW / 2 * (1 - K0), CH / 2 * (1 - K0))
+      .scale(K0)
+    containerSel.call(zoom.transform, initial)
 
     return () => {
       simulation.stop()
-      svg.on('.zoom', null)
+      containerSel.on('.zoom', null)
+      simNodes.forEach(d => {
+        const el = nodeEls.get(d.id)
+        if (el) d3.select(el).on('.drag', null).on('click', null).on('mouseenter', null).on('mouseleave', null)
+      })
     }
-  }, [filteredNodes, filteredEdges, locale])
+  }, [filteredNodes, filteredEdges])
 
   // ─── visual selection ring update (no simulation restart needed) ──────────
   useEffect(() => {
-    const svgEl = svgRef.current
-    if (!svgEl) return
-    d3.select(svgEl)
-      .selectAll<SVGCircleElement, SimNode>('circle.rg-sel-ring')
-      .attr('opacity', (d: SimNode) => (editMode && firstNode === d.id) ? 1 : 0)
-  }, [firstNode, editMode])
+    const nodeEls = nodeElsRef.current
+    nodeEls.forEach((el, id) => {
+      const selected = editMode && firstNode === id
+      el.style.boxShadow = selected ? '0 0 0 3px #e8b149, 0 18px 40px -20px rgba(20,40,90,0.5)' : ''
+    })
+  }, [firstNode, editMode, filteredNodes])
 
   // ─── create link ──────────────────────────────────────────────────────────
   const createLink = async () => {
@@ -417,16 +395,76 @@ export function RelationGraph({ nodes, edges, isMember, locale }: Props) {
 
   return (
     <div
-      className="absolute inset-0 flex flex-col overflow-hidden"
+      ref={containerRef}
+      className="absolute inset-0 overflow-hidden"
       style={{
         background: '#F9F9FA',
         backgroundImage: 'radial-gradient(rgba(20,40,90,0.08) 1.3px, transparent 1.3px)',
         backgroundSize: '22px 22px',
+        cursor: 'grab',
       }}
     >
+      {/* Disable the lab-grid hover-zoom inside the graph (nodes stay put). */}
+      <style>{`
+        [data-graph-node] .poster { transition: none; }
+        [data-graph-node] .poster:hover .poster-inner { transform: none; box-shadow: 0 18px 40px -22px rgba(20,40,90,0.5); }
+      `}</style>
+
+      {/* ── world (receives the zoom transform) ── */}
+      {!isEmpty && (
+        <div
+          ref={worldRef}
+          style={{ position: 'absolute', top: 0, left: 0, transformOrigin: '0 0', willChange: 'transform' }}
+        >
+          {/* edges behind the cards */}
+          <svg
+            ref={svgRef}
+            width={SVG_W}
+            height={SVG_H}
+            style={{ position: 'absolute', top: 0, left: 0, overflow: 'visible', pointerEvents: 'none' }}
+            aria-hidden="true"
+          />
+          {/* one wrapper per node → real SubjectVitrine card */}
+          {filteredNodes.map(n => {
+            const subject = subjectById.get(n.id)
+            if (!subject) return null
+            return (
+              <div
+                key={n.id}
+                data-graph-node={n.id}
+                ref={el => { if (el) nodeElsRef.current.set(n.id, el); else nodeElsRef.current.delete(n.id) }}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: CARD_W,
+                  borderRadius: 6,
+                  cursor: 'pointer',
+                  willChange: 'transform',
+                }}
+              >
+                <SubjectVitrine
+                  subject={subject}
+                  locale={loc2}
+                  byId={subjectById}
+                  members={members}
+                  editMode={false}
+                  statusLabel={tLab(`status.${subject.statut}`)}
+                  doneLabel={tLab('done')}
+                  ficheLabel={tLab('vitrine.ficheLabel')}
+                  questionLabel={tLab('vitrine.theQuestion')}
+                  readLabel={tLab('vitrine.readSubject')}
+                  transversalLabel={tLab('transversalBadge')}
+                />
+              </div>
+            )
+          })}
+        </div>
+      )}
 
       {/* ── filter + edit panel ── */}
       <div
+        data-graph-ui
         className="absolute top-4 right-4 z-10 flex flex-col gap-2 rounded-lg p-3 border border-fame-ecru min-w-[190px]"
         style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(6px)', boxShadow: '0 12px 30px -16px rgba(20,40,90,0.4)' }}
       >
@@ -506,6 +544,7 @@ export function RelationGraph({ nodes, edges, isMember, locale }: Props) {
       {/* ── edit mode hint banner ── */}
       {editMode && !linkChooser && (
         <div
+          data-graph-ui
           className="absolute top-4 left-1/2 -translate-x-1/2 z-10 font-mono text-xs text-white px-4 py-2 rounded-lg pointer-events-none border border-fame-blue/50"
           style={{ background: 'rgba(47,68,134,0.88)', backdropFilter: 'blur(4px)' }}
         >
@@ -513,49 +552,43 @@ export function RelationGraph({ nodes, edges, isMember, locale }: Props) {
         </div>
       )}
 
-      {isEmpty ? (
-        /* ── empty / filtered-empty state ── */
-        <div className="flex-1 flex items-center justify-center">
+      {/* ── empty / filtered-empty state ── */}
+      {isEmpty && (
+        <div className="absolute inset-0 flex items-center justify-center">
           <p className="font-mono text-sm text-fame-text-body">{t('empty')}</p>
         </div>
-      ) : (
-        <>
-          {/* ── full-area SVG ── */}
-          <svg
-            ref={svgRef}
-            className="flex-1 w-full"
-            style={{ display: 'block' }}
-            aria-label={t('title')}
-          />
+      )}
 
-          {/* ── legend overlay ── */}
-          <div
-            className="absolute bottom-5 left-5 flex flex-col gap-2 rounded-lg p-3 border border-fame-ecru"
-            style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(6px)', boxShadow: '0 12px 30px -16px rgba(20,40,90,0.4)' }}
-            aria-hidden="true"
-          >
-            {/* parent edge */}
-            <div className="flex items-center gap-2">
-              <svg width="36" height="12" aria-hidden="true">
-                <line x1="0" y1="6" x2="26" y2="6" stroke="rgba(20,40,90,0.42)" strokeWidth="1.6" />
-                <polyline points="20,2 26,6 20,10" fill="none" stroke="rgba(20,40,90,0.42)" strokeWidth="1.6" />
-              </svg>
-              <span className="font-mono text-xs text-fame-text-body">{t('legendParent')}</span>
-            </div>
-            {/* assoc edge */}
-            <div className="flex items-center gap-2">
-              <svg width="36" height="12" aria-hidden="true">
-                <line x1="0" y1="6" x2="26" y2="6" stroke="rgba(20,40,90,0.28)" strokeWidth="1.2" strokeDasharray="4,3" />
-              </svg>
-              <span className="font-mono text-xs text-fame-text-body">{t('legendAssoc')}</span>
-            </div>
+      {/* ── legend overlay ── */}
+      {!isEmpty && (
+        <div
+          data-graph-ui
+          className="absolute bottom-5 left-5 flex flex-col gap-2 rounded-lg p-3 border border-fame-ecru z-10"
+          style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(6px)', boxShadow: '0 12px 30px -16px rgba(20,40,90,0.4)' }}
+          aria-hidden="true"
+        >
+          {/* parent edge */}
+          <div className="flex items-center gap-2">
+            <svg width="36" height="12" aria-hidden="true">
+              <line x1="0" y1="6" x2="26" y2="6" stroke="rgba(20,40,90,0.42)" strokeWidth="1.6" />
+              <polyline points="20,2 26,6 20,10" fill="none" stroke="rgba(20,40,90,0.42)" strokeWidth="1.6" />
+            </svg>
+            <span className="font-mono text-xs text-fame-text-body">{t('legendParent')}</span>
           </div>
-        </>
+          {/* assoc edge */}
+          <div className="flex items-center gap-2">
+            <svg width="36" height="12" aria-hidden="true">
+              <line x1="0" y1="6" x2="26" y2="6" stroke="rgba(20,40,90,0.28)" strokeWidth="1.2" strokeDasharray="4,3" />
+            </svg>
+            <span className="font-mono text-xs text-fame-text-body">{t('legendAssoc')}</span>
+          </div>
+        </div>
       )}
 
       {/* ── link-kind chooser overlay ── */}
       {linkChooser && (
         <div
+          data-graph-ui
           className="absolute inset-0 z-20 flex items-center justify-center"
           style={{ background: 'rgba(10,16,40,0.60)' }}
         >

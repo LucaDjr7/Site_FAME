@@ -3,10 +3,8 @@ import { getTranslations } from 'next-intl/server'
 import Link from 'next/link'
 import { createServiceClient } from '@/lib/supabase/server'
 import { getSession } from '@/lib/auth'
-import { buildGraphData } from '@/lib/subjects/graph-data'
-import { toLocale2 } from '@/lib/subjects/localized'
 import { RelationGraph } from '@/components/graph/RelationGraph'
-import type { Subject, SubjectRelation } from '@/types'
+import type { Subject, SubjectRelation, MemberRef } from '@/types'
 
 type Props = { params: Promise<{ locale: string }> }
 
@@ -26,16 +24,11 @@ export default async function GraphPage({ params }: Props) {
   let sq = service.from('subjects').select('*')
   if (!isMember) sq = sq.eq('confidentiel', false)
 
-  const [{ data: subjects }, { data: relations }] = await Promise.all([
+  const [{ data: subjects }, { data: relations }, { data: members }] = await Promise.all([
     sq.order('ordre', { ascending: true }),
     service.from('subject_relations').select('*'),
+    service.from('members').select('id,prenom,nom,photo_url'),
   ])
-
-  const { nodes, edges } = buildGraphData(
-    (subjects ?? []) as Subject[],
-    (relations ?? []) as SubjectRelation[],
-    toLocale2(locale),
-  )
 
   return (
     <div className="flex flex-col h-screen bg-fame-sand-bg">
@@ -58,7 +51,13 @@ export default async function GraphPage({ params }: Props) {
 
       {/* Graph fills remaining viewport height */}
       <div className="flex-1 relative">
-        <RelationGraph nodes={nodes} edges={edges} isMember={isMember} locale={locale} />
+        <RelationGraph
+          subjects={(subjects ?? []) as Subject[]}
+          relations={(relations ?? []) as SubjectRelation[]}
+          members={(members ?? []) as MemberRef[]}
+          isMember={isMember}
+          locale={locale}
+        />
       </div>
     </div>
   )
