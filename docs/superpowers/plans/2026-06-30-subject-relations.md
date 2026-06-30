@@ -54,7 +54,7 @@
 - `messages/en.json` / `messages/fr.json` — namespaces `graph` + clés `paper.relations.*` + `nav.graph`.
 - `docs/STATUS.md` — entrée de fin de feature.
 
-**Décision de planification (raffinement spec)** : `src/lib/rag/chunk.ts` (`chunkSubject`) **n'est PAS modifié** — chaque fiche indexe ses champs **propres** ; le contenu hérité reste indexé sur la mère (évite la duplication de chunks). Documenté ici, à confirmer au handoff.
+**Décision de planification (raffinement spec — CONFIRMÉE 2026-06-30)** : `src/lib/rag/chunk.ts` (`chunkSubject`) **n'est PAS modifié** — chaque fiche indexe ses champs **propres** ; le contenu hérité reste indexé sur la mère (évite la duplication de chunks). Validé par l'utilisateur.
 
 ---
 
