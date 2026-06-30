@@ -5,9 +5,10 @@ export function buildGraphData(subjects: Subject[], relations: SubjectRelation[]
   nodes: RelationGraphNode[]; edges: RelationGraphEdge[]
 } {
   const present = new Set(subjects.map(s => s.id))
-  const nodes: RelationGraphNode[] = subjects.map(s => ({
-    id: s.id, titre: localizedSubject(s, locale).titre, labo: s.labo, statut: s.statut, is_transversal: s.is_transversal,
-  }))
+  const nodes: RelationGraphNode[] = subjects.map(s => {
+    const L = localizedSubject(s, locale)
+    return { id: s.id, titre: L.titre, kicker: L.kicker, labo: s.labo, statut: s.statut, is_transversal: s.is_transversal }
+  })
   const edges: RelationGraphEdge[] = relations
     .filter(r => present.has(r.source_id) && present.has(r.target_id))
     .map(r => ({

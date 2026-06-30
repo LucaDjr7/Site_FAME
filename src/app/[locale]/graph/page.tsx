@@ -38,20 +38,20 @@ export default async function GraphPage({ params }: Props) {
   )
 
   return (
-    <div className="flex flex-col h-screen bg-fame-navy">
+    <div className="flex flex-col h-screen bg-fame-sand-bg">
       {/* Minimal in-page header (no TopBar — this route is outside [lab]) */}
-      <header className="flex items-center gap-4 px-6 py-3 border-b border-fame-blue-mid shrink-0">
+      <header className="flex items-center gap-4 px-6 py-3 border-b border-fame-ecru shrink-0 bg-white/70 backdrop-blur-sm">
         <Link
           href={`/${locale}`}
-          className="font-mono text-xs text-fame-text-muted hover:text-fame-text-light transition-colors"
+          className="font-mono text-xs text-fame-slate hover:text-fame-blue transition-colors"
         >
           {t('back')}
         </Link>
-        <span className="w-px h-4 bg-fame-blue-mid" aria-hidden="true" />
+        <span className="w-px h-4 bg-fame-ecru" aria-hidden="true" />
         <span className="font-mono text-xs text-fame-slate tracking-widest uppercase select-none">
           {t('kicker')}
         </span>
-        <h1 className="font-mono text-sm font-semibold text-fame-text-light tracking-wide">
+        <h1 className="font-mono text-sm font-semibold text-fame-text-dark tracking-wide">
           {t('title')}
         </h1>
       </header>

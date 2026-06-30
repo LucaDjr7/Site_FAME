@@ -95,7 +95,7 @@ export interface SubjectRelation {
   created_at: string
 }
 
-export interface RelationGraphNode { id: string; titre: string; labo: Lab; statut: SubjectStatus; is_transversal: boolean }
+export interface RelationGraphNode { id: string; titre: string; kicker: string; labo: Lab; statut: SubjectStatus; is_transversal: boolean }
 export interface RelationGraphEdge { id: string; source: string; target: string; kind: RelationKind; label: string }
 
 export interface SubjectWithProgress extends Subject {

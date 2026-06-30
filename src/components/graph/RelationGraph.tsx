@@ -13,6 +13,7 @@ import { useToast } from '@/components/ui/Toast'
 interface SimNode extends d3.SimulationNodeDatum {
   id: string
   titre: string
+  kicker: string
   labo: Lab
   statut: SubjectStatus
   is_transversal: boolean
@@ -33,7 +34,26 @@ interface Props {
   locale: string
 }
 
-const R = 18 // node radius (px)
+// Nœud = mini-carte (façon vitrine), pas un point.
+const CARD_W = 172
+const CARD_H = 58
+const HW = CARD_W / 2
+const HH = CARD_H / 2
+// Couleurs d'arêtes adaptées au fond clair.
+const EDGE_PARENT = 'rgba(20,40,90,0.42)'
+const EDGE_ASSOC = 'rgba(20,40,90,0.22)'
+
+/** Point d'intersection du bord de la carte (rect centré cx,cy) sur le segment
+ *  allant vers (fromX,fromY) — pour que les arêtes/flèches s'arrêtent au bord. */
+function rectBorderPoint(cx: number, cy: number, fromX: number, fromY: number): { x: number; y: number } {
+  const dx = fromX - cx
+  const dy = fromY - cy
+  if (dx === 0 && dy === 0) return { x: cx, y: cy }
+  const sx = dx !== 0 ? HW / Math.abs(dx) : Infinity
+  const sy = dy !== 0 ? HH / Math.abs(dy) : Infinity
+  const s = Math.min(sx, sy)
+  return { x: cx + dx * s, y: cy + dy * s }
+}
 
 export function RelationGraph({ nodes, edges, isMember, locale }: Props) {
   const t = useTranslations('graph')
@@ -99,19 +119,23 @@ export function RelationGraph({ nodes, edges, isMember, locale }: Props) {
     const width = svgEl.clientWidth || 900
     const height = svgEl.clientHeight || 600
 
-    // defs: arrowhead for parent edges
+    // defs: arrowhead for parent edges (tip lands exactly on the card border)
     const defs = svg.append('defs')
     defs.append('marker')
       .attr('id', 'rg-arrow')
       .attr('viewBox', '0 -5 10 10')
-      .attr('refX', R + 10)
+      .attr('refX', 9)
       .attr('refY', 0)
-      .attr('markerWidth', 6)
-      .attr('markerHeight', 6)
+      .attr('markerWidth', 7)
+      .attr('markerHeight', 7)
       .attr('orient', 'auto')
       .append('path')
       .attr('d', 'M0,-5L10,0L0,5')
-      .attr('fill', 'rgba(190,205,255,0.55)')
+      .attr('fill', EDGE_PARENT)
+
+    // Soft drop shadow for the card nodes.
+    const shadow = defs.append('filter').attr('id', 'rg-shadow').attr('x', '-30%').attr('y', '-30%').attr('width', '160%').attr('height', '160%')
+    shadow.append('feDropShadow').attr('dx', 0).attr('dy', 6).attr('stdDeviation', 7).attr('flood-color', 'rgba(20,40,90,0.28)')
 
     // root <g> for zoom/pan
     const root = svg.append('g').attr('class', 'rg-root')
@@ -128,12 +152,12 @@ export function RelationGraph({ nodes, edges, isMember, locale }: Props) {
       label: e.label,
     }))
 
-    // force simulation
+    // force simulation — distances/forces scaled to the card footprint
     const simulation = d3.forceSimulation<SimNode>(simNodes)
-      .force('link', d3.forceLink<SimNode, SimEdge>(simEdges).id(d => d.id).distance(130).strength(0.8))
-      .force('charge', d3.forceManyBody<SimNode>().strength(-380))
+      .force('link', d3.forceLink<SimNode, SimEdge>(simEdges).id(d => d.id).distance(230).strength(0.55))
+      .force('charge', d3.forceManyBody<SimNode>().strength(-1100))
       .force('center', d3.forceCenter<SimNode>(width / 2, height / 2))
-      .force('collide', d3.forceCollide<SimNode>(R + 10))
+      .force('collide', d3.forceCollide<SimNode>(Math.hypot(HW, HH) + 8))
 
     // ─── edges — invisible wide hit line + visible thin line ────────────────
     // Hit lines go in first (underneath nodes) so node clicks take priority
@@ -161,8 +185,8 @@ export function RelationGraph({ nodes, edges, isMember, locale }: Props) {
       .enter()
       .append('line')
       .attr('class', 'rg-edge')
-      .attr('stroke', d => d.kind === 'parent' ? 'rgba(190,205,255,0.55)' : 'rgba(190,205,255,0.28)')
-      .attr('stroke-width', d => d.kind === 'parent' ? 1.5 : 1)
+      .attr('stroke', d => d.kind === 'parent' ? EDGE_PARENT : EDGE_ASSOC)
+      .attr('stroke-width', d => d.kind === 'parent' ? 1.6 : 1.2)
       .attr('stroke-dasharray', d => d.kind === 'assoc' ? '5,4' : null)
       .attr('marker-end', d => d.kind === 'parent' ? 'url(#rg-arrow)' : null)
       .attr('pointer-events', 'none')
@@ -176,51 +200,82 @@ export function RelationGraph({ nodes, edges, isMember, locale }: Props) {
       .attr('class', 'rg-node')
       .style('cursor', 'pointer')
 
-    // Halo for transversal nodes
+    const trunc = (s: string, n: number) => s.length > n ? s.slice(0, n - 1) + '…' : s
+
+    // Transversal: gold dashed rounded-rect halo behind the card
     nodeSel.filter(d => d.is_transversal)
-      .append('circle')
-      .attr('r', R + 6)
+      .append('rect')
+      .attr('x', -HW - 4).attr('y', -HH - 4)
+      .attr('width', CARD_W + 8).attr('height', CARD_H + 8)
+      .attr('rx', 14)
       .attr('fill', 'none')
       .attr('stroke', '#e8b149')
       .attr('stroke-width', 1.5)
       .attr('stroke-dasharray', '3,3')
-      .attr('opacity', 0.55)
+      .attr('opacity', 0.7)
 
     // Selection ring (edit-mode first-pick indicator)
-    nodeSel.append('circle')
+    nodeSel.append('rect')
       .attr('class', 'rg-sel-ring')
-      .attr('r', R + 4)
+      .attr('x', -HW - 3).attr('y', -HH - 3)
+      .attr('width', CARD_W + 6).attr('height', CARD_H + 6)
+      .attr('rx', 13)
       .attr('fill', 'none')
       .attr('stroke', '#e8b149')
       .attr('stroke-width', 2.5)
       .attr('opacity', 0) // updated by visual effect
 
-    // Main fill circle
-    nodeSel.append('circle')
-      .attr('r', R)
-      .attr('fill', d => NODE_STATUS_COLOR[d.statut])
-      .attr('fill-opacity', 0.88)
-      .attr('stroke', d => LAB_STROKE[d.labo])
-      .attr('stroke-width', 2.5)
+    // Card body
+    nodeSel.append('rect')
+      .attr('x', -HW).attr('y', -HH)
+      .attr('width', CARD_W).attr('height', CARD_H)
+      .attr('rx', 11)
+      .attr('fill', '#fbf9f3')
+      .attr('stroke', 'rgba(20,40,90,0.14)')
+      .attr('stroke-width', 1)
+      .attr('filter', 'url(#rg-shadow)')
 
-    // Title label — truncated
+    // Lab accent stripe (left edge)
+    nodeSel.append('rect')
+      .attr('x', -HW + 5).attr('y', -HH + 9)
+      .attr('width', 4).attr('height', CARD_H - 18)
+      .attr('rx', 2)
+      .attr('fill', d => LAB_STROKE[d.labo])
+
+    // Status dot
+    nodeSel.append('circle')
+      .attr('cx', -HW + 22).attr('cy', -HH + 18)
+      .attr('r', 5)
+      .attr('fill', d => NODE_STATUS_COLOR[d.statut])
+
+    // Title (serif, dark) — truncated
     nodeSel.append('text')
-      .text(d => d.titre.length > 22 ? d.titre.slice(0, 20) + '…' : d.titre)
-      .attr('x', R + 5)
-      .attr('y', 4)
-      .attr('font-size', '10px')
+      .text(d => trunc(d.titre, 22))
+      .attr('x', -HW + 34).attr('y', -HH + 22)
+      .attr('font-size', '12px')
+      .attr('font-weight', 600)
+      .attr('font-family', '"Roboto Slab", Georgia, serif')
+      .attr('fill', '#15203f')
+      .attr('pointer-events', 'none')
+
+    // Kicker (mono, muted, uppercase) — truncated
+    nodeSel.append('text')
+      .text(d => trunc(d.kicker || '', 30).toUpperCase())
+      .attr('x', -HW + 16).attr('y', HH - 13)
+      .attr('font-size', '8px')
+      .attr('letter-spacing', '0.08em')
       .attr('font-family', '"IBM Plex Mono", monospace')
-      .attr('fill', 'rgba(220,230,255,0.82)')
+      .attr('fill', '#7e8aa8')
       .attr('pointer-events', 'none')
 
     // ─── simulation tick ──────────────────────────────────────────────────────
     function ticked() {
       const posLine = (sel: d3.Selection<SVGLineElement, SimEdge, SVGGElement, unknown>) => {
         sel
-          .attr('x1', d => (d.source as SimNode).x ?? 0)
-          .attr('y1', d => (d.source as SimNode).y ?? 0)
-          .attr('x2', d => (d.target as SimNode).x ?? 0)
-          .attr('y2', d => (d.target as SimNode).y ?? 0)
+          .attr('x1', d => { const s = d.source as SimNode, tg = d.target as SimNode; return rectBorderPoint(s.x ?? 0, s.y ?? 0, tg.x ?? 0, tg.y ?? 0).x })
+          .attr('y1', d => { const s = d.source as SimNode, tg = d.target as SimNode; return rectBorderPoint(s.x ?? 0, s.y ?? 0, tg.x ?? 0, tg.y ?? 0).y })
+          .attr('x2', d => { const s = d.source as SimNode, tg = d.target as SimNode; return rectBorderPoint(tg.x ?? 0, tg.y ?? 0, s.x ?? 0, s.y ?? 0).x })
+          .attr('y2', d => { const s = d.source as SimNode, tg = d.target as SimNode; return rectBorderPoint(tg.x ?? 0, tg.y ?? 0, s.x ?? 0, s.y ?? 0).y })
       }
       posLine(edgeHitSel)
       posLine(edgeSel)
@@ -361,16 +416,23 @@ export function RelationGraph({ nodes, edges, isMember, locale }: Props) {
   const isEmpty = filteredNodes.length === 0
 
   return (
-    <div className="absolute inset-0 bg-fame-navy flex flex-col overflow-hidden">
+    <div
+      className="absolute inset-0 flex flex-col overflow-hidden"
+      style={{
+        background: '#F9F9FA',
+        backgroundImage: 'radial-gradient(rgba(20,40,90,0.08) 1.3px, transparent 1.3px)',
+        backgroundSize: '22px 22px',
+      }}
+    >
 
       {/* ── filter + edit panel ── */}
       <div
-        className="absolute top-4 right-4 z-10 flex flex-col gap-2 rounded-lg p-3 border border-fame-blue-mid/40 min-w-[190px]"
-        style={{ background: 'rgba(24,36,76,0.82)', backdropFilter: 'blur(6px)' }}
+        className="absolute top-4 right-4 z-10 flex flex-col gap-2 rounded-lg p-3 border border-fame-ecru min-w-[190px]"
+        style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(6px)', boxShadow: '0 12px 30px -16px rgba(20,40,90,0.4)' }}
       >
         {/* Lab filter */}
         <div>
-          <div className="font-mono text-[10px] text-fame-text-dim uppercase tracking-wider mb-1">
+          <div className="font-mono text-[10px] text-fame-slate uppercase tracking-wider mb-1">
             {t('byLab')}
           </div>
           <div className="flex gap-1 flex-wrap">
@@ -381,7 +443,7 @@ export function RelationGraph({ nodes, edges, isMember, locale }: Props) {
                 className={`font-mono text-[10px] px-2 py-0.5 rounded border transition-colors ${
                   filterLabo === l
                     ? 'bg-fame-blue text-white border-fame-blue'
-                    : 'border-fame-blue-mid/50 text-fame-text-muted hover:border-fame-blue'
+                    : 'border-fame-ecru text-fame-text-body hover:border-fame-blue'
                 }`}
               >
                 {l === 'all' ? t('all') : l === 'paris' ? tNav('labParis') : tNav('labMontreal')}
@@ -392,7 +454,7 @@ export function RelationGraph({ nodes, edges, isMember, locale }: Props) {
 
         {/* Status filter */}
         <div>
-          <div className="font-mono text-[10px] text-fame-text-dim uppercase tracking-wider mb-1">
+          <div className="font-mono text-[10px] text-fame-slate uppercase tracking-wider mb-1">
             {t('byStatus')}
           </div>
           <div className="flex gap-1 flex-wrap">
@@ -403,7 +465,7 @@ export function RelationGraph({ nodes, edges, isMember, locale }: Props) {
                 className={`font-mono text-[10px] px-2 py-0.5 rounded border transition-colors ${
                   filterStatut === s
                     ? 'bg-fame-blue text-white border-fame-blue'
-                    : 'border-fame-blue-mid/50 text-fame-text-muted hover:border-fame-blue'
+                    : 'border-fame-ecru text-fame-text-body hover:border-fame-blue'
                 }`}
               >
                 {s === 'all' ? t('all') : tLab(`status.${s}`)}
@@ -420,7 +482,7 @@ export function RelationGraph({ nodes, edges, isMember, locale }: Props) {
             onChange={e => { setTreeOnly(e.target.checked); setFirstNode(null) }}
             className="accent-fame-blue"
           />
-          <span className="font-mono text-[10px] text-fame-text-muted">{t('treeOnly')}</span>
+          <span className="font-mono text-[10px] text-fame-text-body">{t('treeOnly')}</span>
         </label>
 
         {/* Edit mode toggle (member only) */}
@@ -430,7 +492,7 @@ export function RelationGraph({ nodes, edges, isMember, locale }: Props) {
             className={`flex items-center gap-1.5 px-2 py-1 rounded text-[10px] font-mono border transition-colors mt-1 ${
               editMode
                 ? 'bg-fame-blue text-white border-fame-blue'
-                : 'border-fame-blue-mid/50 text-fame-text-muted hover:border-fame-blue'
+                : 'border-fame-ecru text-fame-text-body hover:border-fame-blue'
             }`}
           >
             <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
@@ -454,7 +516,7 @@ export function RelationGraph({ nodes, edges, isMember, locale }: Props) {
       {isEmpty ? (
         /* ── empty / filtered-empty state ── */
         <div className="flex-1 flex items-center justify-center">
-          <p className="font-mono text-sm text-fame-text-muted">{t('empty')}</p>
+          <p className="font-mono text-sm text-fame-text-body">{t('empty')}</p>
         </div>
       ) : (
         <>
@@ -468,24 +530,24 @@ export function RelationGraph({ nodes, edges, isMember, locale }: Props) {
 
           {/* ── legend overlay ── */}
           <div
-            className="absolute bottom-5 left-5 flex flex-col gap-2 rounded-lg p-3 border border-fame-blue-mid/40"
-            style={{ background: 'rgba(24,36,76,0.75)', backdropFilter: 'blur(6px)' }}
+            className="absolute bottom-5 left-5 flex flex-col gap-2 rounded-lg p-3 border border-fame-ecru"
+            style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(6px)', boxShadow: '0 12px 30px -16px rgba(20,40,90,0.4)' }}
             aria-hidden="true"
           >
             {/* parent edge */}
             <div className="flex items-center gap-2">
               <svg width="36" height="12" aria-hidden="true">
-                <line x1="0" y1="6" x2="26" y2="6" stroke="rgba(190,205,255,0.55)" strokeWidth="1.5" />
-                <polyline points="20,2 26,6 20,10" fill="none" stroke="rgba(190,205,255,0.55)" strokeWidth="1.5" />
+                <line x1="0" y1="6" x2="26" y2="6" stroke="rgba(20,40,90,0.42)" strokeWidth="1.6" />
+                <polyline points="20,2 26,6 20,10" fill="none" stroke="rgba(20,40,90,0.42)" strokeWidth="1.6" />
               </svg>
-              <span className="font-mono text-xs text-fame-text-muted">{t('legendParent')}</span>
+              <span className="font-mono text-xs text-fame-text-body">{t('legendParent')}</span>
             </div>
             {/* assoc edge */}
             <div className="flex items-center gap-2">
               <svg width="36" height="12" aria-hidden="true">
-                <line x1="0" y1="6" x2="26" y2="6" stroke="rgba(190,205,255,0.28)" strokeWidth="1" strokeDasharray="4,3" />
+                <line x1="0" y1="6" x2="26" y2="6" stroke="rgba(20,40,90,0.28)" strokeWidth="1.2" strokeDasharray="4,3" />
               </svg>
-              <span className="font-mono text-xs text-fame-text-muted">{t('legendAssoc')}</span>
+              <span className="font-mono text-xs text-fame-text-body">{t('legendAssoc')}</span>
             </div>
           </div>
         </>
@@ -501,7 +563,7 @@ export function RelationGraph({ nodes, edges, isMember, locale }: Props) {
             className="rounded-xl p-6 border border-fame-blue-mid/50 flex flex-col gap-4 w-80"
             style={{ background: 'rgba(21,32,63,0.97)', backdropFilter: 'blur(8px)' }}
           >
-            <div className="font-mono text-[10px] text-fame-text-dim uppercase tracking-wider">
+            <div className="font-mono text-[10px] text-fame-slate uppercase tracking-wider">
               {t('editMode')}
             </div>
 
@@ -512,7 +574,7 @@ export function RelationGraph({ nodes, edges, isMember, locale }: Props) {
                 className={`flex-1 font-mono text-xs py-2 rounded border transition-colors ${
                   linkKind === 'parent'
                     ? 'bg-fame-blue text-white border-fame-blue'
-                    : 'border-fame-blue-mid/50 text-fame-text-muted hover:border-fame-blue'
+                    : 'border-fame-ecru text-fame-text-body hover:border-fame-blue'
                 }`}
               >
                 {t('linkMotherDaughter')}
@@ -522,7 +584,7 @@ export function RelationGraph({ nodes, edges, isMember, locale }: Props) {
                 className={`flex-1 font-mono text-xs py-2 rounded border transition-colors ${
                   linkKind === 'assoc'
                     ? 'bg-fame-blue text-white border-fame-blue'
-                    : 'border-fame-blue-mid/50 text-fame-text-muted hover:border-fame-blue'
+                    : 'border-fame-ecru text-fame-text-body hover:border-fame-blue'
                 }`}
               >
                 {t('linkAssoc')}
