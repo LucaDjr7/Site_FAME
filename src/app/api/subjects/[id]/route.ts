@@ -4,9 +4,19 @@ import { requireMember, getSession, authErrorResponse } from '@/lib/auth'
 import { scheduleReindex, scheduleDeleteSubjectFiles } from '@/lib/rag/schedule'
 import { buildSubjectI18n } from '@/lib/subjects/translate'
 import { isOverBudget } from '@/lib/rag/usage'
+import { isInheritableField } from '@/lib/subjects/inheritance'
 import type { SubjectI18nFields } from '@/types'
 
 type Params = { params: Promise<{ id: string }> }
+
+export function sanitizeInherits(raw: unknown, validMotherIds: Set<string>): Record<string, string> {
+  const out: Record<string, string> = {}
+  if (!raw || typeof raw !== 'object') return out
+  for (const [k, v] of Object.entries(raw as Record<string, unknown>)) {
+    if (isInheritableField(k) && typeof v === 'string' && validMotherIds.has(v)) out[k] = v
+  }
+  return out
+}
 
 export async function GET(_req: NextRequest, { params }: Params) {
   const { id } = await params
@@ -47,6 +57,12 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     })
   }
   const service = await createServiceClient()
+  if ('inherits' in body) {
+    // mères réelles = sources des relations 'parent' dont la fille est `id`.
+    const { data: parents } = await service.from('subject_relations').select('source_id').eq('kind', 'parent').eq('target_id', id)
+    const motherIds = new Set((parents ?? []).map((p: { source_id: string }) => p.source_id))
+    updates.inherits = sanitizeInherits(body.inherits, motherIds)
+  }
   const { data, error } = await service.from('subjects').update(updates).eq('id', id).select().single()
   if (error?.code === 'PGRST116') return NextResponse.json({ error: 'Not found' }, { status: 404 })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
