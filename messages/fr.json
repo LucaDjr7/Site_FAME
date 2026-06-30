@@ -173,7 +173,26 @@
     "deleteFile": "Supprimer le fichier",
     "confirmDeleteFile": "Supprimer ce fichier ? Action irréversible.",
     "relations": {
-      "inheritedFrom": "hérité de {title}"
+      "inheritedFrom": "hérité de {title}",
+      "title": "Relations",
+      "mothers": "Mères",
+      "daughters": "Filles",
+      "associations": "Associations",
+      "none": "aucune",
+      "inheritsFields": "hérite : {fields}",
+      "addLink": "Ajouter un lien",
+      "linkKind": {
+        "motherOf": "est mère de",
+        "derivesFrom": "découle de",
+        "assoc": "lié à"
+      },
+      "labelOptional": "libellé (optionnel)",
+      "ownValue": "valeur propre",
+      "inheritFrom": "hériter de {title}",
+      "pickSubject": "choisir un sujet…",
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "remove": "Retirer"
     }
   },
   "tasks": {

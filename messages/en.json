@@ -173,7 +173,26 @@
     "deleteFile": "Delete file",
     "confirmDeleteFile": "Delete this file? This cannot be undone.",
     "relations": {
-      "inheritedFrom": "inherited from {title}"
+      "inheritedFrom": "inherited from {title}",
+      "title": "Relations",
+      "mothers": "Mothers",
+      "daughters": "Daughters",
+      "associations": "Links",
+      "none": "none",
+      "inheritsFields": "inherits: {fields}",
+      "addLink": "Add link",
+      "linkKind": {
+        "motherOf": "is mother of",
+        "derivesFrom": "derives from",
+        "assoc": "linked to"
+      },
+      "labelOptional": "label (optional)",
+      "ownValue": "own value",
+      "inheritFrom": "inherit from {title}",
+      "pickSubject": "choose a subject…",
+      "save": "Save",
+      "cancel": "Cancel",
+      "remove": "Remove"
     }
   },
   "tasks": {
