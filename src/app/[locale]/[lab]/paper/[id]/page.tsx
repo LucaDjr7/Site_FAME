@@ -37,8 +37,12 @@ export default async function PaperPage({ params }: Props) {
   let navQuery = service.from('subjects').select('id,titre,statut,ordre,i18n').eq('labo', lab)
   if (!isMember) navQuery = navQuery.eq('confidentiel', false)
 
+  // All subjects for the relations panel link picker (members see all; visitors see public only).
+  let allSubjectsQuery = service.from('subjects').select('id,titre,i18n')
+  if (!isMember) allSubjectsQuery = allSubjectsQuery.eq('confidentiel', false)
+
   const [{ data: subject }, { data: navRows }, { data: members }, { data: tasksRaw },
-    { data: comments }, { data: links }, { data: files }, { data: relRows }] = await Promise.all([
+    { data: comments }, { data: links }, { data: files }, { data: relRows }, { data: allSubjectsRows }] = await Promise.all([
     service.from('subjects').select('*').eq('id', id).single(),
     navQuery.order('ordre', { ascending: true }),
     service.from('members').select('id,prenom,nom,photo_url').eq('labo', lab),
@@ -49,6 +53,7 @@ export default async function PaperPage({ params }: Props) {
     service.from('dropbox_links').select('*').eq('subject_id', id),
     service.from('subject_files').select('*').eq('subject_id', id).order('created_at', { ascending: true }),
     service.from('subject_relations').select('*').or(`source_id.eq.${id},target_id.eq.${id}`),
+    allSubjectsQuery.order('ordre', { ascending: true }),
   ])
 
   // Charger les sujets liés (avec gate confidentiel visiteur).
@@ -84,6 +89,7 @@ export default async function PaperPage({ params }: Props) {
       isMember={isMember}
       relations={(relRows ?? []) as SubjectRelation[]}
       relatedSubjects={related}
+      allSubjects={(allSubjectsRows ?? []) as Pick<Subject, 'id' | 'titre' | 'i18n'>[]}
     />
   )
 }

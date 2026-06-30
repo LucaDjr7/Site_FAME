@@ -1,9 +1,11 @@
 'use client'
 import { useState, useCallback, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { PaperSheet } from './PaperSheet'
 import { TasksPanel } from './TasksPanel'
+import { RelationsPanel } from './RelationsPanel'
 import { FilesPanel } from './FilesPanel'
 import { CommentsPanel } from './CommentsPanel'
 import { PaperNav, PAPER_NAV_HEIGHT } from './PaperNav'
@@ -23,6 +25,7 @@ type Props = {
   isMember: boolean
   relations: SubjectRelation[]
   relatedSubjects: Subject[]
+  allSubjects: Pick<Subject, 'id' | 'titre' | 'i18n'>[]
 }
 
 const GHOSTS = [
@@ -36,12 +39,13 @@ const GHOSTS = [
 
 export function PaperView({
   locale, lab, subject, navSubjects, members, tasks: initialTasks, initialComments, links, files, isMember,
-  relatedSubjects,
+  relations, relatedSubjects, allSubjects,
 }: Props) {
   const t = useTranslations('paper')
+  const router = useRouter()
   const [tasks, setTasks] = useState<TaskWithRelations[]>(initialTasks)
-  const [panels, setPanels] = useState({ tasks: true, files: true, comments: true })
-  const toggle = (k: 'tasks' | 'files' | 'comments') => setPanels(p => ({ ...p, [k]: !p[k] }))
+  const [panels, setPanels] = useState({ tasks: true, files: true, comments: true, relations: true })
+  const toggle = (k: 'tasks' | 'files' | 'comments' | 'relations') => setPanels(p => ({ ...p, [k]: !p[k] }))
 
   // The bottom thumbnail nav would otherwise be covered by the assistant bubble —
   // lift it to just above the nav (derived from PAPER_NAV_HEIGHT + a small gap).
@@ -156,12 +160,31 @@ export function PaperView({
         {/* CENTRAL PAPER */}
         <PaperSheet subject={subject} members={members} labName={labName} locale={locale} lab={lab} byId={byId} />
 
-        {/* LEFT: linked tasks */}
-        <TasksPanel
-          tasks={tasks} isMember={isMember}
-          open={panels.tasks} onToggleOpen={() => toggle('tasks')}
-          doneCount={tasksDone} total={tasksTotal} onToggleTask={onToggleTask}
-        />
+        {/* LEFT COLUMN: tasks + relations (stacked, scrollable) */}
+        <div className="fame-scroll" style={{
+          position: 'absolute', left: 14, top: 118, bottom: 124, width: 300,
+          display: 'flex', flexDirection: 'column', gap: 12, pointerEvents: 'auto',
+          overflowY: 'auto', overflowX: 'hidden',
+        }}>
+          <TasksPanel
+            tasks={tasks} isMember={isMember}
+            open={panels.tasks} onToggleOpen={() => toggle('tasks')}
+            doneCount={tasksDone} total={tasksTotal} onToggleTask={onToggleTask}
+          />
+          <RelationsPanel
+            subjectId={subject.id}
+            relations={relations}
+            relatedById={byId}
+            subjectInherits={subject.inherits}
+            isMember={isMember}
+            open={panels.relations}
+            onToggleOpen={() => toggle('relations')}
+            locale={locale}
+            lab={lab}
+            allSubjects={allSubjects}
+            onChanged={() => router.refresh()}
+          />
+        </div>
 
         {/* RIGHT COLUMN: files + comments (stacked, scrollable) */}
         <div className="fame-scroll" style={{
