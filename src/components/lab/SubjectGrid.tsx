@@ -256,7 +256,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
       <style>{`
         .poster { transition: transform .18s cubic-bezier(.2,.7,.2,1); }
         .poster:hover { z-index: 50; }
-        .poster:hover .poster-inner { transform: scale(1.4); box-shadow: 0 34px 70px -22px rgba(0,5,30,0.85); }
+        .poster:hover .poster-inner { transform: scale(1.2); box-shadow: 0 26px 56px -20px rgba(0,5,30,0.8); }
         .editing .poster:hover .poster-inner { transform: none; }
         .editing .poster { cursor: default; }
         .poster.dragging { z-index: 200; transition: none; }
@@ -385,10 +385,10 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
           minHeight: 0,
         }}>
           {/* Grid area — scrollbar INTERNE à la grille (overflowY auto).
-              Padding large sur tous les côtés (haut 80 / côtés 60, + 80 en bas
-              sur la grille interne) pour que le zoom au survol — qui déborde
-              ~77px par côté — reste dans le scrollport au lieu d'être rogné. */}
-          <div style={{ flex: 1, overflowY: 'auto', padding: '80px 60px 0' }}>
+              Padding ajusté au zoom 1.2 (déborde ~31px/côté, ~43px en haut) :
+              côtés resserrés à 36px pour laisser plus de place aux fiches en
+              responsive, sans rogner le zoom des colonnes de bord. */}
+          <div style={{ flex: 1, overflowY: 'auto', padding: '44px 36px 0' }}>
             {displaySubjects.length === 0 && (
               <div className="font-mono text-fame-text-muted" style={{ fontSize: 13, textAlign: 'center', paddingTop: 60 }}>
                 {t('empty')}
@@ -405,8 +405,8 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
                   // sur petit écran, elles passent à la ligne.
                   gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
                   gap: '30px 26px',
-                  // marge basse : barre du bas collée (~40px) + air pour le zoom
-                  paddingBottom: 80,
+                  // marge basse : air pour le zoom (~43px) avant la barre du bas
+                  paddingBottom: 48,
                 }}
               >
                 {displaySubjects.map(s => (
