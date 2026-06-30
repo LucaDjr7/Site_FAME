@@ -1,8 +1,9 @@
 'use client'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import type { Subject, TaskWithRelations } from '@/types'
 import { TaskCard } from './TaskCard'
 import { SUBJECT_STATUS_COLOR } from './kanban-shared'
+import { localizedSubject, toLocale2 } from '@/lib/subjects/localized'
 
 type Props = {
   subject: Subject
@@ -20,6 +21,7 @@ export function KanbanColumn({
   subject, tasks, isMember, currentMemberId, editMode, onOpenTask, onClaim, onDeleteTask, onAddTask,
 }: Props) {
   const t = useTranslations('tasks')
+  const locale = useLocale()
 
   return (
     <div style={{ flexShrink: 0, width: 300, height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -30,7 +32,7 @@ export function KanbanColumn({
            fontSize: 13, fontWeight: 600,
           margin: 0, flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
         }}>
-          {subject.titre}
+          {localizedSubject(subject, toLocale2(locale)).titre}
         </h3>
         <span className="font-mono" style={{
            fontSize: 11, color: '#5c678a', flexShrink: 0,

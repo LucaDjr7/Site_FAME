@@ -1,7 +1,9 @@
 'use client'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { Avatar } from '@/components/ui/Avatar'
 import { DiffDots, DIFF_LEVEL, TASK_STATUS_COLOR, STATUS_KEY, ProgressBar, taskProgress } from './kanban-shared'
+import { localizedTask } from '@/lib/tasks/localized'
+import { toLocale2 } from '@/lib/subjects/localized'
 import type { TaskWithRelations } from '@/types'
 
 type Props = {
@@ -16,6 +18,7 @@ type Props = {
 
 export function TaskCard({ task, isMember, currentMemberId, editMode, onOpen, onClaim, onDelete }: Props) {
   const t = useTranslations('tasks')
+  const locale = useLocale()
   const pct = taskProgress(task)
   const claimedByMe = !!currentMemberId && task.assignees.some(a => a.id === currentMemberId)
 
@@ -54,7 +57,7 @@ export function TaskCard({ task, isMember, currentMemberId, editMode, onOpen, on
 
       {/* title */}
       <p className="font-serif" style={{  fontSize: 13, fontWeight: 500, color: '#18244c', margin: 0, lineHeight: 1.32 }}>
-        {task.titre}
+        {localizedTask(task, toLocale2(locale)).titre}
       </p>
 
       {/* progress */}

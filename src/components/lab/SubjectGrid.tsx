@@ -10,7 +10,7 @@ import { VitrineEditor } from './VitrineEditor'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { useToast } from '@/components/ui/Toast'
 import { dateBucket } from '@/lib/utils'
-import { subjectSearchText, toLocale2 } from '@/lib/subjects/localized'
+import { subjectSearchText, localizedSubject, toLocale2 } from '@/lib/subjects/localized'
 
 function passesFilters(
   s: Subject,
@@ -247,7 +247,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
   }, [])
 
   // Subject to delete title for confirm dialog
-  const deleteTitle = pendingSubject?.titre ?? ''
+  const deleteTitle = pendingSubject ? localizedSubject(pendingSubject, toLocale2(locale)).titre : ''
 
   return (
     <>

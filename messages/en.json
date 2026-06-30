@@ -379,6 +379,8 @@
     "inviteTitle": "Invite a member",
     "fFirstName": "First name",
     "fLastName": "Last name",
+    "fFirstNamePlaceholder": "John",
+    "fLastNamePlaceholder": "Doe",
     "fEmail": "Email",
     "fRole": "Role",
     "send": "Send invitation →",

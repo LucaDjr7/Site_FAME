@@ -6,7 +6,7 @@ import { Avatar } from '@/components/ui/Avatar'
 import { AssistButton } from '@/components/ui/AssistButton'
 import { FORM_INPUT_STYLE, FORM_BTN_CANCEL_STYLE, FORM_BTN_SUBMIT_STYLE } from '@/components/ui/form-styles'
 import { buildTaskFieldPrompt, type TaskAssistField } from '@/lib/tasks/field-prompts'
-import { localizedTask } from '@/lib/tasks/localized'
+import { localizedTask, localizedSubtaskLabel } from '@/lib/tasks/localized'
 import { DiffDots, DIFF_LEVEL, TASK_STATUS_COLOR, STATUS_KEY, ProgressBar, taskProgress } from './kanban-shared'
 import type { TaskWithRelations, TaskStatus, Difficulty } from '@/types'
 
@@ -204,7 +204,7 @@ export function TaskModal({ task, subjectTitle, isMember, currentMemberId, onClo
                   className="accent-fame-teal"
                 />
                 <span className={s.done ? 'text-fame-text-muted' : 'text-fame-text-body'} style={{ fontSize: 13, textDecoration: s.done ? 'line-through' : 'none' }}>
-                  {s.label}
+                  {localizedSubtaskLabel(s, locale)}
                 </span>
               </label>
             ))}

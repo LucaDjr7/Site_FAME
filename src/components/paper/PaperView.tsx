@@ -14,7 +14,7 @@ type Props = {
   locale: string
   lab: Lab
   subject: Subject
-  navSubjects: Pick<Subject, 'id' | 'titre' | 'statut' | 'ordre'>[]
+  navSubjects: Pick<Subject, 'id' | 'titre' | 'statut' | 'ordre' | 'i18n'>[]
   members: MemberRef[]
   tasks: TaskWithRelations[]
   initialComments: Comment[]

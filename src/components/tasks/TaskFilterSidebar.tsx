@@ -1,19 +1,28 @@
 'use client'
 import { useEffect } from 'react'
-import { useTranslations } from 'next-intl'
-import type { Subject, TaskWithRelations, MemberRef, TaskStatus, Difficulty, DateBucket } from '@/types'
+import { useTranslations, useLocale } from 'next-intl'
+import type { Subject, TaskWithRelations, MemberRef, TaskStatus, Difficulty, DateBucket, Locale2 } from '@/types'
 import { Avatar } from '@/components/ui/Avatar'
 import { DiffDots, DIFF_LEVEL, TASK_STATUS_COLOR, STATUS_KEY, SUBJECT_STATUS_COLOR } from './kanban-shared'
+import { localizedSubject, toLocale2 } from '@/lib/subjects/localized'
+import { localizedTask } from '@/lib/tasks/localized'
 import { dateBucket } from '@/lib/utils'
 
 type Dim = 'subject' | 'status' | 'diff' | 'person' | 'date'
 
+function taskMatches(t: TaskWithRelations, q: string, loc: Locale2): boolean {
+  if (!q) return true
+  const needle = q.toLowerCase()
+  return t.titre.toLowerCase().includes(needle)
+    || localizedTask(t, loc).titre.toLowerCase().includes(needle)
+}
+
 function passes(
-  t: TaskWithRelations, q: string,
+  t: TaskWithRelations, q: string, loc: Locale2,
   fSubject: Set<string>, fStatus: Set<TaskStatus>, fDiff: Set<Difficulty>, fPerson: Set<string>, fDate: Set<DateBucket>,
   ignore: Dim,
 ): boolean {
-  if (q && !t.titre.toLowerCase().includes(q.toLowerCase())) return false
+  if (!taskMatches(t, q, loc)) return false
   if (ignore !== 'subject' && fSubject.size > 0 && !fSubject.has(t.sujet_id)) return false
   if (ignore !== 'status' && fStatus.size > 0 && !fStatus.has(t.statut)) return false
   if (ignore !== 'diff' && fDiff.size > 0 && !fDiff.has(t.difficulte)) return false
@@ -23,12 +32,12 @@ function passes(
 }
 
 function countFor(
-  tasks: TaskWithRelations[], q: string,
+  tasks: TaskWithRelations[], q: string, loc: Locale2,
   fSubject: Set<string>, fStatus: Set<TaskStatus>, fDiff: Set<Difficulty>, fPerson: Set<string>, fDate: Set<DateBucket>,
   dim: Dim, value: string,
 ): number {
   return tasks.filter(t => {
-    if (!passes(t, q, fSubject, fStatus, fDiff, fPerson, fDate, dim)) return false
+    if (!passes(t, q, loc, fSubject, fStatus, fDiff, fPerson, fDate, dim)) return false
     if (dim === 'subject') return t.sujet_id === value
     if (dim === 'status') return t.statut === value
     if (dim === 'diff') return t.difficulte === value
@@ -67,6 +76,7 @@ export function TaskFilterSidebar({
   open, onToggle, onToggleSubject, onToggleStatus, onToggleDiff, onTogglePerson, onToggleDate, onReset,
 }: Props) {
   const t = useTranslations('tasks')
+  const loc = toLocale2(useLocale())
 
   // Publish the right rail's current width so the global assistant bubble can
   // sit just left of it (and glide when the filter expands/collapses).
@@ -146,12 +156,12 @@ export function TaskFilterSidebar({
       <div style={{ padding: '0 14px 14px' }}>
         <div className="font-mono text-fame-slate" style={sectionLabel}>{t('section.subject')}</div>
         {subjects.map(s => {
-          const count = countFor(tasks, q, fSubject, fStatus, fDiff, fPerson, fDate, 'subject', s.id)
+          const count = countFor(tasks, q, loc, fSubject, fStatus, fDiff, fPerson, fDate, 'subject', s.id)
           const active = fSubject.has(s.id)
           return (
             <button key={s.id} onClick={() => onToggleSubject(s.id)} aria-pressed={active} className={`font-mono ${active ? 'text-fame-blue border-fame-blue' : 'text-fame-text-muted'}`} style={{ ...btnBase, ...(active ? ACTIVE : INACTIVE) }}>
               <span style={{ width: 7, height: 7, borderRadius: '50%', background: SUBJECT_STATUS_COLOR[s.statut], flexShrink: 0 }} />
-              <span style={{ flex: 1, fontSize: 10, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.titre}</span>
+              <span style={{ flex: 1, fontSize: 10, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{localizedSubject(s, loc).titre}</span>
               <span style={{ fontSize: 9, opacity: 0.65 }}>{count}</span>
             </button>
           )
@@ -162,7 +172,7 @@ export function TaskFilterSidebar({
       <div style={{ padding: '0 14px 14px' }}>
         <div className="font-mono text-fame-slate" style={sectionLabel}>{t('section.status')}</div>
         {statuses.map(s => {
-          const count = countFor(tasks, q, fSubject, fStatus, fDiff, fPerson, fDate, 'status', s)
+          const count = countFor(tasks, q, loc, fSubject, fStatus, fDiff, fPerson, fDate, 'status', s)
           const active = fStatus.has(s)
           return (
             <button key={s} onClick={() => onToggleStatus(s)} aria-pressed={active} className={`font-mono ${active ? 'text-fame-blue border-fame-blue' : 'text-fame-text-muted'}`} style={{ ...btnBase, ...(active ? ACTIVE : INACTIVE) }}>
@@ -178,7 +188,7 @@ export function TaskFilterSidebar({
       <div style={{ padding: '0 14px 14px' }}>
         <div className="font-mono text-fame-slate" style={sectionLabel}>{t('section.difficulty')}</div>
         {diffs.map(({ key }) => {
-          const count = countFor(tasks, q, fSubject, fStatus, fDiff, fPerson, fDate, 'diff', key)
+          const count = countFor(tasks, q, loc, fSubject, fStatus, fDiff, fPerson, fDate, 'diff', key)
           const active = fDiff.has(key)
           return (
             <button key={key} onClick={() => onToggleDiff(key)} aria-pressed={active} className={`font-mono ${active ? 'text-fame-blue border-fame-blue' : 'text-fame-text-muted'}`} style={{ ...btnBase, ...(active ? ACTIVE : INACTIVE) }}>
@@ -195,7 +205,7 @@ export function TaskFilterSidebar({
         <div style={{ padding: '0 14px 14px' }}>
           <div className="font-mono text-fame-slate" style={sectionLabel}>{t('section.people')}</div>
           {people.map(m => {
-            const count = countFor(tasks, q, fSubject, fStatus, fDiff, fPerson, fDate, 'person', m.id)
+            const count = countFor(tasks, q, loc, fSubject, fStatus, fDiff, fPerson, fDate, 'person', m.id)
             const active = fPerson.has(m.id)
             const name = `${m.prenom} ${m.nom}`
             return (
@@ -213,7 +223,7 @@ export function TaskFilterSidebar({
       <div style={{ padding: '0 14px 14px' }}>
         <div className="font-mono text-fame-slate" style={sectionLabel}>{t('section.date')}</div>
         {dates.map(d => {
-          const count = countFor(tasks, q, fSubject, fStatus, fDiff, fPerson, fDate, 'date', d)
+          const count = countFor(tasks, q, loc, fSubject, fStatus, fDiff, fPerson, fDate, 'date', d)
           const active = fDate.has(d)
           return (
             <button key={d} onClick={() => onToggleDate(d)} aria-pressed={active} className={`font-mono ${active ? 'text-fame-blue border-fame-blue' : 'text-fame-text-muted'}`} style={{ ...btnBase, ...(active ? ACTIVE : INACTIVE) }}>

@@ -180,7 +180,7 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
                 value={prenom}
                 onChange={e => setPrenom(e.target.value)}
                 style={inputStyle}
-                placeholder="Éric"
+                placeholder={t('fFirstNamePlaceholder')}
                 required
               />
             </div>
@@ -191,7 +191,7 @@ export function InviteModal({ open, lab, onClose, onInvited }: Props) {
                 value={nom}
                 onChange={e => setNom(e.target.value)}
                 style={inputStyle}
-                placeholder="Dupont"
+                placeholder={t('fLastNamePlaceholder')}
                 required
               />
             </div>

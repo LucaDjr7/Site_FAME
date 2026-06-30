@@ -5,6 +5,7 @@ import type { Subject, SubjectStatus, Difficulty, MemberRef, DateBucket } from '
 import { Avatar } from '@/components/ui/Avatar'
 import { DiffDots } from '@/components/ui/DiffDots'
 import { dateBucket } from '@/lib/utils'
+import { subjectSearchText } from '@/lib/subjects/localized'
 
 // Count subjects matching all filters except one dimension
 function countExcluding(
@@ -18,7 +19,7 @@ function countExcluding(
   value: string,
 ): number {
   return subjects.filter(s => {
-    if (q && !s.titre.toLowerCase().includes(q.toLowerCase())) return false
+    if (q && !subjectSearchText(s).includes(q.toLowerCase())) return false
     if (ignoreDim !== 'status' && fStatus.size > 0 && !fStatus.has(s.statut)) return false
     if (ignoreDim !== 'diff' && fDiff.size > 0 && !fDiff.has(s.difficulte)) return false
     if (ignoreDim !== 'person' && fPerson.size > 0 && !s.auteurs.some(id => fPerson.has(id))) return false

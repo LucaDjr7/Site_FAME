@@ -12,6 +12,8 @@ import { useToast } from '@/components/ui/Toast'
 import { flattenTasks } from './kanban-shared'
 import { dateBucket } from '@/lib/utils'
 import { apiFetch } from '@/lib/api-fetch'
+import { localizedSubject, toLocale2 } from '@/lib/subjects/localized'
+import { localizedTask } from '@/lib/tasks/localized'
 
 type Props = {
   lab: Lab
@@ -25,6 +27,7 @@ type Props = {
 
 export function KanbanBoard({ lab, locale, subjects, initialTasks, members, isMember, currentMemberId }: Props) {
   const t = useTranslations('tasks')
+  const loc = toLocale2(locale)
   const { addToast } = useToast()
 
   // This page has a bottom toolbar above the footer; lift the global assistant
@@ -114,7 +117,10 @@ export function KanbanBoard({ lab, locale, subjects, initialTasks, members, isMe
   }
 
   const filtered = useMemo(() => tasks.filter(tk => {
-    if (q && !tk.titre.toLowerCase().includes(q.toLowerCase())) return false
+    if (q) {
+      const needle = q.toLowerCase()
+      if (!tk.titre.toLowerCase().includes(needle) && !localizedTask(tk, loc).titre.toLowerCase().includes(needle)) return false
+    }
     if (hideDone && tk.statut === 'done') return false
     if (fSubject.size > 0 && !fSubject.has(tk.sujet_id)) return false
     if (fStatus.size > 0 && !fStatus.has(tk.statut)) return false
@@ -122,13 +128,14 @@ export function KanbanBoard({ lab, locale, subjects, initialTasks, members, isMe
     if (fPerson.size > 0 && !tk.assignees.some(a => fPerson.has(a.id))) return false
     if (fDate.size > 0 && !fDate.has(dateBucket(tk.date_creation ?? ''))) return false
     return true
-  }), [tasks, q, hideDone, fSubject, fStatus, fDiff, fPerson, fDate])
+  }), [tasks, q, hideDone, fSubject, fStatus, fDiff, fPerson, fDate, loc])
 
   const visibleSubjects = subjects.filter(s => fSubject.size === 0 || fSubject.has(s.id))
   const totalCount = filtered.length
   const openCount = filtered.filter(tk => tk.assignees.length === 0).length
   const selectedTask = tasks.find(tk => tk.id === selectedTaskId) ?? null
-  const selectedSubjectTitle = selectedTask ? (subjects.find(s => s.id === selectedTask.sujet_id)?.titre ?? '') : ''
+  const selectedSubject = selectedTask ? subjects.find(s => s.id === selectedTask.sujet_id) : undefined
+  const selectedSubjectTitle = selectedSubject ? localizedSubject(selectedSubject, loc).titre : ''
 
   return (
     <>

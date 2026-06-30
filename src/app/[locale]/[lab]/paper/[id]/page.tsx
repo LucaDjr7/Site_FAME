@@ -7,6 +7,7 @@ import { PaperView } from '@/components/paper/PaperView'
 import { flattenTasks } from '@/components/tasks/kanban-shared'
 import type { Lab, Subject, MemberRef, Comment, DropboxLink, SubjectFile } from '@/types'
 import { VALID_LABS, LAB_LABELS } from '@/lib/constants'
+import { toLocale2 } from '@/lib/subjects/localized'
 
 type Props = { params: Promise<{ locale: string; lab: string; id: string }> }
 
@@ -16,10 +17,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const labLabel = LAB_LABELS[lab as Lab] ?? lab
   const t = await getTranslations({ locale, namespace: 'meta' })
   const service = await createServiceClient()
-  const { data: subject } = await service.from('subjects').select('titre,confidentiel').eq('id', id).single()
+  const { data: subject } = await service.from('subjects').select('titre,confidentiel,i18n').eq('id', id).single()
   // Ne pas divulguer le titre d'un sujet confidentiel à un non-membre via les metadata.
   const isMember = !!(await getSession())?.member
-  const title = subject && !(subject.confidentiel && !isMember) ? (subject.titre ?? id) : labLabel
+  const localizedTitre = (subject?.i18n as Subject['i18n'] | undefined)?.[toLocale2(locale)]?.titre ?? subject?.titre
+  const title = subject && !(subject.confidentiel && !isMember) ? (localizedTitre ?? id) : labLabel
   return { title: t('paperTitle', { title, lab: labLabel }) }
 }
 
@@ -32,7 +34,7 @@ export default async function PaperPage({ params }: Props) {
   const service = await createServiceClient()
 
   // Nav (prev/next) : masquer les sujets confidentiels au visiteur.
-  let navQuery = service.from('subjects').select('id,titre,statut,ordre').eq('labo', lab)
+  let navQuery = service.from('subjects').select('id,titre,statut,ordre,i18n').eq('labo', lab)
   if (!isMember) navQuery = navQuery.eq('confidentiel', false)
 
   const [{ data: subject }, { data: navRows }, { data: members }, { data: tasksRaw },
@@ -61,7 +63,7 @@ export default async function PaperPage({ params }: Props) {
       locale={locale}
       lab={lab as Lab}
       subject={subject as Subject}
-      navSubjects={(navRows ?? []) as Pick<Subject, 'id' | 'titre' | 'statut' | 'ordre'>[]}
+      navSubjects={(navRows ?? []) as Pick<Subject, 'id' | 'titre' | 'statut' | 'ordre' | 'i18n'>[]}
       members={(members ?? []) as MemberRef[]}
       tasks={tasks}
       initialComments={(comments ?? []) as Comment[]}

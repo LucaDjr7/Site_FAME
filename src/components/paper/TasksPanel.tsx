@@ -1,6 +1,8 @@
 'use client'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { Avatar } from '@/components/ui/Avatar'
+import { localizedTask } from '@/lib/tasks/localized'
+import { toLocale2 } from '@/lib/subjects/localized'
 import type { TaskWithRelations, TaskStatus } from '@/types'
 
 const STATUS_KEY: Record<TaskStatus, 'todo' | 'inProgress' | 'done'> = {
@@ -20,6 +22,7 @@ type Props = {
 export function TasksPanel({ tasks, isMember, open, onToggleOpen, doneCount, total, onToggleTask }: Props) {
   const t = useTranslations('paper')
   const tt = useTranslations('tasks')
+  const loc = toLocale2(useLocale())
 
   return (
     <section style={{
@@ -60,7 +63,7 @@ export function TasksPanel({ tasks, isMember, open, onToggleOpen, doneCount, tot
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>{done ? '✓' : ''}</span>
                 <span style={{ flex: 1, minWidth: 0 }}>
-                  <span style={{ display: 'block', fontSize: 12.5, lineHeight: 1.35, color: done ? 'rgba(239,243,255,0.65)' : '#dfe7fb', textDecoration: done ? 'line-through' : 'none' }}>{task.titre}</span>
+                  <span style={{ display: 'block', fontSize: 12.5, lineHeight: 1.35, color: done ? 'rgba(239,243,255,0.65)' : '#dfe7fb', textDecoration: done ? 'line-through' : 'none' }}>{localizedTask(task, loc).titre}</span>
                   <span style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 5 }}>
                     {assignee && <Avatar name={`${assignee.prenom} ${assignee.nom}`} photoUrl={assignee.photo_url} size={16} />}
                     <span className="font-mono text-fame-text-muted" style={{  fontSize: 9 }}>{tt(`status.${STATUS_KEY[task.statut]}`)}</span>

@@ -1,10 +1,12 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { useToast } from '@/components/ui/Toast'
 import type { Lab, DropboxNode, DropboxLink, Subject, Task } from '@/types'
 import { LAB_LABELS } from '@/lib/constants'
 import { apiFetch } from '@/lib/api-fetch'
+import { localizedSubject, toLocale2 } from '@/lib/subjects/localized'
+import { localizedTask } from '@/lib/tasks/localized'
 
 // Intentional variance: 3-gradient composite with specific position offsets (at 24%/80%/90%).
 const PAGE_BG =
@@ -70,6 +72,7 @@ function flattenTree(
 
 export function DataExplorer({ lab }: Props) {
   const t = useTranslations('data')
+  const loc = toLocale2(useLocale())
   const { addToast } = useToast()
 
   const [rootNodes, setRootNodes] = useState<DropboxNode[]>([])
@@ -196,11 +199,11 @@ export function DataExplorer({ lab }: Props) {
   function titleForLink(link: DropboxLink): string {
     if (link.subject_id) {
       const subj = subjects.find(s => s.id === link.subject_id)
-      return subj?.titre ?? link.subject_id
+      return subj ? localizedSubject(subj, loc).titre : link.subject_id
     }
     if (link.task_id) {
       const task = tasks.find(t => t.id === link.task_id)
-      return task?.titre ?? link.task_id
+      return task ? localizedTask(task, loc).titre : link.task_id
     }
     return ''
   }
@@ -748,7 +751,7 @@ export function DataExplorer({ lab }: Props) {
                     const subj = isSubject ? subjects.find(s => s.id === link.subject_id) : null
                     const task = !isSubject ? tasks.find(t2 => t2.id === link.task_id) : null
                     const dotColor = dotColorForLink(link)
-                    const itemTitle = subj?.titre ?? task?.titre ?? ''
+                    const itemTitle = subj ? localizedSubject(subj, loc).titre : task ? localizedTask(task, loc).titre : ''
 
                     return (
                       <div
@@ -858,7 +861,7 @@ export function DataExplorer({ lab }: Props) {
                 >
                   <option value="">{t('chooseSubject')}</option>
                   {unlinkedSubjects.map(s => (
-                    <option key={s.id} value={s.id}>{s.titre}</option>
+                    <option key={s.id} value={s.id}>{localizedSubject(s, loc).titre}</option>
                   ))}
                 </select>
               </div>
@@ -899,7 +902,7 @@ export function DataExplorer({ lab }: Props) {
                 >
                   <option value="">{t('chooseTask')}</option>
                   {unlinkedTasks.map(task => (
-                    <option key={task.id} value={task.id}>{task.titre}</option>
+                    <option key={task.id} value={task.id}>{localizedTask(task, loc).titre}</option>
                   ))}
                 </select>
               </div>
