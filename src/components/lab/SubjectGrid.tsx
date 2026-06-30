@@ -264,7 +264,10 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
       `}</style>
 
       <div style={{
-        minHeight: 'calc(100vh - 6rem)',
+        // Hauteur BORNÉE à la zone visible (viewport − TopBar 3rem − footer 3rem)
+        // pour que seule la grille scrolle : la toolbar (bouton d'édition) et la
+        // barre du bas restent fixes (flexShrink:0), la grille devient movible.
+        height: 'calc(100vh - 6rem)',
         background: [
           'radial-gradient(110% 80% at 30% 10%, rgba(181,157,135,0.28) 0%, rgba(181,157,135,0) 52%)',
           'radial-gradient(120% 110% at 72% 110%, rgba(113,120,132,0.22) 0%, rgba(113,120,132,0) 60%)',
