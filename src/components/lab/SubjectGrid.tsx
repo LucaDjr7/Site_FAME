@@ -396,7 +396,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
                   // avec une largeur MINIMALE de carte (240px) pour qu'elles ne deviennent
                   // jamais trop petites. Plus l'écran est large, plus il y a de colonnes ;
                   // sur petit écran, elles passent à la ligne.
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
                   gap: '30px 26px',
                   paddingBottom: 16,
                 }}
