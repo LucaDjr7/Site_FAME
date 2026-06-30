@@ -26,7 +26,7 @@ export function TasksPanel({ tasks, isMember, open, onToggleOpen, doneCount, tot
 
   return (
     <section style={{
-      position: 'absolute', left: 14, top: 118, width: 300, pointerEvents: 'auto',
+      width: '100%', pointerEvents: 'auto', flexShrink: 0,
       background: '#2f4486', backdropFilter: 'blur(12px)',
       border: '1px solid rgba(150,180,255,0.18)', borderRadius: 14,
       boxShadow: '0 22px 60px -18px rgba(0,5,30,0.75)', overflow: 'hidden',

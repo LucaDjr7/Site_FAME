@@ -1,14 +1,18 @@
 'use client'
 import { useState, useCallback, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { PaperSheet } from './PaperSheet'
 import { TasksPanel } from './TasksPanel'
+import { RelationsPanel } from './RelationsPanel'
 import { FilesPanel } from './FilesPanel'
 import { CommentsPanel } from './CommentsPanel'
 import { PaperNav, PAPER_NAV_HEIGHT } from './PaperNav'
-import type { Lab, Subject, MemberRef, TaskWithRelations, Comment, DropboxLink, SubjectFile } from '@/types'
+import { VitrineEditor } from '@/components/lab/VitrineEditor'
+import type { Lab, Subject, SubjectRelation, MemberRef, TaskWithRelations, Comment, DropboxLink, SubjectFile } from '@/types'
 import { LAB_LABELS } from '@/lib/constants'
+import { toLocale2 } from '@/lib/subjects/localized'
 
 type Props = {
   locale: string
@@ -21,6 +25,9 @@ type Props = {
   links: DropboxLink[]
   files: SubjectFile[]
   isMember: boolean
+  relations: SubjectRelation[]
+  relatedSubjects: Subject[]
+  allSubjects: Pick<Subject, 'id' | 'titre' | 'i18n'>[]
 }
 
 const GHOSTS = [
@@ -34,11 +41,14 @@ const GHOSTS = [
 
 export function PaperView({
   locale, lab, subject, navSubjects, members, tasks: initialTasks, initialComments, links, files, isMember,
+  relations, relatedSubjects, allSubjects,
 }: Props) {
   const t = useTranslations('paper')
+  const router = useRouter()
   const [tasks, setTasks] = useState<TaskWithRelations[]>(initialTasks)
-  const [panels, setPanels] = useState({ tasks: true, files: true, comments: true })
-  const toggle = (k: 'tasks' | 'files' | 'comments') => setPanels(p => ({ ...p, [k]: !p[k] }))
+  const [panels, setPanels] = useState({ tasks: true, files: true, comments: true, relations: true })
+  const [creating, setCreating] = useState(false)
+  const toggle = (k: 'tasks' | 'files' | 'comments' | 'relations') => setPanels(p => ({ ...p, [k]: !p[k] }))
 
   // The bottom thumbnail nav would otherwise be covered by the assistant bubble —
   // lift it to just above the nav (derived from PAPER_NAV_HEIGHT + a small gap).
@@ -68,6 +78,7 @@ export function PaperView({
   }, [])
 
   const labName = LAB_LABELS[lab] ?? lab
+  const byId = new Map<string, Subject>([subject, ...relatedSubjects].map(s => [s.id, s]))
 
   return (
     <div
@@ -118,17 +129,50 @@ export function PaperView({
         }}>↩ {t('back')}</div>
       </Link>
 
-      {/* TOP-LEFT: link to tasks board */}
-      <Link href={`/${locale}/${lab}/tasks`} style={{
-        position: 'absolute', left: 24, top: 18, zIndex: 20, display: 'flex', alignItems: 'center', gap: 9,
-        textDecoration: 'none', background: '#2f4486', backdropFilter: 'blur(8px)',
-        border: '1px solid rgba(150,180,255,0.28)', borderRadius: 9, padding: '9px 15px', color: '#eef3ff',
-        fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, letterSpacing: '0.1em',
-        boxShadow: '0 14px 34px -16px rgba(0,5,30,0.7)',
-      }}>
-        <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#e8b149' }} />
-        {t('tasksLink')}
-      </Link>
+      {/* TOP-LEFT: link to tasks board + daughter creation (member only) */}
+      <div style={{ position: 'absolute', left: 24, top: 18, zIndex: 20, display: 'flex', alignItems: 'center', gap: 10 }}>
+        <Link href={`/${locale}/${lab}/tasks`} style={{
+          display: 'flex', alignItems: 'center', gap: 9,
+          textDecoration: 'none', background: '#2f4486', backdropFilter: 'blur(8px)',
+          border: '1px solid rgba(150,180,255,0.28)', borderRadius: 9, padding: '9px 15px', color: '#eef3ff',
+          fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, letterSpacing: '0.1em',
+          boxShadow: '0 14px 34px -16px rgba(0,5,30,0.7)',
+        }}>
+          <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#e8b149' }} />
+          {t('tasksLink')}
+        </Link>
+        {isMember && (
+          <button
+            type="button"
+            onClick={() => setCreating(true)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 7,
+              background: 'rgba(30,155,126,0.15)', backdropFilter: 'blur(8px)',
+              border: '1px solid rgba(30,155,126,0.38)', borderRadius: 9, padding: '9px 15px',
+              color: '#1e9b7e', fontFamily: "'IBM Plex Mono', monospace", fontSize: 12,
+              letterSpacing: '0.1em', cursor: 'pointer',
+              boxShadow: '0 14px 34px -16px rgba(0,5,30,0.5)',
+            }}
+          >
+            <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#1e9b7e' }} />
+            {t('relations.createDaughter')}
+          </button>
+        )}
+      </div>
+
+      {/* DAUGHTER CREATION MODAL (member only) */}
+      {isMember && (
+        <VitrineEditor
+          open={creating}
+          lab={lab}
+          members={members}
+          subject={null}
+          motherSubject={subject}
+          locale={toLocale2(locale)}
+          onClose={() => setCreating(false)}
+          onSaved={() => { setCreating(false); router.refresh() }}
+        />
+      )}
 
       {/* CONTENT LAYER — gaps fall through to the backdrop */}
       <div style={{ position: 'absolute', inset: 0, zIndex: 10, pointerEvents: 'none' }}>
@@ -150,14 +194,33 @@ export function PaperView({
         </div>
 
         {/* CENTRAL PAPER */}
-        <PaperSheet subject={subject} members={members} labName={labName} locale={locale} />
+        <PaperSheet subject={subject} members={members} labName={labName} locale={locale} lab={lab} byId={byId} />
 
-        {/* LEFT: linked tasks */}
-        <TasksPanel
-          tasks={tasks} isMember={isMember}
-          open={panels.tasks} onToggleOpen={() => toggle('tasks')}
-          doneCount={tasksDone} total={tasksTotal} onToggleTask={onToggleTask}
-        />
+        {/* LEFT COLUMN: tasks + relations (stacked, scrollable) */}
+        <div className="fame-scroll" style={{
+          position: 'absolute', left: 14, top: 118, bottom: 124, width: 300,
+          display: 'flex', flexDirection: 'column', gap: 12, pointerEvents: 'auto',
+          overflowY: 'auto', overflowX: 'hidden',
+        }}>
+          <TasksPanel
+            tasks={tasks} isMember={isMember}
+            open={panels.tasks} onToggleOpen={() => toggle('tasks')}
+            doneCount={tasksDone} total={tasksTotal} onToggleTask={onToggleTask}
+          />
+          <RelationsPanel
+            subjectId={subject.id}
+            relations={relations}
+            relatedById={byId}
+            subjectInherits={subject.inherits}
+            isMember={isMember}
+            open={panels.relations}
+            onToggleOpen={() => toggle('relations')}
+            locale={locale}
+            lab={lab}
+            allSubjects={allSubjects}
+            onChanged={() => router.refresh()}
+          />
+        </div>
 
         {/* RIGHT COLUMN: files + comments (stacked, scrollable) */}
         <div className="fame-scroll" style={{

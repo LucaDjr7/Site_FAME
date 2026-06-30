@@ -3,13 +3,17 @@ import { Avatar } from '@/components/ui/Avatar'
 import { FitText } from './FitText'
 import { CornerRibbon } from './CornerRibbon'
 import { vitrineHeadline, vitrineSubtitle, vitrineNumber } from '@/lib/subjects/vitrine'
-import { localizedSubject } from '@/lib/subjects/localized'
+import { resolveInheritance } from '@/lib/subjects/inheritance'
 import type { Locale2 } from '@/types'
 
 type Props = {
   subject: Subject
   locale: Locale2
+  byId?: Map<string, Subject>
   members: MemberRef[]
+  /** Abaisse le plancher d'auto-fit (FitText) pour garantir une question/accroche
+   *  entièrement visibles même sur une petite carte (ex. nœuds du graphe). */
+  fitMinPx?: number
   editMode: boolean
   isDragging?: boolean
   statusLabel: string
@@ -26,11 +30,11 @@ type Props = {
 }
 
 export function SubjectVitrine({
-  subject, locale, members, editMode, isDragging = false,
+  subject, locale, byId = new Map(), members, editMode, isDragging = false,
   statusLabel, doneLabel, ficheLabel, questionLabel, readLabel,
-  transversalLabel, deleteTitle, editTitle, onDelete, onEdit, onCardClick,
+  transversalLabel, deleteTitle, editTitle, onDelete, onEdit, onCardClick, fitMinPx,
 }: Props) {
-  const L = localizedSubject(subject, locale)
+  const L = resolveInheritance(subject, byId, locale)
   const author = subject.auteurs[0] ? members.find(m => m.id === subject.auteurs[0]) : null
   const authorName = author ? `${author.prenom} ${author.nom}` : null
   const headline = vitrineHeadline({ question: L.question, titre: L.titre })
@@ -67,7 +71,7 @@ export function SubjectVitrine({
             {/* Bloc question (bas de section) : police auto-réduite (FitText borné par
                 l'espace dispo) → label + titre + sous-titre visibles sans troncature.
                 Le label garde une taille fixe (px) ; seuls titre/sous-titre scalent (em). */}
-            <FitText maxPx={21} minPx={11} style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+            <FitText maxPx={21} minPx={fitMinPx ?? 11} style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
               <span className="font-mono" style={{ fontSize: '8.5px', letterSpacing: '0.1em', color: '#9a9485', textTransform: 'uppercase', marginBottom: 5 }}>{questionLabel}</span>
               <span className="font-serif" style={{ fontWeight: 700, fontSize: '1em', lineHeight: 1.05, color: '#16263f', letterSpacing: '-0.02em', display: 'block' }}>{headline}</span>
               {subtitle && <span className="font-serif" style={{ fontStyle: 'italic', fontSize: '0.55em', color: '#6a7589', marginTop: '0.3em', lineHeight: 1.2, display: 'block' }}>{subtitle}</span>}
@@ -78,7 +82,7 @@ export function SubjectVitrine({
             {/* Accroche : occupe tout l'espace de la bande navy (mots-clés retirés de la carte),
                 police auto-réduite (FitText) pour rester visible EN ENTIER sans troncature. */}
             {L.accroche
-              ? <FitText maxPx={15} minPx={7} style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              ? <FitText maxPx={15} minPx={fitMinPx ?? 7} style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                   <span className="font-serif" style={{ fontStyle: 'italic', fontSize: '1em', lineHeight: 1.4, color: '#cdd8ea', display: 'block' }}>{L.accroche}</span>
                 </FitText>
               : <div style={{ flex: 1 }} />}

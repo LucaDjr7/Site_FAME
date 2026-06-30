@@ -1,7 +1,8 @@
 'use client'
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
-import type { Subject, MemberRef, Lab, SubjectStatus, Difficulty } from '@/types'
+import type { Subject, MemberRef, Lab, SubjectStatus, Difficulty, InheritableField } from '@/types'
+import { INHERITABLE_FIELDS } from '@/types'
 import { buildFieldPrompt, type AssistField, type FieldDraft } from '@/lib/subjects/field-prompts'
 import { DOMAIN_OPTIONS } from '@/lib/subjects/domains'
 import { localizedSubject } from '@/lib/subjects/localized'
@@ -95,20 +96,26 @@ type Props = {
   locale: 'en' | 'fr'
   onClose: () => void
   onSaved: (subject: Subject, isNew: boolean) => void
+  motherSubject?: Subject
 }
 
 const STATUSES: SubjectStatus[] = ['active', 'on-hold', 'done']
 const DIFFS: Difficulty[] = ['easy', 'intermediate', 'advanced']
 
-export function VitrineEditor({ open, lab, members, subject, locale, onClose, onSaved }: Props) {
+export function VitrineEditor({ open, lab, members, subject, locale, onClose, onSaved, motherSubject }: Props) {
   const t = useTranslations('lab')
   const tStatus = useTranslations('lab.status')
   const tDiff = useTranslations('lab.difficulty')
   const { addToast } = useToast()
   const isNew = !subject
+  const isDaughterMode = isNew && !!motherSubject
 
   const [f, setF] = useState(() => {
     const L = subject ? localizedSubject(subject, locale) : null
+    // SÉCURITÉ : en mode fille on ne PRÉ-REMPLIT PAS les champs héritables depuis la
+    // mère. Ils sont hérités par défaut (résolus en direct depuis la mère) ; basculer
+    // un champ en « rédiger » part donc d'un champ VIDE — jamais d'une recopie du
+    // contenu d'une mère (potentiellement confidentielle) dans une fille publique.
     return {
       question: L?.question ?? '',
       titre: L?.titre ?? '',
@@ -132,6 +139,22 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
   })
   type Form = typeof f
   function set<K extends keyof Form>(k: K, v: Form[K]) { setF(prev => ({ ...prev, [k]: v })) }
+
+  // Daughter mode: tracks which INHERITABLE_FIELDS are inherited from the mother.
+  // Starts with all fields inherited; user can switch individual fields to "own".
+  const [inherited, setInherited] = useState<Set<InheritableField>>(
+    () => isDaughterMode ? new Set(INHERITABLE_FIELDS) : new Set<InheritableField>()
+  )
+  function toggleInherited(field: InheritableField) {
+    setInherited(prev => {
+      const next = new Set(prev)
+      if (next.has(field)) next.delete(field); else next.add(field)
+      return next
+    })
+  }
+  function isInherited(field: InheritableField): boolean {
+    return isDaughterMode && inherited.has(field)
+  }
 
   const [detailsOpen, setDetailsOpen] = useState(false)
   const [genField, setGenField] = useState<AssistField | null>(null)
@@ -183,7 +206,7 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
   async function save() {
     if (!f.titre.trim()) { setError(t('editor.errorRequired')); return }
     setError(''); setSaving(true)
-    const payload = {
+    const payload: Record<string, unknown> = {
       labo: lab,
       locale,
       question: f.question.trim(), titre: f.titre.trim(), kicker: f.kicker.trim(),
@@ -197,6 +220,21 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
         theory: f.dimTheory.trim(), writing: f.dimWriting.trim(),
       },
       is_transversal: f.isTransversal, confidentiel: f.confidentiel,
+    }
+    if (isDaughterMode && motherSubject) {
+      payload.parentId = motherSubject.id
+      payload.inherits = Object.fromEntries(
+        [...inherited].map(field => [field, motherSubject.id])
+      )
+      // SÉCURITÉ : ne JAMAIS recopier le contenu hérité dans les colonnes propres
+      // (publiques) de la fille. Il vit sur la mère et est résolu en direct. Recopier
+      // fuiterait le contenu d'une mère confidentielle (repli visiteur + RAG public).
+      const BLANK: Record<InheritableField, unknown> = {
+        context: '', method: '', results: '', kicker: '', periode: '',
+        keywords: [], auteurs: [],
+        dimensions: { method: '', data: '', theory: '', writing: '' },
+      }
+      for (const field of inherited) payload[field] = BLANK[field]
     }
     try {
       const res = await fetch(isNew ? '/api/subjects' : `/api/subjects/${subject!.id}`, {
@@ -253,6 +291,18 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
     copyPrompt: t('editor.copyPrompt'),
   }
 
+  // Lookup map for inheritable field display labels — avoids dynamic template keys.
+  const inheritFieldLabel: Record<InheritableField, string> = {
+    context: t('editor.fContext'),
+    method: t('editor.fMethod'),
+    results: t('editor.fResults'),
+    dimensions: `${t('editor.dimMethod')} / ${t('editor.dimData')} / ${t('editor.dimTheory')} / ${t('editor.dimWriting')}`,
+    keywords: t('editor.fKeywords'),
+    auteurs: t('editor.fResponsable'),
+    kicker: t('editor.fKicker'),
+    periode: t('editor.fPeriode'),
+  }
+
   const draft = currentDraft()
   const domainOptions = DOMAIN_OPTIONS[locale]
   const kickerOptions = f.kicker && !domainOptions.includes(f.kicker)
@@ -286,15 +336,52 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
         </p>
 
         <div className="p-6">
+          {/* ── Daughter mode: per-field inheritance toggles ── */}
+          {isDaughterMode && motherSubject && (
+            <div style={{
+              background: 'rgba(47,68,134,0.06)', border: '1px solid rgba(47,68,134,0.18)',
+              borderRadius: 8, padding: '10px 14px', marginBottom: 16,
+            }}>
+              <p className="font-mono" style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#5768ac', margin: '0 0 8px' }}>
+                {t('editor.inheritFromMother')}
+              </p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px 14px' }}>
+                {INHERITABLE_FIELDS.map(field => {
+                  const inh = inherited.has(field)
+                  return (
+                    <div key={field} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                      <span className="font-mono" style={{ fontSize: 10, color: '#5a6486' }}>{inheritFieldLabel[field]}</span>
+                      <button
+                        type="button"
+                        className="font-mono"
+                        onClick={() => toggleInherited(field)}
+                        style={{
+                          fontSize: 9, padding: '2px 7px', borderRadius: 4,
+                          border: `1px solid ${inh ? '#2f4486' : 'rgba(20,40,90,0.2)'}`,
+                          background: inh ? '#2f4486' : '#fff',
+                          color: inh ? '#eef3ff' : '#8090b0',
+                          cursor: 'pointer', transition: 'all 0.12s',
+                        }}
+                      >
+                        {inh ? t('editor.inherit') : t('editor.own')}
+                      </button>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
           {/* ── Editable poster: light top ── */}
           <div style={{ background: '#faf9f5', borderRadius: 8, padding: 18, boxShadow: '0 4px 18px rgba(20,38,63,.1)' }}>
-            <div>
+            <div style={{ opacity: isInherited('kicker') ? 0.5 : 1 }}>
               <label htmlFor="ve-kicker" className="font-mono" style={labelStyle}>{t('editor.fKicker')}</label>
               <select
                 id="ve-kicker"
                 className="font-mono"
                 value={f.kicker}
                 onChange={e => set('kicker', e.target.value)}
+                disabled={isInherited('kicker')}
                 style={{ ...inputBase, fontSize: 12, letterSpacing: '0.12em', color: '#3a5a8a', textTransform: 'uppercase' }}
               >
                 <option value="">{t('editor.domainPlaceholder')}</option>
@@ -303,7 +390,7 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
             </div>
 
             <div style={{ display: 'flex', gap: 14, marginTop: 14 }}>
-              <div style={{ flex: 1 }}>
+              <div style={{ flex: 1, opacity: isInherited('periode') ? 0.5 : 1 }}>
                 <label htmlFor="ve-periode" className="font-mono" style={labelStyle}>{t('editor.fPeriode')}</label>
                 <input
                   id="ve-periode"
@@ -311,6 +398,7 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
                   value={f.periode}
                   onChange={e => set('periode', e.target.value)}
                   placeholder={t('editor.phPeriode')}
+                  disabled={isInherited('periode')}
                   style={{ ...inputBase, fontSize: 11 }}
                 />
               </div>
@@ -374,7 +462,7 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
               />
               <AssistButton field="accroche" promptField={promptField} genField={genField} draft={draft} locale={locale} onGenerate={generate} onTogglePrompt={togglePrompt} labels={assistLabels} />
             </div>
-            <div style={{ marginTop: 14 }}>
+            <div style={{ marginTop: 14, opacity: isInherited('keywords') ? 0.5 : 1 }}>
               <label htmlFor="ve-keywords" className="font-mono" style={{ ...labelStyle, color: '#7fa3d4' }}>{t('editor.fKeywords')}</label>
               <input
                 id="ve-keywords"
@@ -382,6 +470,7 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
                 value={f.keywords}
                 onChange={e => set('keywords', e.target.value)}
                 placeholder={t('editor.phKeywords')}
+                disabled={isInherited('keywords')}
                 style={{
                   width: '100%', background: 'transparent', border: 'none',
                   borderBottom: '1px dashed rgba(127,163,212,0.4)', outline: 'none',
@@ -390,13 +479,14 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
               />
               <AssistButton field="keywords" promptField={promptField} genField={genField} draft={draft} locale={locale} onGenerate={generate} onTogglePrompt={togglePrompt} labels={assistLabels} />
             </div>
-            <div style={{ marginTop: 14 }}>
+            <div style={{ marginTop: 14, opacity: isInherited('auteurs') ? 0.5 : 1 }}>
               <label htmlFor="ve-responsable" className="font-mono" style={{ ...labelStyle, color: '#7fa3d4' }}>{t('editor.fResponsable')}</label>
               <select
                 id="ve-responsable"
                 className="font-mono"
                 value={f.responsable}
                 onChange={e => set('responsable', e.target.value)}
+                disabled={isInherited('auteurs')}
                 style={{
                   background: 'transparent', border: 'none',
                   borderBottom: '1px dashed rgba(127,163,212,0.4)', outline: 'none',
@@ -454,7 +544,7 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
           {detailsOpen && (
             <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 14 }}>
               {(['context', 'method', 'results'] as const).map(key => (
-                <div key={key}>
+                <div key={key} style={{ opacity: isInherited(key) ? 0.5 : 1 }}>
                   <label htmlFor={`ve-${key}`} className="font-mono" style={labelStyle}>{fContextLabel[key]}</label>
                   <textarea
                     id={`ve-${key}`}
@@ -462,6 +552,7 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
                     value={f[key]}
                     onChange={e => set(key, e.target.value)}
                     rows={3}
+                    disabled={isInherited(key)}
                     style={detailInput}
                   />
                   <AssistButton field={key} promptField={promptField} genField={genField} draft={draft} locale={locale} onGenerate={generate} onTogglePrompt={togglePrompt} labels={assistLabels} />
@@ -474,13 +565,14 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
                 ['dimTheory', 'dimensions.theory'],
                 ['dimWriting', 'dimensions.writing'],
               ] as const).map(([stateKey, field]) => (
-                <div key={stateKey}>
+                <div key={stateKey} style={{ opacity: isInherited('dimensions') ? 0.5 : 1 }}>
                   <label htmlFor={`ve-${stateKey}`} className="font-mono" style={labelStyle}>{dimLabelMap[stateKey]}</label>
                   <input
                     id={`ve-${stateKey}`}
                     className="font-mono"
                     value={f[stateKey]}
                     onChange={e => set(stateKey, e.target.value)}
+                    disabled={isInherited('dimensions')}
                     style={detailInput}
                   />
                   <AssistButton field={field} promptField={promptField} genField={genField} draft={draft} locale={locale} onGenerate={generate} onTogglePrompt={togglePrompt} labels={assistLabels} />

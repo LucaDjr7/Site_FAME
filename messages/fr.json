@@ -7,6 +7,7 @@
     "team": "Équipe",
     "prompts": "Prompts",
     "propose": "Proposer",
+    "graph": "Graphe",
     "menu": "Menu",
     "navigation": "Navigation",
     "admin": "Admin",
@@ -138,7 +139,10 @@
       "phQuestion": "Refusé. Mais pourquoi ?",
       "phTitre": "IA explicable pour le risque de crédit",
       "phPeriode": "2025–2027",
-      "phKeywords": "IA explicable, Scoring, Régulation"
+      "phKeywords": "IA explicable, Scoring, Régulation",
+      "inherit": "hériter",
+      "own": "rédiger",
+      "inheritFromMother": "hérité de la fiche mère"
     }
   },
   "paper": {
@@ -171,7 +175,33 @@
     "fileTooLarge": "Fichier trop volumineux (max 50 Mo)",
     "fileTypeNotAllowed": "Type de fichier non autorisé",
     "deleteFile": "Supprimer le fichier",
-    "confirmDeleteFile": "Supprimer ce fichier ? Action irréversible."
+    "confirmDeleteFile": "Supprimer ce fichier ? Action irréversible.",
+    "relations": {
+      "inheritedFrom": "hérité de {title}",
+      "title": "Relations",
+      "mothers": "Mères",
+      "daughters": "Filles",
+      "associations": "Associations",
+      "none": "aucune",
+      "inheritsFields": "hérite : {fields}",
+      "addLink": "Ajouter un lien",
+      "linkKind": {
+        "motherOf": "est mère de",
+        "derivesFrom": "découle de",
+        "assoc": "lié à"
+      },
+      "labelOptional": "libellé (optionnel)",
+      "ownValue": "valeur propre",
+      "inheritFrom": "hériter de {title}",
+      "pickSubject": "choisir un sujet…",
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "remove": "Retirer",
+      "createDaughter": "+ Créer une fiche fille",
+      "errCycle": "Ce lien créerait un cycle.",
+      "errDuplicate": "Ce lien existe déjà.",
+      "errGeneric": "Impossible d'ajouter le lien."
+    }
   },
   "tasks": {
     "claimTask": "Se positionner",
@@ -577,6 +607,32 @@
     "sending": "Envoi…",
     "success": "Merci ! Votre signalement a été envoyé.",
     "error": "Impossible d'envoyer votre signalement. Réessayez."
+  },
+  "graph": {
+    "metaTitle": "Graphe des relations — FAME",
+    "title": "Réseau",
+    "kicker": "FAME / Graphe",
+    "empty": "Aucun sujet à afficher pour l'instant.",
+    "legendParent": "mère → fille",
+    "legendAssoc": "association",
+    "back": "← Accueil",
+    "filters": "Filtres",
+    "byLab": "Labo",
+    "byStatus": "Statut",
+    "all": "Tous",
+    "treeOnly": "Arborescence seule",
+    "editMode": "Éditer",
+    "editModeOn": "Édition",
+    "pickSecondNode": "Sélectionnez un second sujet…",
+    "linkMotherDaughter": "mère → fille",
+    "linkAssoc": "association",
+    "labelOptional": "libellé (optionnel)",
+    "create": "Créer",
+    "cancel": "Annuler",
+    "deleteLink": "Supprimer ce lien ?",
+    "delete": "Supprimer",
+    "errCycle": "Ce lien créerait un cycle.",
+    "errDuplicate": "Ce lien existe déjà."
   },
   "privacy": {
     "back": "← Retour au site",

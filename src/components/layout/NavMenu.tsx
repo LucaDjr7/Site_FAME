@@ -102,6 +102,15 @@ export function NavMenu({ locale, lab, member }: Props) {
                 {t(key)}
               </Link>
             ))}
+            {/* Page globale (hors [lab]) → lien absolu, pas de préfixe base. */}
+            <Link
+              href={`/${locale}/graph`}
+              onClick={() => setOpen(false)}
+              className="font-serif hover:bg-[rgba(47,68,134,0.08)] transition-colors text-fame-text-body"
+              style={itemStyle}
+            >
+              {t('graph')}
+            </Link>
             {member && (
               <>
                 <hr style={{ border: 'none', borderTop: '1px solid rgba(20,40,90,0.08)', margin: '4px 0' }} />

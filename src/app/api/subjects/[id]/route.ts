@@ -4,9 +4,19 @@ import { requireMember, getSession, authErrorResponse } from '@/lib/auth'
 import { scheduleReindex, scheduleDeleteSubjectFiles } from '@/lib/rag/schedule'
 import { buildSubjectI18n } from '@/lib/subjects/translate'
 import { isOverBudget } from '@/lib/rag/usage'
+import { isInheritableField } from '@/lib/subjects/inheritance'
 import type { SubjectI18nFields } from '@/types'
 
 type Params = { params: Promise<{ id: string }> }
+
+export function sanitizeInherits(raw: unknown, validMotherIds: Set<string>): Record<string, string> {
+  const out: Record<string, string> = {}
+  if (!raw || typeof raw !== 'object') return out
+  for (const [k, v] of Object.entries(raw as Record<string, unknown>)) {
+    if (isInheritableField(k) && typeof v === 'string' && validMotherIds.has(v)) out[k] = v
+  }
+  return out
+}
 
 export async function GET(_req: NextRequest, { params }: Params) {
   const { id } = await params
@@ -47,6 +57,12 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     })
   }
   const service = await createServiceClient()
+  if ('inherits' in body) {
+    // mères réelles = sources des relations 'parent' dont la fille est `id`.
+    const { data: parents } = await service.from('subject_relations').select('source_id').eq('kind', 'parent').eq('target_id', id)
+    const motherIds = new Set((parents ?? []).map((p: { source_id: string }) => p.source_id))
+    updates.inherits = sanitizeInherits(body.inherits, motherIds)
+  }
   const { data, error } = await service.from('subjects').update(updates).eq('id', id).select().single()
   if (error?.code === 'PGRST116') return NextResponse.json({ error: 'Not found' }, { status: 404 })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
@@ -58,6 +74,17 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
   try { await requireMember() } catch (e) { return authErrorResponse(e) }
   const { id } = await params
   const service = await createServiceClient()
+  // Purger les `inherits` des filles qui héritaient de cette mère : le FK cascade
+  // supprime les lignes `subject_relations` mais pas la map jsonb sur les filles.
+  const { data: childRels } = await service.from('subject_relations').select('target_id').eq('kind', 'parent').eq('source_id', id)
+  for (const cid of new Set((childRels ?? []).map((r: { target_id: string }) => r.target_id))) {
+    const { data: child } = await service.from('subjects').select('inherits').eq('id', cid).single()
+    const inh = (child?.inherits ?? {}) as Record<string, string>
+    const cleaned = Object.fromEntries(Object.entries(inh).filter(([, m]) => m !== id))
+    if (Object.keys(cleaned).length !== Object.keys(inh).length) {
+      await service.from('subjects').update({ inherits: cleaned }).eq('id', cid)
+    }
+  }
   const { error } = await service.from('subjects').delete().eq('id', id)
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   scheduleReindex('subject', id)

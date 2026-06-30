@@ -11,13 +11,14 @@ const subject = {
   statut: 'active', context: 'Some context', method: '', results: '',
   keywords: ['a'], auteurs: [], difficulte: 'easy',
   dimensions: { method: '', data: '', theory: '', writing: '' }, ordre: 1,
-  is_transversal: false, confidentiel: false, i18n: {}, created_at: '2025-01-01', updated_at: '',
+  is_transversal: false, confidentiel: false, i18n: {}, inherits: {},
+  created_at: '2025-01-01', updated_at: '',
 } as unknown as Subject
 
 function wrap() {
   return render(
     <NextIntlClientProvider locale="en" messages={en}>
-      <PaperSheet subject={subject} members={[]} labName="Paris" locale="en" />
+      <PaperSheet subject={subject} members={[]} labName="Paris" locale="en" byId={new Map()} />
     </NextIntlClientProvider>)
 }
 
