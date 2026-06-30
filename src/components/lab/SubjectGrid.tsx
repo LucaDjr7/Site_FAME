@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { useRouter, useParams } from 'next/navigation'
@@ -83,6 +83,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
   const filtersActive = fStatus.size > 0 || fDiff.size > 0 || fPerson.size > 0 || fDate.size > 0
   const canDrag = canEdit && sort === 'ordre' && !filtersActive && q === ''
 
+  const byId = useMemo(() => new Map(subjects.map(s => [s.id, s])), [subjects])
   const displaySubjects = sorted(
     subjects.filter(s => passesFilters(s, q, fStatus, fDiff, fPerson, fDate)),
     sort,
@@ -411,6 +412,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
                     <SubjectVitrine
                       subject={s}
                       locale={toLocale2(locale)}
+                      byId={byId}
                       members={members}
                       editMode={editMode}
                       isDragging={draggingId === s.id}

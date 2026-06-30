@@ -3,12 +3,13 @@ import { Avatar } from '@/components/ui/Avatar'
 import { FitText } from './FitText'
 import { CornerRibbon } from './CornerRibbon'
 import { vitrineHeadline, vitrineSubtitle, vitrineNumber } from '@/lib/subjects/vitrine'
-import { localizedSubject } from '@/lib/subjects/localized'
+import { resolveInheritance } from '@/lib/subjects/inheritance'
 import type { Locale2 } from '@/types'
 
 type Props = {
   subject: Subject
   locale: Locale2
+  byId?: Map<string, Subject>
   members: MemberRef[]
   editMode: boolean
   isDragging?: boolean
@@ -26,11 +27,11 @@ type Props = {
 }
 
 export function SubjectVitrine({
-  subject, locale, members, editMode, isDragging = false,
+  subject, locale, byId = new Map(), members, editMode, isDragging = false,
   statusLabel, doneLabel, ficheLabel, questionLabel, readLabel,
   transversalLabel, deleteTitle, editTitle, onDelete, onEdit, onCardClick,
 }: Props) {
-  const L = localizedSubject(subject, locale)
+  const L = resolveInheritance(subject, byId, locale)
   const author = subject.auteurs[0] ? members.find(m => m.id === subject.auteurs[0]) : null
   const authorName = author ? `${author.prenom} ${author.nom}` : null
   const headline = vitrineHeadline({ question: L.question, titre: L.titre })
