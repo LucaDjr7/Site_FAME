@@ -138,7 +138,10 @@
       "phQuestion": "Refused. But why?",
       "phTitre": "Explainable AI for Credit Risk",
       "phPeriode": "2025–2027",
-      "phKeywords": "Explainable AI, Scoring, Regulation"
+      "phKeywords": "Explainable AI, Scoring, Regulation",
+      "inherit": "inherit",
+      "own": "write",
+      "inheritFromMother": "inherited from the mother card"
     }
   },
   "paper": {
@@ -192,7 +195,8 @@
       "pickSubject": "choose a subject…",
       "save": "Save",
       "cancel": "Cancel",
-      "remove": "Remove"
+      "remove": "Remove",
+      "createDaughter": "+ Create a daughter card"
     }
   },
   "tasks": {

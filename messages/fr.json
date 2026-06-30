@@ -138,7 +138,10 @@
       "phQuestion": "Refusé. Mais pourquoi ?",
       "phTitre": "IA explicable pour le risque de crédit",
       "phPeriode": "2025–2027",
-      "phKeywords": "IA explicable, Scoring, Régulation"
+      "phKeywords": "IA explicable, Scoring, Régulation",
+      "inherit": "hériter",
+      "own": "rédiger",
+      "inheritFromMother": "hérité de la fiche mère"
     }
   },
   "paper": {
@@ -192,7 +195,8 @@
       "pickSubject": "choisir un sujet…",
       "save": "Enregistrer",
       "cancel": "Annuler",
-      "remove": "Retirer"
+      "remove": "Retirer",
+      "createDaughter": "+ Créer une fiche fille"
     }
   },
   "tasks": {
