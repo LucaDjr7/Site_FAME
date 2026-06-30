@@ -604,6 +604,15 @@
     "success": "Thanks! Your report has been sent.",
     "error": "Could not send your report. Please try again."
   },
+  "graph": {
+    "metaTitle": "Relations graph — FAME",
+    "title": "Network",
+    "kicker": "FAME / Graph",
+    "empty": "No subjects to display yet.",
+    "legendParent": "mother → daughter",
+    "legendAssoc": "association",
+    "back": "← Home"
+  },
   "privacy": {
     "back": "← Back to site",
     "link": "Privacy policy",

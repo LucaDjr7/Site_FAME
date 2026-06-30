@@ -604,6 +604,15 @@
     "success": "Merci ! Votre signalement a été envoyé.",
     "error": "Impossible d'envoyer votre signalement. Réessayez."
   },
+  "graph": {
+    "metaTitle": "Graphe des relations — FAME",
+    "title": "Réseau",
+    "kicker": "FAME / Graphe",
+    "empty": "Aucun sujet à afficher pour l'instant.",
+    "legendParent": "mère → fille",
+    "legendAssoc": "association",
+    "back": "← Accueil"
+  },
   "privacy": {
     "back": "← Retour au site",
     "link": "Politique de confidentialité",
