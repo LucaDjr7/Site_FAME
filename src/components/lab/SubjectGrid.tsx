@@ -385,9 +385,10 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
           minHeight: 0,
         }}>
           {/* Grid area — scrollbar INTERNE à la grille (overflowY auto).
-              Padding latéral large (60px) pour que le zoom au survol des colonnes
-              de bord reste dans le scrollport au lieu d'être rogné. */}
-          <div style={{ flex: 1, overflowY: 'auto', padding: '24px 60px 0' }}>
+              Padding large sur tous les côtés (haut 80 / côtés 60, + 80 en bas
+              sur la grille interne) pour que le zoom au survol — qui déborde
+              ~77px par côté — reste dans le scrollport au lieu d'être rogné. */}
+          <div style={{ flex: 1, overflowY: 'auto', padding: '80px 60px 0' }}>
             {displaySubjects.length === 0 && (
               <div className="font-mono text-fame-text-muted" style={{ fontSize: 13, textAlign: 'center', paddingTop: 60 }}>
                 {t('empty')}
