@@ -76,8 +76,23 @@ export interface Subject {
   is_transversal: boolean
   confidentiel: boolean
   i18n: SubjectI18n
+  inherits: Partial<Record<InheritableField, string>>
   created_at: string
   updated_at: string
+}
+
+export const INHERITABLE_FIELDS = ['context','method','results','dimensions','keywords','auteurs','kicker','periode'] as const
+export type InheritableField = typeof INHERITABLE_FIELDS[number]
+export type RelationKind = 'parent' | 'assoc'
+
+export interface SubjectRelation {
+  id: string
+  source_id: string
+  target_id: string
+  kind: RelationKind
+  label: string
+  label_i18n: Partial<Record<Locale2, { label: string }>>
+  created_at: string
 }
 
 export interface SubjectWithProgress extends Subject {
