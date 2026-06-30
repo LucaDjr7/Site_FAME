@@ -112,24 +112,27 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
 
   const [f, setF] = useState(() => {
     const L = subject ? localizedSubject(subject, locale) : null
-    const motherL = isDaughterMode ? localizedSubject(motherSubject!, locale) : null
+    // SÉCURITÉ : en mode fille on ne PRÉ-REMPLIT PAS les champs héritables depuis la
+    // mère. Ils sont hérités par défaut (résolus en direct depuis la mère) ; basculer
+    // un champ en « rédiger » part donc d'un champ VIDE — jamais d'une recopie du
+    // contenu d'une mère (potentiellement confidentielle) dans une fille publique.
     return {
       question: L?.question ?? '',
       titre: L?.titre ?? '',
-      kicker: L?.kicker ?? (motherL?.kicker ?? ''),
+      kicker: L?.kicker ?? '',
       accroche: L?.accroche ?? '',
-      periode: subject?.periode ?? (motherSubject?.periode ?? ''),
+      periode: subject?.periode ?? '',
       statut: (subject?.statut ?? 'active') as SubjectStatus,
       difficulte: (subject?.difficulte ?? 'intermediate') as Difficulty,
-      responsable: subject?.auteurs[0] ?? (motherSubject?.auteurs[0] ?? ''),
-      keywords: (L?.keywords ?? (motherL?.keywords ?? [])).join(', '),
-      context: L?.context ?? (motherL?.context ?? ''),
-      method: L?.method ?? (motherL?.method ?? ''),
-      results: L?.results ?? (motherL?.results ?? ''),
-      dimMethod: L?.dimensions.method ?? (motherL?.dimensions?.method ?? ''),
-      dimData: L?.dimensions.data ?? (motherL?.dimensions?.data ?? ''),
-      dimTheory: L?.dimensions.theory ?? (motherL?.dimensions?.theory ?? ''),
-      dimWriting: L?.dimensions.writing ?? (motherL?.dimensions?.writing ?? ''),
+      responsable: subject?.auteurs[0] ?? '',
+      keywords: (L?.keywords ?? []).join(', '),
+      context: L?.context ?? '',
+      method: L?.method ?? '',
+      results: L?.results ?? '',
+      dimMethod: L?.dimensions.method ?? '',
+      dimData: L?.dimensions.data ?? '',
+      dimTheory: L?.dimensions.theory ?? '',
+      dimWriting: L?.dimensions.writing ?? '',
       isTransversal: subject?.is_transversal ?? false,
       confidentiel: subject?.confidentiel ?? false,
     }
