@@ -388,8 +388,10 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
           flex: 1,
           display: 'flex',
         }}>
-          {/* Grid area — pas d'overflow : le zoom au survol doit pouvoir déborder */}
-          <div style={{ flex: 1, padding: '10px 24px 0' }}>
+          {/* Grid area — pas d'overflow : le zoom au survol doit pouvoir déborder.
+              Padding latéral large (60px) pour que le zoom des colonnes de bord
+              reste dans le viewport au lieu d'être coupé hors de la page. */}
+          <div style={{ flex: 1, padding: '10px 60px 0' }}>
             {displaySubjects.length === 0 && (
               <div className="font-mono text-fame-text-muted" style={{ fontSize: 13, textAlign: 'center', paddingTop: 60 }}>
                 {t('empty')}

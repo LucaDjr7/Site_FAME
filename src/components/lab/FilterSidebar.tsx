@@ -109,6 +109,11 @@ export function FilterSidebar({
           backdropFilter: 'blur(8px)',
           borderLeft: '1px solid rgba(87,104,172,0.15)',
           cursor: 'pointer',
+          // Reste fixe sous la toolbar collante pendant le scroll de la grille
+          position: 'sticky',
+          top: 119,
+          alignSelf: 'flex-start',
+          maxHeight: 'calc(100vh - 167px)',
         }}
         onClick={onToggle}
         title={t('filters')}
@@ -152,6 +157,11 @@ export function FilterSidebar({
       flexDirection: 'column',
       padding: '16px 0',
       overflowY: 'auto',
+      // Reste fixe sous la toolbar collante ; scroll interne si la liste est longue
+      position: 'sticky',
+      top: 119,
+      alignSelf: 'flex-start',
+      maxHeight: 'calc(100vh - 167px)',
     }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 14px 12px' }}>
