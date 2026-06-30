@@ -6,6 +6,7 @@ import type { Lab } from '@/types'
 import { VALID_LABS } from '@/lib/constants'
 import { buildSubjectI18n } from '@/lib/subjects/translate'
 import { isOverBudget } from '@/lib/rag/usage'
+import { isInheritableField } from '@/lib/subjects/inheritance'
 import type { SubjectI18nFields } from '@/types'
 
 export async function GET(req: NextRequest) {
@@ -72,6 +73,22 @@ export async function POST(req: NextRequest) {
     .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+  // Lien mère→fille optionnel (bouton « créer une fiche fille »).
+  const parentId = typeof body.parentId === 'string' ? body.parentId : ''
+  if (parentId) {
+    await service.from('subject_relations').insert({ source_id: parentId, target_id: data.id, kind: 'parent', label: '', label_i18n: {} })
+    const inh: Record<string, string> = {}
+    const raw = (body.inherits ?? {}) as Record<string, unknown>
+    for (const [k, v] of Object.entries(raw)) {
+      if (isInheritableField(k) && v === parentId) inh[k] = parentId
+    }
+    if (Object.keys(inh).length) {
+      await service.from('subjects').update({ inherits: inh }).eq('id', data.id)
+      data.inherits = inh
+    }
+  }
+
   scheduleReindex('subject', data.id)
   return NextResponse.json(data, { status: 201 })
 }
