@@ -29,13 +29,15 @@ interface SimEdge extends d3.SimulationLinkDatum<SimNode> {
 
 // ─── card footprint (deterministic) ─────────────────────────────────────────
 // Le nœud EST la vraie fiche vitrine (SubjectVitrine, aspect-ratio 1 / 1.414).
-const CARD_W = 220
-const CARD_H = Math.round(CARD_W * 1.414) // 311
-const HW = CARD_W / 2 // 110
-const HH = CARD_H / 2 // 155.5
-const COLLIDE = Math.hypot(HW, HH) + 18 // ≈ 209
-const LINK_DIST = 400
-const CHARGE = -4200
+const CARD_W = 260
+const CARD_H = Math.round(CARD_W * 1.414) // 368
+const HW = CARD_W / 2 // 130
+const HH = CARD_H / 2 // 184
+// Espacement resserré : on reste juste au-dessus du seuil anti-chevauchement
+// (collide), avec une répulsion modérée pour éviter un graphe trop épars.
+const COLLIDE = Math.hypot(HW, HH) + 10 // ≈ 235
+const LINK_DIST = 290
+const CHARGE = -1800
 
 // SVG canvas (couche d'arêtes derrière les fiches). overflow visible → les lignes
 // hors de ce rectangle restent dessinées.
@@ -455,6 +457,7 @@ export function RelationGraph({ subjects, relations, members, isMember, locale }
                   questionLabel={tLab('vitrine.theQuestion')}
                   readLabel={tLab('vitrine.readSubject')}
                   transversalLabel={tLab('transversalBadge')}
+                  fitMinPx={5}
                 />
               </div>
             )
