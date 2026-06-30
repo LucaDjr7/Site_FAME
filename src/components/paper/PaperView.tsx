@@ -36,7 +36,7 @@ const GHOSTS = [
 
 export function PaperView({
   locale, lab, subject, navSubjects, members, tasks: initialTasks, initialComments, links, files, isMember,
-  relations: _relations, relatedSubjects,
+  relatedSubjects,
 }: Props) {
   const t = useTranslations('paper')
   const [tasks, setTasks] = useState<TaskWithRelations[]>(initialTasks)
