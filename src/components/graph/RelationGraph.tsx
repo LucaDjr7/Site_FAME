@@ -29,13 +29,13 @@ interface SimEdge extends d3.SimulationLinkDatum<SimNode> {
 
 // ─── card footprint (deterministic) ─────────────────────────────────────────
 // Le nœud EST la vraie fiche vitrine (SubjectVitrine, aspect-ratio 1 / 1.414).
-const CARD_W = 200
-const CARD_H = Math.round(CARD_W * 1.414) // 283
-const HW = CARD_W / 2 // 100
-const HH = CARD_H / 2 // 141.5
-const COLLIDE = Math.hypot(HW, HH) + 16 // ≈ 189
-const LINK_DIST = 360
-const CHARGE = -3500
+const CARD_W = 220
+const CARD_H = Math.round(CARD_W * 1.414) // 311
+const HW = CARD_W / 2 // 110
+const HH = CARD_H / 2 // 155.5
+const COLLIDE = Math.hypot(HW, HH) + 18 // ≈ 209
+const LINK_DIST = 400
+const CHARGE = -4200
 
 // SVG canvas (couche d'arêtes derrière les fiches). overflow visible → les lignes
 // hors de ce rectangle restent dessinées.
@@ -156,8 +156,8 @@ export function RelationGraph({ subjects, relations, members, isMember, locale }
       .attr('viewBox', '0 -5 10 10')
       .attr('refX', 9)
       .attr('refY', 0)
-      .attr('markerWidth', 7)
-      .attr('markerHeight', 7)
+      .attr('markerWidth', 9)
+      .attr('markerHeight', 9)
       .attr('orient', 'auto')
       .append('path')
       .attr('d', 'M0,-5L10,0L0,5')
@@ -214,8 +214,8 @@ export function RelationGraph({ subjects, relations, members, isMember, locale }
       .append('line')
       .attr('class', 'rg-edge')
       .attr('stroke', d => d.kind === 'parent' ? EDGE_PARENT : EDGE_ASSOC)
-      .attr('stroke-width', d => d.kind === 'parent' ? 2 : 1.5)
-      .attr('stroke-dasharray', d => d.kind === 'assoc' ? '6,5' : null)
+      .attr('stroke-width', d => d.kind === 'parent' ? 4 : 3)
+      .attr('stroke-dasharray', d => d.kind === 'assoc' ? '8,6' : null)
       .attr('marker-end', d => d.kind === 'parent' ? 'url(#rg-arrow)' : null)
       .attr('pointer-events', 'none')
 
@@ -570,15 +570,15 @@ export function RelationGraph({ subjects, relations, members, isMember, locale }
           {/* parent edge */}
           <div className="flex items-center gap-2">
             <svg width="36" height="12" aria-hidden="true">
-              <line x1="0" y1="6" x2="26" y2="6" stroke="rgba(20,40,90,0.42)" strokeWidth="1.6" />
-              <polyline points="20,2 26,6 20,10" fill="none" stroke="rgba(20,40,90,0.42)" strokeWidth="1.6" />
+              <line x1="0" y1="6" x2="24" y2="6" stroke="rgba(20,40,90,0.42)" strokeWidth="3" />
+              <polyline points="19,1.5 26,6 19,10.5" fill="none" stroke="rgba(20,40,90,0.42)" strokeWidth="3" />
             </svg>
             <span className="font-mono text-xs text-fame-text-body">{t('legendParent')}</span>
           </div>
           {/* assoc edge */}
           <div className="flex items-center gap-2">
             <svg width="36" height="12" aria-hidden="true">
-              <line x1="0" y1="6" x2="26" y2="6" stroke="rgba(20,40,90,0.28)" strokeWidth="1.2" strokeDasharray="4,3" />
+              <line x1="0" y1="6" x2="26" y2="6" stroke="rgba(20,40,90,0.28)" strokeWidth="2.5" strokeDasharray="5,4" />
             </svg>
             <span className="font-mono text-xs text-fame-text-body">{t('legendAssoc')}</span>
           </div>
