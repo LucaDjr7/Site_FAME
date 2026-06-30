@@ -28,6 +28,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function PaperPage({ params }: Props) {
   const { locale, lab, id } = await params
   if (!VALID_LABS.includes(lab as Lab)) notFound()
+  // `id` est interpolé dans un filtre PostgREST `.or(...)` plus bas — exiger un UUID
+  // strict ferme toute injection de clause de filtre via le segment d'URL.
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) notFound()
 
   const session = await getSession()
   const isMember = !!session?.member

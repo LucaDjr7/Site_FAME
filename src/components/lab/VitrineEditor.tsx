@@ -223,6 +223,15 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
       payload.inherits = Object.fromEntries(
         [...inherited].map(field => [field, motherSubject.id])
       )
+      // SÉCURITÉ : ne JAMAIS recopier le contenu hérité dans les colonnes propres
+      // (publiques) de la fille. Il vit sur la mère et est résolu en direct. Recopier
+      // fuiterait le contenu d'une mère confidentielle (repli visiteur + RAG public).
+      const BLANK: Record<InheritableField, unknown> = {
+        context: '', method: '', results: '', kicker: '', periode: '',
+        keywords: [], auteurs: [],
+        dimensions: { method: '', data: '', theory: '', writing: '' },
+      }
+      for (const field of inherited) payload[field] = BLANK[field]
     }
     try {
       const res = await fetch(isNew ? '/api/subjects' : `/api/subjects/${subject!.id}`, {

@@ -25,14 +25,6 @@ export function resolveParentEnds(id: string, otherId: string, direction: 'child
   return direction === 'mother' ? { source_id: otherId, target_id: id } : { source_id: id, target_id: otherId }
 }
 
-export async function GET(_req: NextRequest, { params }: Params) {
-  const { id } = await params
-  const service = await createServiceClient()
-  const { data, error } = await service.from('subject_relations').select('*').or(`source_id.eq.${id},target_id.eq.${id}`)
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ relations: data ?? [] })
-}
-
 export async function POST(req: NextRequest, { params }: Params) {
   try { await requireMember() } catch (e) { return authErrorResponse(e) }
   const { id } = await params

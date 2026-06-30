@@ -13,4 +13,6 @@ create table if not exists subject_relations (
 create unique index if not exists ux_subject_relations_pair on subject_relations (source_id, target_id, kind);
 create index if not exists ix_subject_relations_source on subject_relations (source_id);
 create index if not exists ix_subject_relations_target on subject_relations (target_id);
+-- RLS activée (default-deny) comme les tables sœurs ; les accès passent par le service-role qui la contourne.
+alter table subject_relations enable row level security;
 alter table subjects add column if not exists inherits jsonb not null default '{}'::jsonb;

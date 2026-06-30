@@ -197,7 +197,10 @@
       "save": "Save",
       "cancel": "Cancel",
       "remove": "Remove",
-      "createDaughter": "+ Create a daughter card"
+      "createDaughter": "+ Create a daughter card",
+      "errCycle": "That link would create a cycle.",
+      "errDuplicate": "That link already exists.",
+      "errGeneric": "Could not add the link."
     }
   },
   "tasks": {

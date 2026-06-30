@@ -74,6 +74,17 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
   try { await requireMember() } catch (e) { return authErrorResponse(e) }
   const { id } = await params
   const service = await createServiceClient()
+  // Purger les `inherits` des filles qui héritaient de cette mère : le FK cascade
+  // supprime les lignes `subject_relations` mais pas la map jsonb sur les filles.
+  const { data: childRels } = await service.from('subject_relations').select('target_id').eq('kind', 'parent').eq('source_id', id)
+  for (const cid of new Set((childRels ?? []).map((r: { target_id: string }) => r.target_id))) {
+    const { data: child } = await service.from('subjects').select('inherits').eq('id', cid).single()
+    const inh = (child?.inherits ?? {}) as Record<string, string>
+    const cleaned = Object.fromEntries(Object.entries(inh).filter(([, m]) => m !== id))
+    if (Object.keys(cleaned).length !== Object.keys(inh).length) {
+      await service.from('subjects').update({ inherits: cleaned }).eq('id', cid)
+    }
+  }
   const { error } = await service.from('subjects').delete().eq('id', id)
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   scheduleReindex('subject', id)

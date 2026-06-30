@@ -51,7 +51,10 @@ export function resolveInheritance(
     if (!motherId) continue
     const mother = byId.get(motherId)
     if (!mother) continue // mère absente (visiteur/confidentiel) → garde la valeur propre
-    const mres = resolveInheritance(mother, byId, locale, _seen)
+    // `_seen` doit être scopé au CHEMIN (anti-cycle), pas partagé entre les champs :
+    // une copie par champ évite qu'un 2ᵉ champ hérité de la même mère court-circuite
+    // la résolution (diamant / multi-champs).
+    const mres = resolveInheritance(mother, byId, locale, new Set(_seen))
     ;(own as unknown as Record<string, unknown>)[field] = (mres as unknown as Record<string, unknown>)[field]
   }
   return own

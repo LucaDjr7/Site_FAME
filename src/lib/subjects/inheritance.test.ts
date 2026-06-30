@@ -41,6 +41,16 @@ describe('resolveInheritance', () => {
     expect(L.context).toBe('repli')
   })
 
+  it('résout plusieurs champs hérités de la même mère, dont un via la grand-mère (diamant)', () => {
+    const gm = mk({ id: 'gm', method: 'M-gm' })
+    const m = mk({ id: 'm', context: 'CTX-m', method: 'ignored', inherits: { method: 'gm' } })
+    const c = mk({ id: 'c', context: 'x', method: 'y', inherits: { context: 'm', method: 'm' } })
+    const byId = new Map([['gm', gm], ['m', m], ['c', c]])
+    const L = resolveInheritance(c, byId, 'en')
+    expect(L.context).toBe('CTX-m')  // valeur propre de m
+    expect(L.method).toBe('M-gm')    // m hérite method de gm → la chaîne doit être suivie
+  })
+
   it('ne boucle pas sur un cycle accidentel', () => {
     const a = mk({ id: 'a', context: 'A', inherits: { context: 'b' } })
     const b = mk({ id: 'b', context: 'B', inherits: { context: 'a' } })

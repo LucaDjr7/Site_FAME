@@ -197,7 +197,10 @@
       "save": "Enregistrer",
       "cancel": "Annuler",
       "remove": "Retirer",
-      "createDaughter": "+ Créer une fiche fille"
+      "createDaughter": "+ Créer une fiche fille",
+      "errCycle": "Ce lien créerait un cycle.",
+      "errDuplicate": "Ce lien existe déjà.",
+      "errGeneric": "Impossible d'ajouter le lien."
     }
   },
   "tasks": {

@@ -79,7 +79,11 @@ export function RelationGraph({ nodes, edges, isMember, locale }: Props) {
   const setFirstNodeRef = useRef(setFirstNode)
   const setLinkChooserRef = useRef(setLinkChooser)
   const setConfirmEdgeRef = useRef(setConfirmEdge)
+  // `router` n'est pas garanti stable : on le lit via une ref pour ne pas l'inclure
+  // dans les deps de l'effet d3 (sinon rebuild complet de la simulation au re-render).
+  const routerRef = useRef(router)
 
+  useEffect(() => { routerRef.current = router }, [router])
   useEffect(() => { editModeRef.current = editMode }, [editMode])
   useEffect(() => { firstNodeRef.current = firstNode }, [firstNode])
 
@@ -259,7 +263,7 @@ export function RelationGraph({ nodes, edges, isMember, locale }: Props) {
           setFirstNodeRef.current(null)
         }
       } else {
-        router.push(`/${locale}/${d.labo}/paper/${d.id}`)
+        routerRef.current.push(`/${locale}/${d.labo}/paper/${d.id}`)
       }
     })
 
@@ -303,7 +307,7 @@ export function RelationGraph({ nodes, edges, isMember, locale }: Props) {
       simulation.stop()
       svg.on('.zoom', null)
     }
-  }, [filteredNodes, filteredEdges, locale, router])
+  }, [filteredNodes, filteredEdges, locale])
 
   // ─── visual selection ring update (no simulation restart needed) ──────────
   useEffect(() => {
@@ -328,8 +332,8 @@ export function RelationGraph({ nodes, edges, isMember, locale }: Props) {
         body: JSON.stringify(body),
       })
       if (res.status === 409) {
-        const data = await res.json().catch(() => ({})) as { code?: string }
-        addToast(data.code === 'CYCLE' ? t('errCycle') : t('errDuplicate'), 'error')
+        const data = await res.json().catch(() => ({})) as { error?: string }
+        addToast(data.error === 'cycle' ? t('errCycle') : t('errDuplicate'), 'error')
         setLinkChooser(null)
       } else if (res.ok) {
         setLinkChooser(null)

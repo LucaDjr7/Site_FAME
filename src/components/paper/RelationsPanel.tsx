@@ -3,6 +3,7 @@ import { useState } from 'react'
 import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
+import { useToast } from '@/components/ui/Toast'
 import { toLocale2 } from '@/lib/subjects/localized'
 import { INHERITABLE_FIELDS } from '@/types'
 import type { Subject, SubjectRelation, Lab, InheritableField, Locale2 } from '@/types'
@@ -28,6 +29,7 @@ export function RelationsPanel({
   isMember, open, onToggleOpen, locale, lab, allSubjects, onChanged,
 }: Props) {
   const t = useTranslations('paper.relations')
+  const { addToast } = useToast()
   const loc = toLocale2(locale)
 
   const [showAddForm, setShowAddForm] = useState(false)
@@ -37,10 +39,16 @@ export function RelationsPanel({
   const [saving, setSaving] = useState(false)
 
   // ── Derive 3 groups ──────────────────────────────────────────────────────
-  const mothers = relations.filter(r => r.kind === 'parent' && r.target_id === subjectId)
-  const daughters = relations.filter(r => r.kind === 'parent' && r.source_id === subjectId)
+  // SÉCURITÉ : ne montrer que les relations dont l'AUTRE extrémité est présente
+  // dans `relatedById`. Pour un visiteur, les fiches confidentielles en sont
+  // absentes → on ne révèle ni leur existence, ni leur UUID, ni un lien (mirroir
+  // de `buildGraphData` côté graphe).
+  const mothers = relations.filter(r => r.kind === 'parent' && r.target_id === subjectId && relatedById.has(r.source_id))
+  const daughters = relations.filter(r => r.kind === 'parent' && r.source_id === subjectId && relatedById.has(r.target_id))
   const associations = relations.filter(
-    r => r.kind === 'assoc' && (r.source_id === subjectId || r.target_id === subjectId)
+    r => r.kind === 'assoc'
+      && (r.source_id === subjectId || r.target_id === subjectId)
+      && relatedById.has(r.source_id === subjectId ? r.target_id : r.source_id)
   )
 
   const linkedIds = new Set([
@@ -97,6 +105,12 @@ export function RelationsPanel({
         setAddKind('assoc')
         setAddLabel('')
         onChanged()
+      } else {
+        const data = await res.json().catch(() => ({})) as { error?: string }
+        const msg = data.error === 'cycle' ? t('errCycle')
+          : data.error === 'duplicate' ? t('errDuplicate')
+          : t('errGeneric')
+        addToast(msg, 'error')
       }
     } finally {
       setSaving(false)
