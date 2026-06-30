@@ -5,7 +5,7 @@ import { createServiceClient } from '@/lib/supabase/server'
 import { getSession } from '@/lib/auth'
 import { PaperView } from '@/components/paper/PaperView'
 import { flattenTasks } from '@/components/tasks/kanban-shared'
-import type { Lab, Subject, MemberRef, Comment, DropboxLink, SubjectFile } from '@/types'
+import type { Lab, Subject, SubjectRelation, MemberRef, Comment, DropboxLink, SubjectFile } from '@/types'
 import { VALID_LABS, LAB_LABELS } from '@/lib/constants'
 import { toLocale2 } from '@/lib/subjects/localized'
 
@@ -38,7 +38,7 @@ export default async function PaperPage({ params }: Props) {
   if (!isMember) navQuery = navQuery.eq('confidentiel', false)
 
   const [{ data: subject }, { data: navRows }, { data: members }, { data: tasksRaw },
-    { data: comments }, { data: links }, { data: files }] = await Promise.all([
+    { data: comments }, { data: links }, { data: files }, { data: relRows }] = await Promise.all([
     service.from('subjects').select('*').eq('id', id).single(),
     navQuery.order('ordre', { ascending: true }),
     service.from('members').select('id,prenom,nom,photo_url').eq('labo', lab),
@@ -48,7 +48,19 @@ export default async function PaperPage({ params }: Props) {
     service.from('comments').select('*').eq('sujet_id', id).order('created_at', { ascending: true }),
     service.from('dropbox_links').select('*').eq('subject_id', id),
     service.from('subject_files').select('*').eq('subject_id', id).order('created_at', { ascending: true }),
+    service.from('subject_relations').select('*').or(`source_id.eq.${id},target_id.eq.${id}`),
   ])
+
+  // Charger les sujets liés (avec gate confidentiel visiteur).
+  const relatedIds = Array.from(new Set(
+    (relRows ?? []).flatMap((r: SubjectRelation) => [r.source_id, r.target_id]).filter(x => x !== id)
+  ))
+  let related: Subject[] = []
+  if (relatedIds.length) {
+    let rq = service.from('subjects').select('*').in('id', relatedIds)
+    if (!isMember) rq = rq.eq('confidentiel', false)
+    related = ((await rq).data ?? []) as Subject[]
+  }
 
   // Introuvable, ou rattaché à un autre lab sans être transversal → 404 (intégrité d'URL).
   if (!subject || (subject.labo !== lab && !subject.is_transversal)) notFound()
@@ -70,6 +82,8 @@ export default async function PaperPage({ params }: Props) {
       links={(links ?? []) as DropboxLink[]}
       files={(files ?? []) as SubjectFile[]}
       isMember={isMember}
+      relations={(relRows ?? []) as SubjectRelation[]}
+      relatedSubjects={related}
     />
   )
 }

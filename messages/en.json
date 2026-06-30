@@ -171,7 +171,10 @@
     "fileTooLarge": "File too large (max 50 MB)",
     "fileTypeNotAllowed": "File type not allowed",
     "deleteFile": "Delete file",
-    "confirmDeleteFile": "Delete this file? This cannot be undone."
+    "confirmDeleteFile": "Delete this file? This cannot be undone.",
+    "relations": {
+      "inheritedFrom": "inherited from {title}"
+    }
   },
   "tasks": {
     "claimTask": "Claim task",

@@ -7,7 +7,7 @@ import { TasksPanel } from './TasksPanel'
 import { FilesPanel } from './FilesPanel'
 import { CommentsPanel } from './CommentsPanel'
 import { PaperNav, PAPER_NAV_HEIGHT } from './PaperNav'
-import type { Lab, Subject, MemberRef, TaskWithRelations, Comment, DropboxLink, SubjectFile } from '@/types'
+import type { Lab, Subject, SubjectRelation, MemberRef, TaskWithRelations, Comment, DropboxLink, SubjectFile } from '@/types'
 import { LAB_LABELS } from '@/lib/constants'
 
 type Props = {
@@ -21,6 +21,8 @@ type Props = {
   links: DropboxLink[]
   files: SubjectFile[]
   isMember: boolean
+  relations: SubjectRelation[]
+  relatedSubjects: Subject[]
 }
 
 const GHOSTS = [
@@ -34,6 +36,7 @@ const GHOSTS = [
 
 export function PaperView({
   locale, lab, subject, navSubjects, members, tasks: initialTasks, initialComments, links, files, isMember,
+  relations: _relations, relatedSubjects,
 }: Props) {
   const t = useTranslations('paper')
   const [tasks, setTasks] = useState<TaskWithRelations[]>(initialTasks)
@@ -68,6 +71,7 @@ export function PaperView({
   }, [])
 
   const labName = LAB_LABELS[lab] ?? lab
+  const byId = new Map<string, Subject>([subject, ...relatedSubjects].map(s => [s.id, s]))
 
   return (
     <div
@@ -150,7 +154,7 @@ export function PaperView({
         </div>
 
         {/* CENTRAL PAPER */}
-        <PaperSheet subject={subject} members={members} labName={labName} locale={locale} />
+        <PaperSheet subject={subject} members={members} labName={labName} locale={locale} lab={lab} byId={byId} />
 
         {/* LEFT: linked tasks */}
         <TasksPanel
