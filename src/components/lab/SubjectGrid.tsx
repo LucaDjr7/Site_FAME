@@ -264,10 +264,10 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
       `}</style>
 
       <div style={{
-        // Scroll au niveau de la PAGE (pas de conteneur overflow) pour que le
-        // zoom au survol des cartes ne soit jamais rogné. La toolbar et la barre
-        // du bas restent fixes via position:sticky (voir plus bas).
-        minHeight: 'calc(100vh - 6rem)',
+        // Hauteur bornée à la zone visible → la grille scrolle EN INTERNE
+        // (scrollbar dans la grille). Toolbar, filtre et barre du bas restent
+        // naturellement fixes (flexShrink:0 / flex item pleine hauteur).
+        height: 'calc(100vh - 6rem)',
         background: [
           'radial-gradient(110% 80% at 30% 10%, rgba(181,157,135,0.28) 0%, rgba(181,157,135,0) 52%)',
           'radial-gradient(120% 110% at 72% 110%, rgba(113,120,132,0.22) 0%, rgba(113,120,132,0) 60%)',
@@ -277,7 +277,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
         display: 'flex',
         flexDirection: 'column',
       }}>
-        {/* Secondary toolbar — collée sous la TopBar fixe (48px) pendant le scroll */}
+        {/* Secondary toolbar */}
         <div style={{
           display: 'flex',
           alignItems: 'center',
@@ -285,12 +285,6 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
           padding: '18px 24px 14px',
           flexShrink: 0,
           borderBottom: '1px solid rgba(20,40,90,0.1)',
-          position: 'sticky',
-          top: 48,
-          zIndex: 30,
-          background: 'rgba(249,249,250,0.92)',
-          backdropFilter: 'blur(8px)',
-          WebkitBackdropFilter: 'blur(8px)',
         }}>
           {/* Left: title block */}
           <div>
@@ -387,11 +381,13 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
         <div style={{
           flex: 1,
           display: 'flex',
+          overflow: 'hidden',
+          minHeight: 0,
         }}>
-          {/* Grid area — pas d'overflow : le zoom au survol doit pouvoir déborder.
-              Padding latéral large (60px) pour que le zoom des colonnes de bord
-              reste dans le viewport au lieu d'être coupé hors de la page. */}
-          <div style={{ flex: 1, padding: '10px 60px 0' }}>
+          {/* Grid area — scrollbar INTERNE à la grille (overflowY auto).
+              Padding latéral large (60px) pour que le zoom au survol des colonnes
+              de bord reste dans le scrollport au lieu d'être rogné. */}
+          <div style={{ flex: 1, overflowY: 'auto', padding: '24px 60px 0' }}>
             {displaySubjects.length === 0 && (
               <div className="font-mono text-fame-text-muted" style={{ fontSize: 13, textAlign: 'center', paddingTop: 60 }}>
                 {t('empty')}
@@ -477,7 +473,7 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
           />
         </div>
 
-        {/* Bottom bar — collée au bas du viewport pendant le scroll */}
+        {/* Bottom bar */}
         <div style={{
           display: 'flex',
           alignItems: 'center',
@@ -485,12 +481,6 @@ export function SubjectGrid({ lab, initialSubjects, members, canEdit }: Props) {
           padding: '10px 24px',
           borderTop: '1px solid rgba(20,40,90,0.1)',
           flexShrink: 0,
-          position: 'sticky',
-          bottom: 0,
-          zIndex: 30,
-          background: 'rgba(249,249,250,0.92)',
-          backdropFilter: 'blur(8px)',
-          WebkitBackdropFilter: 'blur(8px)',
         }}>
           {/* Left: count + sort */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
