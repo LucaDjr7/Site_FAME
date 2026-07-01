@@ -57,4 +57,11 @@ describe('indexSubjectFile', () => {
     expect(inserted[0]!.visibility).toBe('member')
     expect(inserted[0]!.confidentiel).toBe(true)
   })
+  it('doc confidentiel sur sujet public → chunks visibility=member', async () => {
+    fileRow = { id: 'f1', subject_id: 's1', storage_path: 's1/u', file_name: 'doc.pdf', mime_type: 'application/pdf', confidentiel: true }
+    subjectRow = { confidentiel: false, labo: 'paris', is_transversal: false }
+    await indexSubjectFile('f1', { service: service as never, provider: provider as never, extract: async () => 'contenu' })
+    expect(inserted[0]!.visibility).toBe('member')
+    expect(inserted[0]!.confidentiel).toBe(true)
+  })
 })

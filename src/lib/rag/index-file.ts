@@ -40,8 +40,8 @@ export async function indexSubjectFile(fileId: string, deps: IndexFileDeps = {})
   if (!file) { await deleteFileChunks(fileId, { service }); return }
 
   const { data: subject } = await service.from('subjects').select('confidentiel,labo,is_transversal').eq('id', file.subject_id).single()
-  // FAIL-CLOSED : sujet introuvable → confidentiel (jamais de fuite).
-  const confidentiel = subject ? !!subject.confidentiel : true
+  // Confidentiel si le sujet l'est (fail-closed si introuvable) OU si le doc l'est.
+  const confidentiel = (subject ? !!subject.confidentiel : true) || !!file.confidentiel
   const visibility: 'public' | 'member' = confidentiel ? 'member' : 'public'
 
   const dl = await service.storage.from(SUBJECT_FILES_BUCKET).download(file.storage_path)
