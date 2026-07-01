@@ -176,6 +176,10 @@
     "fileTypeNotAllowed": "Type de fichier non autorisé",
     "deleteFile": "Supprimer le fichier",
     "confirmDeleteFile": "Supprimer ce fichier ? Action irréversible.",
+    "makeFileConfidential": "Rendre confidentiel",
+    "makeFilePublic": "Rendre public",
+    "fileConfidential": "Confidentiel",
+    "updateFailed": "Échec de la mise à jour",
     "relations": {
       "inheritedFrom": "hérité de {title}",
       "title": "Relations",

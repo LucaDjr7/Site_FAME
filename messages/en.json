@@ -176,6 +176,10 @@
     "fileTypeNotAllowed": "File type not allowed",
     "deleteFile": "Delete file",
     "confirmDeleteFile": "Delete this file? This cannot be undone.",
+    "makeFileConfidential": "Make confidential",
+    "makeFilePublic": "Make public",
+    "fileConfidential": "Confidential",
+    "updateFailed": "Update failed",
     "relations": {
       "inheritedFrom": "inherited from {title}",
       "title": "Relations",
