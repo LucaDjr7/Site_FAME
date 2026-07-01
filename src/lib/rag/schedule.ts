@@ -1,6 +1,6 @@
 import { after } from 'next/server'
 import { indexSource, markSourceStale } from './index-source'
-import { indexSubjectFile, deleteFileChunks, deleteSubjectFileChunks } from './index-file'
+import { indexSubjectFile, deleteFileChunks, deleteSubjectFileChunks, retierFile } from './index-file'
 import type { RagSourceType } from '@/types'
 
 /** Re-indexe une source APRES la reponse HTTP, sans bloquer ni faire echouer la requete. */
@@ -26,4 +26,7 @@ export function scheduleDeleteFileChunks(fileId: string): void {
 }
 export function scheduleDeleteSubjectFiles(subjectId: string): void {
   after(async () => { try { await deleteSubjectFileChunks(subjectId) } catch { /* avale */ } })
+}
+export function scheduleRetierFile(fileId: string): void {
+  after(async () => { try { await retierFile(fileId) } catch { /* avale */ } })
 }

@@ -31,6 +31,18 @@ export async function syncSubjectFileVisibility(
   await service.from('rag_chunks').update(vals).eq('source_type', 'subject_file').eq('metadata->>subject_id', subjectId)
 }
 
+/** Re-tier léger des chunks d'un fichier (au toggle de confidentialité) — pas de ré-embed. */
+export async function retierFile(fileId: string, deps: IndexFileDeps = {}): Promise<void> {
+  const service = deps.service ?? (await createServiceClient())
+  const { data: file } = await service.from('subject_files').select('subject_id,confidentiel').eq('id', fileId).single()
+  if (!file) return
+  const { data: subject } = await service.from('subjects').select('confidentiel').eq('id', file.subject_id).single()
+  const confidentiel = (subject ? !!subject.confidentiel : true) || !!file.confidentiel
+  const visibility: 'public' | 'member' = confidentiel ? 'member' : 'public'
+  await service.from('rag_chunks').update({ confidentiel, visibility })
+    .eq('source_type', 'subject_file').eq('source_id', fileId)
+}
+
 export async function indexSubjectFile(fileId: string, deps: IndexFileDeps = {}): Promise<void> {
   const service = deps.service ?? (await createServiceClient())
   const provider = deps.provider ?? getEmbeddingProvider()

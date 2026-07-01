@@ -23,7 +23,7 @@ const service = {
 }
 const provider = { embed: async (texts: string[]) => texts.map(() => [0.1, 0.2]) }
 
-import { indexSubjectFile } from './index-file'
+import { indexSubjectFile, retierFile } from './index-file'
 
 beforeEach(() => {
   fileRow = { id: 'f1', subject_id: 's1', storage_path: 's1/u', file_name: 'doc.pdf', mime_type: 'application/pdf' }
@@ -63,5 +63,23 @@ describe('indexSubjectFile', () => {
     await indexSubjectFile('f1', { service: service as never, provider: provider as never, extract: async () => 'contenu' })
     expect(inserted[0]!.visibility).toBe('member')
     expect(inserted[0]!.confidentiel).toBe(true)
+  })
+})
+
+describe('retierFile', () => {
+  it('doc confidentiel sur sujet public → met les chunks en member, sans embed', async () => {
+    fileRow = { id: 'f1', subject_id: 's1', confidentiel: true }
+    subjectRow = { confidentiel: false }
+    let embedded = false
+    const prov = { embed: async (t: string[]) => { embedded = true; return t.map(() => [0.1]) } }
+    await retierFile('f1', { service: service as never, provider: prov as never })
+    expect(embedded).toBe(false)
+    expect(updated.at(-1)!.vals).toMatchObject({ visibility: 'member', confidentiel: true })
+  })
+  it('doc public sur sujet public → chunks public', async () => {
+    fileRow = { id: 'f1', subject_id: 's1', confidentiel: false }
+    subjectRow = { confidentiel: false }
+    await retierFile('f1', { service: service as never })
+    expect(updated.at(-1)!.vals).toMatchObject({ visibility: 'public', confidentiel: false })
   })
 })
