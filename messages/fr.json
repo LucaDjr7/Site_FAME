@@ -491,6 +491,7 @@
   "admin": {
     "kicker": "FAME / Admin",
     "proposalsTitle": "Propositions",
+    "assistantLink": "Assistant & journaux",
     "status": {
       "pending": "En attente",
       "accepted": "Acceptée",

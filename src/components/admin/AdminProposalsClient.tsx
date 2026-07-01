@@ -136,6 +136,21 @@ export function AdminProposalsClient() {
           >
             {t('proposalsTitle')}
           </h1>
+          <a
+            href={`/${locale}/admin/assistant`}
+            className="font-mono text-fame-blue"
+            style={{
+              display: 'inline-block',
+              marginTop: 7,
+              fontSize: 10,
+              letterSpacing: '0.06em',
+              textTransform: 'uppercase',
+              textDecoration: 'underline',
+              textUnderlineOffset: 3,
+            }}
+          >
+            {t('assistantLink')} →
+          </a>
         </div>
 
         {/* Right: lab + status filters */}
