@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { getSession, requireMember, authErrorResponse } from '@/lib/auth'
 import { SUBJECT_FILES_BUCKET } from '@/lib/subjects/file-upload'
-import { scheduleDeleteFileChunks } from '@/lib/rag/schedule'
+import { scheduleDeleteFileChunks, scheduleRetierFile } from '@/lib/rag/schedule'
 
 type Params = { params: Promise<{ id: string; fileId: string }> }
 
@@ -36,4 +36,20 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
   await service.from('subject_files').delete().eq('id', fileId)
   scheduleDeleteFileChunks(fileId)
   return NextResponse.json({ ok: true })
+}
+
+export async function PATCH(req: NextRequest, { params }: Params) {
+  try { await requireMember() } catch (e) { return authErrorResponse(e) }
+  const { id, fileId } = await params
+  const body = await req.json().catch(() => ({}))
+  if (typeof body.confidentiel !== 'boolean') return NextResponse.json({ error: 'confidentiel required' }, { status: 400 })
+
+  const service = await createServiceClient()
+  const { data: file } = await service.from('subject_files').select('subject_id').eq('id', fileId).single()
+  if (!file || file.subject_id !== id) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+
+  const { error } = await service.from('subject_files').update({ confidentiel: body.confidentiel }).eq('id', fileId)
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  scheduleRetierFile(fileId)
+  return NextResponse.json({ ok: true, confidentiel: body.confidentiel })
 }
