@@ -9,6 +9,7 @@ vi.mock('@/lib/auth', async (orig) => {
 
 let subject: unknown = { id: 's1', labo: 'paris' }
 let insertResult: { data: unknown; error: unknown } = { data: { id: 'f1' }, error: null }
+let inserted: Record<string, unknown> = {}
 const removed: string[][] = []
 vi.mock('@/lib/rag/schedule', () => ({ scheduleIndexFile: () => {}, scheduleReindex: () => {} }))
 
@@ -16,7 +17,7 @@ vi.mock('@/lib/supabase/server', () => ({
   createServiceClient: async () => ({
     from: () => ({
       select: () => ({ eq: () => ({ single: () => Promise.resolve({ data: subject, error: subject ? null : { message: 'nf' } }) }) }),
-      insert: () => ({ select: () => ({ single: () => Promise.resolve(insertResult) }) }),
+      insert: (row: Record<string, unknown>) => { inserted = row; return { select: () => ({ single: () => Promise.resolve(insertResult) }) } },
     }),
     storage: { from: () => ({ remove: (paths: string[]) => { removed.push(paths); return Promise.resolve({ error: null }) } }) },
   }),
@@ -33,6 +34,7 @@ beforeEach(() => {
   subject = { id: 's1', labo: 'paris' }
   insertResult = { data: { id: 'f1' }, error: null }
   removed.length = 0
+  inserted = {}
 })
 
 describe('POST /api/subjects/[id]/files (register)', () => {
@@ -51,6 +53,10 @@ describe('POST /api/subjects/[id]/files (register)', () => {
   })
   it('201 en succès', async () => {
     expect((await POST(req(valid), params)).status).toBe(201)
+  })
+  it('insère confidentiel=true par défaut', async () => {
+    await POST(req(valid), params)
+    expect(inserted.confidentiel).toBe(true)
   })
   it("compense (supprime l'objet) si l'insert échoue", async () => {
     insertResult = { data: null, error: { message: 'db down' } }

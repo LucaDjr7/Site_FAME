@@ -253,6 +253,7 @@ export interface SubjectFile {
   file_name: string
   mime_type: string
   size_bytes: number
+  confidentiel: boolean
   uploaded_by: string | null
   created_at: string
 }
