@@ -24,11 +24,36 @@ export async function deleteSubjectFileChunks(subjectId: string, deps: IndexFile
 
 export async function syncSubjectFileVisibility(
   subjectId: string,
-  vals: { labo: string | null; confidentiel: boolean; is_transversal: boolean; visibility: 'public' | 'member' },
+  vals: { labo: string | null; confidentiel: boolean; is_transversal: boolean },
   deps: IndexFileDeps = {},
 ): Promise<void> {
   const service = deps.service ?? (await createServiceClient())
-  await service.from('rag_chunks').update(vals).eq('source_type', 'subject_file').eq('metadata->>subject_id', subjectId)
+  const base = { labo: vals.labo, is_transversal: vals.is_transversal }
+  if (vals.confidentiel) {
+    // Sujet confidentiel : tous ses docs sont member, quel que soit leur flag.
+    await service.from('rag_chunks').update({ ...base, confidentiel: true, visibility: 'member' })
+      .eq('source_type', 'subject_file').eq('metadata->>subject_id', subjectId)
+    return
+  }
+  // Sujet public : la visibilité de chaque doc suit son propre flag.
+  const { data: files } = await service.from('subject_files').select('id,confidentiel').eq('subject_id', subjectId)
+  for (const f of (files ?? []) as Array<{ id: string; confidentiel: boolean }>) {
+    const confidentiel = !!f.confidentiel
+    await service.from('rag_chunks').update({ ...base, confidentiel, visibility: confidentiel ? 'member' : 'public' })
+      .eq('source_type', 'subject_file').eq('source_id', f.id)
+  }
+}
+
+/** Re-tier léger des chunks d'un fichier (au toggle de confidentialité) — pas de ré-embed. */
+export async function retierFile(fileId: string, deps: IndexFileDeps = {}): Promise<void> {
+  const service = deps.service ?? (await createServiceClient())
+  const { data: file } = await service.from('subject_files').select('subject_id,confidentiel').eq('id', fileId).single()
+  if (!file) return
+  const { data: subject } = await service.from('subjects').select('confidentiel').eq('id', file.subject_id).single()
+  const confidentiel = (subject ? !!subject.confidentiel : true) || !!file.confidentiel
+  const visibility: 'public' | 'member' = confidentiel ? 'member' : 'public'
+  await service.from('rag_chunks').update({ confidentiel, visibility })
+    .eq('source_type', 'subject_file').eq('source_id', fileId)
 }
 
 export async function indexSubjectFile(fileId: string, deps: IndexFileDeps = {}): Promise<void> {
@@ -40,8 +65,8 @@ export async function indexSubjectFile(fileId: string, deps: IndexFileDeps = {})
   if (!file) { await deleteFileChunks(fileId, { service }); return }
 
   const { data: subject } = await service.from('subjects').select('confidentiel,labo,is_transversal').eq('id', file.subject_id).single()
-  // FAIL-CLOSED : sujet introuvable → confidentiel (jamais de fuite).
-  const confidentiel = subject ? !!subject.confidentiel : true
+  // Confidentiel si le sujet l'est (fail-closed si introuvable) OU si le doc l'est.
+  const confidentiel = (subject ? !!subject.confidentiel : true) || !!file.confidentiel
   const visibility: 'public' | 'member' = confidentiel ? 'member' : 'public'
 
   const dl = await service.storage.from(SUBJECT_FILES_BUCKET).download(file.storage_path)

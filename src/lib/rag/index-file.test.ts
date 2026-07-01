@@ -23,7 +23,7 @@ const service = {
 }
 const provider = { embed: async (texts: string[]) => texts.map(() => [0.1, 0.2]) }
 
-import { indexSubjectFile } from './index-file'
+import { indexSubjectFile, retierFile, syncSubjectFileVisibility } from './index-file'
 
 beforeEach(() => {
   fileRow = { id: 'f1', subject_id: 's1', storage_path: 's1/u', file_name: 'doc.pdf', mime_type: 'application/pdf' }
@@ -56,5 +56,64 @@ describe('indexSubjectFile', () => {
     await indexSubjectFile('f1', { service: service as never, provider: provider as never, extract: async () => 'contenu' })
     expect(inserted[0]!.visibility).toBe('member')
     expect(inserted[0]!.confidentiel).toBe(true)
+  })
+  it('doc confidentiel sur sujet public → chunks visibility=member', async () => {
+    fileRow = { id: 'f1', subject_id: 's1', storage_path: 's1/u', file_name: 'doc.pdf', mime_type: 'application/pdf', confidentiel: true }
+    subjectRow = { confidentiel: false, labo: 'paris', is_transversal: false }
+    await indexSubjectFile('f1', { service: service as never, provider: provider as never, extract: async () => 'contenu' })
+    expect(inserted[0]!.visibility).toBe('member')
+    expect(inserted[0]!.confidentiel).toBe(true)
+  })
+})
+
+describe('syncSubjectFileVisibility', () => {
+  function make(files: Array<{ id: string; confidentiel: boolean }>) {
+    const ups: Array<{ vals: Record<string, unknown>; filters: Array<[string, unknown]> }> = []
+    const svc = {
+      from: (t: string) => ({
+        select: () => ({ eq: () => Promise.resolve({ data: t === 'subject_files' ? files : [], error: null }) }),
+        update: (vals: Record<string, unknown>) => {
+          const filters: Array<[string, unknown]> = []
+          const u = { eq: (c: string, v: unknown) => { filters.push([c, v]); return u } }
+          ups.push({ vals, filters }); return Object.assign(Promise.resolve({ error: null }), u)
+        },
+      }),
+    }
+    return { svc, ups }
+  }
+
+  it('sujet confidentiel → blanket member', async () => {
+    const { svc, ups } = make([])
+    await syncSubjectFileVisibility('s1', { labo: 'paris', confidentiel: true, is_transversal: false }, { service: svc as never })
+    expect(ups[0]!.vals).toMatchObject({ visibility: 'member', confidentiel: true })
+  })
+
+  it('sujet public → visibilité par fichier (confi reste member)', async () => {
+    const { svc, ups } = make([{ id: 'fa', confidentiel: true }, { id: 'fb', confidentiel: false }])
+    await syncSubjectFileVisibility('s1', { labo: 'paris', confidentiel: false, is_transversal: false }, { service: svc as never })
+    const a = ups.find(u => u.filters.some(f => f[1] === 'fa'))!
+    const b = ups.find(u => u.filters.some(f => f[1] === 'fb'))!
+    expect(a.vals).toMatchObject({ visibility: 'member', confidentiel: true })
+    expect(b.vals).toMatchObject({ visibility: 'public', confidentiel: false })
+  })
+})
+
+describe('retierFile', () => {
+  it('doc confidentiel sur sujet public → met les chunks en member, sans embed', async () => {
+    fileRow = { id: 'f1', subject_id: 's1', confidentiel: true }
+    subjectRow = { confidentiel: false }
+    let embedded = false
+    const prov = { embed: async (t: string[]) => { embedded = true; return t.map(() => [0.1]) } }
+    await retierFile('f1', { service: service as never, provider: prov as never })
+    expect(embedded).toBe(false)
+    expect(updated.at(-1)!.vals).toMatchObject({ visibility: 'member', confidentiel: true })
+    expect(updated.at(-1)!.filters).toEqual([['source_type', 'subject_file'], ['source_id', 'f1']])
+  })
+  it('doc public sur sujet public → chunks public', async () => {
+    fileRow = { id: 'f1', subject_id: 's1', confidentiel: false }
+    subjectRow = { confidentiel: false }
+    await retierFile('f1', { service: service as never })
+    expect(updated.at(-1)!.vals).toMatchObject({ visibility: 'public', confidentiel: false })
+    expect(updated.at(-1)!.filters).toEqual([['source_type', 'subject_file'], ['source_id', 'f1']])
   })
 })

@@ -70,6 +70,15 @@ export function FilesPanel({ links, files, subjectId, isMember, open, onToggleOp
     else addToast(t('deleteFailed'), 'error')
   }
 
+  async function toggleConfidential(f: SubjectFile) {
+    const res = await fetch(`/api/subjects/${subjectId}/files/${f.id}`, {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ confidentiel: !f.confidentiel }),
+    })
+    if (res.ok) router.refresh()
+    else addToast(t('updateFailed'), 'error')
+  }
+
   return (
     <section style={{
       flex: 'none', pointerEvents: 'auto', background: '#2f4486', backdropFilter: 'blur(12px)',
@@ -111,8 +120,19 @@ export function FilesPanel({ links, files, subjectId, isMember, open, onToggleOp
                 <span style={{ flex: 1, minWidth: 0 }}>
                   <span className="text-fame-text-light" style={{ display: 'block', fontSize: 12, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{f.file_name}</span>
                   <span className="font-mono text-fame-text-muted" style={{ fontSize: 10 }}>{fmtSize(f.size_bytes)}</span>
+                  {isMember && f.confidentiel && (
+                    <span className="font-mono" style={{ marginLeft: 8, fontSize: 9, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#e8b149', pointerEvents: 'none' }}>{t('fileConfidential')}</span>
+                  )}
                 </span>
               </a>
+              {isMember && (
+                <button
+                  onClick={() => toggleConfidential(f)}
+                  aria-label={f.confidentiel ? t('makeFilePublic') : t('makeFileConfidential')}
+                  title={f.confidentiel ? t('fileConfidential') : t('makeFileConfidential')}
+                  style={{ flex: 'none', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: f.confidentiel ? '#e8b149' : '#8ea4df' }}
+                >{f.confidentiel ? '🔒' : '🔓'}</button>
+              )}
               {isMember && (
                 <button onClick={() => setPendingDelete(f)} aria-label={t('deleteFile')} style={{ flex: 'none', background: 'none', border: 'none', color: '#ff8a7d', cursor: 'pointer', fontSize: 14 }}>✕</button>
               )}

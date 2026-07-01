@@ -25,7 +25,7 @@ export async function POST(req: NextRequest, { params }: Params) {
   const { data, error } = await service.from('subject_files').insert({
     subject_id: id, labo: subject.labo, storage_path: body.storage_path,
     file_name: body.file_name, mime_type: body.mime_type, size_bytes: body.size_bytes,
-    uploaded_by: member.id,
+    uploaded_by: member.id, confidentiel: true,
   }).select().single()
 
   if (error) {

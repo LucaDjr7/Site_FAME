@@ -10,15 +10,17 @@ vi.mock('@/lib/auth', async (orig) => {
 
 let subject: unknown = { confidentiel: false }
 let file: unknown = { id: 'f1', subject_id: 's1', storage_path: 's1/uuid', file_name: 'a.pdf' }
+let updated: Record<string, unknown> = {}
 const removed: string[][] = []
 const createSignedUrl = vi.fn()
-vi.mock('@/lib/rag/schedule', () => ({ scheduleDeleteFileChunks: () => {}, scheduleReindex: () => {} }))
+vi.mock('@/lib/rag/schedule', () => ({ scheduleDeleteFileChunks: () => {}, scheduleReindex: () => {}, scheduleRetierFile: () => {} }))
 
 vi.mock('@/lib/supabase/server', () => ({
   createServiceClient: async () => ({
     from: (table: string) => ({
       select: () => ({ eq: () => ({ single: () => Promise.resolve({ data: table === 'subjects' ? subject : file, error: (table === 'subjects' ? subject : file) ? null : { message: 'nf' } }) }) }),
       delete: () => ({ eq: () => Promise.resolve({ error: null }) }),
+      update: (vals: Record<string, unknown>) => { updated = vals; return { eq: () => Promise.resolve({ error: null }) } },
     }),
     storage: { from: () => ({
       createSignedUrl: (...a: unknown[]) => createSignedUrl(...a),
@@ -27,7 +29,7 @@ vi.mock('@/lib/supabase/server', () => ({
   }),
 }))
 
-import { GET, DELETE } from './route'
+import { GET, DELETE, PATCH } from './route'
 import { AuthError } from '@/lib/auth'
 
 const params = { params: Promise.resolve({ id: 's1', fileId: 'f1' }) }
@@ -39,6 +41,7 @@ beforeEach(() => {
   requireMember.mockReset(); requireMember.mockResolvedValue({ session: {}, member: { id: 'm' } })
   subject = { confidentiel: false }
   file = { id: 'f1', subject_id: 's1', storage_path: 's1/uuid', file_name: 'a.pdf' }
+  updated = {}
   removed.length = 0
   createSignedUrl.mockReset()
   createSignedUrl.mockResolvedValue({ data: { signedUrl: 'https://storage.example/signed' }, error: null })
@@ -63,6 +66,15 @@ describe('GET /api/subjects/[id]/files/[fileId] (download)', () => {
     expect(res.status).toBe(302)
     expect(res.headers.get('location')).toBe('https://storage.example/signed')
   })
+  it('404 doc confidentiel sur sujet public vu par un visiteur', async () => {
+    file = { id: 'f1', subject_id: 's1', storage_path: 's1/uuid', file_name: 'a.pdf', confidentiel: true }
+    expect((await GET(gReq(), params)).status).toBe(404)
+  })
+  it('302 doc confidentiel vu par un membre', async () => {
+    file = { id: 'f1', subject_id: 's1', storage_path: 's1/uuid', file_name: 'a.pdf', confidentiel: true }
+    getSession.mockResolvedValue({ user: { id: 'u' }, member: { id: 'u' } })
+    expect((await GET(gReq(), params)).status).toBe(302)
+  })
 })
 
 describe('DELETE /api/subjects/[id]/files/[fileId]', () => {
@@ -74,5 +86,30 @@ describe('DELETE /api/subjects/[id]/files/[fileId]', () => {
     const res = await DELETE(dReq(), params)
     expect(res.status).toBe(200)
     expect(removed).toEqual([['s1/uuid']])
+  })
+})
+
+const pReq = (b: unknown) => new NextRequest('http://localhost/api/subjects/s1/files/f1', { method: 'PATCH', body: JSON.stringify(b) })
+
+describe('PATCH /api/subjects/[id]/files/[fileId]', () => {
+  it('401 si non-membre', async () => {
+    requireMember.mockRejectedValue(new AuthError(401, 'x'))
+    expect((await PATCH(pReq({ confidentiel: true }), params)).status).toBe(401)
+  })
+  it('400 si confidentiel absent', async () => {
+    expect((await PATCH(pReq({}), params)).status).toBe(400)
+  })
+  it('404 si le fichier appartient à un autre sujet', async () => {
+    file = { id: 'f1', subject_id: 'OTHER' }
+    expect((await PATCH(pReq({ confidentiel: true }), params)).status).toBe(404)
+  })
+  it('200 + met à jour confidentiel', async () => {
+    const res = await PATCH(pReq({ confidentiel: true }), params)
+    expect(res.status).toBe(200)
+    expect(updated.confidentiel).toBe(true)
+    expect(await res.json()).toEqual({ ok: true, confidentiel: true })
+  })
+  it('400 si confidentiel est une chaîne', async () => {
+    expect((await PATCH(pReq({ confidentiel: 'true' }), params)).status).toBe(400)
   })
 })

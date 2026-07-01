@@ -44,6 +44,10 @@ export default async function PaperPage({ params }: Props) {
   let allSubjectsQuery = service.from('subjects').select('id,titre,i18n')
   if (!isMember) allSubjectsQuery = allSubjectsQuery.eq('confidentiel', false)
 
+  // Fichiers : le visiteur ne voit pas les docs confidentiels (même sur une fiche publique).
+  let filesQuery = service.from('subject_files').select('*').eq('subject_id', id)
+  if (!isMember) filesQuery = filesQuery.eq('confidentiel', false)
+
   const [{ data: subject }, { data: navRows }, { data: members }, { data: tasksRaw },
     { data: comments }, { data: links }, { data: files }, { data: relRows }, { data: allSubjectsRows }] = await Promise.all([
     service.from('subjects').select('*').eq('id', id).single(),
@@ -54,7 +58,7 @@ export default async function PaperPage({ params }: Props) {
       .eq('sujet_id', id).order('date_creation', { ascending: true }),
     service.from('comments').select('*').eq('sujet_id', id).order('created_at', { ascending: true }),
     service.from('dropbox_links').select('*').eq('subject_id', id),
-    service.from('subject_files').select('*').eq('subject_id', id).order('created_at', { ascending: true }),
+    filesQuery.order('created_at', { ascending: true }),
     service.from('subject_relations').select('*').or(`source_id.eq.${id},target_id.eq.${id}`),
     allSubjectsQuery.order('ordre', { ascending: true }),
   ])
