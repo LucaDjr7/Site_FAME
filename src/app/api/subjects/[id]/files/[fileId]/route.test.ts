@@ -107,5 +107,9 @@ describe('PATCH /api/subjects/[id]/files/[fileId]', () => {
     const res = await PATCH(pReq({ confidentiel: true }), params)
     expect(res.status).toBe(200)
     expect(updated.confidentiel).toBe(true)
+    expect(await res.json()).toEqual({ ok: true, confidentiel: true })
+  })
+  it('400 si confidentiel est une chaîne', async () => {
+    expect((await PATCH(pReq({ confidentiel: 'true' }), params)).status).toBe(400)
   })
 })

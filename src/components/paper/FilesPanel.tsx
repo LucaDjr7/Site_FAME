@@ -121,7 +121,7 @@ export function FilesPanel({ links, files, subjectId, isMember, open, onToggleOp
                   <span className="text-fame-text-light" style={{ display: 'block', fontSize: 12, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{f.file_name}</span>
                   <span className="font-mono text-fame-text-muted" style={{ fontSize: 10 }}>{fmtSize(f.size_bytes)}</span>
                   {isMember && f.confidentiel && (
-                    <span className="font-mono" style={{ marginLeft: 8, fontSize: 9, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#e8b149' }}>{t('fileConfidential')}</span>
+                    <span className="font-mono" style={{ marginLeft: 8, fontSize: 9, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#e8b149', pointerEvents: 'none' }}>{t('fileConfidential')}</span>
                   )}
                 </span>
               </a>

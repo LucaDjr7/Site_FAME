@@ -107,11 +107,13 @@ describe('retierFile', () => {
     await retierFile('f1', { service: service as never, provider: prov as never })
     expect(embedded).toBe(false)
     expect(updated.at(-1)!.vals).toMatchObject({ visibility: 'member', confidentiel: true })
+    expect(updated.at(-1)!.filters).toEqual([['source_type', 'subject_file'], ['source_id', 'f1']])
   })
   it('doc public sur sujet public → chunks public', async () => {
     fileRow = { id: 'f1', subject_id: 's1', confidentiel: false }
     subjectRow = { confidentiel: false }
     await retierFile('f1', { service: service as never })
     expect(updated.at(-1)!.vals).toMatchObject({ visibility: 'public', confidentiel: false })
+    expect(updated.at(-1)!.filters).toEqual([['source_type', 'subject_file'], ['source_id', 'f1']])
   })
 })
