@@ -13,11 +13,12 @@ export async function GET(_req: NextRequest, { params }: Params) {
 
   const { data: subject } = await service.from('subjects').select('confidentiel').eq('id', id).single()
   if (!subject) return NextResponse.json({ error: 'Not found' }, { status: 404 })
-  // Visiteur : un fichier de sujet confidentiel n'existe pas.
-  if (subject.confidentiel && !isMember) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
   const { data: file } = await service.from('subject_files').select('*').eq('id', fileId).single()
   if (!file || file.subject_id !== id) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+
+  // Visiteur : un doc confidentiel (par le sujet OU par le doc) n'existe pas.
+  if ((subject.confidentiel || file.confidentiel) && !isMember) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
   const { data: signed, error } = await service.storage.from(SUBJECT_FILES_BUCKET)
     .createSignedUrl(file.storage_path, 60, { download: file.file_name })

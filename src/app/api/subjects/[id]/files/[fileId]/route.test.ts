@@ -63,6 +63,15 @@ describe('GET /api/subjects/[id]/files/[fileId] (download)', () => {
     expect(res.status).toBe(302)
     expect(res.headers.get('location')).toBe('https://storage.example/signed')
   })
+  it('404 doc confidentiel sur sujet public vu par un visiteur', async () => {
+    file = { id: 'f1', subject_id: 's1', storage_path: 's1/uuid', file_name: 'a.pdf', confidentiel: true }
+    expect((await GET(gReq(), params)).status).toBe(404)
+  })
+  it('302 doc confidentiel vu par un membre', async () => {
+    file = { id: 'f1', subject_id: 's1', storage_path: 's1/uuid', file_name: 'a.pdf', confidentiel: true }
+    getSession.mockResolvedValue({ user: { id: 'u' }, member: { id: 'u' } })
+    expect((await GET(gReq(), params)).status).toBe(302)
+  })
 })
 
 describe('DELETE /api/subjects/[id]/files/[fileId]', () => {
