@@ -560,6 +560,8 @@
     "resolved": "Resolved",
     "open": "Open",
     "none": "Nothing logged yet",
+    "delete": "Delete",
+    "confirmDelete": "Delete this log entry? This cannot be undone.",
     "backToAssistant": "← Assistant settings"
   },
   "assistant": {

@@ -560,6 +560,8 @@
     "resolved": "Résolu",
     "open": "À traiter",
     "none": "Aucun log pour le moment",
+    "delete": "Supprimer",
+    "confirmDelete": "Supprimer cette entrée de log ? Action irréversible.",
     "backToAssistant": "← Réglages de l'assistant"
   },
   "assistant": {
