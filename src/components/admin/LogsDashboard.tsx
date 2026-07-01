@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl'
 type Unanswered = { id: string; question: string; lang: string; resolved: boolean; created_at: string }
 type Flagged = { id: string; question: string; reason: string; created_at: string }
 
-export function LogsDashboard({ unanswered, flagged, backHref }: { unanswered: Unanswered[]; flagged: Flagged[]; backHref: string }) {
+export function LogsDashboard({ unanswered, flagged, backHref }: { unanswered: Unanswered[]; flagged: Flagged[]; backHref?: string }) {
   const t = useTranslations('adminLogs')
   const [rows, setRows] = useState(unanswered)
 
@@ -19,7 +19,7 @@ export function LogsDashboard({ unanswered, flagged, backHref }: { unanswered: U
     <section className="space-y-8">
       <div className="flex items-center justify-between">
         <h2 className="font-serif text-xl text-fame-text-dark">{t('title')}</h2>
-        <a href={backHref} className="font-mono text-sm text-fame-blue underline">{t('backToAssistant')}</a>
+        {backHref && <a href={backHref} className="font-mono text-sm text-fame-blue underline">{t('backToAssistant')}</a>}
       </div>
 
       <div className="rounded-lg border border-fame-ecru p-4">

@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl'
 interface Props {
   enabled: boolean
   usage: { month: string; estCost: number; budget: number }
-  logsHref: string
+  logsHref?: string
 }
 
 export function AssistantDashboard({ enabled, usage, logsHref }: Props) {
@@ -46,9 +46,11 @@ export function AssistantDashboard({ enabled, usage, logsHref }: Props) {
         <p className="text-fame-text-body">{t('monthlyCost')}: ${usage.estCost.toFixed(2)} / {t('budget')}: ${usage.budget.toFixed(2)}</p>
       </div>
 
-      <div className="rounded-lg border border-fame-ecru p-4">
-        <a href={logsHref} className="font-mono text-sm text-fame-blue underline">{t('viewLogs')}</a>
-      </div>
+      {logsHref && (
+        <div className="rounded-lg border border-fame-ecru p-4">
+          <a href={logsHref} className="font-mono text-sm text-fame-blue underline">{t('viewLogs')}</a>
+        </div>
+      )}
     </section>
   )
 }
