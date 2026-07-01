@@ -159,7 +159,7 @@ export async function indexSource(
   if (type === 'subject') {
     await syncSubjectFileVisibility(id, {
       labo: batch.labo, confidentiel: batch.confidentiel,
-      is_transversal: batch.is_transversal, visibility: batch.visibility,
+      is_transversal: batch.is_transversal,
     }, { service })
   }
 }
