@@ -71,7 +71,7 @@ describe('syncSubjectFileVisibility', () => {
     const ups: Array<{ vals: Record<string, unknown>; filters: Array<[string, unknown]> }> = []
     const svc = {
       from: (t: string) => ({
-        select: () => ({ eq: (_c: string, _v: unknown) => Promise.resolve({ data: t === 'subject_files' ? files : [], error: null }) }),
+        select: () => ({ eq: () => Promise.resolve({ data: t === 'subject_files' ? files : [], error: null }) }),
         update: (vals: Record<string, unknown>) => {
           const filters: Array<[string, unknown]> = []
           const u = { eq: (c: string, v: unknown) => { filters.push([c, v]); return u } }
