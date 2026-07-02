@@ -26,6 +26,7 @@ export async function POST(req: NextRequest, { params }: Params) {
   }
   const service = await createServiceClient()
   const { data, error } = await service.from('subtasks').insert({ task_id, label, ordre, i18n: subI18n }).select().single()
+  if (error?.code === '23503') return NextResponse.json({ error: 'Task not found' }, { status: 404 })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json(data, { status: 201 })
 }
@@ -39,6 +40,7 @@ export async function PATCH(req: NextRequest) {
   }
   const service = await createServiceClient()
   const { data, error } = await service.from('subtasks').update({ done }).eq('id', subtask_id).select().single()
+  if (error?.code === 'PGRST116') return NextResponse.json({ error: 'Subtask not found' }, { status: 404 })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json(data)
 }

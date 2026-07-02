@@ -85,9 +85,14 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
       await service.from('subjects').update({ inherits: cleaned }).eq('id', cid)
     }
   }
+  // Lire les chemins Storage AVANT le delete : le FK `on delete cascade` supprime
+  // les lignes `subject_files`, donc les `storage_path` seraient introuvables après.
+  const { data: filesToPurge } = await service.from('subject_files').select('storage_path').eq('subject_id', id)
+  const storagePaths = ((filesToPurge ?? []) as Array<{ storage_path: string }>).map(f => f.storage_path)
+
   const { error } = await service.from('subjects').delete().eq('id', id)
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   scheduleReindex('subject', id)
-  scheduleDeleteSubjectFiles(id)
+  scheduleDeleteSubjectFiles(id, storagePaths)
   return NextResponse.json({ ok: true })
 }

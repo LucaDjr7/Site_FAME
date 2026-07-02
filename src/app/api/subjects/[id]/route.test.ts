@@ -9,32 +9,45 @@ vi.mock('@/lib/auth', async (orig) => {
 })
 
 // Le hook embed-on-write appelle after() hors scope de requête en test → no-op.
-vi.mock('@/lib/rag/schedule', () => ({ scheduleReindex: () => {}, scheduleDeleteSubjectFiles: () => {} }))
+const scheduleDeleteSubjectFiles = vi.fn()
+vi.mock('@/lib/rag/schedule', () => ({ scheduleReindex: () => {}, scheduleDeleteSubjectFiles: (id: string, paths?: string[]) => scheduleDeleteSubjectFiles(id, paths) }))
 
 let updateVals: Record<string, unknown> = {}
 let singleResult: { data: unknown; error: unknown } = { data: null, error: null }
 let getResult: { data: unknown; error: unknown } = { data: null, error: null }
+let subjectFilesResult: { data: unknown; error: unknown } = { data: [], error: null }
 vi.mock('@/lib/supabase/server', () => ({
   createServiceClient: async () => ({
-    from: () => ({
-      update: (vals: Record<string, unknown>) => { updateVals = vals; return {
-        eq: () => ({ select: () => ({ single: () => Promise.resolve(singleResult) }) }) } },
-      select: () => ({ eq: () => ({ single: () => Promise.resolve(getResult) }) }),
-      delete: () => ({ eq: () => Promise.resolve({ error: null }) }),
-    }),
+    from: (table: string) => {
+      if (table === 'subject_files') {
+        return { select: () => ({ eq: () => Promise.resolve(subjectFilesResult) }) }
+      }
+      if (table === 'subject_relations') {
+        return { select: () => ({ eq: () => ({ eq: () => Promise.resolve({ data: [], error: null }) }) }) }
+      }
+      return {
+        update: (vals: Record<string, unknown>) => { updateVals = vals; return {
+          eq: () => ({ select: () => ({ single: () => Promise.resolve(singleResult) }) }) } },
+        select: () => ({ eq: () => ({ single: () => Promise.resolve(getResult) }) }),
+        delete: () => ({ eq: () => Promise.resolve({ error: null }) }),
+      }
+    },
   }),
 }))
 
 vi.mock('@/lib/rag/usage', () => ({ isOverBudget: async () => false }))
 vi.mock('@/lib/subjects/translate', () => ({ buildSubjectI18n: async () => ({ en: {}, fr: {} }) }))
 
-import { GET, PATCH } from './route'
+import { GET, PATCH, DELETE } from './route'
 
 function req(body: unknown) {
   return new NextRequest('http://localhost/api/subjects/x', { method: 'PATCH', body: JSON.stringify(body) })
 }
 function getReq() {
   return new NextRequest('http://localhost/api/subjects/x')
+}
+function delReq() {
+  return new NextRequest('http://localhost/api/subjects/x', { method: 'DELETE' })
 }
 
 beforeEach(() => {
@@ -45,6 +58,8 @@ beforeEach(() => {
   updateVals = {}
   singleResult = { data: null, error: null }
   getResult = { data: null, error: null }
+  subjectFilesResult = { data: [], error: null }
+  scheduleDeleteSubjectFiles.mockClear()
 })
 
 describe('GET /api/subjects/[id] — confidentiel gating', () => {
@@ -91,5 +106,19 @@ describe('PATCH /api/subjects/[id]', () => {
     singleResult = { data: { id: 'x', is_transversal: true }, error: null }
     await PATCH(req({ is_transversal: 1 }), { params: Promise.resolve({ id: 'x' }) })
     expect(updateVals.is_transversal).toBe(true)
+  })
+})
+
+describe('DELETE /api/subjects/[id] — purge Storage', () => {
+  it('lit les storage_path avant le delete et les passe au scheduler', async () => {
+    subjectFilesResult = { data: [{ storage_path: 'x/a.pdf' }, { storage_path: 'x/b.png' }], error: null }
+    const res = await DELETE(delReq(), { params: Promise.resolve({ id: 'x' }) })
+    expect(res.status).toBe(200)
+    expect(scheduleDeleteSubjectFiles).toHaveBeenCalledWith('x', ['x/a.pdf', 'x/b.png'])
+  })
+  it('sans fichier : passe un tableau vide', async () => {
+    subjectFilesResult = { data: [], error: null }
+    await DELETE(delReq(), { params: Promise.resolve({ id: 'x' }) })
+    expect(scheduleDeleteSubjectFiles).toHaveBeenCalledWith('x', [])
   })
 })
