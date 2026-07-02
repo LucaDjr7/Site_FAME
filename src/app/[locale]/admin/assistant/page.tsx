@@ -3,7 +3,7 @@ import { requireAdmin, AuthError } from '@/lib/auth'
 import { createServiceClient } from '@/lib/supabase/server'
 import { isAssistantEnabled } from '@/lib/rag/settings'
 import { AssistantDashboard } from '@/components/admin/AssistantDashboard'
-import { LogsDashboard } from '@/components/admin/LogsDashboard'
+import { LogsDashboard, type Unanswered, type Flagged } from '@/components/admin/LogsDashboard'
 
 export default async function AssistantAdminPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
@@ -31,8 +31,8 @@ export default async function AssistantAdminPage({ params }: { params: Promise<{
         usage={{ month, estCost: Number(usageRow?.est_cost_usd ?? 0), budget }}
       />
       <LogsDashboard
-        unanswered={(unanswered ?? []) as never}
-        flagged={(flagged ?? []) as never}
+        unanswered={(unanswered ?? []) as Unanswered[]}
+        flagged={(flagged ?? []) as Flagged[]}
       />
     </main>
   )

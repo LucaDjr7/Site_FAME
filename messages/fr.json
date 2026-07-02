@@ -488,7 +488,7 @@
     "countSuffix": "prompt(s)",
     "untitled": "Nouveau prompt",
     "titlePlaceholder": "Titre du prompt",
-    "bodyPlaceholder": "Texte du prompt — utilisez des variables comme {{nom}} pour les champs à compléter.",
+    "bodyPlaceholder": "Texte du prompt — utilisez des variables comme '{{nom}}' pour les champs à compléter.",
     "confirmDelete": "Supprimer ce prompt ? Cette action est définitive.",
     "loading": "Chargement…",
     "errorGeneric": "Une erreur est survenue.",

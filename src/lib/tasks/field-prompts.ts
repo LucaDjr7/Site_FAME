@@ -1,4 +1,4 @@
-import type { Lab } from '@/types'
+import type { Lab, Locale2 } from '@/types'
 
 export type TaskAssistField = 'titre' | 'description' | 'subtask'
 export const TASK_ASSIST_FIELDS: TaskAssistField[] = ['titre', 'description', 'subtask']
@@ -6,7 +6,6 @@ export function isTaskAssistField(v: unknown): v is TaskAssistField {
   return typeof v === 'string' && (TASK_ASSIST_FIELDS as string[]).includes(v)
 }
 
-export type Locale = 'en' | 'fr'
 
 export type TaskFieldDraft = {
   titre?: string
@@ -37,7 +36,7 @@ const INSTRUCTIONS: Record<TaskAssistField, { en: string; fr: string }> = {
   },
 }
 
-function draftContext(draft: TaskFieldDraft, locale: Locale): string {
+function draftContext(draft: TaskFieldDraft, locale: Locale2): string {
   const fr = locale === 'fr'
   const rows: Array<[string, string | undefined]> = [
     [fr ? 'Sujet de recherche' : 'Research subject', draft.subjectTitre],
@@ -50,7 +49,7 @@ function draftContext(draft: TaskFieldDraft, locale: Locale): string {
   return lines.join('\n')
 }
 
-export function buildTaskFieldPrompt(field: TaskAssistField, draft: TaskFieldDraft, locale: Locale, context?: string): TaskFieldPrompt {
+export function buildTaskFieldPrompt(field: TaskAssistField, draft: TaskFieldDraft, locale: Locale2, context?: string): TaskFieldPrompt {
   const fr = locale === 'fr'
   const system = fr
     ? "Tu es un assistant de gestion de projet pour un laboratoire de recherche (finance, économie, IA). Écris dans un français idiomatique, mais garde tels quels les termes que les chercheurs laissent en l'état : sigles/acronymes (LLM, LLMs, NLP, GPT, RAG, API, ML…), termes techniques anglais usuels (machine learning, embedding, transformer, dataset, benchmark, prompt…), noms propres, produits, modèles, jeux de données, code, symboles et unités. Ne traduis pas et n'explicite pas ces termes. Réponds uniquement avec le texte demandé : pas de guillemets, pas de préambule, pas d'explication."

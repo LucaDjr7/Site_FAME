@@ -105,8 +105,9 @@ export function AddTaskModal({ open, lab, subjectId, members, onClose, onAdded }
         }),
       })
       if (!res.ok) {
-        const err = await res.json().catch(() => ({}))
-        setError((err as { error?: string }).error ?? t('modal.error'))
+        // Ne jamais afficher `err.error` brut : la route renvoie des messages en
+        // anglais / bruts Postgres. Message localisé générique à la place.
+        setError(t('modal.error'))
         return
       }
       reset()

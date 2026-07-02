@@ -4,8 +4,8 @@ import { useTranslations } from 'next-intl'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { useToast } from '@/components/ui/Toast'
 
-type Unanswered = { id: string; question: string; lang: string; resolved: boolean; created_at: string }
-type Flagged = { id: string; question: string; reason: string; created_at: string }
+export type Unanswered = { id: string; question: string; lang: string; resolved: boolean; created_at: string }
+export type Flagged = { id: string; question: string; reason: string; created_at: string }
 
 export function LogsDashboard({ unanswered, flagged, backHref }: { unanswered: Unanswered[]; flagged: Flagged[]; backHref?: string }) {
   const t = useTranslations('adminLogs')

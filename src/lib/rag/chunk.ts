@@ -8,19 +8,25 @@ export interface RawChunk {
 /** Un chunk par champ logique du sujet (question/accroche/context/method/results), préfixé du titre + kicker pour l'ancrage.
  *  Si `i18n.en` ou `i18n.fr` sont présents, on émet un jeu de chunks par langue (fallback sur les colonnes plates sinon). */
 export function chunkSubject(s: Subject): RawChunk[] {
-  const base = s.kicker ? `${s.titre} — ${s.kicker}` : s.titre
-  const head = s.periode ? `${base} (${s.periode})` : base
+  // Le titre est localisé (i18n) ; kicker/période ne le sont pas. Construire le
+  // head PAR LANGUE : sinon un chunk `en` porte le titre de la langue source (FR),
+  // contaminant le contexte servi à l'assistant.
+  const headFor = (titre: string): string => {
+    const base = s.kicker ? `${titre} — ${s.kicker}` : titre
+    return s.periode ? `${base} (${s.periode})` : base
+  }
 
-  type FieldSet = { lang?: string; question: string; accroche: string; context: string; method: string; results: string }
+  type FieldSet = { lang?: string; titre: string; question: string; accroche: string; context: string; method: string; results: string }
   const sets: FieldSet[] = []
   const en = s.i18n?.en
   const fr = s.i18n?.fr
-  if (en) sets.push({ lang: 'en', question: en.question ?? '', accroche: en.accroche ?? '', context: en.context ?? '', method: en.method ?? '', results: en.results ?? '' })
-  if (fr) sets.push({ lang: 'fr', question: fr.question ?? '', accroche: fr.accroche ?? '', context: fr.context ?? '', method: fr.method ?? '', results: fr.results ?? '' })
-  if (sets.length === 0) sets.push({ question: s.question, accroche: s.accroche, context: s.context, method: s.method, results: s.results })
+  if (en) sets.push({ lang: 'en', titre: en.titre ?? s.titre, question: en.question ?? '', accroche: en.accroche ?? '', context: en.context ?? '', method: en.method ?? '', results: en.results ?? '' })
+  if (fr) sets.push({ lang: 'fr', titre: fr.titre ?? s.titre, question: fr.question ?? '', accroche: fr.accroche ?? '', context: fr.context ?? '', method: fr.method ?? '', results: fr.results ?? '' })
+  if (sets.length === 0) sets.push({ titre: s.titre, question: s.question, accroche: s.accroche, context: s.context, method: s.method, results: s.results })
 
   const chunks: RawChunk[] = []
   for (const set of sets) {
+    const head = headFor(set.titre)
     const fields: [string, string][] = [
       ['Question', set.question], ['Accroche', set.accroche],
       ['Context', set.context], ['Method', set.method], ['Results', set.results],

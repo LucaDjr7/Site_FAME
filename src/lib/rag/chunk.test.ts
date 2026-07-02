@@ -57,6 +57,20 @@ describe('chunkSubject', () => {
     expect(joined).toContain('Question: Q en')
     expect(joined).toContain('Context: Ctx en')
   })
+  it('utilise le titre localisé dans le head de chaque langue', () => {
+    const chunks = chunkSubject(makeSubject({
+      titre: 'Titre FR', kicker: 'Macro', context: 'Ctx fr',
+      i18n: {
+        fr: { titre: 'Titre FR', question: '', accroche: '', context: 'Ctx fr', method: '', results: '', keywords: [], dimensions: { method: '', data: '', theory: '', writing: '' } },
+        en: { titre: 'English title', question: '', accroche: '', context: 'Ctx en', method: '', results: '', keywords: [], dimensions: { method: '', data: '', theory: '', writing: '' } },
+      },
+    }))
+    const en = chunks.find(c => c.lang === 'en')!
+    const fr = chunks.find(c => c.lang === 'fr')!
+    expect(en.content).toContain('English title — Macro')
+    expect(en.content).not.toContain('Titre FR')
+    expect(fr.content).toContain('Titre FR — Macro')
+  })
 })
 
 describe('chunkMember', () => {

@@ -1,4 +1,5 @@
-import { buildTaskFieldPrompt, type TaskAssistField, type TaskFieldDraft, type Locale } from './field-prompts'
+import { buildTaskFieldPrompt, type TaskAssistField, type TaskFieldDraft } from './field-prompts'
+import type { Locale2 } from '@/types'
 import { getChatProvider, type ChatProvider } from '@/lib/llm'
 import { recordUsage } from '@/lib/rag/usage'
 
@@ -12,7 +13,7 @@ export interface GenerateTaskDeps {
 export async function generateTaskField(
   field: TaskAssistField,
   draft: TaskFieldDraft,
-  locale: Locale,
+  locale: Locale2,
   deps: GenerateTaskDeps = {},
   context?: string,
 ): Promise<string> {
