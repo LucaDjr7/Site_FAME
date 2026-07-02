@@ -11,9 +11,10 @@ type Props = {
   initialComments: Comment[]
   open: boolean
   onToggleOpen: () => void
+  locale: string
 }
 
-export function CommentsPanel({ subjectId, isMember, initialComments, open, onToggleOpen }: Props) {
+export function CommentsPanel({ subjectId, isMember, initialComments, open, onToggleOpen, locale }: Props) {
   const t = useTranslations('paper')
   const tc = useTranslations('comments')
   const { addToast } = useToast()
@@ -65,7 +66,7 @@ export function CommentsPanel({ subjectId, isMember, initialComments, open, onTo
       flex: 'none', pointerEvents: 'auto', background: '#2f4486', backdropFilter: 'blur(12px)',
       border: '1px solid rgba(150,180,255,0.18)', borderRadius: 14, boxShadow: '0 22px 60px -18px rgba(0,5,30,0.75)', overflow: 'hidden',
     }}>
-      <button onClick={onToggleOpen} className="text-fame-text-light" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', background: 'none', border: 'none', cursor: 'pointer' }}>
+      <button onClick={onToggleOpen} aria-expanded={open} className="text-fame-text-light" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', background: 'none', border: 'none', cursor: 'pointer' }}>
         <span style={{ display: 'flex', alignItems: 'center', gap: 9, fontSize: 13, fontWeight: 600, letterSpacing: '0.04em' }}>
           <span style={{ width: 8, height: 8, borderRadius: 2, background: '#f4b740' }} />{t('comments')}
         </span>
@@ -81,7 +82,7 @@ export function CommentsPanel({ subjectId, isMember, initialComments, open, onTo
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: 7 }}>
                     <span style={{ fontSize: 11.5, fontWeight: 600, color: '#dfe7fb' }}>{c.auteur_nom}</span>
-                    <span className="font-mono text-fame-text-muted" style={{  fontSize: 9 }}>{new Date(c.created_at).toLocaleDateString()}</span>
+                    <span className="font-mono text-fame-text-muted" style={{  fontSize: 9 }}>{new Date(c.created_at).toLocaleDateString(locale)}</span>
                     {isMember && (
                       <button className="font-mono text-fame-coral" onClick={() => remove(c.id)} style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer',  fontSize: 9 }}>{tc('delete')}</button>
                     )}

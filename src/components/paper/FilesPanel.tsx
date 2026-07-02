@@ -29,6 +29,7 @@ export function FilesPanel({ links, files, subjectId, isMember, open, onToggleOp
   const { addToast } = useToast()
   const inputRef = useRef<HTMLInputElement>(null)
   const [busy, setBusy] = useState(false)
+  const [rowBusy, setRowBusy] = useState<string | null>(null)
   const [pendingDelete, setPendingDelete] = useState<SubjectFile | null>(null)
 
   async function onPick(e: React.ChangeEvent<HTMLInputElement>) {
@@ -36,7 +37,12 @@ export function FilesPanel({ links, files, subjectId, isMember, open, onToggleOp
     e.target.value = '' // permet de re-sélectionner le même fichier
     if (!file) return
     const v = validateUpload({ mimeType: file.type, sizeBytes: file.size, fileName: file.name })
-    if (!v.ok) { addToast(v.error === 'file too large' ? t('fileTooLarge') : t('fileTypeNotAllowed'), 'error'); return }
+    if (!v.ok) {
+      const msg = v.error === 'file too large' ? t('fileTooLarge')
+        : v.error === 'invalid size' ? t('fileInvalidSize')
+        : t('fileTypeNotAllowed')
+      addToast(msg, 'error'); return
+    }
     setBusy(true)
     try {
       const signRes = await fetch(`/api/subjects/${subjectId}/files/sign`, {
@@ -64,19 +70,26 @@ export function FilesPanel({ links, files, subjectId, isMember, open, onToggleOp
   async function confirmDelete() {
     const f = pendingDelete
     setPendingDelete(null)
-    if (!f) return
-    const res = await fetch(`/api/subjects/${subjectId}/files/${f.id}`, { method: 'DELETE' })
-    if (res.ok) router.refresh()
-    else addToast(t('deleteFailed'), 'error')
+    if (!f || rowBusy) return
+    setRowBusy(f.id)
+    try {
+      const res = await fetch(`/api/subjects/${subjectId}/files/${f.id}`, { method: 'DELETE' })
+      if (res.ok) router.refresh()
+      else addToast(t('deleteFailed'), 'error')
+    } finally { setRowBusy(null) }
   }
 
   async function toggleConfidential(f: SubjectFile) {
-    const res = await fetch(`/api/subjects/${subjectId}/files/${f.id}`, {
-      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ confidentiel: !f.confidentiel }),
-    })
-    if (res.ok) router.refresh()
-    else addToast(t('updateFailed'), 'error')
+    if (rowBusy) return
+    setRowBusy(f.id)
+    try {
+      const res = await fetch(`/api/subjects/${subjectId}/files/${f.id}`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ confidentiel: !f.confidentiel }),
+      })
+      if (res.ok) { addToast(f.confidentiel ? t('fileMadePublic') : t('fileMadeConfidential'), 'success'); router.refresh() }
+      else addToast(t('updateFailed'), 'error')
+    } finally { setRowBusy(null) }
   }
 
   return (
@@ -84,7 +97,7 @@ export function FilesPanel({ links, files, subjectId, isMember, open, onToggleOp
       flex: 'none', pointerEvents: 'auto', background: '#2f4486', backdropFilter: 'blur(12px)',
       border: '1px solid rgba(150,180,255,0.18)', borderRadius: 14, boxShadow: '0 22px 60px -18px rgba(0,5,30,0.75)', overflow: 'hidden',
     }}>
-      <button onClick={onToggleOpen} className="text-fame-text-light" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', background: 'none', border: 'none', cursor: 'pointer' }}>
+      <button onClick={onToggleOpen} aria-expanded={open} className="text-fame-text-light" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', background: 'none', border: 'none', cursor: 'pointer' }}>
         <span style={{ display: 'flex', alignItems: 'center', gap: 9, fontSize: 13, fontWeight: 600, letterSpacing: '0.04em' }}>
           <span style={{ width: 8, height: 8, borderRadius: 2, background: '#4cd2a0' }} />{t('filesLinks')}
         </span>
@@ -128,13 +141,14 @@ export function FilesPanel({ links, files, subjectId, isMember, open, onToggleOp
               {isMember && (
                 <button
                   onClick={() => toggleConfidential(f)}
+                  disabled={rowBusy === f.id}
                   aria-label={f.confidentiel ? t('makeFilePublic') : t('makeFileConfidential')}
                   title={f.confidentiel ? t('fileConfidential') : t('makeFileConfidential')}
-                  style={{ flex: 'none', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: f.confidentiel ? '#e8b149' : '#8ea4df' }}
+                  style={{ flex: 'none', background: 'none', border: 'none', cursor: rowBusy === f.id ? 'default' : 'pointer', opacity: rowBusy === f.id ? 0.5 : 1, fontSize: 13, color: f.confidentiel ? '#e8b149' : '#8ea4df' }}
                 >{f.confidentiel ? '🔒' : '🔓'}</button>
               )}
               {isMember && (
-                <button onClick={() => setPendingDelete(f)} aria-label={t('deleteFile')} style={{ flex: 'none', background: 'none', border: 'none', color: '#ff8a7d', cursor: 'pointer', fontSize: 14 }}>✕</button>
+                <button onClick={() => setPendingDelete(f)} disabled={rowBusy === f.id} aria-label={t('deleteFile')} style={{ flex: 'none', background: 'none', border: 'none', color: '#ff8a7d', cursor: rowBusy === f.id ? 'default' : 'pointer', opacity: rowBusy === f.id ? 0.5 : 1, fontSize: 14 }}>✕</button>
               )}
             </div>
           ))}

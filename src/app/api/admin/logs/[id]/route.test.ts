@@ -42,4 +42,12 @@ describe('DELETE /api/admin/logs/[id]', () => {
     const res = await DELETE(delReq('http://x?type=bogus'), { params: Promise.resolve({ id: 'x1' }) })
     expect(res.status).toBe(400)
   })
+  it('400 sur une propriété de prototype (constructor)', async () => {
+    const res = await DELETE(delReq('http://x?type=constructor'), { params: Promise.resolve({ id: 'x1' }) })
+    expect(res.status).toBe(400)
+  })
+  it('400 sur __proto__', async () => {
+    const res = await DELETE(delReq('http://x?type=__proto__'), { params: Promise.resolve({ id: 'x1' }) })
+    expect(res.status).toBe(400)
+  })
 })

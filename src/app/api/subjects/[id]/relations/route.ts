@@ -45,6 +45,15 @@ export async function POST(req: NextRequest, { params }: Params) {
       .insert({ source_id, target_id, kind: 'parent', label: '', label_i18n: {} }).select().single()
     if (error?.code === '23505') return NextResponse.json({ error: 'duplicate' }, { status: 409 })
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    // Mitigation TOCTOU : deux insertions concurrentes peuvent chacune passer le
+    // check ci-dessus puis former un cycle. Re-vérifier APRÈS l'insert contre les
+    // autres arêtes désormais visibles ; si un cycle est apparu, annuler l'insert.
+    const { data: edgesAfter } = await service.from('subject_relations').select('id,source_id,target_id').eq('kind', 'parent')
+    const otherEdges = (edgesAfter ?? []).filter((e: { id: string }) => e.id !== data.id)
+    if (wouldCreateCycle(source_id, target_id, otherEdges)) {
+      await service.from('subject_relations').delete().eq('id', data.id)
+      return NextResponse.json({ error: 'cycle' }, { status: 409 })
+    }
     return NextResponse.json({ relation: data }, { status: 201 })
   }
 

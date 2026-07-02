@@ -4,6 +4,9 @@ import { generateTaskField } from '@/lib/tasks/generate-field'
 import { isTaskAssistField, type TaskFieldDraft } from '@/lib/tasks/field-prompts'
 import { isOverBudget } from '@/lib/rag/usage'
 
+// Routes longues (LLM/SSE, extraction+embedding) : éviter la coupure au défaut Vercel (~10-15 s).
+export const maxDuration = 60
+
 export async function POST(req: NextRequest) {
   try { await requireMember() } catch (e) { return authErrorResponse(e) }
 

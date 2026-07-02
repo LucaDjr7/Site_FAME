@@ -44,11 +44,11 @@ export function SubjectVitrine({
   return (
     <div style={{ position: 'relative' }}>
       {editMode && onDelete && (
-        <button className="font-mono bg-fame-red text-white" onClick={e => { e.stopPropagation(); onDelete() }} title={deleteTitle}
+        <button className="font-mono bg-fame-red text-white" onClick={e => { e.stopPropagation(); onDelete() }} title={deleteTitle} aria-label={deleteTitle}
           style={{ position: 'absolute', top: -8, right: -8, zIndex: 10, width: 22, height: 22, borderRadius: '50%', border: 'none', cursor: 'pointer', fontSize: 13, lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
       )}
       {editMode && onEdit && (
-        <button className="font-mono bg-fame-blue text-white" onClick={e => { e.stopPropagation(); onEdit() }} title={editTitle}
+        <button className="font-mono bg-fame-blue text-white" onClick={e => { e.stopPropagation(); onEdit() }} title={editTitle} aria-label={editTitle}
           style={{ position: 'absolute', top: -8, right: 20, zIndex: 10, width: 22, height: 22, borderRadius: '50%', border: 'none', cursor: 'pointer', fontSize: 11, lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✎</button>
       )}
 

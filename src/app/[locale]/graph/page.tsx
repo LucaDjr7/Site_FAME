@@ -11,7 +11,7 @@ type Props = { params: Promise<{ locale: string }> }
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'graph' })
-  return { title: t('metaTitle') }
+  return { title: t('metaTitle'), description: t('metaDescription') }
 }
 
 export default async function GraphPage({ params }: Props) {
@@ -29,6 +29,14 @@ export default async function GraphPage({ params }: Props) {
     service.from('subject_relations').select('*'),
     service.from('members').select('id,prenom,nom,photo_url'),
   ])
+
+  // Ne jamais envoyer au client une relation qui touche un sujet non visible :
+  // pour un visiteur, `subjects` exclut déjà les confidentiels, donc restreindre
+  // aux arêtes dont les DEUX extrémités sont chargées supprime UUID + libellés
+  // (label/label_i18n) des sujets confidentiels du payload (finding R1).
+  const visibleIds = new Set(((subjects ?? []) as Subject[]).map(s => s.id))
+  const visibleRelations = ((relations ?? []) as SubjectRelation[])
+    .filter(r => visibleIds.has(r.source_id) && visibleIds.has(r.target_id))
 
   return (
     <div className="flex flex-col h-screen bg-fame-sand-bg">
@@ -48,7 +56,7 @@ export default async function GraphPage({ params }: Props) {
       <div className="flex-1 relative">
         <RelationGraph
           subjects={(subjects ?? []) as Subject[]}
-          relations={(relations ?? []) as SubjectRelation[]}
+          relations={visibleRelations}
           members={(members ?? []) as MemberRef[]}
           isMember={isMember}
           locale={locale}

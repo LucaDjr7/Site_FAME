@@ -60,6 +60,9 @@ export function ChatMessageList({
 
   return (
     <div
+      role="log"
+      aria-live="polite"
+      aria-atomic="false"
       style={{
         flex: 1,
         overflowY: 'auto',

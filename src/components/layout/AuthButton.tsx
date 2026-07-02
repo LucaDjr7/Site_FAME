@@ -11,9 +11,14 @@ export function AuthButton({ member, locale }: Props) {
   const router = useRouter()
 
   async function signOut() {
-    await fetch('/api/auth/sign-out', { method: 'POST' })
-    router.refresh()
-    router.push(`/${locale}`)
+    // Même en cas d'échec réseau, rediriger : ne pas laisser l'UI figée sur un clic
+    // apparemment ignoré (le cookie de session sera de toute façon revalidé).
+    try {
+      await fetch('/api/auth/sign-out', { method: 'POST' })
+    } finally {
+      router.refresh()
+      router.push(`/${locale}`)
+    }
   }
 
   if (!member) {

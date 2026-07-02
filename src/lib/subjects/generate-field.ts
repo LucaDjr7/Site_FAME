@@ -1,4 +1,5 @@
-import { buildFieldPrompt, type AssistField, type FieldDraft, type Locale } from './field-prompts'
+import { buildFieldPrompt, type AssistField, type FieldDraft } from './field-prompts'
+import type { Locale2 } from '@/types'
 import { getChatProvider, type ChatProvider } from '@/lib/llm'
 import { recordUsage } from '@/lib/rag/usage'
 
@@ -12,7 +13,7 @@ export interface GenerateDeps {
 export async function generateField(
   field: AssistField,
   draft: FieldDraft,
-  locale: Locale,
+  locale: Locale2,
   deps: GenerateDeps = {},
   context?: string,
 ): Promise<string> {

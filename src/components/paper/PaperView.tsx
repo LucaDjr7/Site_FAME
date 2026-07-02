@@ -234,7 +234,7 @@ export function PaperView({
           />
           <CommentsPanel
             subjectId={subject.id} isMember={isMember} initialComments={initialComments}
-            open={panels.comments} onToggleOpen={() => toggle('comments')}
+            open={panels.comments} onToggleOpen={() => toggle('comments')} locale={locale}
           />
         </div>
 

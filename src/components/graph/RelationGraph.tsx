@@ -130,6 +130,14 @@ export function RelationGraph({ subjects, relations, members, isMember, locale }
   const routerRef = useRef(router)
   const localeRef = useRef(locale)
 
+  // Escape ferme l'overlay de création de lien (sémantique modale).
+  useEffect(() => {
+    if (!linkChooser) return
+    function onKey(e: KeyboardEvent) { if (e.key === 'Escape') setLinkChooser(null) }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [linkChooser])
+
   useEffect(() => { routerRef.current = router }, [router])
   useEffect(() => { localeRef.current = locale }, [locale])
   useEffect(() => { editModeRef.current = editMode }, [editMode])
@@ -186,11 +194,16 @@ export function RelationGraph({ subjects, relations, members, isMember, locale }
     })
 
     // force simulation — distances/forces scaled to the card footprint
+    // Mouvement réduit : converger quasi instantanément vers les positions finales
+    // plutôt que d'animer plusieurs secondes de physique (cohérent avec le globe).
+    const reduceMotion = typeof window !== 'undefined'
+      && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
     const simulation = d3.forceSimulation<SimNode>(simNodes)
       .force('link', d3.forceLink<SimNode, SimEdge>(simEdges).id(d => d.id).distance(LINK_DIST).strength(0.5))
       .force('charge', d3.forceManyBody<SimNode>().strength(CHARGE))
       .force('center', d3.forceCenter<SimNode>(CW / 2, CH / 2))
       .force('collide', d3.forceCollide<SimNode>(COLLIDE))
+    if (reduceMotion) simulation.alphaDecay(0.3)
 
     // ─── edges — wide transparent hit line + visible thin line ──────────────
     const edgeHitSel = svg
@@ -385,12 +398,17 @@ export function RelationGraph({ subjects, relations, members, isMember, locale }
 
   // ─── delete link ──────────────────────────────────────────────────────────
   const deleteLink = async () => {
-    if (!confirmEdge) return
-    await fetch(`/api/subjects/${confirmEdge.sourceId}/relations/${confirmEdge.edgeId}`, {
-      method: 'DELETE',
-    })
-    setConfirmEdge(null)
-    router.refresh()
+    if (!confirmEdge || saving) return
+    setSaving(true)
+    try {
+      const res = await fetch(`/api/subjects/${confirmEdge.sourceId}/relations/${confirmEdge.edgeId}`, {
+        method: 'DELETE',
+      })
+      if (res.ok) { setConfirmEdge(null); router.refresh() }
+      else addToast(t('errGeneric'), 'error')
+    } finally {
+      setSaving(false)
+    }
   }
 
   const isEmpty = filteredNodes.length === 0
@@ -481,6 +499,7 @@ export function RelationGraph({ subjects, relations, members, isMember, locale }
               <button
                 key={l}
                 onClick={() => { setFilterLabo(l); setFirstNode(null) }}
+                aria-pressed={filterLabo === l}
                 className={`font-mono text-[10px] px-2 py-0.5 rounded border transition-colors ${
                   filterLabo === l
                     ? 'bg-fame-blue text-white border-fame-blue'
@@ -503,6 +522,7 @@ export function RelationGraph({ subjects, relations, members, isMember, locale }
               <button
                 key={s}
                 onClick={() => { setFilterStatut(s); setFirstNode(null) }}
+                aria-pressed={filterStatut === s}
                 className={`font-mono text-[10px] px-2 py-0.5 rounded border transition-colors ${
                   filterStatut === s
                     ? 'bg-fame-blue text-white border-fame-blue'
@@ -594,8 +614,12 @@ export function RelationGraph({ subjects, relations, members, isMember, locale }
           data-graph-ui
           className="absolute inset-0 z-20 flex items-center justify-center"
           style={{ background: 'rgba(10,16,40,0.60)' }}
+          onClick={e => { if (e.target === e.currentTarget) setLinkChooser(null) }}
         >
           <div
+            role="dialog"
+            aria-modal="true"
+            aria-label={t('editMode')}
             className="rounded-xl p-6 border border-fame-blue-mid/50 flex flex-col gap-4 w-80"
             style={{ background: 'rgba(21,32,63,0.97)', backdropFilter: 'blur(8px)' }}
           >

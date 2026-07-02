@@ -72,6 +72,7 @@ export function ChatComposer({
           onKeyDown={handleKeyDown}
           rows={1}
           placeholder={t('placeholder')}
+          aria-label={t('placeholder')}
           disabled={disabled}
           style={{
             flex: 1,

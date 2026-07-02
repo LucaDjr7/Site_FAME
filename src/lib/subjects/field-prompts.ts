@@ -1,4 +1,4 @@
-import type { Subject, Lab } from '@/types'
+import type { Subject, Lab, Locale2 } from '@/types'
 
 export type AssistField =
   | 'question' | 'titre' | 'accroche' | 'kicker' | 'keywords'
@@ -14,7 +14,6 @@ export function isAssistField(v: unknown): v is AssistField {
   return typeof v === 'string' && (ASSIST_FIELDS as string[]).includes(v)
 }
 
-export type Locale = 'en' | 'fr'
 
 export type FieldDraft = Partial<Pick<Subject,
   'question' | 'titre' | 'accroche' | 'kicker' | 'context' | 'method' | 'results' | 'keywords'>>
@@ -77,7 +76,7 @@ const INSTRUCTIONS: Record<AssistField, { en: string; fr: string }> = {
   },
 }
 
-function draftContext(draft: FieldDraft, locale: Locale): string {
+function draftContext(draft: FieldDraft, locale: Locale2): string {
   const fr = locale === 'fr'
   const rows: Array<[string, string | undefined]> = [
     [fr ? 'Domaine' : 'Domain', draft.kicker],
@@ -94,7 +93,7 @@ function draftContext(draft: FieldDraft, locale: Locale): string {
   return lines.join('\n')
 }
 
-export function buildFieldPrompt(field: AssistField, draft: FieldDraft, locale: Locale, context?: string): FieldPrompt {
+export function buildFieldPrompt(field: AssistField, draft: FieldDraft, locale: Locale2, context?: string): FieldPrompt {
   const fr = locale === 'fr'
   const system = fr
     ? "Tu es un assistant de rédaction scientifique pour un laboratoire de recherche (finance, économie, IA). Écris dans un français idiomatique, mais garde tels quels les termes que les chercheurs laissent en l'état : sigles/acronymes (LLM, LLMs, NLP, GPT, RAG, API, ML…), termes techniques anglais usuels (machine learning, embedding, transformer, dataset, benchmark, prompt…), noms propres, produits, modèles, jeux de données, code, symboles et unités. Ne traduis pas et n'explicite pas ces termes. Réponds uniquement avec le texte demandé : pas de guillemets, pas de préambule, pas d'explication."

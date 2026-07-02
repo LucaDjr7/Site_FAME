@@ -10,7 +10,7 @@ import {
 } from './chunk'
 import { loadKbDir } from './kb'
 import type { RagSourceType } from '@/types'
-import { syncSubjectFileVisibility } from './index-file'
+import { syncSubjectFileVisibility, indexSubjectFile } from './index-file'
 
 // Forme minimale du client service-role utilisée ici (assez pour typer/mock).
 type SupabaseLike = {
@@ -201,6 +201,14 @@ export async function reindexAll(deps: IndexDeps = {}): Promise<{ indexed: numbe
       await indexSource(tableToType[table], row.id, { service, provider })
       indexed++
     }
+  }
+
+  // Documents de sujet : indexés via un chemin distinct (extraction + embedding),
+  // absents de `indexSource`. Sans cette boucle, « Réindexer tout » les laisse périmés.
+  const { data: files } = await service.from('subject_files').select('id')
+  for (const row of (files ?? []) as { id: string }[]) {
+    await indexSubjectFile(row.id, { service, provider })
+    indexed++
   }
 
   // KB (frontmatter Markdown — source_id = `kb:<slug>`).

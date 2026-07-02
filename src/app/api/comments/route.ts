@@ -18,6 +18,14 @@ export async function POST(req: NextRequest) {
   const session = await getSession()
   const service = await createServiceClient()
 
+  // Gate : le sujet doit exister, et un visiteur ne peut pas commenter un sujet
+  // confidentiel dont il aurait deviné l'UUID (finding R3). Miroir du gate de lecture.
+  const { data: subject } = await service.from('subjects').select('confidentiel').eq('id', sujet_id).maybeSingle()
+  if (!subject) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  if (subject.confidentiel && !session?.member) {
+    return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  }
+
   let auteur_type: 'visitor' | 'member'
   let auteur_nom: string
   let membre_id: string | null = null

@@ -4,6 +4,9 @@ import { requireMember, authErrorResponse } from '@/lib/auth'
 import { validateUpload, SUBJECT_FILES_BUCKET } from '@/lib/subjects/file-upload'
 import { scheduleIndexFile } from '@/lib/rag/schedule'
 
+// Routes longues (LLM/SSE, extraction+embedding) : éviter la coupure au défaut Vercel (~10-15 s).
+export const maxDuration = 60
+
 type Params = { params: Promise<{ id: string }> }
 
 export async function POST(req: NextRequest, { params }: Params) {

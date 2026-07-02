@@ -22,6 +22,14 @@ export async function deleteSubjectFileChunks(subjectId: string, deps: IndexFile
   await service.from('rag_chunks').delete().eq('source_type', 'subject_file').eq('metadata->>subject_id', subjectId)
 }
 
+/** Purge des objets Storage. Les chemins doivent être lus AVANT le DELETE du sujet
+ *  (le FK `on delete cascade` supprime les lignes `subject_files`, donc les paths). */
+export async function deleteSubjectFilesStorage(storagePaths: string[], deps: IndexFileDeps = {}): Promise<void> {
+  if (!storagePaths.length) return
+  const service = deps.service ?? (await createServiceClient())
+  await service.storage.from(SUBJECT_FILES_BUCKET).remove(storagePaths)
+}
+
 export async function syncSubjectFileVisibility(
   subjectId: string,
   vals: { labo: string | null; confidentiel: boolean; is_transversal: boolean },
@@ -65,9 +73,6 @@ export async function indexSubjectFile(fileId: string, deps: IndexFileDeps = {})
   if (!file) { await deleteFileChunks(fileId, { service }); return }
 
   const { data: subject } = await service.from('subjects').select('confidentiel,labo,is_transversal').eq('id', file.subject_id).single()
-  // Confidentiel si le sujet l'est (fail-closed si introuvable) OU si le doc l'est.
-  const confidentiel = (subject ? !!subject.confidentiel : true) || !!file.confidentiel
-  const visibility: 'public' | 'member' = confidentiel ? 'member' : 'public'
 
   const dl = await service.storage.from(SUBJECT_FILES_BUCKET).download(file.storage_path)
   if (dl.error || !dl.data) return
@@ -79,6 +84,16 @@ export async function indexSubjectFile(fileId: string, deps: IndexFileDeps = {})
   if (chunks.length === 0) return
 
   const embeddings = await provider.embed(chunks.map((c) => c.content))
+
+  // Relire la confidentialité JUSTE avant l'insert : un toggle survenu pendant
+  // l'embedding (fenêtre réseau longue) ne doit pas laisser un chunk en tier périmé.
+  const { data: freshFile } = await service.from('subject_files').select('confidentiel,subject_id').eq('id', fileId).single()
+  if (!freshFile) { await deleteFileChunks(fileId, { service }); return }
+  const { data: freshSubject } = await service.from('subjects').select('confidentiel').eq('id', freshFile.subject_id).single()
+  // Confidentiel si le sujet l'est (fail-closed si introuvable) OU si le doc l'est.
+  const confidentiel = (freshSubject ? !!freshSubject.confidentiel : true) || !!freshFile.confidentiel
+  const visibility: 'public' | 'member' = confidentiel ? 'member' : 'public'
+
   const rows = chunks.map((c, i) => ({
     source_type: 'subject_file',
     source_id: fileId,

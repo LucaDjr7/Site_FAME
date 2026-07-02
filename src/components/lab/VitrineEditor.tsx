@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import type { Subject, MemberRef, Lab, SubjectStatus, Difficulty, InheritableField } from '@/types'
 import { INHERITABLE_FIELDS } from '@/types'
@@ -161,6 +161,27 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
   const [promptField, setPromptField] = useState<AssistField | null>(null)
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
+  const dialogRef = useRef<HTMLDivElement>(null)
+
+  // Comportement de modale : focus initial, Escape ferme, Tab piégé dans le dialogue,
+  // focus restauré sur le déclencheur à la fermeture.
+  useEffect(() => {
+    if (!open) return
+    const dialog = dialogRef.current
+    const prevActive = document.activeElement as HTMLElement | null
+    dialog?.focus()
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') { onClose(); return }
+      if (e.key !== 'Tab' || !dialog) return
+      const els = dialog.querySelectorAll<HTMLElement>('a[href],button:not([disabled]),textarea:not([disabled]),input:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])')
+      if (els.length === 0) return
+      const first = els[0]!, last = els[els.length - 1]!
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus() }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus() }
+    }
+    document.addEventListener('keydown', onKey)
+    return () => { document.removeEventListener('keydown', onKey); prevActive?.focus?.() }
+  }, [open, onClose])
 
   function currentDraft(): FieldDraft {
     return {
@@ -192,6 +213,7 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
       if (!res.ok) throw new Error()
       const data = (await res.json()) as { text?: string }
       if (data.text) applyField(field, data.text)
+      else addToast(t('editor.genError'), 'error') // réponse vide : ne pas rester silencieux
     } catch {
       addToast(t('editor.genError'), 'error')
     } finally {
@@ -315,10 +337,12 @@ export function VitrineEditor({ open, lab, members, subject, locale, onClose, on
       onClick={e => { if (e.target === e.currentTarget) onClose() }}
     >
       <div
+        ref={dialogRef}
+        tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-label={isNew ? t('editor.createTitle') : t('editor.editTitle')}
-        className="bg-fame-sand rounded-xl shadow-2xl w-full mx-4 my-8"
+        className="bg-fame-sand rounded-xl shadow-2xl w-full mx-4 my-8 outline-none"
         style={{ maxWidth: 640, animation: 'modalIn 0.15s ease' }}
       >
         {/* Header */}

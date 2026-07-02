@@ -23,7 +23,9 @@ export async function DELETE(req: NextRequest, { params }: Params) {
   try { await requireAdmin() } catch (e) { return authErrorResponse(e) }
   const { id } = await params
   const type = req.nextUrl.searchParams.get('type') as keyof typeof DELETABLE | null
-  if (!type || !(type in DELETABLE)) {
+  // hasOwnProperty : ne pas laisser passer `constructor`/`__proto__`/`toString`
+  // via la traversée de prototype de l'opérateur `in` (finding R2).
+  if (!type || !Object.prototype.hasOwnProperty.call(DELETABLE, type)) {
     return NextResponse.json({ error: 'type must be "unanswered" or "flagged"' }, { status: 400 })
   }
   const service = await createServiceClient()

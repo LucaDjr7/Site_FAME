@@ -12,18 +12,27 @@ export function AssistantDashboard({ enabled, usage, logsHref }: Props) {
   const t = useTranslations('adminAssistant')
   const [isEnabled, setIsEnabled] = useState(enabled)
   const [msg, setMsg] = useState('')
+  const [busy, setBusy] = useState(false)
 
   const toggle = async () => {
-    const next = !isEnabled
-    const res = await fetch('/api/assistant/toggle', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ enabled: next }) })
-    // Ne basculer l'UI que si le write a réussi (sinon affichage désynchronisé).
-    if (!res.ok) { setMsg(t('actionFailed')); return }
-    setIsEnabled(next)
-    setMsg('')
+    if (busy) return
+    setBusy(true)
+    try {
+      const next = !isEnabled
+      const res = await fetch('/api/assistant/toggle', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ enabled: next }) })
+      // Ne basculer l'UI que si le write a réussi (sinon affichage désynchronisé).
+      if (!res.ok) { setMsg(t('actionFailed')); return }
+      setIsEnabled(next)
+      setMsg('')
+    } finally { setBusy(false) }
   }
   const reindex = async () => {
-    const res = await fetch('/api/assistant/reindex', { method: 'POST' })
-    setMsg(res.ok ? t('reindexStarted') : t('actionFailed'))
+    if (busy) return
+    setBusy(true)
+    try {
+      const res = await fetch('/api/assistant/reindex', { method: 'POST' })
+      setMsg(res.ok ? t('reindexStarted') : t('actionFailed'))
+    } finally { setBusy(false) }
   }
 
   return (
@@ -32,10 +41,10 @@ export function AssistantDashboard({ enabled, usage, logsHref }: Props) {
 
       <div className="flex items-center gap-3">
         <span className="font-mono text-sm text-fame-text-body">{t('enabledLabel')}</span>
-        <button onClick={toggle} className="rounded-md bg-fame-blue px-3 py-1 text-sm font-mono text-fame-text-light">
+        <button onClick={toggle} disabled={busy} className="rounded-md bg-fame-blue px-3 py-1 text-sm font-mono text-fame-text-light disabled:opacity-50">
           {isEnabled ? t('disable') : t('enable')}
         </button>
-        <button onClick={reindex} className="rounded-md border border-fame-ecru px-3 py-1 text-sm font-mono text-fame-text-body">
+        <button onClick={reindex} disabled={busy} className="rounded-md border border-fame-ecru px-3 py-1 text-sm font-mono text-fame-text-body disabled:opacity-50">
           {t('reindex')}
         </button>
         {msg && <span className="text-xs font-mono text-fame-teal">{msg}</span>}
