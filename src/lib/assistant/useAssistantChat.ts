@@ -1,5 +1,5 @@
 'use client'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type { ChatUiMessage, AssistantStatus, SourceRef } from './types'
 
 // Pure parser — sépare les événements SSE complets du reste incomplet.
@@ -25,6 +25,10 @@ export function useAssistantChat(opts: { endpoint?: string; fetchImpl?: typeof f
   const doFetch = opts.fetchImpl ?? fetch
   const [messages, setMessages] = useState<ChatUiMessage[]>([])
   const [status, setStatus] = useState<AssistantStatus>('idle')
+  // Annule le stream SSE en cours au démontage (fermeture de la bulle / navigation)
+  // ou au reset : sans ça la requête + la génération LLM continuent en arrière-plan.
+  const abortRef = useRef<AbortController | null>(null)
+  useEffect(() => () => abortRef.current?.abort(), [])
 
   const send = useCallback(async (text: string) => {
     const trimmed = text.trim()
@@ -32,6 +36,10 @@ export function useAssistantChat(opts: { endpoint?: string; fetchImpl?: typeof f
     const history: ChatUiMessage[] = [...messages, { role: 'user', content: trimmed }]
     setMessages([...history, { role: 'assistant', content: '' }])
     setStatus('streaming')
+
+    abortRef.current?.abort()
+    const controller = new AbortController()
+    abortRef.current = controller
 
     const removeEmptyPlaceholder = () =>
       setMessages(prev =>
@@ -44,8 +52,9 @@ export function useAssistantChat(opts: { endpoint?: string; fetchImpl?: typeof f
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: history.map(m => ({ role: m.role, content: m.content })) }),
+        signal: controller.signal,
       })
-    } catch { removeEmptyPlaceholder(); setStatus('error'); return }
+    } catch { removeEmptyPlaceholder(); setStatus(controller.signal.aborted ? 'idle' : 'error'); return }
 
     if (res.status === 503) { removeEmptyPlaceholder(); setStatus('degraded'); return }
     if (res.status === 429) { removeEmptyPlaceholder(); setStatus('rate_limited'); return }
@@ -74,8 +83,9 @@ export function useAssistantChat(opts: { endpoint?: string; fetchImpl?: typeof f
         }
       }
     } catch {
-      // Coupure réseau / flux avorté en cours de stream : ne pas laisser le chat
-      // gelé en 'streaming' (composer désactivé indéfiniment).
+      // Flux avorté volontairement (démontage/reset) → pas une erreur ; sinon
+      // coupure réseau : ne pas laisser le chat gelé en 'streaming'.
+      if (controller.signal.aborted) return
       removeEmptyPlaceholder()
       setStatus('error')
       return
@@ -83,6 +93,6 @@ export function useAssistantChat(opts: { endpoint?: string; fetchImpl?: typeof f
     setStatus(s => (s === 'streaming' ? 'idle' : s))
   }, [messages, endpoint, doFetch])
 
-  const reset = useCallback(() => { setMessages([]); setStatus('idle') }, [])
+  const reset = useCallback(() => { abortRef.current?.abort(); setMessages([]); setStatus('idle') }, [])
   return { messages, status, send, reset }
 }

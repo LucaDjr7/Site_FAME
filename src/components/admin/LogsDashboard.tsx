@@ -1,25 +1,32 @@
 'use client'
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
+import { useToast } from '@/components/ui/Toast'
 
 type Unanswered = { id: string; question: string; lang: string; resolved: boolean; created_at: string }
 type Flagged = { id: string; question: string; reason: string; created_at: string }
 
 export function LogsDashboard({ unanswered, flagged, backHref }: { unanswered: Unanswered[]; flagged: Flagged[]; backHref?: string }) {
   const t = useTranslations('adminLogs')
+  const { addToast } = useToast()
   const [rows, setRows] = useState(unanswered)
   const [flaggedRows, setFlaggedRows] = useState(flagged)
+  const [pendingDelete, setPendingDelete] = useState<{ id: string; type: 'unanswered' | 'flagged' } | null>(null)
 
   async function toggle(id: string, resolved: boolean) {
     const res = await fetch(`/api/admin/logs/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ resolved }) })
     if (res.ok) setRows(prev => prev.map(r => r.id === id ? { ...r, resolved } : r))
+    else addToast(t('actionFailed'), 'error')
   }
-  async function del(id: string, type: 'unanswered' | 'flagged') {
-    if (!window.confirm(t('confirmDelete'))) return
-    const res = await fetch(`/api/admin/logs/${id}?type=${type}`, { method: 'DELETE' })
-    if (!res.ok) return
-    if (type === 'unanswered') setRows(prev => prev.filter(r => r.id !== id))
-    else setFlaggedRows(prev => prev.filter(r => r.id !== id))
+  async function confirmDelete() {
+    const target = pendingDelete
+    setPendingDelete(null)
+    if (!target) return
+    const res = await fetch(`/api/admin/logs/${target.id}?type=${target.type}`, { method: 'DELETE' })
+    if (!res.ok) { addToast(t('actionFailed'), 'error'); return }
+    if (target.type === 'unanswered') setRows(prev => prev.filter(r => r.id !== target.id))
+    else setFlaggedRows(prev => prev.filter(r => r.id !== target.id))
   }
   const fmt = (s: string) => s.slice(0, 10)
 
@@ -47,7 +54,7 @@ export function LogsDashboard({ unanswered, flagged, backHref }: { unanswered: U
                   <td className="py-2 pr-3 font-mono text-xs">{r.resolved ? t('resolved') : t('open')}</td>
                   <td className="py-2 whitespace-nowrap">
                     <button onClick={() => toggle(r.id, !r.resolved)} className="font-mono text-xs text-fame-blue underline">{r.resolved ? t('open') : t('markResolved')}</button>
-                    <button onClick={() => del(r.id, 'unanswered')} className="font-mono text-xs text-fame-red underline ml-3">{t('delete')}</button>
+                    <button onClick={() => setPendingDelete({ id: r.id, type: 'unanswered' })} className="font-mono text-xs text-fame-red underline ml-3">{t('delete')}</button>
                   </td>
                 </tr>
               ))}
@@ -69,13 +76,20 @@ export function LogsDashboard({ unanswered, flagged, backHref }: { unanswered: U
                   <td className="py-2 pr-3 font-mono text-xs">{fmt(r.created_at)}</td>
                   <td className="py-2 pr-3 font-mono text-xs">{r.reason}</td>
                   <td className="py-2 pr-3">{r.question}</td>
-                  <td className="py-2 whitespace-nowrap"><button onClick={() => del(r.id, 'flagged')} className="font-mono text-xs text-fame-red underline">{t('delete')}</button></td>
+                  <td className="py-2 whitespace-nowrap"><button onClick={() => setPendingDelete({ id: r.id, type: 'flagged' })} className="font-mono text-xs text-fame-red underline">{t('delete')}</button></td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
       </div>
+
+      <ConfirmDialog
+        open={!!pendingDelete}
+        message={t('confirmDelete')}
+        onConfirm={confirmDelete}
+        onCancel={() => setPendingDelete(null)}
+      />
     </section>
   )
 }

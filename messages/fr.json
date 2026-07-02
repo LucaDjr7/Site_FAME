@@ -173,12 +173,15 @@
     "uploadFailed": "Échec de l'envoi",
     "deleteFailed": "Échec de la suppression",
     "fileTooLarge": "Fichier trop volumineux (max 50 Mo)",
+    "fileInvalidSize": "Fichier invalide ou vide",
     "fileTypeNotAllowed": "Type de fichier non autorisé",
     "deleteFile": "Supprimer le fichier",
     "confirmDeleteFile": "Supprimer ce fichier ? Action irréversible.",
     "makeFileConfidential": "Rendre confidentiel",
     "makeFilePublic": "Rendre public",
     "fileConfidential": "Confidentiel",
+    "fileMadeConfidential": "Fichier rendu confidentiel",
+    "fileMadePublic": "Fichier rendu public",
     "updateFailed": "Échec de la mise à jour",
     "relations": {
       "inheritedFrom": "hérité de {title}",
@@ -566,7 +569,8 @@
     "none": "Aucun log pour le moment",
     "delete": "Supprimer",
     "confirmDelete": "Supprimer cette entrée de log ? Action irréversible.",
-    "backToAssistant": "← Réglages de l'assistant"
+    "backToAssistant": "← Réglages de l'assistant",
+    "actionFailed": "Échec de l'action"
   },
   "assistant": {
     "title": "Astra",
@@ -639,7 +643,8 @@
     "deleteLink": "Supprimer ce lien ?",
     "delete": "Supprimer",
     "errCycle": "Ce lien créerait un cycle.",
-    "errDuplicate": "Ce lien existe déjà."
+    "errDuplicate": "Ce lien existe déjà.",
+    "errGeneric": "Impossible de mettre à jour le lien."
   },
   "privacy": {
     "back": "← Retour au site",

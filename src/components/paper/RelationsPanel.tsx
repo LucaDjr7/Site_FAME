@@ -120,6 +120,7 @@ export function RelationsPanel({
   async function handleRemove(relId: string) {
     const res = await fetch(`/api/subjects/${subjectId}/relations/${relId}`, { method: 'DELETE' })
     if (res.ok) onChanged()
+    else addToast(t('errGeneric'), 'error')
   }
 
   async function handleInheritChange(field: InheritableField, motherId: string) {
@@ -135,6 +136,7 @@ export function RelationsPanel({
       body: JSON.stringify({ inherits: newInherits }),
     })
     if (res.ok) onChanged()
+    else addToast(t('errGeneric'), 'error')
   }
 
   const total = mothers.length + daughters.length + associations.length

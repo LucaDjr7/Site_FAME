@@ -173,12 +173,15 @@
     "uploadFailed": "Upload failed",
     "deleteFailed": "Delete failed",
     "fileTooLarge": "File too large (max 50 MB)",
+    "fileInvalidSize": "Invalid or empty file",
     "fileTypeNotAllowed": "File type not allowed",
     "deleteFile": "Delete file",
     "confirmDeleteFile": "Delete this file? This cannot be undone.",
     "makeFileConfidential": "Make confidential",
     "makeFilePublic": "Make public",
     "fileConfidential": "Confidential",
+    "fileMadeConfidential": "File is now confidential",
+    "fileMadePublic": "File is now public",
     "updateFailed": "Update failed",
     "relations": {
       "inheritedFrom": "inherited from {title}",
@@ -566,7 +569,8 @@
     "none": "Nothing logged yet",
     "delete": "Delete",
     "confirmDelete": "Delete this log entry? This cannot be undone.",
-    "backToAssistant": "← Assistant settings"
+    "backToAssistant": "← Assistant settings",
+    "actionFailed": "Action failed"
   },
   "assistant": {
     "title": "Astra",
@@ -639,7 +643,8 @@
     "deleteLink": "Delete this link?",
     "delete": "Delete",
     "errCycle": "That link would create a cycle.",
-    "errDuplicate": "That link already exists."
+    "errDuplicate": "That link already exists.",
+    "errGeneric": "Could not update the link."
   },
   "privacy": {
     "back": "← Back to site",

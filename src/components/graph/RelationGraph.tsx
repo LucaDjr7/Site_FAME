@@ -385,12 +385,17 @@ export function RelationGraph({ subjects, relations, members, isMember, locale }
 
   // ─── delete link ──────────────────────────────────────────────────────────
   const deleteLink = async () => {
-    if (!confirmEdge) return
-    await fetch(`/api/subjects/${confirmEdge.sourceId}/relations/${confirmEdge.edgeId}`, {
-      method: 'DELETE',
-    })
-    setConfirmEdge(null)
-    router.refresh()
+    if (!confirmEdge || saving) return
+    setSaving(true)
+    try {
+      const res = await fetch(`/api/subjects/${confirmEdge.sourceId}/relations/${confirmEdge.edgeId}`, {
+        method: 'DELETE',
+      })
+      if (res.ok) { setConfirmEdge(null); router.refresh() }
+      else addToast(t('errGeneric'), 'error')
+    } finally {
+      setSaving(false)
+    }
   }
 
   const isEmpty = filteredNodes.length === 0

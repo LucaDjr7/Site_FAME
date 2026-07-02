@@ -11,9 +11,10 @@ type Props = {
   initialComments: Comment[]
   open: boolean
   onToggleOpen: () => void
+  locale: string
 }
 
-export function CommentsPanel({ subjectId, isMember, initialComments, open, onToggleOpen }: Props) {
+export function CommentsPanel({ subjectId, isMember, initialComments, open, onToggleOpen, locale }: Props) {
   const t = useTranslations('paper')
   const tc = useTranslations('comments')
   const { addToast } = useToast()
@@ -81,7 +82,7 @@ export function CommentsPanel({ subjectId, isMember, initialComments, open, onTo
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: 7 }}>
                     <span style={{ fontSize: 11.5, fontWeight: 600, color: '#dfe7fb' }}>{c.auteur_nom}</span>
-                    <span className="font-mono text-fame-text-muted" style={{  fontSize: 9 }}>{new Date(c.created_at).toLocaleDateString()}</span>
+                    <span className="font-mono text-fame-text-muted" style={{  fontSize: 9 }}>{new Date(c.created_at).toLocaleDateString(locale)}</span>
                     {isMember && (
                       <button className="font-mono text-fame-coral" onClick={() => remove(c.id)} style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer',  fontSize: 9 }}>{tc('delete')}</button>
                     )}
