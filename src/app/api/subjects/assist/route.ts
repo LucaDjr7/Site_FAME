@@ -5,6 +5,9 @@ import { isAssistField, type FieldDraft } from '@/lib/subjects/field-prompts'
 import { isOverBudget } from '@/lib/rag/usage'
 import { retrieveSubjectFiles } from '@/lib/rag/retrieve'
 
+// Routes longues (LLM/SSE, extraction+embedding) : éviter la coupure au défaut Vercel (~10-15 s).
+export const maxDuration = 60
+
 export async function POST(req: NextRequest) {
   try { await requireMember() } catch (e) { return authErrorResponse(e) }
 

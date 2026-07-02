@@ -16,6 +16,9 @@ import { createServiceClient } from '@/lib/supabase/server'
 import { toolDefs, runTool } from '@/lib/rag/tools'
 import type { ToolContext } from '@/lib/rag/tools/types'
 
+// Routes longues (LLM/SSE, extraction+embedding) : éviter la coupure au défaut Vercel (~10-15 s).
+export const maxDuration = 60
+
 const MAX_TURNS = 8
 const MAX_QUESTION_LEN = 2000
 

@@ -9,7 +9,7 @@ const intlMiddleware = createMiddleware(routing)
 const MEMBER_ONLY_PATHS = ['/data', '/prompts']
 const ADMIN_ONLY_PATHS = ['/admin']
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname
 
   // API routes must never be touched by the intl middleware: it would 307-
@@ -24,11 +24,14 @@ export async function middleware(request: NextRequest) {
   // Run intl middleware (handles locale redirect / cookie) for page routes
   const intlResponse = intlMiddleware(request)
 
-  // Check member-only pages
-  const matchesPath = (paths: string[]) =>
-    paths.some(p => pathWithoutLocale === p || pathWithoutLocale.startsWith(p + '/'))
-  const needsMember = matchesPath(MEMBER_ONLY_PATHS)
-  const needsAdmin = matchesPath(ADMIN_ONLY_PATHS)
+  // Check member-only pages. ATTENTION : `/data` et `/prompts` sont des routes
+  // LAB-PRÉFIXÉES (`/[lab]/data`), donc pathWithoutLocale vaut `/paris/data` — un
+  // match sur le préfixe `/data` échouait silencieusement (gate mort). On teste
+  // donc aussi le dernier segment. `/admin` n'est PAS lab-préfixé (préfixe direct).
+  const segments = pathWithoutLocale.split('/').filter(Boolean)
+  const memberSegs = MEMBER_ONLY_PATHS.map(p => p.replace(/^\//, ''))
+  const needsMember = segments.some(s => memberSegs.includes(s))
+  const needsAdmin = ADMIN_ONLY_PATHS.some(p => pathWithoutLocale === p || pathWithoutLocale.startsWith(p + '/'))
 
   // NOTE: this is an authentication gate only (is the caller logged in?).
   // It does NOT verify is_admin at the edge — RLS blocks reading members
