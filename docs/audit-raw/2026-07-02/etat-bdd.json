@@ -1,0 +1,71 @@
+{
+  "tables": {
+    "subjects": "OK (14 lignes)",
+    "tasks": "OK (1 lignes)",
+    "subtasks": "OK (0 lignes)",
+    "members": "OK (1 lignes)",
+    "comments": "OK (1 lignes)",
+    "publications": "OK (0 lignes)",
+    "prompts": "OK (0 lignes)",
+    "proposals": "OK (2 lignes)",
+    "dropbox_links": "OK (0 lignes)",
+    "rag_chunks": "OK (349 lignes)",
+    "chat_sessions": "OK (null lignes)",
+    "chat_unanswered": "OK (1 lignes)",
+    "chat_flagged": "OK (0 lignes)",
+    "subject_files": "OK (6 lignes)",
+    "subject_relations": "OK (12 lignes)"
+  },
+  "columns": {
+    "subjects(question,accroche,periode,i18n,inherits,confidentiel,is_transversal)": "OK",
+    "tasks(i18n)": "OK",
+    "subtasks(i18n)": "OK",
+    "subject_files(confidentiel,storage_path,mime_type,size_bytes)": "OK",
+    "subject_relations(kind,source_id,target_id,label_i18n)": "OK",
+    "rag_chunks(source_type,visibility,metadata,lang)": "OK"
+  },
+  "rpc": {
+    "match_rag_chunks": "OK",
+    "match_subject_files": "OK"
+  },
+  "storage": {
+    "subject-files": "privé"
+  },
+  "rls_probe": {
+    "subjects": "0 ligne(s) lisible(s) en anonyme",
+    "members": "0 ligne(s) lisible(s) en anonyme",
+    "prompts": "0 ligne(s) lisible(s) en anonyme",
+    "chat_sessions": "bloqué (PGRST205)",
+    "chat_unanswered": "0 ligne(s) lisible(s) en anonyme",
+    "subject_files": "0 ligne(s) lisible(s) en anonyme",
+    "subject_relations": "0 ligne(s) lisible(s) en anonyme",
+    "rag_chunks": "0 ligne(s) lisible(s) en anonyme",
+    "proposals": "0 ligne(s) lisible(s) en anonyme",
+    "dropbox_links": "0 ligne(s) lisible(s) en anonyme"
+  },
+  "rag": {
+    "source_type=subject": 78,
+    "source_type=task": 3,
+    "source_type=member": 1,
+    "source_type=publication": 0,
+    "source_type=prompt": 0,
+    "source_type=kb": 136,
+    "source_type=subject_file": 131,
+    "visibility=public": 339,
+    "visibility=member": 10
+  },
+  "confidential": {
+    "subject": {
+      "id": "b9cfac5d-5909-46ef-877d-5a6dc0ec2097",
+      "labo": "paris"
+    },
+    "file": {
+      "id": "ec9a89e9-1fbb-40c6-b6b9-bc5cc1adfadd",
+      "subject_id": "db5f41e4-db17-40fc-a48f-89e4f7905ae8"
+    },
+    "publicSubject": {
+      "id": "fb313865-4e9b-4bd8-8447-cca99d0a3037",
+      "labo": "paris"
+    }
+  }
+}
