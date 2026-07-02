@@ -79,6 +79,15 @@ export default async function PaperPage({ params }: Props) {
   // Visiteur : un sujet confidentiel n'existe pas (contenu, tâches, commentaires, fichiers protégés).
   if (subject.confidentiel && !isMember) notFound()
 
+  // Ne pas transmettre au client une relation dont l'autre extrémité est un sujet
+  // non visible : pour un visiteur, `related` exclut déjà les confidentiels, donc
+  // restreindre aux arêtes dont les deux bouts sont visibles retire UUID + libellés
+  // des sujets confidentiels du payload RSC (finding R1).
+  const visibleRelIds = new Set<string>([id, ...related.map(s => s.id)])
+  const visibleRelations = (relRows ?? []).filter(
+    (r: SubjectRelation) => visibleRelIds.has(r.source_id) && visibleRelIds.has(r.target_id)
+  )
+
   // Flatten nested task_assignees(members(...)) → assignees: MemberRef[]
   const tasks = flattenTasks(tasksRaw ?? [])
 
@@ -94,7 +103,7 @@ export default async function PaperPage({ params }: Props) {
       links={(links ?? []) as DropboxLink[]}
       files={(files ?? []) as SubjectFile[]}
       isMember={isMember}
-      relations={(relRows ?? []) as SubjectRelation[]}
+      relations={visibleRelations as SubjectRelation[]}
       relatedSubjects={related}
       allSubjects={(allSubjectsRows ?? []) as Pick<Subject, 'id' | 'titre' | 'i18n'>[]}
     />
