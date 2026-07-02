@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
-import Link from 'next/link'
 import { createServiceClient } from '@/lib/supabase/server'
 import { getSession } from '@/lib/auth'
 import { RelationGraph } from '@/components/graph/RelationGraph'
+import { GraphBackButton } from '@/components/graph/GraphBackButton'
 import type { Subject, SubjectRelation, MemberRef } from '@/types'
 
 type Props = { params: Promise<{ locale: string }> }
@@ -34,12 +34,7 @@ export default async function GraphPage({ params }: Props) {
     <div className="flex flex-col h-screen bg-fame-sand-bg">
       {/* Minimal in-page header (no TopBar — this route is outside [lab]) */}
       <header className="flex items-center gap-4 px-6 py-3 border-b border-fame-ecru shrink-0 bg-white/70 backdrop-blur-sm">
-        <Link
-          href={`/${locale}`}
-          className="font-mono text-xs text-fame-slate hover:text-fame-blue transition-colors"
-        >
-          {t('back')}
-        </Link>
+        <GraphBackButton locale={locale} />
         <span className="w-px h-4 bg-fame-ecru" aria-hidden="true" />
         <span className="font-mono text-xs text-fame-slate tracking-widest uppercase select-none">
           {t('kicker')}
