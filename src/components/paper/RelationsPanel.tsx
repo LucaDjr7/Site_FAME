@@ -150,6 +150,7 @@ export function RelationsPanel({
     }}>
       <button
         onClick={onToggleOpen}
+        aria-expanded={open}
         className="text-fame-text-light"
         style={{
           width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',

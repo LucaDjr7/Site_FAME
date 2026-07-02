@@ -621,6 +621,7 @@
   },
   "graph": {
     "metaTitle": "Relations graph — FAME",
+    "metaDescription": "Explore the network of FAME research subjects and their relationships.",
     "title": "Network",
     "kicker": "FAME / Graph",
     "empty": "No subjects to display yet.",

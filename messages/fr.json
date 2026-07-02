@@ -621,6 +621,7 @@
   },
   "graph": {
     "metaTitle": "Graphe des relations — FAME",
+    "metaDescription": "Explorez le réseau des sujets de recherche FAME et leurs relations.",
     "title": "Réseau",
     "kicker": "FAME / Graphe",
     "empty": "Aucun sujet à afficher pour l'instant.",

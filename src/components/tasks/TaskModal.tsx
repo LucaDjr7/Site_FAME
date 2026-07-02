@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import { Modal } from '@/components/ui/Modal'
+import { useToast } from '@/components/ui/Toast'
 import { Avatar } from '@/components/ui/Avatar'
 import { AssistButton } from '@/components/ui/AssistButton'
 import { FORM_INPUT_STYLE, FORM_BTN_CANCEL_STYLE, FORM_BTN_SUBMIT_STYLE } from '@/components/ui/form-styles'
@@ -31,6 +32,7 @@ const labelStyle: React.CSSProperties = {
 
 export function TaskModal({ task, subjectTitle, isMember, currentMemberId, onClose, onPatch, onToggleSubtask, onClaim }: Props) {
   const t = useTranslations('tasks')
+  const { addToast } = useToast()
   const locale = useLocale() === 'fr' ? 'fr' : 'en'
   const L = task ? localizedTask(task, locale) : { titre: '', description: '' }
   const [editing, setEditing] = useState(false)
@@ -57,7 +59,12 @@ export function TaskModal({ task, subjectTitle, isMember, currentMemberId, onClo
       if (res.ok) {
         const d = await res.json() as { text?: string }
         if (d.text) apply(d.text)
+        else addToast(t('editor.genError'), 'error') // réponse vide
+      } else {
+        addToast(t('editor.genError'), 'error')
       }
+    } catch {
+      addToast(t('editor.genError'), 'error')
     } finally { setGenField(null) }
   }
   function saveEdits() {
