@@ -1,0 +1,30 @@
+{
+  "name": "fame-onboarding-video",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "validate": "tsx scripts/validate.ts",
+    "tts": "tsx scripts/tts.ts",
+    "capture": "tsx scripts/capture.ts",
+    "studio": "remotion studio",
+    "render": "tsx scripts/render.ts",
+    "publish": "tsx scripts/publish.ts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.290",
+    "openai": "^6.9.0",
+    "playwright": "^1.56.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "remotion": "^4.0.290"
+  },
+  "devDependencies": {
+    "@supabase/supabase-js": "^2.108.2",
+    "@types/react": "^19",
+    "dotenv": "^17.4.2",
+    "tsx": "^4.22.4",
+    "typescript": "^5",
+    "vitest": "^3.2.6"
+  }
+}
