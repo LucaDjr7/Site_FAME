@@ -11,6 +11,10 @@ export async function createClient() {
     url,
     key,
     {
+      // Cookies de session : forcés `Secure` en prod (Vercel sert en HTTPS) pour qu'ils ne
+      // transitent jamais en clair. `httpOnly` reste false — @supabase/ssr en a besoin côté
+      // navigateur. En dev (http://localhost), `secure` désactivé sinon le cookie ne serait pas posé.
+      cookieOptions: { secure: process.env.NODE_ENV === 'production' },
       cookies: {
         getAll() { return cookieStore.getAll() },
         setAll(cookiesToSet) {

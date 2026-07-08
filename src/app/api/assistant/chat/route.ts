@@ -21,6 +21,10 @@ export const maxDuration = 60
 
 const MAX_TURNS = 8
 const MAX_QUESTION_LEN = 2000
+// Plafond de l'historique réellement envoyé au LLM (~3000 tokens). Le client contrôle
+// `body.messages` : sans ce garde-fou, il peut gonfler chaque tour pour multiplier les
+// tokens en entrée (abus de coût OpenAI). On garde les tours les plus récents.
+const MAX_INPUT_CHARS = 12_000
 
 function sse(body: ReadableStream): NextResponse {
   return new NextResponse(body, {
@@ -96,9 +100,18 @@ export async function POST(req: NextRequest) {
   // côté client (un client pourrait injecter de faux system/tool ou de faux outils).
   // Les messages assistant+tool LÉGITIMES sont ajoutés plus bas par la boucle d'outils (serveur).
   const trimmed = messages.slice(-MAX_TURNS)
-  const sanitized: ChatMessage[] = trimmed
-    .filter(m => m.role === 'user' || m.role === 'assistant')
-    .map(m => ({ role: m.role, content: m.content ?? '' }))
+  // Borne chaque tour (MAX_QUESTION_LEN) ET le total (MAX_INPUT_CHARS) : on remonte du
+  // plus récent au plus ancien tant qu'il reste du budget, puis on rétablit l'ordre.
+  const sanitized: ChatMessage[] = []
+  let inputBudget = MAX_INPUT_CHARS
+  for (let i = trimmed.length - 1; i >= 0; i--) {
+    const m = trimmed[i]
+    if (!m || (m.role !== 'user' && m.role !== 'assistant')) continue
+    const content = (m.content ?? '').slice(0, MAX_QUESTION_LEN)
+    if (content.length > inputBudget) break
+    inputBudget -= content.length
+    sanitized.unshift({ role: m.role, content })
+  }
   const provider = getChatProvider()
   const chatMessages: ChatMessage[] = [
     { role: 'system', content: buildSystemPrompt(tier, chunks, lang) },

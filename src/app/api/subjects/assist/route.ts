@@ -4,15 +4,23 @@ import { generateField } from '@/lib/subjects/generate-field'
 import { isAssistField, type FieldDraft } from '@/lib/subjects/field-prompts'
 import { isOverBudget } from '@/lib/rag/usage'
 import { retrieveSubjectFiles } from '@/lib/rag/retrieve'
+import { checkRateLimitDb } from '@/lib/rag/rate-limit-db'
 
 // Routes longues (LLM/SSE, extraction+embedding) : éviter la coupure au défaut Vercel (~10-15 s).
 export const maxDuration = 60
 
 export async function POST(req: NextRequest) {
-  try { await requireMember() } catch (e) { return authErrorResponse(e) }
+  let memberId: string
+  try { const { member } = await requireMember(); memberId = member.id } catch (e) { return authErrorResponse(e) }
 
   if (process.env.ASSISTANT_DISABLED === '1') {
     return NextResponse.json({ error: 'assistant disabled' }, { status: 503 })
+  }
+
+  // Génération LLM payante : rate-limit par membre (comme /api/assistant/chat) pour qu'un
+  // compte négligent ou compromis ne puisse pas épuiser le budget mensuel en boucle.
+  if (!(await checkRateLimitDb(`assist:${memberId}`, 30, 10 * 60_000))) {
+    return NextResponse.json({ error: 'rate_limited' }, { status: 429 })
   }
 
   const body = await req.json().catch(() => ({}))

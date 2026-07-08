@@ -42,6 +42,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'labo and titre required' }, { status: 400 })
   }
 
+  // Bornes de longueur (garde-fou coût embedding/DB ; généreuses pour ne pas gêner un usage réel).
+  const tooLong =
+    (typeof titre === 'string' && titre.length > 500) ||
+    [kicker, periode].some(v => typeof v === 'string' && v.length > 500) ||
+    [question, accroche, context, method, results].some(v => typeof v === 'string' && v.length > 20_000) ||
+    (Array.isArray(keywords) && (keywords.length > 100 || keywords.some((k: unknown) => typeof k === 'string' && k.length > 200))) ||
+    (Array.isArray(auteurs) && auteurs.length > 100)
+  if (tooLong) {
+    return NextResponse.json({ error: 'field too long' }, { status: 400 })
+  }
+
   const service = await createServiceClient()
   // Get current max ordre for this lab
   const { data: last } = await service
