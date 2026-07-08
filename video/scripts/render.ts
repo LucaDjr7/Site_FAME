@@ -16,7 +16,8 @@ symlinkSync(resolve('recordings'), resolve('public/recordings'))
 mkdirSync('out', { recursive: true })
 
 for (const locale of locales) {
-  execSync(`npx remotion render src/index.ts GuideVideo-${locale} out/fame-guide-${locale}.mp4`, { stdio: 'inherit' })
+  // CRF 27 (défaut Remotion : 23) : perte visuelle négligeable en 1080p screencast, ~40-50 % plus léger — fichier destiné au partage direct (email/Dropbox).
+  execSync(`npx remotion render src/index.ts GuideVideo-${locale} out/fame-guide-${locale}.mp4 --crf 27`, { stdio: 'inherit' })
   const timeline = JSON.parse(readFileSync(`recordings/${locale}/timeline.json`, 'utf8')) as TimelineJson
   const narration = locale === 'fr' ? FR : EN
   const chapters = computeSchedule(timeline, 30).chapters.map(ch => ({

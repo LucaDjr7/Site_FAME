@@ -14,8 +14,17 @@ Rien ici ne depend du site, et le site ne depend pas de `video/`.
 ## Pipeline
 
 ```
-npm run validate && npm run tts && npm run capture && npm run render && npm run publish
+npm run validate && npm run tts && npm run capture && npm run render
 ```
 
 Chaque etape est aussi relancable individuellement (`npm run tts`, `npm run capture`, etc.).
 Les artefacts generes (`audio/`, `recordings/`, `out/`) ne sont pas commites (voir `.gitignore` racine).
+
+## Livrable
+
+Le resultat du pipeline est un fichier video a partager directement (email, Dropbox...) :
+`out/fame-guide-fr.mp4` et `out/fame-guide-en.mp4` (+ les timecodes des chapitres dans
+`out/chapters.{fr,en}.json`). Decision 2026-07-08 : la video n'est PAS integree au site
+(pas de page, pas de bucket Storage) — c'est un livrable hors ligne uniquement.
+
+Apres le tournage, purger le contenu de demo du site : `npm run seed:demo -- --purge` a la racine.

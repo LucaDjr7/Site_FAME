@@ -3,6 +3,8 @@
 Date : 2026-07-08
 Statut : validé en brainstorming (diffusion, contenu, style, narration, langues, données, pipeline)
 
+> ⚠️ **Révision 2026-07-08 (en cours d'exécution)** : la diffusion est finalement **hors site uniquement** — la vidéo est un fichier MP4 à partager (email/Dropbox). Les sections « Publication » (bucket Storage `guide-videos`), « Intégration au site » (page `/[locale]/guide`, NavMenu, i18n) et les étapes associées sont **abandonnées** ; le bucket créé a été supprimé et les données démo purgées après tournage. Le pipeline s'arrête au rendu : `video/out/fame-guide-{fr,en}.mp4` (+ `chapters.{fr,en}.json` pour les timecodes).
+
 ## Objectif
 
 Produire une vidéo d'onboarding (~5 min 30) montrant les bons usages du site FAME aux futurs membres des labos Paris/Montréal, pour que l'outil soit utilisé au mieux. La mascotte **Astra** (dérivée de l'étoile 4 branches existante de la bulle de chat) guide la visite en voix off.

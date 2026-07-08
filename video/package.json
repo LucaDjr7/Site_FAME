@@ -8,7 +8,6 @@
     "capture": "tsx scripts/capture.ts",
     "studio": "remotion studio",
     "render": "tsx scripts/render.ts",
-    "publish": "tsx scripts/publish.ts",
     "test": "vitest run"
   },
   "dependencies": {
@@ -20,7 +19,6 @@
     "remotion": "^4.0.290"
   },
   "devDependencies": {
-    "@supabase/supabase-js": "^2.108.2",
     "@types/react": "^19",
     "dotenv": "^17.4.2",
     "tsx": "^4.22.4",
