@@ -22,17 +22,35 @@ const supabase = createClient(
 
 async function purge() {
   // Ordre FK-safe : enfants d'abord. Les cascades gèrent le reste.
-  await supabase.from('subtasks').delete().in('id', DEMO.subtasks.map(s => s.id))
-  await supabase.from('tasks').delete().in('id', DEMO.tasks.map(t => t.id))
-  await supabase.from('comments').delete().in('id', DEMO.comments.map(c => c.id))
-  await supabase.from('subject_relations').delete().in('id', DEMO.relations.map(r => r.id))
-  await supabase.from('subjects').delete().in('id', DEMO.subjects.map(s => s.id))
-  await supabase.from('publications').delete().in('id', DEMO.publications.map(p => p.id))
-  await supabase.from('members').delete().in('id', DEMO.members.map(m => m.id))
-  // Auth user du membre de capture
-  const { data } = await supabase.auth.admin.listUsers()
-  const authUser = data?.users?.find(u => u.email === DEMO_MEMBER_EMAIL)
-  if (authUser) await supabase.auth.admin.deleteUser(authUser.id)
+  const deletes: Array<[string, readonly string[]]> = [
+    ['subtasks', DEMO.subtasks.map(s => s.id)],
+    ['tasks', DEMO.tasks.map(t => t.id)],
+    ['comments', DEMO.comments.map(c => c.id)],
+    ['subject_relations', DEMO.relations.map(r => r.id)],
+    ['subjects', DEMO.subjects.map(s => s.id)],
+    ['publications', DEMO.publications.map(p => p.id)],
+    ['members', DEMO.members.map(m => m.id)],
+  ]
+  for (const [table, ids] of deletes) {
+    const { error } = await supabase.from(table).delete().in('id', ids)
+    if (error) { console.error(`${table}:`, error.message); process.exit(1) }
+  }
+
+  // Auth user du membre de capture — listUsers() est paginé (~50/page par défaut).
+  let authUser: { id: string } | undefined
+  for (let page = 1; ; page++) {
+    const { data, error } = await supabase.auth.admin.listUsers({ page, perPage: 200 })
+    if (error) { console.error('listUsers:', error.message); process.exit(1) }
+    authUser = data.users.find(u => u.email === DEMO_MEMBER_EMAIL)
+    if (authUser || data.users.length === 0) break
+  }
+  if (authUser) {
+    const { error } = await supabase.auth.admin.deleteUser(authUser.id)
+    if (error) { console.error('deleteUser:', error.message); process.exit(1) }
+  } else {
+    console.log(`Auth user ${DEMO_MEMBER_EMAIL} not found (already absent).`)
+  }
+
   console.log('Demo data purged.')
 }
 

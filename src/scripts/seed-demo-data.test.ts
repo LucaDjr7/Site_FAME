@@ -37,7 +37,10 @@ describe('seed-demo-data', () => {
     const taskIds = new Set(DEMO.tasks.map(t => t.id))
     for (const t of DEMO.tasks) expect(subjectIds.has(t.sujet_id)).toBe(true)
     for (const st of DEMO.subtasks) expect(taskIds.has(st.task_id)).toBe(true)
-    for (const c of DEMO.comments) expect(subjectIds.has(c.sujet_id)).toBe(true)
+    for (const c of DEMO.comments) {
+      expect(subjectIds.has(c.sujet_id)).toBe(true)
+      if (c.membre_id !== null) expect(memberIds.has(c.membre_id)).toBe(true)
+    }
     for (const r of DEMO.relations) {
       expect(subjectIds.has(r.source_id)).toBe(true)
       expect(subjectIds.has(r.target_id)).toBe(true)
