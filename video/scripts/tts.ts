@@ -25,13 +25,13 @@ for (const locale of locales) {
   const manifestPath = `${dir}/manifest.json`
   const manifest: Manifest = existsSync(manifestPath) ? JSON.parse(readFileSync(manifestPath, 'utf8')) : {}
 
-  for (const [id, text] of Object.entries(SOURCES[locale])) {
+  for (const [id, text] of Object.entries(SOURCES[locale] ?? {})) {
     if (id.startsWith('chapter.')) continue // titres de cartes : pas de voix
     const hash = createHash('sha256').update(text).digest('hex').slice(0, 16)
     if (manifest[id]?.hash === hash && existsSync(`${dir}/${id}.wav`)) continue
     console.log(`[${locale}] ${id} …`)
     const res = await openai.audio.speech.create({
-      model: 'gpt-4o-mini-tts', voice: VOICES[locale], input: text, response_format: 'wav',
+      model: 'gpt-4o-mini-tts', voice: VOICES[locale] ?? 'alloy', input: text, response_format: 'wav',
       instructions: 'Enthusiastic but clear tour-guide voice, natural pace.',
     })
     const buf = Buffer.from(await res.arrayBuffer())
