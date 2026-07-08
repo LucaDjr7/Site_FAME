@@ -20,11 +20,16 @@ function xmlText(xml: string, tag: string): string {
 function unzipText(bytes: Uint8Array, match: (name: string) => boolean, tag: string): string {
   const files = unzipSync(bytes)
   const parts: string[] = []
+  let total = 0
   for (const name of Object.keys(files)) {
-    if (match(name)) {
-      const file = files[name]
-      if (file) parts.push(xmlText(strFromU8(file), tag))
-    }
+    if (!match(name)) continue
+    const file = files[name]
+    if (!file) continue
+    parts.push(xmlText(strFromU8(file), tag))
+    total += file.length
+    // Garde-fou : au-delà de MAX_CHARS de contenu inspecté on s'arrête — le texte est de
+    // toute façon tronqué à MAX_CHARS ensuite, inutile de traiter des archives gonflées.
+    if (total >= MAX_CHARS) break
   }
   return parts.join('\n')
 }
