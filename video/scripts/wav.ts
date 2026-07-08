@@ -23,3 +23,12 @@ export function wavDurationMs(buf: Buffer): number {
   }
   throw new Error('No data chunk found')
 }
+
+// Borne basse (lâche) de durée de parole plausible pour un texte donné, en
+// ms. Le débit réel d'une voix TTS tourne autour de 60-80 ms/caractère ;
+// on prend une marge large (30 ms/caractère) pour ne jamais faux-positiver
+// sur une voix rapide, tout en attrapant les troncatures franches (ex.
+// audio coupé à 300 ms au lieu de 8,6 s).
+export function minPlausibleMs(text: string): number {
+  return Math.max(1500, text.length * 30)
+}

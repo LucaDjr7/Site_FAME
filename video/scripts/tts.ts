@@ -3,11 +3,11 @@
 //      npm run tts -- fr      (une locale)
 import { config } from 'dotenv'
 import { createHash } from 'node:crypto'
-import { mkdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs'
+import { mkdirSync, readFileSync, writeFileSync, existsSync, unlinkSync } from 'node:fs'
 import OpenAI from 'openai'
 import { NARRATION as FR } from '../scenario/narration.fr'
 import { NARRATION as EN } from '../scenario/narration.en'
-import { wavDurationMs } from './wav'
+import { wavDurationMs, minPlausibleMs } from './wav'
 
 config({ path: ['../.env.local', '../.env'] })
 if (!process.env.OPENAI_API_KEY) { console.error('Set OPENAI_API_KEY in ../.env.local'); process.exit(1) }
@@ -35,8 +35,18 @@ for (const locale of locales) {
       instructions: 'Enthusiastic but clear tour-guide voice, natural pace.',
     })
     const buf = Buffer.from(await res.arrayBuffer())
-    writeFileSync(`${dir}/${id}.wav`, buf)
-    manifest[id] = { hash, durationMs: wavDurationMs(buf) }
+    const wavPath = `${dir}/${id}.wav`
+    writeFileSync(wavPath, buf)
+    const durationMs = wavDurationMs(buf)
+    const minMs = minPlausibleMs(text)
+    if (durationMs < minMs) {
+      unlinkSync(wavPath)
+      console.error(
+        `[${locale}] ${id}: audio tronqué — obtenu ${durationMs}ms, minimum attendu ${minMs}ms. WAV supprimé, manifest non mis à jour.`,
+      )
+      process.exit(1)
+    }
+    manifest[id] = { hash, durationMs }
     writeFileSync(manifestPath, JSON.stringify(manifest, null, 2))
   }
   const total = Object.values(manifest).reduce((s, m) => s + m.durationMs, 0)

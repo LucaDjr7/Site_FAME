@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { wavDurationMs } from './wav'
+import { wavDurationMs, minPlausibleMs } from './wav'
 
 function makeWav(dataBytes: number, byteRate: number): Buffer {
   const buf = Buffer.alloc(44 + dataBytes)
@@ -25,5 +25,28 @@ describe('wavDurationMs', () => {
     const buf = makeWav(96000, 48000)
     buf.writeUInt32LE(0xffffffff, 40)
     expect(wavDurationMs(buf)).toBe(2000)
+  })
+})
+
+describe('minPlausibleMs', () => {
+  it('applique un plancher de 1500ms pour un texte court', () => {
+    expect(minPlausibleMs('Bonjour')).toBe(1500)
+    expect(minPlausibleMs('')).toBe(1500)
+  })
+
+  it('est proportionnelle à la longueur du texte au-delà du plancher', () => {
+    const text = 'x'.repeat(100) // 100 * 30 = 3000ms > plancher 1500ms
+    expect(minPlausibleMs(text)).toBe(3000)
+    const longer = 'x'.repeat(200)
+    expect(minPlausibleMs(longer)).toBe(6000)
+  })
+
+  it("cas type incident : ~140 caractères → minimum ~4200ms, donc 300ms d'audio est rejeté", () => {
+    const text =
+      'Bienvenue au laboratoire FAME. Ici, chercheurs et chercheuses collaborent sur des projets ambitieux, du globe interactif jusqu’aux publications partagées.'
+    expect(text.length).toBeGreaterThanOrEqual(140)
+    const min = minPlausibleMs(text)
+    expect(min).toBeGreaterThanOrEqual(4200)
+    expect(300).toBeLessThan(min)
   })
 })
