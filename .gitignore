@@ -54,4 +54,5 @@ video/node_modules/
 video/audio/
 video/recordings/
 video/out/
+video/public/
 video/.auth/
