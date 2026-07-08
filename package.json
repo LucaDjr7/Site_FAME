@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "seed:admin": "npx tsx src/scripts/seed-admin.ts",
+    "seed:demo": "npx tsx src/scripts/seed-demo.ts",
     "index:rag": "npx tsx src/scripts/index-rag.ts"
   },
   "dependencies": {

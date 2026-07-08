@@ -1,0 +1,46 @@
+export const NARRATION: Record<string, string> = {
+  'chapter.welcome.title': 'Bienvenue',
+  'chapter.tour.title': "Tour d'horizon",
+  'chapter.subject.title': "La vie d'une fiche",
+  'chapter.daily.title': 'Le quotidien',
+  'chapter.reflexes.title': 'Les bons réflexes',
+  'chapter.outro.title': 'À bientôt',
+
+  'welcome.1': "Bonjour ! Moi c'est Astra. Bienvenue sur le site des labos FAME, Paris et Montréal. Suivez-moi, je vous fais visiter.",
+  'welcome.2': "Tout commence ici, sur le globe. Chaque épingle dorée est un labo. Entrons dans celui de Paris.",
+
+  'tour.grid': "Voici la vitrine du labo : chaque carte est une fiche de recherche, avec sa question, son avancement et son équipe.",
+  'tour.paper': "Un clic sur une carte ouvre la fiche détaillée : contexte, méthode, résultats, documents et discussions.",
+  'tour.tasks': "L'onglet Tâches, c'est le kanban du labo : à faire, en cours, terminé.",
+  'tour.publications': "Les publications du labo sont recensées ici.",
+  'tour.team': "La page Équipe présente les membres des deux labos et leurs domaines.",
+  'tour.data': "Réservées aux membres : la page Données explore la Dropbox du labo…",
+  'tour.prompts': "…et la page Prompts partage les prompts d'équipe.",
+  'tour.graph': "Le graphe montre comment les sujets se répondent entre eux, d'un labo à l'autre.",
+  'tour.astra': "Et en bas de page, il y a moi ! Posez-moi vos questions, je connais tout le site.",
+
+  'subject.create': "Créons une fiche. En mode édition, la carte pointillée en fin de grille ajoute un nouveau sujet.",
+  'subject.fill': "La fiche se remplit comme un poster : question, accroche, contexte, méthode.",
+  'subject.assist': "Un doute sur la formulation ? L'étincelle propose un texte à partir de ce que vous avez déjà écrit.",
+  'subject.i18n': "Écrivez dans votre langue : le site traduit automatiquement vers l'autre.",
+  'subject.child': "Une piste dérivée ? Créez une fiche fille : elle hérite des champs que vous choisissez.",
+  'subject.status': "Le statut suit la vie du sujet : actif, en pause, terminé.",
+  'subject.confidential': "Et le cadenas rend la fiche confidentielle : invisible des visiteurs. Seuls les membres la voient.",
+
+  'daily.task': "Au quotidien, tout passe par les tâches. On en crée une, on la découpe en sous-tâches.",
+  'daily.claim': "Une tâche vous tente ? Réclamez-la : votre avatar s'y attache.",
+  'daily.subtasks': "Cochez les sous-tâches au fil de l'eau : la barre de progression de la fiche suit toute seule.",
+  'daily.comments': "Les discussions vivent sous la fiche : commentaires ouverts aux visiteurs comme aux membres.",
+  'daily.files': "Déposez vos documents directement sur la fiche : PDF, présentations, tableurs.",
+  'daily.filelock': "Chaque document a son propre cadenas : un document confidentiel peut vivre sur une fiche publique.",
+  'daily.dropbox': "Et pour les gros jeux de données, liez un dossier Dropbox.",
+
+  'reflexes.intro': "Avant de vous laisser, mes cinq bons réflexes.",
+  'reflexes.1': "Un : déposez vos documents sur les fiches. Je les lis, et je m'en sers pour répondre à tout le monde.",
+  'reflexes.2': "Deux : dans le doute, fermez le cadenas. On peut toujours rouvrir plus tard.",
+  'reflexes.3': "Trois : écrivez dans votre langue, la traduction s'occupe de l'autre.",
+  'reflexes.4': "Quatre : une idée de sujet ? Proposez-la. La page Proposer est ouverte à tous.",
+  'reflexes.5': "Cinq : quelque chose cloche ? Signalez-le depuis mon panneau.",
+
+  'outro.1': "Voilà, vous savez tout ! Et si vous êtes perdu, cliquez sur mon étoile en bas de page. À bientôt !",
+}

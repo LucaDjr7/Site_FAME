@@ -1,0 +1,46 @@
+export const NARRATION: Record<string, string> = {
+  'chapter.welcome.title': 'Welcome',
+  'chapter.tour.title': 'The grand tour',
+  'chapter.subject.title': 'The life of a sheet',
+  'chapter.daily.title': 'Day to day',
+  'chapter.reflexes.title': 'Good habits',
+  'chapter.outro.title': 'See you soon',
+
+  'welcome.1': "Hi! I'm Astra. Welcome to the FAME labs website, Paris and Montréal. Follow me, I'll show you around.",
+  'welcome.2': "Everything starts here, on the globe. Each golden pin is a lab. Let's step into Paris.",
+
+  'tour.grid': "This is the lab's showcase: each card is a research sheet, with its question, its progress and its team.",
+  'tour.paper': "Clicking a card opens the detailed sheet: context, method, results, documents and discussions.",
+  'tour.tasks': "The Tasks tab is the lab's kanban: to do, in progress, done.",
+  'tour.publications': "The lab's publications are listed here.",
+  'tour.team': "The Team page introduces the members of both labs and their fields.",
+  'tour.data': "Members only: the Data page browses the lab's Dropbox…",
+  'tour.prompts': "…and the Prompts page shares the team's prompts.",
+  'tour.graph': "The graph shows how subjects relate to each other, across labs.",
+  'tour.astra': "And down at the bottom of every page, there's me! Ask me anything, I know the whole site.",
+
+  'subject.create': "Let's create a sheet. In edit mode, the dotted card at the end of the grid adds a new subject.",
+  'subject.fill': "The sheet fills in like a poster: question, hook, context, method.",
+  'subject.assist': "Not sure how to phrase it? The sparkle suggests a text based on what you already wrote.",
+  'subject.i18n': "Write in your own language: the site automatically translates to the other one.",
+  'subject.child': "A spin-off idea? Create a child sheet: it inherits the fields you choose.",
+  'subject.status': "The status follows the subject's life: active, on hold, done.",
+  'subject.confidential': "And the padlock makes the sheet confidential: invisible to visitors. Only members see it.",
+
+  'daily.task': "Day to day, everything goes through tasks. Create one, break it into subtasks.",
+  'daily.claim': "Tempted by a task? Claim it: your avatar gets attached to it.",
+  'daily.subtasks': "Tick subtasks as you go: the sheet's progress bar follows along.",
+  'daily.comments': "Discussions live under the sheet: comments are open to visitors and members alike.",
+  'daily.files': "Drop your documents right on the sheet: PDFs, slides, spreadsheets.",
+  'daily.filelock': "Each document has its own padlock: a confidential document can live on a public sheet.",
+  'daily.dropbox': "And for large datasets, link a Dropbox folder.",
+
+  'reflexes.intro': "Before I let you go, my five good habits.",
+  'reflexes.1': "One: drop your documents on the sheets. I read them, and I use them to answer everyone.",
+  'reflexes.2': "Two: when in doubt, close the padlock. You can always reopen it later.",
+  'reflexes.3': "Three: write in your language, translation takes care of the other one.",
+  'reflexes.4': "Four: got a subject idea? Propose it. The Propose page is open to everyone.",
+  'reflexes.5': "Five: something looks off? Report it from my panel.",
+
+  'outro.1': "That's it, you know everything! And if you ever feel lost, click my star at the bottom of the page. See you soon!",
+}
