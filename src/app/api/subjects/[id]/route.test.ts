@@ -107,6 +107,16 @@ describe('PATCH /api/subjects/[id]', () => {
     await PATCH(req({ is_transversal: 1 }), { params: Promise.resolve({ id: 'x' }) })
     expect(updateVals.is_transversal).toBe(true)
   })
+  it('whiteliste show_in_tasks dans l\'update', async () => {
+    singleResult = { data: { id: 'x', show_in_tasks: true }, error: null }
+    await PATCH(req({ show_in_tasks: true }), { params: Promise.resolve({ id: 'x' }) })
+    expect(updateVals.show_in_tasks).toBe(true)
+  })
+  it('coerce show_in_tasks en booléen', async () => {
+    singleResult = { data: { id: 'x', show_in_tasks: false }, error: null }
+    await PATCH(req({ show_in_tasks: 0 }), { params: Promise.resolve({ id: 'x' }) })
+    expect(updateVals.show_in_tasks).toBe(false)
+  })
 })
 
 describe('DELETE /api/subjects/[id] — purge Storage', () => {

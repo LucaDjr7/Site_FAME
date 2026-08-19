@@ -6,6 +6,7 @@ import type { Subject, TaskWithRelations, MemberRef, Lab, TaskStatus, Difficulty
 import { KanbanColumn } from './KanbanColumn'
 import { TaskModal } from './TaskModal'
 import { AddTaskModal } from './AddTaskModal'
+import { AddSubjectModal } from './AddSubjectModal'
 import { TaskFilterSidebar } from './TaskFilterSidebar'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { useToast } from '@/components/ui/Toast'
@@ -39,6 +40,8 @@ export function KanbanBoard({ lab, locale, subjects, initialTasks, members, isMe
   }, [])
 
   const [tasks, setTasks] = useState<TaskWithRelations[]>(initialTasks)
+  const [subjectsState, setSubjectsState] = useState<Subject[]>(subjects)
+  const [addSubjectModalOpen, setAddSubjectModalOpen] = useState(false)
   const [q, setQ] = useState('')
   const [fSubject, setFSubject] = useState<Set<string>>(new Set())
   const [fStatus, setFStatus] = useState<Set<TaskStatus>>(new Set())
@@ -53,14 +56,37 @@ export function KanbanBoard({ lab, locale, subjects, initialTasks, members, isMe
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null)
 
   async function refresh() {
-    // Rafraîchir par les ids des sujets visibles (labo + transversaux), pas par
-    // ?lab — sinon les tâches des sujets transversaux de l'autre labo disparaissent.
-    const ids = subjects.map(s => s.id)
+    // Rafraîchir par les ids des sujets affichés sur le tableau (show_in_tasks),
+    // pas par ?lab — sinon les tâches des sujets transversaux de l'autre labo disparaissent.
+    const ids = subjectsState.filter(s => s.show_in_tasks).map(s => s.id)
     if (ids.length === 0) { setTasks([]); return }
     const res = await fetch(`/api/tasks?subject_ids=${ids.join(',')}`)
     if (!res.ok) return
     const raw = await res.json()
     setTasks(flattenTasks(raw))
+  }
+
+  async function handleAddSubject(subjectId: string) {
+    const result = await apiFetch<unknown>(`/api/subjects/${subjectId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ show_in_tasks: true }),
+    }, (msg) => addToast(msg, 'error'), t('toast.error'))
+    if (result === null) return
+    setSubjectsState(prev => prev.map(s => s.id === subjectId ? { ...s, show_in_tasks: true } : s))
+    setAddSubjectModalOpen(false)
+    await refresh()
+  }
+
+  async function handleRemoveSubject(subjectId: string) {
+    const result = await apiFetch<unknown>(`/api/subjects/${subjectId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ show_in_tasks: false }),
+    }, (msg) => addToast(msg, 'error'), t('toast.error'))
+    if (result === null) return
+    setSubjectsState(prev => prev.map(s => s.id === subjectId ? { ...s, show_in_tasks: false } : s))
+    setTasks(prev => prev.filter(tk => tk.sujet_id !== subjectId))
   }
 
   async function handleClaim(taskId: string) {
@@ -130,11 +156,13 @@ export function KanbanBoard({ lab, locale, subjects, initialTasks, members, isMe
     return true
   }), [tasks, q, hideDone, fSubject, fStatus, fDiff, fPerson, fDate, loc])
 
-  const visibleSubjects = subjects.filter(s => fSubject.size === 0 || fSubject.has(s.id))
+  const displayedSubjects = subjectsState.filter(s => s.show_in_tasks)
+  const hiddenSubjects = subjectsState.filter(s => !s.show_in_tasks)
+  const visibleSubjects = displayedSubjects.filter(s => fSubject.size === 0 || fSubject.has(s.id))
   const totalCount = filtered.length
   const openCount = filtered.filter(tk => tk.assignees.length === 0).length
   const selectedTask = tasks.find(tk => tk.id === selectedTaskId) ?? null
-  const selectedSubject = selectedTask ? subjects.find(s => s.id === selectedTask.sujet_id) : undefined
+  const selectedSubject = selectedTask ? subjectsState.find(s => s.id === selectedTask.sujet_id) : undefined
   const selectedSubjectTitle = selectedSubject ? localizedSubject(selectedSubject, loc).titre : ''
 
   return (
@@ -191,30 +219,50 @@ export function KanbanBoard({ lab, locale, subjects, initialTasks, members, isMe
         {/* Board + sidebar */}
         <div style={{ flex: 1, display: 'flex', overflow: 'hidden', minHeight: 0 }}>
           <div style={{ flex: 1, overflowX: 'auto', overflowY: 'hidden', padding: '18px 28px 0', display: 'flex', gap: 22, alignItems: 'stretch' }}>
-            {visibleSubjects.length === 0 ? (
-              <div className="font-mono text-fame-text-muted" style={{  fontSize: 13, margin: 'auto' }}>
+            {visibleSubjects.length === 0 && (
+              <div className="font-mono text-fame-text-muted" style={
+                isMember
+                  ? { fontSize: 13, alignSelf: 'center', flexShrink: 0, marginRight: 22 }
+                  : { fontSize: 13, margin: 'auto' }
+              }>
                 {t('empty')}
               </div>
-            ) : (
-              visibleSubjects.map(s => (
-                <KanbanColumn
-                  key={s.id}
-                  subject={s}
-                  tasks={filtered.filter(tk => tk.sujet_id === s.id)}
-                  isMember={isMember}
-                  currentMemberId={currentMemberId}
-                  editMode={editMode}
-                  onOpenTask={tk => setSelectedTaskId(tk.id)}
-                  onClaim={handleClaim}
-                  onDeleteTask={id => setPendingDeleteId(id)}
-                  onAddTask={id => setAddSubjectId(id)}
-                />
-              ))
+            )}
+            {visibleSubjects.map(s => (
+              <KanbanColumn
+                key={s.id}
+                subject={s}
+                tasks={filtered.filter(tk => tk.sujet_id === s.id)}
+                isMember={isMember}
+                currentMemberId={currentMemberId}
+                editMode={editMode}
+                onOpenTask={tk => setSelectedTaskId(tk.id)}
+                onClaim={handleClaim}
+                onDeleteTask={id => setPendingDeleteId(id)}
+                onAddTask={id => setAddSubjectId(id)}
+                onRemoveSubject={handleRemoveSubject}
+              />
+            ))}
+            {isMember && (
+              <button className="font-mono"
+                onClick={() => setAddSubjectModalOpen(true)}
+                style={{
+                  flexShrink: 0, width: 300, alignSelf: 'stretch', borderRadius: 10,
+                  border: '2px dashed rgba(47,68,134,0.35)', background: 'rgba(47,68,134,0.03)',
+                  color: '#2f4486', cursor: 'pointer', display: 'flex', flexDirection: 'column',
+                  alignItems: 'center', justifyContent: 'center', gap: 8,
+                }}
+              >
+                <span style={{ fontSize: 28, lineHeight: 1 }}>＋</span>
+                <span style={{  fontSize: 10, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                  {t('addSubject')}
+                </span>
+              </button>
             )}
           </div>
 
           <TaskFilterSidebar
-            subjects={subjects}
+            subjects={displayedSubjects}
             tasks={tasks}
             members={members}
             q={q}
@@ -281,6 +329,13 @@ export function KanbanBoard({ lab, locale, subjects, initialTasks, members, isMe
         members={members}
         onClose={() => setAddSubjectId(null)}
         onAdded={() => { setAddSubjectId(null); refresh(); addToast(t('toast.added'), 'success') }}
+      />
+
+      <AddSubjectModal
+        open={addSubjectModalOpen}
+        subjects={hiddenSubjects}
+        onClose={() => setAddSubjectModalOpen(false)}
+        onAdd={handleAddSubject}
       />
 
       <ConfirmDialog

@@ -7,7 +7,7 @@ function mk(over: Partial<Subject>): Subject {
     id: 'x', labo: 'paris', titre: '', kicker: '', question: '', accroche: '', periode: '',
     statut: 'active', context: '', method: '', results: '', keywords: [], auteurs: [],
     difficulte: 'intermediate', dimensions: { method: '', data: '', theory: '', writing: '' },
-    ordre: 0, is_transversal: false, confidentiel: false, i18n: {}, inherits: {},
+    ordre: 0, is_transversal: false, confidentiel: false, show_in_tasks: false, i18n: {}, inherits: {},
     created_at: '', updated_at: '', ...over,
   }
 }

@@ -33,13 +33,14 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   try { await requireMember() } catch (e) { return authErrorResponse(e) }
   const { id } = await params
   const body = await req.json()
-  const allowed = ['titre', 'kicker', 'question', 'accroche', 'periode', 'statut', 'difficulte', 'context', 'method', 'results', 'keywords', 'auteurs', 'dimensions', 'is_transversal', 'confidentiel']
+  const allowed = ['titre', 'kicker', 'question', 'accroche', 'periode', 'statut', 'difficulte', 'context', 'method', 'results', 'keywords', 'auteurs', 'dimensions', 'is_transversal', 'confidentiel', 'show_in_tasks']
   const updates: Record<string, unknown> = {}
   for (const key of allowed) {
     if (key in body) updates[key] = body[key]
   }
   if ('is_transversal' in updates) updates.is_transversal = !!updates.is_transversal
   if ('confidentiel' in updates) updates.confidentiel = !!updates.confidentiel
+  if ('show_in_tasks' in updates) updates.show_in_tasks = !!updates.show_in_tasks
   // L'éditeur envoie le payload complet (avec `titre`) ; on (re)génère i18n depuis
   // la langue source = locale de l'éditeur. Les màj partielles sans `titre` ne touchent pas i18n.
   if ('titre' in body) {

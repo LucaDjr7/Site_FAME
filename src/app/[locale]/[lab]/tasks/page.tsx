@@ -34,13 +34,15 @@ export default async function TasksPage({ params }: Props) {
     service.from('members').select('id,prenom,nom,photo_url').eq('labo', lab),
   ])
 
-  // Cascade : les tâches visibles sont celles rattachées aux sujets visibles
-  // (sujets du labo + sujets transversaux). Un sujet transversal partage donc ses tâches.
-  const visibleSubjectIds = (subjects ?? []).map((s: { id: string }) => s.id)
-  const { data: tasksRaw } = visibleSubjectIds.length > 0
+  // Le tableau Tasks n'affiche que les sujets ajoutés au tableau (show_in_tasks) ;
+  // on ne charge donc les tâches que pour ceux-là, pas pour tous les sujets visibles.
+  const displayedSubjectIds = (subjects ?? [])
+    .filter((s: { show_in_tasks: boolean }) => s.show_in_tasks)
+    .map((s: { id: string }) => s.id)
+  const { data: tasksRaw } = displayedSubjectIds.length > 0
     ? await service.from('tasks')
         .select('*, task_assignees(member_id, members(id,prenom,nom,photo_url)), subtasks(*)')
-        .in('sujet_id', visibleSubjectIds)
+        .in('sujet_id', displayedSubjectIds)
         .order('date_creation', { ascending: false })
     : { data: [] }
 

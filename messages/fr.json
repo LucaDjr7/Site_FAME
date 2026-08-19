@@ -226,6 +226,12 @@
     },
     "hideCompleted": "Masquer les tâches terminées",
     "addTask": "Ajouter une tâche",
+    "addSubject": "Ajouter un sujet",
+    "removeSubject": "Retirer du tableau",
+    "addSubjectModal": {
+      "title": "Choisir un sujet à afficher",
+      "empty": "Tous les sujets sont déjà affichés."
+    },
     "kicker": "FAME / Tâches",
     "pageTitle": "Tâches",
     "searchLabel": "Rechercher des tâches",
@@ -253,7 +259,7 @@
     "countTasks": "{n} tâche(s)",
     "countOpen": "{n} à pourvoir",
     "subjectsLink": "Sujets →",
-    "empty": "Aucun sujet pour l'instant. Ajoutez des sujets depuis la page du laboratoire.",
+    "empty": "Aucun sujet n'est affiché sur ce tableau pour l'instant.",
     "modal": {
       "title": "Nouvelle tâche",
       "fTitle": "Titre",

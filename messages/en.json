@@ -226,6 +226,12 @@
     },
     "hideCompleted": "Hide completed tasks",
     "addTask": "Add task",
+    "addSubject": "Add a subject",
+    "removeSubject": "Remove from board",
+    "addSubjectModal": {
+      "title": "Choose a subject to display",
+      "empty": "All subjects are already displayed."
+    },
     "kicker": "FAME / Tasks",
     "pageTitle": "Tasks",
     "searchLabel": "Search tasks",
@@ -253,7 +259,7 @@
     "countTasks": "{n} task(s)",
     "countOpen": "{n} to claim",
     "subjectsLink": "Subjects →",
-    "empty": "No subjects yet. Add subjects on the lab page first.",
+    "empty": "No subject is displayed on this board yet.",
     "modal": {
       "title": "New task",
       "fTitle": "Title",

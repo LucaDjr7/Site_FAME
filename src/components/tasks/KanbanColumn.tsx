@@ -15,16 +15,17 @@ type Props = {
   onClaim: (taskId: string) => void
   onDeleteTask: (taskId: string) => void
   onAddTask: (subjectId: string) => void
+  onRemoveSubject: (subjectId: string) => void
 }
 
 export function KanbanColumn({
-  subject, tasks, isMember, currentMemberId, editMode, onOpenTask, onClaim, onDeleteTask, onAddTask,
+  subject, tasks, isMember, currentMemberId, editMode, onOpenTask, onClaim, onDeleteTask, onAddTask, onRemoveSubject,
 }: Props) {
   const t = useTranslations('tasks')
   const locale = useLocale()
 
   return (
-    <div style={{ flexShrink: 0, width: 300, height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ flexShrink: 0, width: 300, height: '100%', display: 'flex', flexDirection: 'column', position: 'relative' }}>
       {/* header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '0 4px 14px', flexShrink: 0 }}>
         <span style={{ width: 9, height: 9, borderRadius: '50%', background: SUBJECT_STATUS_COLOR[subject.statut], flexShrink: 0 }} />
@@ -39,6 +40,22 @@ export function KanbanColumn({
           background: 'rgba(20,40,90,0.08)', padding: '2px 8px', borderRadius: 20,
         }}>{tasks.length}</span>
       </div>
+
+      {/* remove from board (edit mode, member) */}
+      {isMember && editMode && (
+        <button className="bg-fame-red text-white"
+          onClick={() => onRemoveSubject(subject.id)}
+          aria-label={t('removeSubject')}
+          title={t('removeSubject')}
+          style={{
+            position: 'absolute', top: -7, right: -7, width: 18, height: 18, borderRadius: '50%',
+            border: 'none', fontSize: 11, lineHeight: '18px',
+            cursor: 'pointer', padding: 0,
+          }}
+        >
+          ×
+        </button>
+      )}
 
       {/* cards */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12, overflowY: 'auto', padding: 8 }}>
