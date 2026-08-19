@@ -13,7 +13,7 @@ function makeSubject(id: string, titre: string): Subject {
     statut: 'active', context: '', method: '', results: '', keywords: [], auteurs: [],
     difficulte: 'easy',
     dimensions: { method: '', data: '', theory: '', writing: '' },
-    ordre: 0, is_transversal: false, confidentiel: false,
+    ordre: 0, is_transversal: false, confidentiel: false, show_in_tasks: false,
     i18n: {}, inherits: {}, created_at: '', updated_at: '',
   }
 }

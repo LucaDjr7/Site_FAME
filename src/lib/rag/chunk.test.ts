@@ -9,7 +9,7 @@ function makeSubject(over: Partial<Subject> = {}): Subject {
     statut: 'active', context: '', method: '', results: '',
     keywords: [], auteurs: [], difficulte: 'intermediate',
     dimensions: { method: '', data: '', theory: '', writing: '' },
-    ordre: 0, is_transversal: false, confidentiel: false,
+    ordre: 0, is_transversal: false, confidentiel: false, show_in_tasks: false,
     i18n: {}, inherits: {},
     created_at: '2026-01-01', updated_at: '2026-01-01',
     ...over,
@@ -23,7 +23,7 @@ describe('chunkSubject', () => {
     statut: 'active', context: 'Ctx text', method: 'Method text', results: '',
     keywords: ['inflation'], auteurs: [], difficulte: 'intermediate',
     dimensions: { method: '', data: '', theory: '', writing: '' }, ordre: 0,
-    is_transversal: false, confidentiel: false,
+    is_transversal: false, confidentiel: false, show_in_tasks: false,
     i18n: {}, inherits: {},
     created_at: '', updated_at: '',
   }

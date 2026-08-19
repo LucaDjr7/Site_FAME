@@ -6,7 +6,7 @@ function sub(id: string, over: Partial<Subject> = {}): Subject {
   return { id, labo: 'paris', titre: id.toUpperCase(), kicker: '', question: '', accroche: '', periode: '',
     statut: 'active', context: '', method: '', results: '', keywords: [], auteurs: [], difficulte: 'intermediate',
     dimensions: { method: '', data: '', theory: '', writing: '' }, ordre: 0, is_transversal: false,
-    confidentiel: false, i18n: {}, inherits: {}, created_at: '', updated_at: '', ...over }
+    confidentiel: false, show_in_tasks: false, i18n: {}, inherits: {}, created_at: '', updated_at: '', ...over }
 }
 function rel(over: Partial<SubjectRelation>): SubjectRelation {
   return { id: 'r', source_id: 'a', target_id: 'b', kind: 'assoc', label: '', label_i18n: {}, created_at: '', ...over }

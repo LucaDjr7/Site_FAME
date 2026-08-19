@@ -75,6 +75,7 @@ export interface Subject {
   ordre: number
   is_transversal: boolean
   confidentiel: boolean
+  show_in_tasks: boolean
   i18n: SubjectI18n
   inherits: Partial<Record<InheritableField, string>>
   created_at: string
