@@ -2462,7 +2462,11 @@ git commit -m "feat(research): add member notes API"
 - Consumes: `ResearchPaper` type (Task 1), `THEME_NAMES` (Task 7), `createServiceClient` (existing), `getSession` (existing, to know if bookmarks should render — wired in Task 19)
 - Produces: page at `/{locale}/research`; `ResearchCard`, `ResearchFilters` components used by Task 19/20.
 
-No unit test for this task (Server Component + presentational components — verified by running the dev server, per this repo's convention for UI work). This is a UI task: **before writing it, read the `FAME Accueil.dc.html` mockup via the MCP Claude Design (Opus-only — see AGENTS.md) to check whether a research-hub layout/card style is already specified.** No mockup file is known to cover `/research` itself; if the orchestrating Opus session finds none, use the layout below (consistent with the existing `[lab]/page.tsx` subject grid) and flag that to the user rather than inventing a divergent visual language.
+No unit test for this task (Server Component + presentational components — verified by running the dev server, per this repo's convention for UI work).
+
+**Mockup check performed (AGENTS.md):** read `FAME Accueil.dc.html` via the MCP Claude Design (Opus session, `/design-login` authorized) — no mockup exists for a `/research` page, confirming the plan's earlier assessment. Rather than invent a new visual language, this task ports the already-shipped, closest-precedent pattern in this codebase: `src/components/publications/PublicationList.tsx` (toolbar with kicker+title+search, main list grouped by year, right-hand filter sidebar with pill-style toggle buttons, stat card, badge+venue+title+authors+link-chip card anatomy). The research card adds what publications don't have — an abstract preview, theme chips, and a FAME-relevance score badge — everything else follows that file's exact visual conventions (colors, fonts, spacing) so the new page reads as part of the same design system, not a bolted-on one-off.
+
+**Deliberate simplification vs. `PublicationList`:** that component fetches its entire dataset client-side and filters/counts in the browser (`useState`+`useMemo`), which is fine for a lab's own small publication list but won't scale to a corpus of research papers expected to grow by hundreds per year (per spec). This page keeps the plan's original server-side approach instead: a Server Component filters via Supabase query params (`?q=&theme=&source=`), and the filter sidebar is single-select per dimension (one active theme, one active source at a time) without per-option result counts — computing exact counts per theme would require either loading the full table or one query per theme, which isn't warranted for a first version. Everything else (visual style, component shapes, grouping by year) is preserved.
 
 - [ ] **Step 1: Add i18n keys**
 
@@ -2471,14 +2475,17 @@ No unit test for this task (Server Component + presentational components — ver
 "research": {
   "metaTitle": "Research radar — FAME",
   "metaDescription": "AI × finance papers, fetched automatically and scored for relevance to FAME.",
-  "title": "Research radar",
   "kicker": "FAME / Research",
+  "title": "Research radar",
   "empty": "No papers yet — the next weekly fetch will populate this page.",
   "searchPlaceholder": "Search title or abstract…",
-  "filterTheme": "Theme",
-  "filterSource": "Source",
-  "allThemes": "All themes",
-  "allSources": "All sources",
+  "filters": "Filters",
+  "reset": "Reset",
+  "theme": "Theme",
+  "source": "Source",
+  "statPapers": "Papers",
+  "unknownDate": "Undated",
+  "countSuffix": "paper(s)",
   "fameScoreLabel": "FAME relevance",
   "viewSource": "View source ↗",
   "bookmark": "Bookmark",
@@ -2495,14 +2502,17 @@ No unit test for this task (Server Component + presentational components — ver
 "research": {
   "metaTitle": "Veille recherche — FAME",
   "metaDescription": "Papiers IA × finance, récupérés automatiquement et notés selon leur pertinence pour FAME.",
-  "title": "Veille recherche",
   "kicker": "FAME / Recherche",
+  "title": "Veille recherche",
   "empty": "Aucun papier pour l'instant — le prochain fetch hebdomadaire remplira cette page.",
   "searchPlaceholder": "Rechercher un titre ou un résumé…",
-  "filterTheme": "Thème",
-  "filterSource": "Source",
-  "allThemes": "Tous les thèmes",
-  "allSources": "Toutes les sources",
+  "filters": "Filtres",
+  "reset": "Réinitialiser",
+  "theme": "Thème",
+  "source": "Source",
+  "statPapers": "Papiers",
+  "unknownDate": "Non daté",
+  "countSuffix": "papier(s)",
   "fameScoreLabel": "Pertinence FAME",
   "viewSource": "Voir la source ↗",
   "bookmark": "Enregistrer",
@@ -2516,37 +2526,76 @@ No unit test for this task (Server Component + presentational components — ver
 
 - [ ] **Step 2: Write `ResearchCard`**
 
+Card anatomy (meta row with a source badge + venue, serif title, authors line, link chip) ported directly from `PublicationList.tsx`'s `<article>` block; the abstract preview, theme chips, and FAME score badge are additions this content needs that publications don't:
+
 ```tsx
 // src/components/research/ResearchCard.tsx
 import { useTranslations } from 'next-intl'
-import type { ResearchPaper } from '@/types'
+import type { ResearchPaper, ResearchSource } from '@/types'
+
+type BadgeCfg = { hex: string; bg: string; border: string }
+
+const SOURCE_BADGE: Record<ResearchSource, BadgeCfg> = {
+  arxiv:             { hex: '#5768ac', bg: 'rgba(87,104,172,0.08)',  border: 'rgba(87,104,172,0.3)' },
+  openalex:          { hex: '#1e9b7e', bg: 'rgba(30,155,126,0.08)', border: 'rgba(30,155,126,0.3)' },
+  repec:             { hex: '#e8b149', bg: 'rgba(232,177,73,0.1)',  border: 'rgba(232,177,73,0.35)' },
+  semantic_scholar:  { hex: '#ec6553', bg: 'rgba(236,101,83,0.08)', border: 'rgba(236,101,83,0.3)' },
+  manual:            { hex: '#28b8ce', bg: 'rgba(40,184,206,0.08)', border: 'rgba(40,184,206,0.3)' },
+}
 
 export function ResearchCard({ paper, actions }: { paper: ResearchPaper; actions?: React.ReactNode }) {
   const t = useTranslations('research')
+  const badge = SOURCE_BADGE[paper.source]
+
   return (
     <article
+      className="bg-fame-sand"
       style={{
-        background: '#fff',
-        border: '1px solid rgba(20,40,90,0.1)',
-        borderRadius: 12,
-        padding: '18px 20px',
+        position: 'relative',
+        borderRadius: 9,
+        boxShadow: '0 14px 34px -20px rgba(0,5,30,0.4), inset 0 0 0 1px rgba(0,0,0,0.05)',
+        padding: '20px 22px',
         display: 'flex',
         flexDirection: 'column',
         gap: 8,
       }}
     >
-      <h3 className="font-serif" style={{ fontSize: 16, margin: 0, color: '#15203f' }}>{paper.title}</h3>
-      <p className="font-mono" style={{ fontSize: 11, color: '#7e95d6', margin: 0, letterSpacing: '0.02em' }}>
-        {paper.authors.join(', ')}
-        {paper.published_at ? ` · ${paper.published_at.slice(0, 4)}` : ''}
-        {paper.venue ? ` · ${paper.venue}` : ''}
-      </p>
+      {/* Meta row: source badge + venue */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+        <span className="font-mono" style={{
+          display: 'inline-flex', alignItems: 'center', gap: 6,
+          padding: '4px 9px', borderRadius: 6, border: `1px solid ${badge.border}`, background: badge.bg,
+          fontSize: 9.5, fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: badge.hex,
+        }}>
+          <span style={{ width: 6, height: 6, borderRadius: '50%', background: badge.hex, flexShrink: 0 }} />
+          {paper.source}
+        </span>
+        {paper.venue && (
+          <span className="font-mono" style={{ fontSize: 10, color: '#6b7596' }}>{paper.venue}</span>
+        )}
+      </div>
+
+      {/* Title */}
+      <h3 className="font-serif text-fame-text-dark" style={{ margin: 0, fontSize: 17, fontWeight: 600, lineHeight: 1.28, letterSpacing: '-0.005em' }}>
+        {paper.title}
+      </h3>
+
+      {/* Authors */}
+      {paper.authors.length > 0 && (
+        <div className="font-serif" style={{ fontSize: 12.5, color: '#43507a' }}>
+          {paper.authors.join(', ')}
+        </div>
+      )}
+
+      {/* Abstract preview */}
       {paper.abstract && (
         <p style={{ fontSize: 13.5, lineHeight: 1.55, color: '#2a3457', margin: 0 }}>
           {paper.abstract.length > 320 ? `${paper.abstract.slice(0, 320)}…` : paper.abstract}
         </p>
       )}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 4 }}>
+
+      {/* Theme chips + FAME score */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
         {paper.themes.map((theme) => (
           <span key={theme} className="font-mono" style={{
             fontSize: 9.5, textTransform: 'uppercase', letterSpacing: '0.06em',
@@ -2560,9 +2609,14 @@ export function ResearchCard({ paper, actions }: { paper: ResearchPaper; actions
           }}>{t('fameScoreLabel')}: {paper.fame_score}%</span>
         )}
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 8 }}>
-        <a href={paper.url} target="_blank" rel="noreferrer" style={{ fontSize: 12, color: '#2f4486' }}>
-          {t('viewSource')}
+
+      {/* Link chip + member actions */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 4 }}>
+        <a className="font-mono text-fame-blue" href={paper.url} target="_blank" rel="noreferrer" style={{
+          display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 9px', borderRadius: 5,
+          border: '1px solid rgba(47,68,134,0.28)', fontSize: 10, textDecoration: 'none', background: 'rgba(47,68,134,0.04)',
+        }}>
+          ↗ {t('viewSource')}
         </a>
         {actions}
       </div>
@@ -2575,7 +2629,7 @@ export function ResearchCard({ paper, actions }: { paper: ResearchPaper; actions
 
 - [ ] **Step 3: Write `ResearchFilters`**
 
-Client component; state lives in the URL (`searchParams`), no new dependency:
+Two client components sharing one URL-param helper: `ResearchSearchInput` (sits in the page's top toolbar, styled exactly like `PublicationList`'s search box) and `ResearchFilterSidebar` (the right-hand `<aside>`, reusing `PublicationList`'s `FilterSection`/`FilterBtn` pattern almost verbatim — ported to single-select-via-URL instead of multi-select-via-Set, and without per-option counts per the simplification noted above):
 
 ```tsx
 // src/components/research/ResearchFilters.tsx
@@ -2583,48 +2637,120 @@ Client component; state lives in the URL (`searchParams`), no new dependency:
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { THEME_NAMES } from '@/lib/research/themes'
+import type { ResearchSource } from '@/types'
 
-const SOURCES = ['arxiv', 'openalex', 'repec', 'semantic_scholar', 'manual'] as const
+const SOURCES: ResearchSource[] = ['arxiv', 'openalex', 'repec', 'semantic_scholar', 'manual']
 
-export function ResearchFilters() {
-  const t = useTranslations('research')
+function useSetParam() {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-
-  function setParam(key: string, value: string) {
+  return (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString())
     if (value) params.set(key, value); else params.delete(key)
     router.push(`${pathname}?${params.toString()}`)
   }
+}
+
+export function ResearchSearchInput() {
+  const t = useTranslations('research')
+  const searchParams = useSearchParams()
+  const setParam = useSetParam()
+  return (
+    <input className="font-mono"
+      type="search"
+      placeholder={t('searchPlaceholder')}
+      defaultValue={searchParams.get('q') ?? ''}
+      onChange={(e) => setParam('q', e.target.value)}
+      style={{
+        padding: '6px 12px', borderRadius: 6, border: '1px solid rgba(20,40,90,0.15)',
+        background: 'rgba(255,255,255,0.7)', fontSize: 11, width: 220, outline: 'none',
+      }}
+    />
+  )
+}
+
+function FilterSection({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div style={{ marginBottom: 20 }}>
+      <div className="font-mono text-fame-blue" style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 8 }}>
+        {label}
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>{children}</div>
+    </div>
+  )
+}
+
+function FilterBtn({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button className={`font-mono ${active ? 'text-fame-blue border-fame-blue' : ''}`}
+      onClick={onClick}
+      style={{
+        display: 'flex', alignItems: 'center', gap: 8, padding: '5px 10px', borderRadius: 6,
+        border: active ? '1.5px solid' : '1px solid rgba(20,40,90,0.12)',
+        background: active ? 'rgba(47,68,134,0.12)' : 'rgba(20,30,60,0.03)',
+        color: active ? undefined : '#5a6486', fontSize: 11, cursor: 'pointer', textAlign: 'left', width: '100%',
+      }}
+    >
+      {children}
+    </button>
+  )
+}
+
+export function ResearchFilterSidebar({ paperCount }: { paperCount: number }) {
+  const t = useTranslations('research')
+  const searchParams = useSearchParams()
+  const setParam = useSetParam()
+  const activeTheme = searchParams.get('theme') ?? ''
+  const activeSource = searchParams.get('source') ?? ''
+
+  function reset() {
+    setParam('theme', '')
+    setParam('source', '')
+  }
 
   return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 20 }}>
-      <input
-        type="search"
-        placeholder={t('searchPlaceholder')}
-        defaultValue={searchParams.get('q') ?? ''}
-        onChange={(e) => setParam('q', e.target.value)}
-        style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid rgba(20,40,90,0.14)', minWidth: 220, flex: 1 }}
-      />
-      <select value={searchParams.get('theme') ?? ''} onChange={(e) => setParam('theme', e.target.value)}
-        style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid rgba(20,40,90,0.14)' }}>
-        <option value="">{t('allThemes')}</option>
-        {THEME_NAMES.map((name) => <option key={name} value={name}>{name}</option>)}
-      </select>
-      <select value={searchParams.get('source') ?? ''} onChange={(e) => setParam('source', e.target.value)}
-        style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid rgba(20,40,90,0.14)' }}>
-        <option value="">{t('allSources')}</option>
-        {SOURCES.map((s) => <option key={s} value={s}>{s}</option>)}
-      </select>
-    </div>
+    <aside style={{
+      width: 300, flexShrink: 0, background: 'rgba(244,243,236,0.92)', backdropFilter: 'blur(12px)',
+      borderLeft: '1px solid rgba(20,40,90,0.1)', overflowY: 'auto', padding: '20px 16px',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+        <span className="font-mono text-fame-blue" style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase' }}>
+          {t('filters')}
+        </span>
+        <button className="font-mono" onClick={reset} style={{ fontSize: 9, color: '#6b7596', background: 'none', border: 'none', cursor: 'pointer', letterSpacing: '0.06em', textDecoration: 'underline' }}>
+          {t('reset')}
+        </button>
+      </div>
+
+      <div style={{ background: '#fff', border: '1px solid rgba(20,40,90,0.1)', borderRadius: 10, padding: '10px 12px', textAlign: 'center', marginBottom: 20 }}>
+        <div className="font-serif text-fame-text-dark" style={{ fontSize: 22, fontWeight: 700, lineHeight: 1, marginBottom: 4 }}>{paperCount}</div>
+        <div className="font-mono" style={{ fontSize: 9, color: '#6b7596', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{t('statPapers')}</div>
+      </div>
+
+      <FilterSection label={t('theme')}>
+        {THEME_NAMES.map((name) => (
+          <FilterBtn key={name} active={activeTheme === name} onClick={() => setParam('theme', activeTheme === name ? '' : name)}>
+            {name}
+          </FilterBtn>
+        ))}
+      </FilterSection>
+
+      <FilterSection label={t('source')}>
+        {SOURCES.map((s) => (
+          <FilterBtn key={s} active={activeSource === s} onClick={() => setParam('source', activeSource === s ? '' : s)}>
+            {s}
+          </FilterBtn>
+        ))}
+      </FilterSection>
+    </aside>
   )
 }
 ```
 
 - [ ] **Step 4: Write the page**
 
-Follows the exact `createServiceClient()` + `.eq(...)` pattern already used by `src/app/[locale]/graph/page.tsx` (no RLS policy in this repo — filtering happens in the query):
+Layout (toolbar, then a main/aside row) ported from `PublicationList.tsx`'s structure; data access follows the exact `createServiceClient()` + `.eq(...)` pattern already used by `src/app/[locale]/graph/page.tsx` (no RLS policy in this repo — filtering happens in the query). Papers are grouped by publication year, same as publications (a paper with no `published_at` falls into an "undated" bucket, sorted last):
 
 ```tsx
 // src/app/[locale]/research/page.tsx
@@ -2632,13 +2758,20 @@ import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { ResearchCard } from '@/components/research/ResearchCard'
-import { ResearchFilters } from '@/components/research/ResearchFilters'
+import { ResearchSearchInput, ResearchFilterSidebar } from '@/components/research/ResearchFilters'
 import type { ResearchPaper } from '@/types'
 
 type Props = {
   params: Promise<{ locale: string }>
   searchParams: Promise<{ q?: string; theme?: string; source?: string }>
 }
+
+// Intentional variance: 3-gradient composite with specific position offsets, matching PublicationList's PAGE_BG.
+const PAGE_BG =
+  'radial-gradient(110% 80% at 26% 8%, rgba(181,157,135,0.28) 0%, rgba(181,157,135,0) 52%), ' +
+  'radial-gradient(120% 110% at 78% 112%, rgba(113,120,132,0.2) 0%, rgba(113,120,132,0) 60%), ' +
+  'radial-gradient(140% 120% at 92% 44%, rgba(47,68,134,0.08) 0%, rgba(47,68,134,0) 55%), ' +
+  '#F9F9FA'
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
@@ -2659,20 +2792,56 @@ export default async function ResearchPage({ searchParams }: Props) {
   const { data } = await query.order('published_at', { ascending: false })
   const papers = (data ?? []) as ResearchPaper[]
 
+  const grouped = Object.values(
+    papers.reduce<Record<string, { year: string; items: ResearchPaper[] }>>((acc, p) => {
+      const year = p.published_at ? p.published_at.slice(0, 4) : 'undated'
+      acc[year] ??= { year, items: [] }
+      acc[year].items.push(p)
+      return acc
+    }, {})
+  ).sort((a, b) => (a.year === 'undated' ? 1 : b.year === 'undated' ? -1 : b.year.localeCompare(a.year)))
+
   return (
-    <div style={{ maxWidth: 920, margin: '0 auto', padding: '32px 20px 80px' }}>
-      <p className="font-mono" style={{ fontSize: 11, letterSpacing: '0.1em', color: '#7e95d6', textTransform: 'uppercase' }}>
-        {t('kicker')}
-      </p>
-      <h1 className="font-serif" style={{ fontSize: 28, margin: '4px 0 20px', color: '#15203f' }}>{t('title')}</h1>
-      <ResearchFilters />
-      {papers.length === 0 ? (
-        <p style={{ color: '#7e95d6' }}>{t('empty')}</p>
-      ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          {papers.map((paper) => <ResearchCard key={paper.id} paper={paper} />)}
+    <div className="font-serif" style={{ minHeight: 'calc(100vh - 6rem)', display: 'flex', flexDirection: 'column', background: PAGE_BG, color: '#18244c' }}>
+      {/* Toolbar */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 24px 14px', flexShrink: 0, borderBottom: '1px solid rgba(20,40,90,0.1)' }}>
+        <div>
+          <div className="font-mono text-fame-text-muted" style={{ fontSize: 9, letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 3 }}>
+            {t('kicker')}
+          </div>
+          <h1 className="font-serif text-fame-text-dark" style={{ fontSize: 20, fontWeight: 600, margin: 0 }}>{t('title')}</h1>
         </div>
-      )}
+        <ResearchSearchInput />
+      </div>
+
+      {/* Body row */}
+      <div style={{ flex: 1, display: 'flex', overflow: 'hidden', minHeight: 0 }}>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '28px 32px 40px' }}>
+          {papers.length === 0 ? (
+            <div className="font-mono text-fame-text-muted" style={{ fontSize: 13, textAlign: 'center', paddingTop: 60 }}>{t('empty')}</div>
+          ) : (
+            <div style={{ maxWidth: 780, margin: '0 auto' }}>
+              {grouped.map(({ year, items }) => (
+                <div key={year} style={{ marginBottom: 36 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
+                    <span className="font-mono text-fame-blue" style={{ fontSize: 13, fontWeight: 500, letterSpacing: '0.14em', flexShrink: 0 }}>
+                      {year === 'undated' ? t('unknownDate') : year}
+                    </span>
+                    <div style={{ flex: 1, height: 1, background: 'rgba(20,40,90,0.12)' }} />
+                    <span className="font-mono" style={{ fontSize: 10, color: '#6b7596', letterSpacing: '0.1em', flexShrink: 0 }}>
+                      {items.length} {t('countSuffix')}
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                    {items.map((paper) => <ResearchCard key={paper.id} paper={paper} />)}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        <ResearchFilterSidebar paperCount={papers.length} />
+      </div>
     </div>
   )
 }
@@ -2681,7 +2850,7 @@ export default async function ResearchPage({ searchParams }: Props) {
 - [ ] **Step 5: Manual verification**
 
 Run: `npm run dev`, visit `http://localhost:3000/en/research`.
-Expected: page renders (empty state until Task 13's fetch has run at least once against a real Supabase project), filters update the URL and re-fetch server-side on navigation.
+Expected: page renders (empty state until Task 13's fetch has run at least once against a real Supabase project), visually consistent with `/paris/publications` (same toolbar/sidebar/card language), filter buttons and search update the URL and re-fetch server-side on navigation.
 
 - [ ] **Step 6: Type-check**
 
@@ -2831,8 +3000,9 @@ if (member) {
 ```
 
 ```tsx
-// replace the `papers.map(...)` line with:
-{papers.map((paper) => (
+// replace the `{items.map((paper) => <ResearchCard key={paper.id} paper={paper} />)}` line
+// (inside the `grouped.map(({ year, items }) => ...)` block) with:
+{items.map((paper) => (
   <div key={paper.id}>
     <ResearchCard
       paper={paper}
