@@ -128,10 +128,13 @@ create table research_notes (
 );
 ```
 
-RLS : `research_papers`/`research_fetch_log` lecture publique pour
-`status='published'` (writes uniquement via service-role côté `/api/`,
-conforme AGENTS.md) ; `research_bookmarks`/`research_notes` scopées à
-`auth.uid()` — privé par défaut, jamais exposé à un autre membre.
+RLS : activée sur les 4 tables (convention du projet), **sans policy** —
+comme `rag_chunks`, `subjects`, etc. Aucune table de ce repo n'a de policy
+RLS réelle ; l'autorisation se fait entièrement côté application via
+`createServiceClient()` + filtres explicites (`.eq('status', 'published')`
+pour un visiteur, `.eq('user_id', member.id)` pour les bookmarks/notes),
+jamais via des policies SQL. On suit ce pattern à l'identique plutôt que
+d'introduire un mécanisme d'autorisation différent pour une seule feature.
 
 Un papier qui rate l'étage 1 (AND-gate) n'est **jamais écrit** en base
 (comme `fetch.py` d'Ardia, qui ne stocke que ce qui passe le filtre) — pas
@@ -208,8 +211,11 @@ Routes : `POST /api/research/[id]/hide`, `POST /api/research/[id]/publish`,
 
 ## 6. UI publique — `src/app/[locale]/research/page.tsx`
 
-Server Component (lecture via client Supabase serveur standard, pas de route
-API — page read-heavy, conforme AGENTS.md).
+Server Component — lecture via `createServiceClient()` filtrée
+`.eq('status', 'published')`, comme le fait déjà `[lab]/page.tsx` pour la
+grille de sujets (le projet n'a aucune policy RLS réelle ; le filtrage
+visiteur/membre se fait toujours côté requête, jamais côté RLS). Pas de
+route API pour cette lecture — page read-heavy, conforme AGENTS.md.
 
 - `ResearchList` — grille/liste des papiers `published`
 - `ResearchCard` — titre, auteurs, extrait du résumé, venue, chips de thème,
