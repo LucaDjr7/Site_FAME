@@ -313,3 +313,49 @@ export interface ChatUsageRow {
   tokens_out: number
   est_cost_usd: number
 }
+
+// ─── Research hub ────────────────────────────────────────────────────────────
+
+export type ResearchStatus = 'published' | 'rejected' | 'hidden'
+export type ResearchSource = 'arxiv' | 'openalex' | 'repec' | 'semantic_scholar' | 'manual'
+
+export interface ResearchPaper {
+  id: string
+  fingerprint: string
+  title: string
+  authors: string[]
+  abstract: string | null
+  url: string
+  source: ResearchSource
+  venue: string | null
+  themes: string[]
+  fame_score: number | null
+  published_at: string | null
+  status: ResearchStatus
+  manual_override: boolean
+  fetched_at: string
+  updated_at: string
+}
+
+export interface ResearchBookmark {
+  user_id: string
+  paper_id: string
+  created_at: string
+}
+
+export interface ResearchNote {
+  user_id: string
+  paper_id: string
+  content: string
+  updated_at: string
+}
+
+export interface ResearchFetchLogEntry {
+  id: string
+  run_at: string
+  source: string
+  added: number
+  skipped: number
+  errors: number
+  message: string | null
+}
