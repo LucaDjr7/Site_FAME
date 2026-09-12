@@ -40,7 +40,7 @@ alter table research_fetch_log enable row level security;
 
 -- 3. Favoris par membre.
 create table research_bookmarks (
-  user_id    uuid not null references auth.users(id) on delete cascade,
+  user_id    uuid not null references members(id) on delete cascade,
   paper_id   uuid not null references research_papers(id) on delete cascade,
   created_at timestamptz not null default now(),
   primary key (user_id, paper_id)
@@ -49,7 +49,7 @@ alter table research_bookmarks enable row level security;
 
 -- 4. Notes privées par membre sur un papier.
 create table research_notes (
-  user_id    uuid not null references auth.users(id) on delete cascade,
+  user_id    uuid not null references members(id) on delete cascade,
   paper_id   uuid not null references research_papers(id) on delete cascade,
   content    text not null,
   updated_at timestamptz not null default now(),
