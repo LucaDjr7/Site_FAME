@@ -99,7 +99,11 @@ async function runSource(
     result.message = err instanceof Error ? err.message : String(err)
     console.error(`[research-fetch:${source}] fetch error:`, err)
   }
-  await service.from('research_fetch_log').insert({ ...result })
+  try {
+    await service.from('research_fetch_log').insert({ ...result })
+  } catch (err) {
+    console.error(`[research-fetch:${source}] log insert error:`, err)
+  }
   return result
 }
 
