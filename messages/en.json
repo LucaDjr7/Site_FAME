@@ -687,5 +687,28 @@
       "provider": "Questions are processed by OpenAI (United States) as a data processor, under a Data Processing Agreement and Standard Contractual Clauses. We do not send confidential or member-only content to the provider; publicly available information from the site (such as the team directory, including members' published email addresses) may be included to answer your question.",
       "retention": "We log questions (without your identity; your IP is stored only as a salted hash) to improve the assistant. We do not use them to identify you."
     }
+  },
+  "research": {
+    "metaTitle": "Research radar — FAME",
+    "metaDescription": "AI × finance papers, fetched automatically and scored for relevance to FAME.",
+    "kicker": "FAME / Research",
+    "title": "Research radar",
+    "empty": "No papers yet — the next weekly fetch will populate this page.",
+    "searchPlaceholder": "Search title or abstract…",
+    "filters": "Filters",
+    "reset": "Reset",
+    "theme": "Theme",
+    "source": "Source",
+    "statPapers": "Papers",
+    "unknownDate": "Undated",
+    "countSuffix": "paper(s)",
+    "fameScoreLabel": "FAME relevance",
+    "viewSource": "View source ↗",
+    "bookmark": "Bookmark",
+    "bookmarked": "Bookmarked",
+    "noteLabel": "Your note",
+    "notePlaceholder": "Private note (only you see this)…",
+    "noteSaved": "Note saved",
+    "actionError": "Something went wrong, please try again."
   }
 }

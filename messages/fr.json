@@ -687,5 +687,28 @@
       "provider": "Les questions sont traitées par OpenAI (États-Unis) en qualité de sous-traitant, dans le cadre d'un accord de traitement des données et de clauses contractuelles types. Nous ne transmettons pas de contenu confidentiel ou réservé aux membres au fournisseur ; des informations publiques du site (comme l'annuaire de l'équipe, y compris les adresses e-mail publiées des membres) peuvent être incluses pour répondre à votre question.",
       "retention": "Nous journalisons les questions (sans votre identité ; votre IP n'est conservée que sous forme d'empreinte salée) afin d'améliorer l'assistant. Nous ne les utilisons pas pour vous identifier."
     }
+  },
+  "research": {
+    "metaTitle": "Veille recherche — FAME",
+    "metaDescription": "Papiers IA × finance, récupérés automatiquement et notés selon leur pertinence pour FAME.",
+    "kicker": "FAME / Recherche",
+    "title": "Veille recherche",
+    "empty": "Aucun papier pour l'instant — le prochain fetch hebdomadaire remplira cette page.",
+    "searchPlaceholder": "Rechercher un titre ou un résumé…",
+    "filters": "Filtres",
+    "reset": "Réinitialiser",
+    "theme": "Thème",
+    "source": "Source",
+    "statPapers": "Papiers",
+    "unknownDate": "Non daté",
+    "countSuffix": "papier(s)",
+    "fameScoreLabel": "Pertinence FAME",
+    "viewSource": "Voir la source ↗",
+    "bookmark": "Enregistrer",
+    "bookmarked": "Enregistré",
+    "noteLabel": "Votre note",
+    "notePlaceholder": "Note privée (visible de vous seul)…",
+    "noteSaved": "Note enregistrée",
+    "actionError": "Une erreur est survenue, réessayez."
   }
 }
