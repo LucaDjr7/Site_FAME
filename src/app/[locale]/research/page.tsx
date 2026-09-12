@@ -1,8 +1,11 @@
 import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 import { createServiceClient } from '@/lib/supabase/server'
+import { getSession } from '@/lib/auth'
 import { ResearchCard } from '@/components/research/ResearchCard'
 import { ResearchSearchInput, ResearchFilterSidebar } from '@/components/research/ResearchFilters'
+import { BookmarkButton } from '@/components/research/BookmarkButton'
+import { NoteField } from '@/components/research/NoteField'
 import type { ResearchPaper } from '@/types'
 
 type Props = {
@@ -45,6 +48,20 @@ export default async function ResearchPage({ searchParams }: Props) {
     }, {})
   ).sort((a, b) => (a.year === 'undated' ? 1 : b.year === 'undated' ? -1 : b.year.localeCompare(a.year)))
 
+  const session = await getSession()
+  const member = session?.member ?? null
+
+  let bookmarkedIds = new Set<string>()
+  let notesByPaper = new Map<string, string>()
+  if (member) {
+    const [{ data: bookmarks }, { data: notes }] = await Promise.all([
+      service.from('research_bookmarks').select('paper_id').eq('user_id', member.id),
+      service.from('research_notes').select('paper_id, content').eq('user_id', member.id),
+    ])
+    bookmarkedIds = new Set((bookmarks ?? []).map((b) => b.paper_id))
+    notesByPaper = new Map((notes ?? []).map((n) => [n.paper_id, n.content]))
+  }
+
   return (
     <div className="font-serif" style={{ minHeight: 'calc(100vh - 6rem)', display: 'flex', flexDirection: 'column', background: PAGE_BG, color: '#18244c' }}>
       {/* Toolbar */}
@@ -77,7 +94,15 @@ export default async function ResearchPage({ searchParams }: Props) {
                     </span>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                    {items.map((paper) => <ResearchCard key={paper.id} paper={paper} />)}
+                    {items.map((paper) => (
+                      <div key={paper.id}>
+                        <ResearchCard
+                          paper={paper}
+                          actions={member ? <BookmarkButton paperId={paper.id} initiallyBookmarked={bookmarkedIds.has(paper.id)} /> : undefined}
+                        />
+                        {member && <NoteField paperId={paper.id} initialContent={notesByPaper.get(paper.id) ?? ''} />}
+                      </div>
+                    ))}
                   </div>
                 </div>
               ))}
