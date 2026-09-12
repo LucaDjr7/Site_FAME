@@ -31,8 +31,12 @@ describe('searchArxiv', () => {
   })
 
   it('returns an empty array on HTTP failure without throwing', async () => {
+    vi.useFakeTimers()
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('', { status: 503 })))
-    const papers = await searchArxiv('anything')
+    const promise = searchArxiv('anything')
+    await vi.runAllTimersAsync()
+    const papers = await promise
+    vi.useRealTimers()
     expect(papers).toEqual([])
-  }, 10_000) // fetchWithRetry backs off 2s+4s on repeated 503s (real timers) — exceeds vitest's 5s default
+  })
 })
