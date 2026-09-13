@@ -14,10 +14,21 @@ vi.mock('@/lib/supabase/server', () => ({
 }))
 
 import { POST } from './route'
+import { requireAdmin } from '@/lib/auth'
 
 beforeEach(() => vi.clearAllMocks())
 
 describe('POST /api/research/[id]/hide', () => {
+  // No RLS backstop: requireAdmin() IS the authorization boundary for this
+  // state transition. This is the case that fails if the guard is removed.
+  it('403s a non-admin caller, without touching the paper', async () => {
+    (requireAdmin as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error('not admin'))
+    const res = await POST(new NextRequest('http://localhost/x', { method: 'POST' }), { params: Promise.resolve({ id: '1' }) })
+    expect(res.status).toBe(403)
+    expect(update).not.toHaveBeenCalled()
+    expect(single).not.toHaveBeenCalled()
+  })
+
   it('404s when the paper does not exist', async () => {
     single.mockResolvedValueOnce({ data: null, error: null })
     const res = await POST(new NextRequest('http://localhost/x', { method: 'POST' }), { params: Promise.resolve({ id: 'nope' }) })

@@ -42,4 +42,31 @@ describe('/api/research/bookmarks', () => {
     const res = await DELETE(new NextRequest('http://localhost/x'))
     expect(res.status).toBe(400)
   })
+
+  // There is no RLS backstop in this repo: requireMember() IS the entire
+  // authorization boundary for this route. These three cases are what fails if
+  // someone deletes the guard.
+  describe('rejects an unauthenticated caller on every verb', () => {
+    beforeEach(() => {
+      (requireMember as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('not signed in'))
+    })
+
+    it('GET → 401, and never reaches the database', async () => {
+      const res = await GET(new NextRequest('http://localhost/x'))
+      expect(res.status).toBe(401)
+      expect(eqCalls).toEqual([])
+    })
+
+    it('POST → 401, and never writes a bookmark', async () => {
+      const res = await POST(new NextRequest('http://localhost/x', { method: 'POST', body: JSON.stringify({ paper_id: 'p1' }) }))
+      expect(res.status).toBe(401)
+      expect(upsert).not.toHaveBeenCalled()
+    })
+
+    it('DELETE → 401, and never deletes a bookmark', async () => {
+      const res = await DELETE(new NextRequest('http://localhost/x?paper_id=p1'))
+      expect(res.status).toBe(401)
+      expect(del).not.toHaveBeenCalled()
+    })
+  })
 })

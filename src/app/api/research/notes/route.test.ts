@@ -14,6 +14,7 @@ vi.mock('@/lib/supabase/server', () => ({
 }))
 
 import { GET, PUT } from './route'
+import { requireMember } from '@/lib/auth'
 
 beforeEach(() => vi.clearAllMocks())
 
@@ -38,5 +39,22 @@ describe('/api/research/notes', () => {
   it('PUT rejects an empty content', async () => {
     const res = await PUT(new NextRequest('http://localhost/x', { method: 'PUT', body: JSON.stringify({ paper_id: 'p1', content: '  ' }) }))
     expect(res.status).toBe(400)
+  })
+
+  // Notes are private per-member data and this repo has no RLS backstop:
+  // requireMember() IS the authorization boundary. These are the cases that
+  // fail if the guard is removed.
+  it('GET → 401 when the caller is not signed in, without touching the database', async () => {
+    (requireMember as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error('not signed in'))
+    const res = await GET(new NextRequest('http://localhost/x?paper_id=p1'))
+    expect(res.status).toBe(401)
+    expect(maybeSingle).not.toHaveBeenCalled()
+  })
+
+  it('PUT → 401 when the caller is not signed in, without writing a note', async () => {
+    (requireMember as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error('not signed in'))
+    const res = await PUT(new NextRequest('http://localhost/x', { method: 'PUT', body: JSON.stringify({ paper_id: 'p1', content: 'x' }) }))
+    expect(res.status).toBe(401)
+    expect(upsert).not.toHaveBeenCalled()
   })
 })

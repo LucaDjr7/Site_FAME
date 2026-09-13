@@ -32,6 +32,15 @@ export async function runRetention(
     .select()
   if (deleteError) throw new Error(deleteError.message)
 
+  // NOTE — the sole intentional exception to the plan's Global Constraint
+  // "`manual_override = true` rows must never be silently overwritten by the
+  // automated weekly job". That constraint protects the admin's *decision*
+  // (the `status`), and a `hidden` row is `manual_override = true` by
+  // construction — an admin is the only thing that can hide a paper. Stripping
+  // the heavy fields 90 days later preserves the decision exactly (`status`
+  // stays `hidden`, the `fingerprint` stays known to dedup, the row is never
+  // deleted); it only reclaims storage. Deliberately NOT filtered on
+  // `manual_override` — see spec § Rétention. This is not a bug.
   const { data: stripped, error: updateError } = await service
     .from('research_papers')
     .update({ abstract: null, embedding: null })
