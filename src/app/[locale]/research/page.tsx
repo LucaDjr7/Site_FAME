@@ -1,7 +1,10 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { getSession } from '@/lib/auth'
+import { RESEARCH_PAPER_COLUMNS } from '@/lib/research/columns'
+import { sanitizeSearchTerm } from '@/lib/research/search'
 import { ResearchCard } from '@/components/research/ResearchCard'
 import { ResearchSearchInput, ResearchFilterSidebar } from '@/components/research/ResearchFilters'
 import { BookmarkButton } from '@/components/research/BookmarkButton'
@@ -26,18 +29,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: t('metaTitle'), description: t('metaDescription') }
 }
 
-export default async function ResearchPage({ searchParams }: Props) {
+export default async function ResearchPage({ params, searchParams }: Props) {
+  const { locale } = await params
   const { q, theme, source } = await searchParams
   const t = await getTranslations('research')
 
   const service = await createServiceClient()
-  let query = service.from('research_papers').select('*').eq('status', 'published')
+  // Explicit columns, never `*`: `research_papers.embedding` is a 1536-float
+  // pgvector that must not end up in the RSC payload (see columns.ts).
+  let query = service.from('research_papers').select(RESEARCH_PAPER_COLUMNS).eq('status', 'published')
   if (theme) query = query.contains('themes', [theme])
   if (source) query = query.eq('source', source)
-  if (q) query = query.or(`title.ilike.%${q}%,abstract.ilike.%${q}%`)
+  // `q` is interpolated into PostgREST's `.or()` mini-language — strip the
+  // characters that would re-partition that string or act as ilike wildcards.
+  const searchTerm = q ? sanitizeSearchTerm(q) : ''
+  if (searchTerm) query = query.or(`title.ilike.%${searchTerm}%,abstract.ilike.%${searchTerm}%`)
 
-  const { data } = await query.order('published_at', { ascending: false })
-  const papers = (data ?? []) as ResearchPaper[]
+  const { data, error } = await query.order('published_at', { ascending: false })
+  // A failed query must not render as the legitimate "no papers yet" empty
+  // state — that is how a broken filter or a DB outage stays invisible.
+  if (error) console.error('[research] query failed:', error.message)
+  const papers: ResearchPaper[] = error ? [] : ((data ?? []) as unknown as ResearchPaper[])
 
   const grouped = Object.values(
     papers.reduce<Record<string, { year: string; items: ResearchPaper[] }>>((acc, p) => {
@@ -67,6 +79,14 @@ export default async function ResearchPage({ searchParams }: Props) {
       {/* Toolbar */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 24px 14px', flexShrink: 0, borderBottom: '1px solid rgba(20,40,90,0.1)' }}>
         <div>
+          {/* /research sits outside [locale]/[lab]/, so it inherits no TopBar —
+              same situation (and same treatment) as [locale]/privacy. */}
+          <Link
+            href={`/${locale}`}
+            className="font-mono inline-block mb-2 text-sm text-fame-blue hover:underline"
+          >
+            {t('back')}
+          </Link>
           <div className="font-mono text-fame-text-muted" style={{ fontSize: 9, letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 3 }}>
             {t('kicker')}
           </div>
@@ -78,7 +98,9 @@ export default async function ResearchPage({ searchParams }: Props) {
       {/* Body row */}
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden', minHeight: 0 }}>
         <div style={{ flex: 1, overflowY: 'auto', padding: '28px 32px 40px' }}>
-          {papers.length === 0 ? (
+          {error ? (
+            <div className="font-mono text-fame-red" style={{ fontSize: 13, textAlign: 'center', paddingTop: 60 }}>{t('loadError')}</div>
+          ) : papers.length === 0 ? (
             <div className="font-mono text-fame-text-muted" style={{ fontSize: 13, textAlign: 'center', paddingTop: 60 }}>{t('empty')}</div>
           ) : (
             <div style={{ maxWidth: 780, margin: '0 auto' }}>

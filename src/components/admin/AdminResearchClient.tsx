@@ -12,7 +12,7 @@ export function AdminResearchClient() {
   const [papers, setPapers] = useState<ResearchPaper[]>([])
   const [log, setLog] = useState<ResearchFetchLogEntry[]>([])
   const [statusFilter, setStatusFilter] = useState<ResearchStatus | 'all'>('published')
-  const [form, setForm] = useState({ title: '', url: '', authors: '', abstract: '' })
+  const [form, setForm] = useState({ title: '', url: '', authors: '', abstract: '', publishedAt: '' })
 
   const load = useCallback(() => {
     const qs = statusFilter === 'all' ? '' : `?status=${statusFilter}`
@@ -52,11 +52,14 @@ export function AdminResearchClient() {
         url: form.url,
         authors: form.authors.split(',').map((a) => a.trim()).filter(Boolean),
         abstract: form.abstract || undefined,
+        // Without it the row sorts into the public page's "undated" bucket,
+        // below every dated paper.
+        published_at: form.publishedAt || undefined,
       }),
     })
     if (res.ok) {
       addToast(t('added'), 'success')
-      setForm({ title: '', url: '', authors: '', abstract: '' })
+      setForm({ title: '', url: '', authors: '', abstract: '', publishedAt: '' })
       load()
     } else {
       addToast(t('actionError'), 'error')
@@ -72,6 +75,10 @@ export function AdminResearchClient() {
         <input required placeholder={t('manualTitle')} value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
         <input required placeholder={t('manualUrl')} value={form.url} onChange={(e) => setForm({ ...form, url: e.target.value })} />
         <input placeholder={t('manualAuthors')} value={form.authors} onChange={(e) => setForm({ ...form, authors: e.target.value })} />
+        <label className="font-mono" style={{ fontSize: 11, color: '#7e95d6', display: 'flex', flexDirection: 'column', gap: 4 }}>
+          {t('manualPublishedAt')}
+          <input type="date" value={form.publishedAt} onChange={(e) => setForm({ ...form, publishedAt: e.target.value })} />
+        </label>
         <textarea placeholder={t('manualAbstract')} value={form.abstract} onChange={(e) => setForm({ ...form, abstract: e.target.value })} rows={2} />
         <button type="submit" style={{ alignSelf: 'flex-start', padding: '8px 16px', borderRadius: 8, background: '#2f4486', color: '#fff', border: 'none', cursor: 'pointer' }}>
           {t('submit')}
