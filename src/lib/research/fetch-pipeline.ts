@@ -20,10 +20,10 @@
 //   4. the `research_fetch_log` row is written BEFORE a source's work starts and
 //      updated afterwards, so a run killed mid-flight still leaves evidence.
 import { createServiceClient } from '@/lib/supabase/server'
-import { searchArxiv } from './sources/arxiv'
+import { searchArxiv, ARXIV_MIN_INTERVAL_MS } from './sources/arxiv'
 import { searchOpenAlex } from './sources/openalex'
 import { searchRepec } from './sources/repec'
-import { searchSemanticScholar } from './sources/semantic-scholar'
+import { searchSemanticScholar, SEMANTIC_SCHOLAR_MIN_INTERVAL_MS } from './sources/semantic-scholar'
 import { tagThemes, THEMES } from './themes'
 import { passesRelevanceGate } from './relevance'
 import { computeFingerprint, findDuplicate, type DedupCandidate } from './dedup'
@@ -55,20 +55,15 @@ const SOURCE_LIMIT = 25
 // seen 429ing in prod.
 const SOURCE_CONCURRENCY = 3
 
-// arXiv's terms of use are explicit: "no more than one request every three
-// seconds, and limit requests to a single connection at a time"
-// (https://info.arxiv.org/help/api/tou.html — verified live). The previous
-// SOURCE_CONCURRENCY=3 fan-out violated both halves of that at once, which is
-// the actual, confirmed cause of the 429s seen in prod — fetchWithRetry's
-// backoff was silently absorbing a self-inflicted rate violation on every
-// run, not a transient upstream overload. +100ms over the 3s floor as margin.
-const ARXIV_MIN_INTERVAL_MS = 3100
-
-// With an API key (always set in prod, see SEMANTIC_SCHOLAR_API_KEY), Semantic
-// Scholar documents a 1 request/sec limit on every endpoint
-// (https://www.semanticscholar.org/product/api — verified live). Same failure
-// mode as arXiv above: SOURCE_CONCURRENCY=3 requested 3x the allowed rate.
-const SEMANTIC_SCHOLAR_MIN_INTERVAL_MS = 1100
+// ARXIV_MIN_INTERVAL_MS / SEMANTIC_SCHOLAR_MIN_INTERVAL_MS (imported above)
+// are each documented next to the adapter that owns the underlying API
+// contract — the previous shared SOURCE_CONCURRENCY=3 fan-out violated both
+// at once, which is the actual, confirmed cause of the 429s seen in prod.
+// Their own fetchWithRetry calls use the same constants, so a retry can't
+// re-violate the floor its own pacing just enforced (confirmed live,
+// 2026-09-13: without that, the default 2s/4s backoff retried arXiv faster
+// than its 3.1s floor and a tripped 429 nearly always exhausted all 3
+// attempts).
 
 async function mapWithConcurrency<T, R>(
   items: readonly T[],

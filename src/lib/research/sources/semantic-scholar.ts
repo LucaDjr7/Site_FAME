@@ -6,6 +6,12 @@ import { fetchWithRetry } from './fetch-utils'
 const BASE = 'https://api.semanticscholar.org/graph/v1'
 const FIELDS = 'paperId,title,abstract,authors,externalIds,url,publicationDate'
 
+// With an API key, Semantic Scholar documents a 1 request/sec limit on every
+// endpoint (https://www.semanticscholar.org/product/api — verified live).
+// Exported so the pipeline's inter-query pacing (fetch-pipeline.ts) and this
+// module's own retry backoff (below) share one source of truth.
+export const SEMANTIC_SCHOLAR_MIN_INTERVAL_MS = 1100
+
 interface SSAuthor { authorId: string; name: string }
 interface SSPaper {
   paperId: string
@@ -30,7 +36,7 @@ export async function searchSemanticScholar(query: string, limit = 50): Promise<
 
   let res: Response
   try {
-    res = await fetchWithRetry(url, { headers: ssHeaders() }, 'semantic-scholar')
+    res = await fetchWithRetry(url, { headers: ssHeaders() }, 'semantic-scholar', 1, SEMANTIC_SCHOLAR_MIN_INTERVAL_MS)
   } catch (err) {
     console.error('[semantic-scholar] fetch error:', err)
     return []
