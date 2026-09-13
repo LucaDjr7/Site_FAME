@@ -1,5 +1,5 @@
 'use client'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { useToast } from '@/components/ui/Toast'
 
@@ -9,10 +9,24 @@ export function NoteField({ paperId, initialContent }: { paperId: string; initia
   const [content, setContent] = useState(initialContent)
   const timeout = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  // Clear any pending debounced save if this field unmounts (e.g. a filter
+  // change re-renders the page and unmounts every NoteField) — otherwise a
+  // stale save/toast would fire for a note the member is no longer viewing.
+  useEffect(() => {
+    return () => {
+      if (timeout.current) clearTimeout(timeout.current)
+    }
+  }, [])
+
   function onChange(value: string) {
     setContent(value)
     if (timeout.current) clearTimeout(timeout.current)
     timeout.current = setTimeout(async () => {
+      // The API rejects blank content with 400 (a note is deleted by other
+      // means, not by saving empty text). Skip the request entirely so
+      // clearing the textarea doesn't surface a false "error" toast or
+      // leave the member thinking their edit was lost.
+      if (!value.trim()) return
       try {
         const res = await fetch('/api/research/notes', {
           method: 'PUT',
