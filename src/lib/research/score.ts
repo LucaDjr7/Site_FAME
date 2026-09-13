@@ -46,13 +46,44 @@ function getReferenceVector(provider: EmbeddingProvider): Promise<number[]> {
   return cachedReferenceVector
 }
 
+export interface ScoredPaper {
+  score: number
+  /**
+   * Raw embedding of `title. abstract`, stored verbatim on
+   * `research_papers.embedding` (pgvector, 1536 dims). It costs nothing extra —
+   * the vector has already been computed to derive `score` — and keeps the
+   * column the migration declares from being permanently NULL.
+   */
+  embedding: number[]
+}
+
+// The embeddings endpoint caps how many inputs one request may carry; chunking
+// keeps a single large source batch from failing wholesale.
+const EMBED_CHUNK = 96
+
+export async function scoreAndEmbedBatch(
+  papers: { title: string; abstract: string }[],
+  deps: { provider?: EmbeddingProvider } = {}
+): Promise<ScoredPaper[]> {
+  if (papers.length === 0) return []
+  const provider = deps.provider ?? getEmbeddingProvider()
+  const refVector = await getReferenceVector(provider)
+  const texts = papers.map((p) => `${p.title}. ${p.abstract.slice(0, 2000)}`)
+
+  const embeddings: number[][] = []
+  for (let i = 0; i < texts.length; i += EMBED_CHUNK) {
+    embeddings.push(...(await provider.embed(texts.slice(i, i + EMBED_CHUNK))))
+  }
+
+  return embeddings.map((e) => ({
+    score: normalizeToPercent(computeCosineSimilarity(e, refVector)),
+    embedding: e,
+  }))
+}
+
 export async function scoreBatch(
   papers: { title: string; abstract: string }[],
   deps: { provider?: EmbeddingProvider } = {}
 ): Promise<number[]> {
-  const provider = deps.provider ?? getEmbeddingProvider()
-  const refVector = await getReferenceVector(provider)
-  const texts = papers.map((p) => `${p.title}. ${p.abstract.slice(0, 2000)}`)
-  const embeddings = await provider.embed(texts)
-  return embeddings.map((e) => normalizeToPercent(computeCosineSimilarity(e, refVector)))
+  return (await scoreAndEmbedBatch(papers, deps)).map((r) => r.score)
 }

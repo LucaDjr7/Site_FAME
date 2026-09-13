@@ -1,5 +1,5 @@
 // src/lib/research/fetch-pipeline.test.ts
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { runResearchFetch } from './fetch-pipeline'
 
 vi.mock('./sources/arxiv', () => ({
@@ -13,67 +13,141 @@ vi.mock('./sources/repec', () => ({ searchRepec: vi.fn(async () => []) }))
 vi.mock('./sources/semantic-scholar', () => ({ searchSemanticScholar: vi.fn(async () => []) }))
 vi.mock('./score', async (importOriginal) => {
   const actual = await importOriginal<typeof import('./score')>()
-  return { ...actual, scoreBatch: vi.fn(async (papers: unknown[]) => papers.map(() => 80)) }
+  return {
+    ...actual,
+    scoreAndEmbedBatch: vi.fn(async (papers: unknown[]) =>
+      papers.map(() => ({ score: 80, embedding: [0.1, 0.2] }))
+    ),
+  }
 })
 
-// Note: the brief's original fakeService used one shared `chain` object whose
-// `.then()` always resolved `{ data: [], error: null }` regardless of which
-// filters had been applied — i.e. `research_papers` lookups never reflected
-// rows inserted earlier in the same run. That's fine for cross-run dedup
-// (nothing pre-exists) but breaks within-run dedup: the mocked `searchArxiv`
-// ignores its query argument and returns the same paper for all 24 fanned-out
-// queries (12 themes × 2 keywords), so the exact-fingerprint check must see
-// each paper as it's inserted, exactly as a real Supabase table would across
-// sequential awaits. Rewired the chain to track filters and evaluate them
-// against `inserted` lazily (in `.then()`), instead of changing
-// `fetch-pipeline.ts`'s dedup logic to match a mock that never persists.
+import { searchArxiv } from './sources/arxiv'
+import { scoreAndEmbedBatch } from './score'
+
+// The mocked `searchArxiv` ignores its query argument and returns the same two
+// papers for every fanned-out query, so the in-memory dedup corpus is what has
+// to catch the repeats — exactly as it does in production for a paper matched
+// by several keywords or several sources.
+//
+// The fake client mirrors the pipeline's real call sequence:
+//   research_papers   → `select(...)` once per run (the dedup corpus read),
+//                       then `insert(rows[]).select()` once per source;
+//   research_fetch_log → `insert(...).select('id').single()` BEFORE the source's
+//                       work, then `update(...).eq('id', …)` after it.
 function fakeService() {
   const inserted: Record<string, unknown>[] = []
-  type Filter = { field: string; op: 'eq' | 'gte' | 'lte'; value: unknown }
+  const logRows: Record<string, unknown>[] = []
+  const logUpdates: { id: unknown; patch: Record<string, unknown> }[] = []
 
-  function makeChain() {
-    const filters: Filter[] = []
+  function papersTable() {
     const chain = {
       select: () => chain,
-      eq: (field: string, value: unknown) => { filters.push({ field, op: 'eq', value }); return chain },
+      eq: () => chain,
       in: () => chain,
-      gte: (field: string, value: unknown) => { filters.push({ field, op: 'gte', value }); return chain },
-      lte: (field: string, value: unknown) => { filters.push({ field, op: 'lte', value }); return chain },
-      insert: (row: Record<string, unknown>) => {
-        inserted.push(row)
-        return { select: () => ({ single: async () => ({ data: { id: `id-${inserted.length}`, ...row }, error: null }) }) }
+      gte: () => chain,
+      lte: () => chain,
+      single: async () => ({ data: null, error: null }),
+      insert: (rows: Record<string, unknown> | Record<string, unknown>[]) => {
+        const list = Array.isArray(rows) ? rows : [rows]
+        inserted.push(...list)
+        const result = { data: list, error: null }
+        return {
+          select: () => ({
+            single: async () => ({ data: list[0], error: null }),
+            then: (resolve: (v: typeof result) => void) => resolve(result),
+          }),
+        }
       },
-      then: (resolve: (v: { data: unknown[]; error: null }) => void) => {
-        const data = inserted.filter((row) =>
-          filters.every((f) => {
-            const rowVal = row[f.field] as string | undefined
-            if (f.op === 'eq') return rowVal === f.value
-            if (f.op === 'gte') return typeof rowVal === 'string' && rowVal >= (f.value as string)
-            if (f.op === 'lte') return typeof rowVal === 'string' && rowVal <= (f.value as string)
-            return true
-          })
-        )
-        resolve({ data, error: null })
-      },
+      // The dedup corpus read resolves against whatever has been inserted so
+      // far, exactly as a real table would across sequential awaits.
+      then: (resolve: (v: { data: unknown[]; error: null }) => void) => resolve({ data: [...inserted], error: null }),
     }
     return chain
   }
 
+  function logTable() {
+    return {
+      insert: (row: Record<string, unknown>) => {
+        logRows.push(row)
+        return {
+          select: () => ({ single: async () => ({ data: { id: `log-${logRows.length}` }, error: null }) }),
+          then: (resolve: (v: { error: null }) => void) => resolve({ error: null }),
+        }
+      },
+      update: (patch: Record<string, unknown>) => ({
+        eq: async (_col: string, id: unknown) => { logUpdates.push({ id, patch }); return { error: null } },
+      }),
+    }
+  }
+
   return {
     inserted,
-    from: (table: string) => {
-      if (table === 'research_fetch_log') return { insert: async () => ({ error: null }) }
-      return makeChain()
-    },
+    logRows,
+    logUpdates,
+    from: (table: string) => (table === 'research_fetch_log' ? logTable() : papersTable()),
   }
 }
 
 describe('runResearchFetch', () => {
+  // Call counts are asserted per test; implementations set by the vi.mock
+  // factories survive clearAllMocks (it clears calls, not implementations).
+  beforeEach(() => vi.clearAllMocks())
+
   it('gates out irrelevant papers before spending an embedding call, and inserts the rest as published', async () => {
     const service = fakeService()
     const results = await runResearchFetch({ service: service as never })
     expect(results.find((r) => r.source === 'arxiv')?.added).toBe(1)
     expect(service.inserted).toHaveLength(1)
     expect(service.inserted[0]).toMatchObject({ status: 'published', fame_score: 80 })
+  })
+
+  it('stores the embedding that produced the score instead of discarding it', async () => {
+    const service = fakeService()
+    await runResearchFetch({ service: service as never })
+    expect(service.inserted[0]).toMatchObject({ embedding: [0.1, 0.2] })
+  })
+
+  it('scores the whole surviving batch in a single call per source', async () => {
+    const service = fakeService()
+    await runResearchFetch({ service: service as never })
+    // Only arxiv yields survivors; the other three sources return no papers and
+    // must not spend an embedding call at all.
+    expect(scoreAndEmbedBatch).toHaveBeenCalledTimes(1)
+    expect(vi.mocked(scoreAndEmbedBatch).mock.calls[0]?.[0]).toHaveLength(1)
+  })
+
+  it('throttles the per-source query fan-out instead of firing every query at once', async () => {
+    const service = fakeService()
+    const original = vi.mocked(searchArxiv).getMockImplementation()
+    let inFlight = 0
+    let peak = 0
+    vi.mocked(searchArxiv).mockImplementation(async () => {
+      inFlight++
+      peak = Math.max(peak, inFlight)
+      await Promise.resolve()
+      inFlight--
+      return []
+    })
+    try {
+      await runResearchFetch({ service: service as never })
+    } finally {
+      if (original) vi.mocked(searchArxiv).mockImplementation(original)
+    }
+    expect(vi.mocked(searchArxiv).mock.calls.length).toBeGreaterThan(3)
+    expect(peak).toBeLessThanOrEqual(3)
+    // Every adapter gets an explicit, conservative page size from the pipeline
+    // rather than falling back to its own `limit = 50` default.
+    expect(vi.mocked(searchArxiv).mock.calls[0]?.[1]).toBe(25)
+  })
+
+  it('opens a fetch-log row before a source runs and updates it afterwards, so a timeout still leaves evidence', async () => {
+    const service = fakeService()
+    await runResearchFetch({ service: service as never })
+    // One opened row per source, all with zeroed counters at open time.
+    expect(service.logRows).toHaveLength(4)
+    expect(service.logRows[0]).toMatchObject({ source: 'arxiv', added: 0, skipped: 0, errors: 0 })
+    // …then one update per source carrying the real counters.
+    expect(service.logUpdates).toHaveLength(4)
+    expect(service.logUpdates[0]).toMatchObject({ id: 'log-1', patch: { added: 1 } })
   })
 })
