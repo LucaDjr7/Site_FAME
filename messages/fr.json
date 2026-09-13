@@ -595,7 +595,10 @@
     "added": "Papier ajouté",
     "actionError": "Une erreur est survenue, réessayez.",
     "fetchLog": "Derniers runs de fetch",
-    "logEmpty": "Aucun run de fetch enregistré pour l'instant."
+    "logEmpty": "Aucun run de fetch enregistré pour l'instant.",
+    "logAdded": "ajoutés",
+    "logSkipped": "ignorés",
+    "logErrors": "erreurs"
   },
   "assistant": {
     "title": "Astra",

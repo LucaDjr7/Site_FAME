@@ -595,7 +595,10 @@
     "added": "Paper added",
     "actionError": "Something went wrong, please try again.",
     "fetchLog": "Recent fetch runs",
-    "logEmpty": "No fetch run recorded yet."
+    "logEmpty": "No fetch run recorded yet.",
+    "logAdded": "added",
+    "logSkipped": "skipped",
+    "logErrors": "errors"
   },
   "assistant": {
     "title": "Astra",

@@ -116,7 +116,7 @@ export function AdminResearchClient() {
               background: entry.errors > 0 ? 'rgba(192,71,59,0.08)' : 'rgba(30,155,126,0.06)',
               color: entry.errors > 0 ? '#c0473b' : '#2a3457',
             }}>
-              {new Date(entry.run_at).toLocaleString()} · {entry.source} · added {entry.added} · skipped {entry.skipped} · errors {entry.errors}
+              {new Date(entry.run_at).toLocaleString()} · {entry.source} · {t('logAdded')} {entry.added} · {t('logSkipped')} {entry.skipped} · {t('logErrors')} {entry.errors}
               {entry.message ? ` · ${entry.message}` : ''}
             </div>
           ))}
