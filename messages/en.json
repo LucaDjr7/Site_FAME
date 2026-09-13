@@ -578,6 +578,25 @@
     "backToAssistant": "← Assistant settings",
     "actionFailed": "Action failed"
   },
+  "adminResearch": {
+    "title": "Research hub — admin",
+    "statusAll": "All",
+    "statusPublished": "Published",
+    "statusRejected": "Rejected",
+    "statusHidden": "Hidden",
+    "hide": "Hide",
+    "republish": "Republish",
+    "addManual": "Add a paper manually",
+    "manualTitle": "Title",
+    "manualUrl": "URL",
+    "manualAuthors": "Authors (comma-separated)",
+    "manualAbstract": "Abstract (optional)",
+    "submit": "Add",
+    "added": "Paper added",
+    "actionError": "Something went wrong, please try again.",
+    "fetchLog": "Recent fetch runs",
+    "logEmpty": "No fetch run recorded yet."
+  },
   "assistant": {
     "title": "Astra",
     "subtitle": "FAME assistant",

@@ -578,6 +578,25 @@
     "backToAssistant": "← Réglages de l'assistant",
     "actionFailed": "Échec de l'action"
   },
+  "adminResearch": {
+    "title": "Hub de veille — admin",
+    "statusAll": "Tous",
+    "statusPublished": "Publiés",
+    "statusRejected": "Rejetés",
+    "statusHidden": "Masqués",
+    "hide": "Masquer",
+    "republish": "Republier",
+    "addManual": "Ajouter un papier manuellement",
+    "manualTitle": "Titre",
+    "manualUrl": "URL",
+    "manualAuthors": "Auteurs (séparés par une virgule)",
+    "manualAbstract": "Résumé (optionnel)",
+    "submit": "Ajouter",
+    "added": "Papier ajouté",
+    "actionError": "Une erreur est survenue, réessayez.",
+    "fetchLog": "Derniers runs de fetch",
+    "logEmpty": "Aucun run de fetch enregistré pour l'instant."
+  },
   "assistant": {
     "title": "Astra",
     "subtitle": "Assistant FAME",
