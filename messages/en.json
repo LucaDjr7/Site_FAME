@@ -8,6 +8,7 @@
     "prompts": "Prompts",
     "propose": "Propose",
     "graph": "Graph",
+    "research": "Research radar",
     "menu": "Menu",
     "navigation": "Navigation",
     "admin": "Admin",
@@ -18,7 +19,8 @@
     "tagline": "Paris · Montréal",
     "cta": "Click on a lab to enter",
     "enteringLab": "Opening {city} lab…",
-    "globeLabel": "Lab locations"
+    "globeLabel": "Lab locations",
+    "researchCta": "Explore the research radar →"
   },
   "lab": {
     "title": {
@@ -522,7 +524,8 @@
     "noProposals": "No proposals match the current filter.",
     "decisionSaved": "Decision saved",
     "converted": "Converted to subject",
-    "actionError": "Action failed"
+    "actionError": "Action failed",
+    "researchLink": "Research radar"
   },
   "common": {
     "cancel": "Cancel",
@@ -577,6 +580,29 @@
     "confirmDelete": "Delete this log entry? This cannot be undone.",
     "backToAssistant": "← Assistant settings",
     "actionFailed": "Action failed"
+  },
+  "adminResearch": {
+    "title": "Research hub — admin",
+    "statusAll": "All",
+    "statusPublished": "Published",
+    "statusRejected": "Rejected",
+    "statusHidden": "Hidden",
+    "hide": "Hide",
+    "republish": "Republish",
+    "addManual": "Add a paper manually",
+    "manualTitle": "Title",
+    "manualUrl": "URL",
+    "manualAuthors": "Authors (comma-separated)",
+    "manualAbstract": "Abstract (optional)",
+    "submit": "Add",
+    "added": "Paper added",
+    "actionError": "Something went wrong, please try again.",
+    "fetchLog": "Recent fetch runs",
+    "logEmpty": "No fetch run recorded yet.",
+    "logAdded": "added",
+    "logSkipped": "skipped",
+    "logErrors": "errors",
+    "manualPublishedAt": "Publication date (optional)"
   },
   "assistant": {
     "title": "Astra",
@@ -686,6 +712,52 @@
       "body": "Our site offers an AI assistant that answers questions about FAME's research. Your questions are sent to our AI provider to generate a response.",
       "provider": "Questions are processed by OpenAI (United States) as a data processor, under a Data Processing Agreement and Standard Contractual Clauses. We do not send confidential or member-only content to the provider; publicly available information from the site (such as the team directory, including members' published email addresses) may be included to answer your question.",
       "retention": "We log questions (without your identity; your IP is stored only as a salted hash) to improve the assistant. We do not use them to identify you."
+    }
+  },
+  "research": {
+    "metaTitle": "Research radar — FAME",
+    "metaDescription": "AI × finance papers, fetched automatically and scored for relevance to FAME.",
+    "kicker": "FAME / Research",
+    "title": "Research radar",
+    "empty": "No papers yet — the next weekly fetch will populate this page.",
+    "searchPlaceholder": "Search title or abstract…",
+    "filters": "Filters",
+    "reset": "Reset",
+    "theme": "Theme",
+    "source": "Source",
+    "statPapers": "Papers",
+    "unknownDate": "Undated",
+    "countSuffix": "paper(s)",
+    "fameScoreLabel": "FAME relevance",
+    "viewSource": "View source ↗",
+    "bookmark": "Bookmark",
+    "bookmarked": "Bookmarked",
+    "noteLabel": "Your note",
+    "notePlaceholder": "Private note (only you see this)…",
+    "noteSaved": "Note saved",
+    "actionError": "Something went wrong, please try again.",
+    "back": "← Back to site",
+    "loadError": "Could not load the papers right now. Please refresh in a moment.",
+    "themes": {
+      "llms": "LLMs",
+      "rl": "Reinforcement learning",
+      "nlp": "NLP",
+      "portfolio": "Portfolio",
+      "factor-investing": "Factor investing",
+      "volatility": "Volatility",
+      "trading": "Trading",
+      "crypto": "Crypto",
+      "derivatives": "Derivatives",
+      "macro": "Macro",
+      "deep-learning": "Deep learning",
+      "return-forecasting": "Return forecasting"
+    },
+    "sources": {
+      "arxiv": "arXiv",
+      "openalex": "OpenAlex",
+      "repec": "RePEc",
+      "semantic_scholar": "Semantic Scholar",
+      "manual": "Manual"
     }
   }
 }

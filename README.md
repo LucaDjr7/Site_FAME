@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FAME Website
 
-## Getting Started
+Site web interne + vitrine publique pour deux laboratoires de recherche indépendants, **Paris** et **Montréal** :
 
-First, run the development server:
+- **Visiteurs** — lecture publique des fiches sujets, publications, équipe ; commentaires et proposition de sujets
+- **Membres** — contribution active (tâches, fiches sujets, publications, fichiers, assistant Astra)
+- **Admin** — gestion des membres, validation des propositions, configuration Dropbox
+
+## Stack technique
+
+| Couche | Choix |
+|---|---|
+| Framework | Next.js (App Router) + TypeScript |
+| UI | React 19, Tailwind CSS v4 |
+| BDD + Auth | Supabase (`@supabase/ssr`) |
+| i18n | next-intl (`en` / `fr`) |
+| Email | Resend |
+| Fichiers | Dropbox JS SDK (server-only) |
+| Assistant | RAG maison (« Astra ») sur `rag_chunks` |
+
+## Démarrage
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # renseigner les variables (Supabase, Dropbox, Resend, OpenAI, ...)
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Autres commandes utiles :
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build          # build de production
+npx tsc --noEmit        # vérification TypeScript
+npm run lint            # ESLint
+npm test                # suite de tests (Vitest)
+npm run seed:admin      # créer le compte admin initial (SEED_ADMIN_* dans .env.local)
+npm run index:rag       # (ré)indexer le contenu pour l'assistant Astra
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Documentation
 
-## Learn More
+- [`AGENTS.md`](./AGENTS.md) — conventions de code, structure des fichiers, règles i18n/sécurité
+- [`CLAUDE.md`](./CLAUDE.md) — guide de session pour le développement assisté
+- [`docs/STATUS.md`](./docs/STATUS.md) — état d'avancement, dernières tâches livrées
+- [`specs_projet_FAME.md`](./specs_projet_FAME.md) — spécifications complètes du projet
 
-To learn more about Next.js, take a look at the following resources:
+## Déploiement
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Le site est déployé sur [Vercel](https://vercel.com), avec Supabase comme backend BDD/Auth/Storage.

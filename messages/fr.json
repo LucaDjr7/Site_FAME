@@ -8,6 +8,7 @@
     "prompts": "Prompts",
     "propose": "Proposer",
     "graph": "Graphe",
+    "research": "Veille recherche",
     "menu": "Menu",
     "navigation": "Navigation",
     "admin": "Admin",
@@ -18,7 +19,8 @@
     "tagline": "Paris · Montréal",
     "cta": "Cliquez sur un laboratoire pour entrer",
     "enteringLab": "Ouverture du laboratoire de {city}…",
-    "globeLabel": "Emplacements des laboratoires"
+    "globeLabel": "Emplacements des laboratoires",
+    "researchCta": "Explorer la veille recherche →"
   },
   "lab": {
     "title": {
@@ -522,7 +524,8 @@
     "noProposals": "Aucune proposition ne correspond au filtre.",
     "decisionSaved": "Décision enregistrée",
     "converted": "Converti en sujet",
-    "actionError": "Échec de l'action"
+    "actionError": "Échec de l'action",
+    "researchLink": "Veille recherche"
   },
   "common": {
     "cancel": "Annuler",
@@ -577,6 +580,29 @@
     "confirmDelete": "Supprimer cette entrée de log ? Action irréversible.",
     "backToAssistant": "← Réglages de l'assistant",
     "actionFailed": "Échec de l'action"
+  },
+  "adminResearch": {
+    "title": "Hub de veille — admin",
+    "statusAll": "Tous",
+    "statusPublished": "Publiés",
+    "statusRejected": "Rejetés",
+    "statusHidden": "Masqués",
+    "hide": "Masquer",
+    "republish": "Republier",
+    "addManual": "Ajouter un papier manuellement",
+    "manualTitle": "Titre",
+    "manualUrl": "URL",
+    "manualAuthors": "Auteurs (séparés par une virgule)",
+    "manualAbstract": "Résumé (optionnel)",
+    "submit": "Ajouter",
+    "added": "Papier ajouté",
+    "actionError": "Une erreur est survenue, réessayez.",
+    "fetchLog": "Derniers runs de fetch",
+    "logEmpty": "Aucun run de fetch enregistré pour l'instant.",
+    "logAdded": "ajoutés",
+    "logSkipped": "ignorés",
+    "logErrors": "erreurs",
+    "manualPublishedAt": "Date de publication (optionnel)"
   },
   "assistant": {
     "title": "Astra",
@@ -686,6 +712,52 @@
       "body": "Notre site propose un assistant IA qui répond aux questions sur les recherches de FAME. Vos questions sont transmises à notre fournisseur d'IA pour générer une réponse.",
       "provider": "Les questions sont traitées par OpenAI (États-Unis) en qualité de sous-traitant, dans le cadre d'un accord de traitement des données et de clauses contractuelles types. Nous ne transmettons pas de contenu confidentiel ou réservé aux membres au fournisseur ; des informations publiques du site (comme l'annuaire de l'équipe, y compris les adresses e-mail publiées des membres) peuvent être incluses pour répondre à votre question.",
       "retention": "Nous journalisons les questions (sans votre identité ; votre IP n'est conservée que sous forme d'empreinte salée) afin d'améliorer l'assistant. Nous ne les utilisons pas pour vous identifier."
+    }
+  },
+  "research": {
+    "metaTitle": "Veille recherche — FAME",
+    "metaDescription": "Papiers IA × finance, récupérés automatiquement et notés selon leur pertinence pour FAME.",
+    "kicker": "FAME / Recherche",
+    "title": "Veille recherche",
+    "empty": "Aucun papier pour l'instant — le prochain fetch hebdomadaire remplira cette page.",
+    "searchPlaceholder": "Rechercher un titre ou un résumé…",
+    "filters": "Filtres",
+    "reset": "Réinitialiser",
+    "theme": "Thème",
+    "source": "Source",
+    "statPapers": "Papiers",
+    "unknownDate": "Non daté",
+    "countSuffix": "papier(s)",
+    "fameScoreLabel": "Pertinence FAME",
+    "viewSource": "Voir la source ↗",
+    "bookmark": "Enregistrer",
+    "bookmarked": "Enregistré",
+    "noteLabel": "Votre note",
+    "notePlaceholder": "Note privée (visible de vous seul)…",
+    "noteSaved": "Note enregistrée",
+    "actionError": "Une erreur est survenue, réessayez.",
+    "back": "← Retour au site",
+    "loadError": "Impossible de charger les papiers pour le moment. Réessayez dans un instant.",
+    "themes": {
+      "llms": "LLM",
+      "rl": "Apprentissage par renforcement",
+      "nlp": "TAL",
+      "portfolio": "Portefeuille",
+      "factor-investing": "Investissement factoriel",
+      "volatility": "Volatilité",
+      "trading": "Trading",
+      "crypto": "Crypto",
+      "derivatives": "Dérivés",
+      "macro": "Macro",
+      "deep-learning": "Apprentissage profond",
+      "return-forecasting": "Prévision des rendements"
+    },
+    "sources": {
+      "arxiv": "arXiv",
+      "openalex": "OpenAlex",
+      "repec": "RePEc",
+      "semantic_scholar": "Semantic Scholar",
+      "manual": "Manuel"
     }
   }
 }

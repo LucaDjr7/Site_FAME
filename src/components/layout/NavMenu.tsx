@@ -111,6 +111,14 @@ export function NavMenu({ locale, lab, member }: Props) {
             >
               {t('graph')}
             </Link>
+            <Link
+              href={`/${locale}/research`}
+              onClick={() => setOpen(false)}
+              className="font-serif hover:bg-[rgba(47,68,134,0.08)] transition-colors text-fame-text-body"
+              style={itemStyle}
+            >
+              {t('research')}
+            </Link>
             {member && (
               <>
                 <hr style={{ border: 'none', borderTop: '1px solid rgba(20,40,90,0.08)', margin: '4px 0' }} />

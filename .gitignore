@@ -48,3 +48,6 @@ next-env.d.ts
 
 # Claude Code local (personal) settings
 .claude/settings.local.json
+
+# onboarding video pipeline (assets, deps, recordings, Playwright auth state)
+/video/
