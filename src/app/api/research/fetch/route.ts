@@ -5,11 +5,14 @@ import { runRetention } from '@/lib/research/retention'
 // Vercel Cron only ever issues GET, with `Authorization: Bearer <CRON_SECRET>`
 // auto-attached when CRON_SECRET is set on the project — see vercel.json.
 
-// 300s is the ceiling Vercel's Pro plan allows for a Node.js function; the
-// Hobby plan caps functions far below that (10s by default, 60s ceiling), which
-// cannot run this pipeline at all — the deployment needs Pro.
+// 300s is the max duration Vercel Functions allow with Fluid Compute (default
+// since 2025) — verified live against https://vercel.com/docs/functions/configuring-functions/duration
+// on 2026-09-13: this is now the ceiling for BOTH Hobby and Pro (an earlier
+// version of this comment claimed Hobby capped at 60s and required a Pro
+// upgrade — that limit no longer applies).
 // This is headroom, not the fix: the real reduction is in fetch-pipeline.ts
-// (batched embeddings, one dedup read per run, throttled + narrowed fan-out).
+// (batched embeddings, one dedup read per run, and per-source pacing that
+// respects each API's actual documented rate limit).
 export const maxDuration = 300
 
 export async function GET(req: NextRequest) {
