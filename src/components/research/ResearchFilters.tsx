@@ -1,32 +1,40 @@
 'use client'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
-import { THEME_NAMES } from '@/lib/research/themes'
+import { THEMES, themeSlug } from '@/lib/research/themes'
 import type { ResearchSource } from '@/types'
 
 const SOURCES: ResearchSource[] = ['arxiv', 'openalex', 'repec', 'semantic_scholar', 'manual']
 
-function useSetParam() {
+// One writer for the whole query string: every caller hands over the complete
+// set of keys it wants changed, so two edits in the same event handler cannot
+// each push a URL built from the same stale `searchParams` snapshot (the second
+// push would win and silently drop the first — that is exactly how the Reset
+// button used to clear `source` but leave `theme` in place).
+function useSetParams() {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  return (key: string, value: string) => {
+  return (changes: Record<string, string>) => {
     const params = new URLSearchParams(searchParams.toString())
-    if (value) params.set(key, value); else params.delete(key)
-    router.push(`${pathname}?${params.toString()}`)
+    for (const [key, value] of Object.entries(changes)) {
+      if (value) params.set(key, value); else params.delete(key)
+    }
+    const qs = params.toString()
+    router.push(qs ? `${pathname}?${qs}` : pathname)
   }
 }
 
 export function ResearchSearchInput() {
   const t = useTranslations('research')
   const searchParams = useSearchParams()
-  const setParam = useSetParam()
+  const setParams = useSetParams()
   return (
     <input className="font-mono"
       type="search"
       placeholder={t('searchPlaceholder')}
       defaultValue={searchParams.get('q') ?? ''}
-      onChange={(e) => setParam('q', e.target.value)}
+      onChange={(e) => setParams({ q: e.target.value })}
       style={{
         padding: '6px 12px', borderRadius: 6, border: '1px solid rgba(20,40,90,0.15)',
         background: 'rgba(255,255,255,0.7)', fontSize: 11, width: 220, outline: 'none',
@@ -65,13 +73,13 @@ function FilterBtn({ active, onClick, children }: { active: boolean; onClick: ()
 export function ResearchFilterSidebar({ paperCount }: { paperCount: number }) {
   const t = useTranslations('research')
   const searchParams = useSearchParams()
-  const setParam = useSetParam()
+  const setParams = useSetParams()
   const activeTheme = searchParams.get('theme') ?? ''
   const activeSource = searchParams.get('source') ?? ''
 
+  // Both keys cleared in a single push — see useSetParams.
   function reset() {
-    setParam('theme', '')
-    setParam('source', '')
+    setParams({ theme: '', source: '' })
   }
 
   return (
@@ -93,18 +101,20 @@ export function ResearchFilterSidebar({ paperCount }: { paperCount: number }) {
         <div className="font-mono" style={{ fontSize: 9, color: '#6b7596', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{t('statPapers')}</div>
       </div>
 
+      {/* The theme name and the source slug stay the stable DB/query-param
+          values; only the label shown here is translated. */}
       <FilterSection label={t('theme')}>
-        {THEME_NAMES.map((name) => (
-          <FilterBtn key={name} active={activeTheme === name} onClick={() => setParam('theme', activeTheme === name ? '' : name)}>
-            {name}
+        {THEMES.map(({ name }) => (
+          <FilterBtn key={name} active={activeTheme === name} onClick={() => setParams({ theme: activeTheme === name ? '' : name })}>
+            {t(`themes.${themeSlug(name)}` as 'themes.llms')}
           </FilterBtn>
         ))}
       </FilterSection>
 
       <FilterSection label={t('source')}>
         {SOURCES.map((s) => (
-          <FilterBtn key={s} active={activeSource === s} onClick={() => setParam('source', activeSource === s ? '' : s)}>
-            {s}
+          <FilterBtn key={s} active={activeSource === s} onClick={() => setParams({ source: activeSource === s ? '' : s })}>
+            {t(`sources.${s}` as 'sources.arxiv')}
           </FilterBtn>
         ))}
       </FilterSection>

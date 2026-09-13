@@ -524,7 +524,8 @@
     "noProposals": "Aucune proposition ne correspond au filtre.",
     "decisionSaved": "Décision enregistrée",
     "converted": "Converti en sujet",
-    "actionError": "Échec de l'action"
+    "actionError": "Échec de l'action",
+    "researchLink": "Veille recherche"
   },
   "common": {
     "cancel": "Annuler",
@@ -600,7 +601,8 @@
     "logEmpty": "Aucun run de fetch enregistré pour l'instant.",
     "logAdded": "ajoutés",
     "logSkipped": "ignorés",
-    "logErrors": "erreurs"
+    "logErrors": "erreurs",
+    "manualPublishedAt": "Date de publication (optionnel)"
   },
   "assistant": {
     "title": "Astra",
@@ -733,6 +735,29 @@
     "noteLabel": "Votre note",
     "notePlaceholder": "Note privée (visible de vous seul)…",
     "noteSaved": "Note enregistrée",
-    "actionError": "Une erreur est survenue, réessayez."
+    "actionError": "Une erreur est survenue, réessayez.",
+    "back": "← Retour au site",
+    "loadError": "Impossible de charger les papiers pour le moment. Réessayez dans un instant.",
+    "themes": {
+      "llms": "LLM",
+      "rl": "Apprentissage par renforcement",
+      "nlp": "TAL",
+      "portfolio": "Portefeuille",
+      "factor-investing": "Investissement factoriel",
+      "volatility": "Volatilité",
+      "trading": "Trading",
+      "crypto": "Crypto",
+      "derivatives": "Dérivés",
+      "macro": "Macro",
+      "deep-learning": "Apprentissage profond",
+      "return-forecasting": "Prévision des rendements"
+    },
+    "sources": {
+      "arxiv": "arXiv",
+      "openalex": "OpenAlex",
+      "repec": "RePEc",
+      "semantic_scholar": "Semantic Scholar",
+      "manual": "Manuel"
+    }
   }
 }

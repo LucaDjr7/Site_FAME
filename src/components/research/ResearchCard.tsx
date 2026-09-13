@@ -1,4 +1,5 @@
 import { useTranslations } from 'next-intl'
+import { themeSlug, isKnownThemeSlug } from '@/lib/research/themes'
 import type { ResearchPaper, ResearchSource } from '@/types'
 
 type BadgeCfg = { hex: string; bg: string; border: string }
@@ -14,6 +15,14 @@ const SOURCE_BADGE: Record<ResearchSource, BadgeCfg> = {
 export function ResearchCard({ paper, actions }: { paper: ResearchPaper; actions?: React.ReactNode }) {
   const t = useTranslations('research')
   const badge = SOURCE_BADGE[paper.source]
+
+  // `paper.themes` holds the stable internal theme names; the label shown is
+  // translated. A stored theme that predates the current taxonomy has no key —
+  // fall back to the raw name rather than a missing-message placeholder.
+  const themeLabel = (theme: string) => {
+    const slug = themeSlug(theme)
+    return isKnownThemeSlug(slug) ? t(`themes.${slug}` as 'themes.llms') : theme
+  }
 
   return (
     <article
@@ -36,7 +45,7 @@ export function ResearchCard({ paper, actions }: { paper: ResearchPaper; actions
           fontSize: 9.5, fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: badge.hex,
         }}>
           <span style={{ width: 6, height: 6, borderRadius: '50%', background: badge.hex, flexShrink: 0 }} />
-          {paper.source}
+          {t(`sources.${paper.source}` as 'sources.arxiv')}
         </span>
         {paper.venue && (
           <span className="font-mono" style={{ fontSize: 10, color: '#6b7596' }}>{paper.venue}</span>
@@ -68,7 +77,7 @@ export function ResearchCard({ paper, actions }: { paper: ResearchPaper; actions
           <span key={theme} className="font-mono" style={{
             fontSize: 9.5, textTransform: 'uppercase', letterSpacing: '0.06em',
             padding: '3px 8px', borderRadius: 20, background: 'rgba(47,68,134,0.08)', color: '#2f4486',
-          }}>{theme}</span>
+          }}>{themeLabel(theme)}</span>
         ))}
         {paper.fame_score !== null && (
           <span className="font-mono" title={t('fameScoreLabel')} style={{

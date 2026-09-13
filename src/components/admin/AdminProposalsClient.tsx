@@ -16,6 +16,16 @@ const PAGE_BG =
   'radial-gradient(140% 120% at 90% 44%, rgba(47,68,134,0.08) 0%, rgba(47,68,134,0) 55%), ' +
   '#F9F9FA'
 
+const adminLinkStyle: React.CSSProperties = {
+  display: 'inline-block',
+  marginTop: 7,
+  fontSize: 10,
+  letterSpacing: '0.06em',
+  textTransform: 'uppercase',
+  textDecoration: 'underline',
+  textUnderlineOffset: 3,
+}
+
 const filterBtnStyle = (active: boolean): React.CSSProperties => ({
   padding: '6px 12px',
   borderRadius: 6,
@@ -136,21 +146,24 @@ export function AdminProposalsClient() {
           >
             {t('proposalsTitle')}
           </h1>
-          <a
-            href={`/${locale}/admin/assistant`}
-            className="font-mono text-fame-blue"
-            style={{
-              display: 'inline-block',
-              marginTop: 7,
-              fontSize: 10,
-              letterSpacing: '0.06em',
-              textTransform: 'uppercase',
-              textDecoration: 'underline',
-              textUnderlineOffset: 3,
-            }}
-          >
-            {t('assistantLink')} →
-          </a>
+          {/* /admin/* pages are not in the NavMenu — this toolbar is the single
+              entry point to every admin sub-page (same pattern for both links). */}
+          <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+            <a
+              href={`/${locale}/admin/assistant`}
+              className="font-mono text-fame-blue"
+              style={adminLinkStyle}
+            >
+              {t('assistantLink')} →
+            </a>
+            <a
+              href={`/${locale}/admin/research`}
+              className="font-mono text-fame-blue"
+              style={adminLinkStyle}
+            >
+              {t('researchLink')} →
+            </a>
+          </div>
         </div>
 
         {/* Right: lab + status filters */}

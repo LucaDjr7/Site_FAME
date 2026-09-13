@@ -22,6 +22,22 @@ export const THEMES: readonly ThemeDefinition[] = [
 
 export const THEME_NAMES: string[] = THEMES.map((t) => t.name)
 
+// `THEMES[].name` stays the stable internal/DB value (it is what lands in
+// `research_papers.themes` and in the `?theme=` query param). Only the label
+// shown to a user is translated, under `research.themes.<slug>` in
+// messages/{en,fr}.json — themes.test.ts asserts every theme has both.
+export function themeSlug(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+}
+
+const KNOWN_THEME_SLUGS = new Set(THEMES.map((t) => themeSlug(t.name)))
+
+// A theme string read back from the DB may predate the current taxonomy; callers
+// fall back to the raw value rather than rendering a missing-message placeholder.
+export function isKnownThemeSlug(slug: string): boolean {
+  return KNOWN_THEME_SLUGS.has(slug)
+}
+
 export function tagThemes(title: string, abstract: string): string[] {
   const text = `${title} ${abstract}`.toLowerCase()
   return THEMES.filter((t) => t.keywords.some((kw) => text.includes(kw))).map((t) => t.name)

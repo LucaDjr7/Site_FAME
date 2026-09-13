@@ -524,7 +524,8 @@
     "noProposals": "No proposals match the current filter.",
     "decisionSaved": "Decision saved",
     "converted": "Converted to subject",
-    "actionError": "Action failed"
+    "actionError": "Action failed",
+    "researchLink": "Research radar"
   },
   "common": {
     "cancel": "Cancel",
@@ -600,7 +601,8 @@
     "logEmpty": "No fetch run recorded yet.",
     "logAdded": "added",
     "logSkipped": "skipped",
-    "logErrors": "errors"
+    "logErrors": "errors",
+    "manualPublishedAt": "Publication date (optional)"
   },
   "assistant": {
     "title": "Astra",
@@ -733,6 +735,29 @@
     "noteLabel": "Your note",
     "notePlaceholder": "Private note (only you see this)…",
     "noteSaved": "Note saved",
-    "actionError": "Something went wrong, please try again."
+    "actionError": "Something went wrong, please try again.",
+    "back": "← Back to site",
+    "loadError": "Could not load the papers right now. Please refresh in a moment.",
+    "themes": {
+      "llms": "LLMs",
+      "rl": "Reinforcement learning",
+      "nlp": "NLP",
+      "portfolio": "Portfolio",
+      "factor-investing": "Factor investing",
+      "volatility": "Volatility",
+      "trading": "Trading",
+      "crypto": "Crypto",
+      "derivatives": "Derivatives",
+      "macro": "Macro",
+      "deep-learning": "Deep learning",
+      "return-forecasting": "Return forecasting"
+    },
+    "sources": {
+      "arxiv": "arXiv",
+      "openalex": "OpenAlex",
+      "repec": "RePEc",
+      "semantic_scholar": "Semantic Scholar",
+      "manual": "Manual"
+    }
   }
 }
