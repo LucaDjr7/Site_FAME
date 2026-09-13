@@ -1,11 +1,19 @@
 // src/lib/research/sources/arxiv.ts
 // ArXiv API client — all ArXiv calls must go through this module.
-// ArXiv serves Atom XML (not JSON) and limits clients to ~3 req/sec.
+// ArXiv serves Atom XML (not JSON).
 import { XMLParser } from 'fast-xml-parser'
 import type { NormalizedPaper } from './types'
 import { fetchWithRetry } from './fetch-utils'
 
 const BASE = 'http://export.arxiv.org/api/query'
+
+// arXiv's terms of use: "no more than one request every three seconds, and
+// limit requests to a single connection at a time"
+// (https://info.arxiv.org/help/api/tou.html — verified live). Exported so
+// both the pipeline's inter-query pacing (fetch-pipeline.ts) and this
+// module's own retry backoff (below) share one source of truth instead of
+// two constants that can drift out of sync.
+export const ARXIV_MIN_INTERVAL_MS = 3100
 
 interface ArxivAuthor { name: string }
 interface ArxivEntry {
@@ -35,7 +43,7 @@ export async function searchArxiv(query: string, limit = 50): Promise<Normalized
 
   let res: Response
   try {
-    res = await fetchWithRetry(url, { headers: { Accept: 'application/atom+xml' } }, 'arxiv')
+    res = await fetchWithRetry(url, { headers: { Accept: 'application/atom+xml' } }, 'arxiv', 1, ARXIV_MIN_INTERVAL_MS)
   } catch (err) {
     console.error('[arxiv] fetch error:', err)
     return []

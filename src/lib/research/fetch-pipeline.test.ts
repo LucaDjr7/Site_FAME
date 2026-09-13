@@ -7,10 +7,14 @@ vi.mock('./sources/arxiv', () => ({
     { title: 'LLM sentiment for equity returns', abstract: 'We use a transformer to score financial news for alpha.', authors: ['A'], doi: null, url: 'http://arxiv.org/abs/2401.00001', source: 'arxiv', venue: null, publishedAt: '2024-01-01' },
     { title: 'A history of medieval trade routes', abstract: 'No AI or finance content here at all.', authors: ['B'], doi: null, url: 'http://arxiv.org/abs/2401.00002', source: 'arxiv', venue: null, publishedAt: '2024-01-01' },
   ]),
+  ARXIV_MIN_INTERVAL_MS: 3100,
 }))
 vi.mock('./sources/openalex', () => ({ searchOpenAlex: vi.fn(async () => []) }))
 vi.mock('./sources/repec', () => ({ searchRepec: vi.fn(async () => []) }))
-vi.mock('./sources/semantic-scholar', () => ({ searchSemanticScholar: vi.fn(async () => []) }))
+vi.mock('./sources/semantic-scholar', () => ({
+  searchSemanticScholar: vi.fn(async () => []),
+  SEMANTIC_SCHOLAR_MIN_INTERVAL_MS: 1100,
+}))
 vi.mock('./score', async (importOriginal) => {
   const actual = await importOriginal<typeof import('./score')>()
   return {
