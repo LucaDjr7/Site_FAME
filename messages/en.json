@@ -8,6 +8,7 @@
     "prompts": "Prompts",
     "propose": "Propose",
     "graph": "Graph",
+    "research": "Research radar",
     "menu": "Menu",
     "navigation": "Navigation",
     "admin": "Admin",
@@ -18,7 +19,8 @@
     "tagline": "Paris · Montréal",
     "cta": "Click on a lab to enter",
     "enteringLab": "Opening {city} lab…",
-    "globeLabel": "Lab locations"
+    "globeLabel": "Lab locations",
+    "researchCta": "Explore the research radar →"
   },
   "lab": {
     "title": {

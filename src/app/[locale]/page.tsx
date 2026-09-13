@@ -4,6 +4,7 @@ import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher'
 import { StarField } from '@/components/globe/StarField'
 import { Globe } from '@/components/globe/Globe'
 import { AssistantGlobeCTA } from '@/components/assistant/AssistantGlobeCTA'
+import { ResearchHubCTA } from '@/components/globe/ResearchHubCTA'
 
 type Props = {
   params: Promise<{ locale: string }>
@@ -151,6 +152,9 @@ export default async function HomePage({ params }: Props) {
 
       {/* Astra teaser — fixed, above the chat bubble */}
       <AssistantGlobeCTA />
+
+      {/* Research hub entry point — fixed, bottom-left (opposite the assistant widget) */}
+      <ResearchHubCTA />
     </div>
   )
 }

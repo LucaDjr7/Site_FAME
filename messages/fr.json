@@ -8,6 +8,7 @@
     "prompts": "Prompts",
     "propose": "Proposer",
     "graph": "Graphe",
+    "research": "Veille recherche",
     "menu": "Menu",
     "navigation": "Navigation",
     "admin": "Admin",
@@ -18,7 +19,8 @@
     "tagline": "Paris · Montréal",
     "cta": "Cliquez sur un laboratoire pour entrer",
     "enteringLab": "Ouverture du laboratoire de {city}…",
-    "globeLabel": "Emplacements des laboratoires"
+    "globeLabel": "Emplacements des laboratoires",
+    "researchCta": "Explorer la veille recherche →"
   },
   "lab": {
     "title": {
