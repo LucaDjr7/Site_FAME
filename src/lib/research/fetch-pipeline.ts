@@ -7,12 +7,16 @@
 // timeout (see src/app/api/research/fetch/route.ts). Four rules keep the run
 // inside it — the original one-paper-at-a-time shape could not finish:
 //   1. ONE batched embedding call per source instead of one per paper;
-//   2. the dedup corpus is read ONCE per run and kept in memory (rows accepted
-//      during the run are appended to it, so within-run duplicates are still
-//      caught) instead of two `research_papers` queries per candidate;
-//   3. the source fan-out is throttled (SOURCE_CONCURRENCY) and narrowed
-//      (QUERIES, SOURCE_LIMIT) so the budget is not burnt on retry backoff
-//      against rate-limited APIs;
+//   2. the dedup corpus is read ONCE per run (paginated past Supabase's
+//      1000-row default cap — see DEDUP_PAGE_SIZE) and kept in memory (rows
+//      accepted during the run are appended to it, so within-run duplicates
+//      are still caught) instead of two `research_papers` queries per
+//      candidate;
+//   3. the source fan-out is narrowed (QUERIES, SOURCE_LIMIT) and paced
+//      per source's *actual* documented rate limit — see ARXIV_MIN_INTERVAL_MS
+//      and SEMANTIC_SCHOLAR_MIN_INTERVAL_MS below — instead of a shared
+//      concurrency guess, so the budget is not burnt on retry backoff against
+//      rate limits the pipeline itself triggered;
 //   4. the `research_fetch_log` row is written BEFORE a source's work starts and
 //      updated afterwards, so a run killed mid-flight still leaves evidence.
 import { createServiceClient } from '@/lib/supabase/server'
@@ -46,9 +50,25 @@ const QUERIES: string[] = THEMES.map((t) => t.keywords[0]).filter((k): k is stri
 // per run, down from ~3650.
 const SOURCE_LIMIT = 25
 
-// arXiv asks clients to stay near ~3 req/sec and Semantic Scholar rate-limits
-// hard; firing all 12 queries at once mostly buys 429s and retry backoff.
+// OpenAlex's polite pool (used with OPENALEX_MAILTO) allows ~10 req/sec, so
+// bounded concurrency is enough — it is the one query-source that was never
+// seen 429ing in prod.
 const SOURCE_CONCURRENCY = 3
+
+// arXiv's terms of use are explicit: "no more than one request every three
+// seconds, and limit requests to a single connection at a time"
+// (https://info.arxiv.org/help/api/tou.html — verified live). The previous
+// SOURCE_CONCURRENCY=3 fan-out violated both halves of that at once, which is
+// the actual, confirmed cause of the 429s seen in prod — fetchWithRetry's
+// backoff was silently absorbing a self-inflicted rate violation on every
+// run, not a transient upstream overload. +100ms over the 3s floor as margin.
+const ARXIV_MIN_INTERVAL_MS = 3100
+
+// With an API key (always set in prod, see SEMANTIC_SCHOLAR_API_KEY), Semantic
+// Scholar documents a 1 request/sec limit on every endpoint
+// (https://www.semanticscholar.org/product/api — verified live). Same failure
+// mode as arXiv above: SOURCE_CONCURRENCY=3 requested 3x the allowed rate.
+const SEMANTIC_SCHOLAR_MIN_INTERVAL_MS = 1100
 
 async function mapWithConcurrency<T, R>(
   items: readonly T[],
@@ -62,8 +82,36 @@ async function mapWithConcurrency<T, R>(
   return out
 }
 
-function fanOut(fetchOne: (query: string) => Promise<NormalizedPaper[]>): Promise<NormalizedPaper[]> {
+// Single connection, spaced at least `minIntervalMs` apart between request
+// *starts* — waiting out the remainder of the interval after each request
+// completes (skipped after the last one, which has nothing left to pace
+// against) guarantees both properties at once: a request can only start once
+// the previous one has finished, and never sooner than the interval allows.
+async function mapWithPacing<T, R>(
+  items: readonly T[],
+  minIntervalMs: number,
+  fn: (item: T) => Promise<R>
+): Promise<R[]> {
+  const out: R[] = []
+  for (let i = 0; i < items.length; i++) {
+    const start = Date.now()
+    out.push(await fn(items[i]!))
+    if (i === items.length - 1) break // no next request to pace against
+    const wait = minIntervalMs - (Date.now() - start)
+    if (wait > 0) await new Promise((r) => setTimeout(r, wait))
+  }
+  return out
+}
+
+function fanOutConcurrent(fetchOne: (query: string) => Promise<NormalizedPaper[]>): Promise<NormalizedPaper[]> {
   return mapWithConcurrency(QUERIES, SOURCE_CONCURRENCY, fetchOne).then((r) => r.flat())
+}
+
+function fanOutPaced(
+  fetchOne: (query: string) => Promise<NormalizedPaper[]>,
+  minIntervalMs: number
+): Promise<NormalizedPaper[]> {
+  return mapWithPacing(QUERIES, minIntervalMs, fetchOne).then((r) => r.flat())
 }
 
 // ─── Dedup corpus ───────────────────────────────────────────────────────────
@@ -71,10 +119,34 @@ function fanOut(fetchOne: (query: string) => Promise<NormalizedPaper[]>): Promis
 // by a few hundred rows a year, so one full read is far cheaper (and strictly
 // more correct, since it is not windowed on a possibly-NULL `published_at`)
 // than the two per-candidate queries it replaces.
+//
+// Paginated with `.range()`: a plain `.select()` is silently capped at 1000
+// rows by Supabase's default `db-max-rows` — past that size (~1 year at the
+// estimated pace) this would quietly stop seeing older papers and resurrect
+// the exact duplicate-insert bug this in-memory corpus was built to fix.
+//
+// `.order('id')` is required, not cosmetic: `.range()` is LIMIT/OFFSET under
+// the hood, and Postgres/PostgREST give no ordering guarantee across separate
+// queries without an explicit ORDER BY. Without it, a row inserted or updated
+// between two page reads (the admin add/hide/publish routes all write to this
+// same table, concurrently with the weekly cron) could shift the offset
+// window and make a page silently skip or repeat a row.
+const DEDUP_PAGE_SIZE = 1000
+
 async function loadDedupCorpus(service: ServiceClient): Promise<DedupCandidate[]> {
-  const { data, error } = await service.from('research_papers').select('id, fingerprint, title')
-  if (error) throw new Error(error.message)
-  return (data ?? []) as DedupCandidate[]
+  const rows: DedupCandidate[] = []
+  for (let from = 0; ; from += DEDUP_PAGE_SIZE) {
+    const { data, error } = await service
+      .from('research_papers')
+      .select('id, fingerprint, title')
+      .order('id', { ascending: true })
+      .range(from, from + DEDUP_PAGE_SIZE - 1)
+    if (error) throw new Error(error.message)
+    const page = (data ?? []) as DedupCandidate[]
+    rows.push(...page)
+    if (page.length < DEDUP_PAGE_SIZE) break
+  }
+  return rows
 }
 
 function makeCorpus(rows: DedupCandidate[]) {
@@ -248,13 +320,24 @@ export async function runResearchFetch(
   const corpus = makeCorpus(await loadDedupCorpus(service))
 
   const results: FetchPipelineResult[] = []
-  results.push(await runSource(service, 'arxiv', () => fanOut((q) => searchArxiv(q, SOURCE_LIMIT)), corpus))
-  results.push(await runSource(service, 'openalex', () => fanOut((q) => searchOpenAlex(q, SOURCE_LIMIT)), corpus))
+  results.push(
+    await runSource(service, 'arxiv', () => fanOutPaced((q) => searchArxiv(q, SOURCE_LIMIT), ARXIV_MIN_INTERVAL_MS), corpus)
+  )
+  results.push(await runSource(service, 'openalex', () => fanOutConcurrent((q) => searchOpenAlex(q, SOURCE_LIMIT)), corpus))
   results.push(await runSource(service, 'repec', () => searchRepec(SOURCE_LIMIT), corpus))
-  // semantic_scholar last — it rate-limits aggressively and would otherwise block the others.
+  // semantic_scholar last — its own pacing already keeps it from blocking the
+  // others; running it last just means a killed-by-timeout run still leaves
+  // the other three sources' results intact.
   // (Each runSource call is awaited sequentially, so "last" must mean last in
   // this list, not just wherever the comment sits — moved after repec.)
-  results.push(await runSource(service, 'semantic_scholar', () => fanOut((q) => searchSemanticScholar(q, SOURCE_LIMIT)), corpus))
+  results.push(
+    await runSource(
+      service,
+      'semantic_scholar',
+      () => fanOutPaced((q) => searchSemanticScholar(q, SOURCE_LIMIT), SEMANTIC_SCHOLAR_MIN_INTERVAL_MS),
+      corpus
+    )
+  )
 
   return results
 }
